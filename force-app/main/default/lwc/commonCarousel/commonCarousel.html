@@ -1,0 +1,97 @@
+<template lwc:render-mode="light">
+    <!-- Image Carousel Mode: Displays product images in a horizontal scrollable gallery -->
+    <template lwc:if={isImageCarousel}>
+        <template lwc:if={filteredProductImageLinks.length}>
+            <div class="slds-carousel-container image-carousel-container">
+                <!-- Horizontal scrollable container for product images -->
+                <div class="slds-scrollable_x carousel-scroll-container">
+                    <template
+                        for:each={filteredProductImageLinks}
+                        for:item="imageLink"
+                        for:index="index">
+                        <!-- Individual image panel with lazy loading -->
+                        <div
+                            key={imageLink.url}
+                            class="slds-carousel__panel"
+                            data-index={index}>
+                            <img
+                                src={imageLink.url}
+                                alt={imageLink.url}
+                                title={imageLink.url}
+                                class="image-carousel-image"
+                                loading="lazy" />
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </template>
+    </template>
+
+    <!-- Product Cards Carousel Mode: Displays clickable product cards for recommendations -->
+    <template lwc:elseif={isProductCardsCarousel}>
+        <template lwc:if={hasProductData}>
+            <div class="product-cards-carousel-container">
+                <!-- Horizontal scrollable container for product cards -->
+                <div class="carousel-scroll-container">
+                    <template
+                        for:each={productData}
+                        for:item="product">
+                        <!-- Clickable product card with image, name, description, and price -->
+                        <button
+                            key={product.id}
+                            class="product-card"
+                            aria-label={product.name}
+                            onclick={handleShowProduct}
+                            name={product.name}
+                            data-id={product.id}
+                            data-url={product.productPageUrl}>
+                            <!-- Product image container -->
+                            <div class="product-image-container">
+                                <img
+                                    src={product.imageUrl}
+                                    alt={product.name}
+                                    class="product-image"
+                                    loading="lazy" />
+                            </div>
+                            <!-- Product information section -->
+                            <div class="product-info">
+                                <!-- Product name with text truncation -->
+                                <div class="product-name">
+                                    <span class="product-link">{product.name}</span>
+                                </div>
+                                <!-- Optional product description -->
+                                <template lwc:if={product.description}>
+                                    <div class="product-description">
+                                        <p
+                                            class="description-text"
+                                            title={product.description}>
+                                            {product.description}
+                                        </p>
+                                    </div>
+                                </template>
+                                <!-- Product pricing with optional original price -->
+                                <div
+                                    class="product-price"
+                                    aria-label="Product Price">
+                                    <lightning-formatted-number
+                                        value={product.price}
+                                        format-style="currency"
+                                        currency-code={product.currencyCode}></lightning-formatted-number>
+                                    <!-- Display original price if different from current price -->
+                                    <template lwc:if={product.originalPrice}>
+                                        <span class="original-price">
+                                            <lightning-formatted-number
+                                                value={product.originalPrice}
+                                                format-style="currency"
+                                                currency-code={product.currencyCode}></lightning-formatted-number>
+                                        </span>
+                                    </template>
+                                </div>
+                            </div>
+                        </button>
+                    </template>
+                </div>
+            </div>
+        </template>
+    </template>
+</template>

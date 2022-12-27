@@ -1,0 +1,51 @@
+<template lwc:render-mode="light">
+    <div class="product-summary slds-grid slds-size_1-of-1">
+        <div class="item-image slds-shrink-none">
+            <img
+                src={imageUrl}
+                alt={name} />
+        </div>
+        <div
+            class="item-details slds-col slds-grow slds-grid slds-grid_vertical slds-p-horizontal_small slds-p-vertical_x-small">
+            <!-- Top: Item name -->
+            <h3 class="item-name slds-col slds-align-top slds-truncate">{name}</h3>
+
+            <!-- Middle: Facets (evenly spaced) -->
+            <div class="facets-container slds-col slds-grow slds-grid slds-grid_vertical slds-grid_align-center">
+                <template if:true={hasFacets}>
+                    <ul class="item-variants slds-grid slds-grid_vertical">
+                        <template
+                            for:each={facets}
+                            for:item="facet">
+                            <li
+                                key={facet.type}
+                                class="facet-item">
+                                {facet.label}
+                                <span class="facet-value">{facet.value}</span>
+                            </li>
+                        </template>
+                    </ul>
+                </template>
+            </div>
+
+            <!-- Bottom: Quantity left, Price right -->
+            <div class="bottom-row slds-col slds-grid slds-grid_align-spread slds-shrink-none">
+                <div class="item-quantity slds-col slds-text-align_left">
+                    {i18n.quantityLabelText}
+                    <span class="item-quantity-value">{quantity}</span>
+                </div>
+                <div class="item-price slds-col slds-no-flex slds-text-align_right">
+                    <template if:true={hasStandardPrice}>
+                        <div
+                            class="price-container"
+                            aria-label={priceAriaLabel}>
+                            <del class="original-price">{formattedStandardPrice}</del>
+                            <span class="current-price">{formattedPrice}</span>
+                        </div>
+                    </template>
+                    <template if:false={hasStandardPrice}>{formattedPrice}</template>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

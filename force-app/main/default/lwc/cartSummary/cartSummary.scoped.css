@@ -1,0 +1,127 @@
+/*
+ * cartSummary.css
+ *
+ * This CSS file styles the CartSummary LWC. It employs a layered
+ * approach to styling, prioritizing consumer customization via public `--ref-c-`
+ * styling hooks, then leveraging Salesforce DXP theme tokens,
+ * and finally falling back to default values if neither are defined.
+ *
+ * The precedence for styling is:
+ * 1. Direct override of a `--ref-c-` hook by a consumer.
+ * 2. The value of the DXP token, if defined in the Experience Site's theme.
+ * 3. The hardcoded fallback value provided within the `var()` function.
+ */
+
+:host {
+    display: block;
+    box-sizing: border-box;
+
+    /* Cart Summary container variables */
+    --ref-c-cart-summary-border-radius: var(--dxp-g-spacing-small, 0.75rem);
+
+    /* Spinner Overlay variables */
+    --ref-c-cart-summary-spinner-height: 40px;
+    --ref-c-cart-summary-spinner-background: #f3f3f3;
+    --ref-c-cart-summary-spinner-border-radius: 4px;
+    --ref-c-cart-summary-spinner-margin-horizontal: 1rem;
+    --ref-c-cart-summary-spinner-margin-top: var(--dxp-g-spacing-xxsmall, 0.25rem);
+    --ref-c-cart-summary-spinner-margin-bottom: var(--dxp-g-spacing-xxsmall, 0.25rem);
+
+    /* Footer text variables */
+    --ref-c-cart-summary-footer-font-size: var(--dxp-g-font-size-s, 12px);
+    --ref-c-cart-summary-footer-text-color: var(--dxp-g-text-color-secondary, #444);
+
+    /* Express container border radius */
+    --ref-c-cart-summary-express-container-border-radius: var(--dxp-g-radius-base, 0.25rem);
+
+    /* Common button variables */
+    --ref-c-common-button-primary-color: var(--dxp-g-success-contrast-2);
+    --ref-c-common-button-primary-color-active: var(--dxp-g-success-contrast-2);
+    --ref-c-common-button-primary-color-hover: var(--dxp-g-success-contrast-2);
+    --ref-c-common-button-primary-color-background: var(--dxp-g-neutral-contrast-2);
+    --ref-c-common-button-primary-color-background-hover: var(--dxp-g-neutral-contrast-2);
+    --ref-c-common-button-primary-color-border: var(--dxp-g-neutral-1);
+    --ref-c-common-button-primary-color-border-hover: var(--dxp-g-neutral-contrast-2);
+    --ref-c-common-button-primary-color-background-active: var(--dxp-g-neutral-contrast-2);
+    --ref-c-common-button-primary-color-border-active: var(--dxp-g-neutral-1);
+    --ref-c-common-link-primary-color: var(--dxp-g-success-contrast-2);
+    --ref-c-common-link-primary-color-hover: var(--dxp-g-success-contrast-2);
+    --ref-c-common-link-primary-color-focus: var(--dxp-g-success-contrast-2);
+    --ref-c-common-link-primary-color-active: var(--dxp-g-success-contrast-2);
+    --ref-c-common-button-secondary-color: var(--dxp-g-neutral-contrast-2);
+    --ref-c-common-button-secondary-color-active: var(--dxp-g-neutral-contrast-2);
+    --ref-c-common-button-secondary-color-hover: var(--dxp-g-neutral-contrast-2);
+    --ref-c-common-button-secondary-color-background: var(--dxp-g-success-contrast-2);
+    --ref-c-common-button-secondary-color-background-hover: var(--dxp-g-success-contrast-2);
+    --ref-c-common-button-secondary-color-border: var(--dxp-g-neutral-1);
+    --ref-c-common-button-secondary-color-border-hover: var(--dxp-g-neutral-contrast-2);
+    --ref-c-common-button-secondary-color-background-active: var(--dxp-g-success-contrast-2);
+    --ref-c-common-button-secondary-color-border-active: var(--dxp-g-neutral-1);
+
+    /* Button font variables */
+    --ref-c-common-button-font-family: 'GT America Trial', sans-serif;
+    --ref-c-common-button-font-weight: 500; /* Medium */
+    --ref-c-common-button-font-size: 14px;
+    --ref-c-common-button-line-height: 20px;
+    --ref-c-common-button-letter-spacing: -0.01em; /* -1% */
+}
+
+.cart-summary {
+    border-radius: var(--ref-c-cart-summary-border-radius);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.loading-container {
+    position: relative;
+    min-height: var(--ref-c-cart-summary-spinner-height);
+}
+
+.spinner-overlay {
+    position: absolute;
+    top: 0;
+    left: var(--ref-c-cart-summary-spinner-margin-horizontal);
+    right: var(--ref-c-cart-summary-spinner-margin-horizontal);
+    height: var(--ref-c-cart-summary-spinner-height);
+    background-color: var(--ref-c-cart-summary-spinner-background);
+    border: 1px solid #d9dfe7;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    border-radius: var(--ref-c-cart-summary-spinner-border-radius);
+    margin-top: var(--ref-c-cart-summary-spinner-margin-top);
+    margin-bottom: var(--ref-c-cart-summary-spinner-margin-bottom);
+}
+
+.express-container {
+    border-radius: var(--ref-c-cart-summary-express-container-border-radius);
+}
+
+lightning-spinner {
+    background-color: transparent;
+}
+
+.cart-summary-footer {
+    font-size: var(--ref-c-cart-summary-footer-font-size);
+    color: var(--ref-c-cart-summary-footer-text-color);
+}
+
+/* Common button height and font styling */
+c-common-button {
+    height: 40px;
+}
+
+c-common-button .slds-button {
+    font-family: var(--ref-c-common-button-font-family);
+    font-weight: var(--ref-c-common-button-font-weight);
+    font-size: var(--ref-c-common-button-font-size);
+    line-height: var(--ref-c-common-button-line-height);
+    letter-spacing: var(--ref-c-common-button-letter-spacing);
+}
+
+/* Checkout icon styling to match button text color */
+c-common-button .checkout-icon {
+    --slds-c-icon-color-foreground-default: currentColor;
+    margin-bottom: 3px;
+}

@@ -1,0 +1,181 @@
+/*
+ * summaryDetails.css
+ *
+ * This CSS file styles the SummaryDetails LWC. It employs a layered
+ * approach to styling, prioritizing consumer customization via public `--ref-c-`
+ * styling hooks, then leveraging Salesforce DXP theme tokens,
+ * and finally falling back to default values if neither are defined.
+ *
+ * The precedence for styling is:
+ * 1. Direct override of a `--ref-c-` hook by a consumer.
+ * 2. The value of the DXP token, if defined in the Experience Site's theme.
+ * 3. The hardcoded fallback value provided within the `var()` function.
+ */
+
+:host {
+    display: block;
+
+    /* Container styling */
+    --ref-c-summary-details-text-color: #1c1c1c;
+    --ref-c-summary-details-border-radius: var(--dxp-g-spacing-small, 0.75rem);
+    --ref-c-summary-details-font-size: 14px;
+    --ref-c-summary-details-font-family: 'GT America Trial', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+        Oxygen, Ubuntu, Cantarell, sans-serif;
+    --ref-c-summary-details-letter-spacing: -0.01em;
+
+    /* Header & clickable row */
+    --ref-c-summary-details-clickable-border-radius: var(--dxp-g-spacing-xxxsmall, 0.125rem);
+    --ref-c-summary-details-clickable-row-hover-background: var(--dxp-g-neutral-1, #e0e0e0);
+
+    /* Title & message */
+    --ref-c-summary-details-title-font-size: 14px;
+    --ref-c-summary-details-title-color: #1c1c1c;
+    --ref-c-summary-details-title-font-weight: 500;
+    --ref-c-summary-details-title-line-height: 20px;
+    --ref-c-summary-details-cart-title-font-weight: 400;
+
+    --ref-c-summary-details-message-font-size: 14px;
+    --ref-c-summary-details-message-color: #444444;
+    --ref-c-summary-details-message-line-height: 20px;
+
+    /* Totals section */
+    --ref-c-summary-details-row-font-size: 14px;
+    --ref-c-summary-details-label-color: #444444;
+    --ref-c-summary-details-label-font-size: 14px;
+    --ref-c-summary-details-value-color: #1c1c1c;
+    --ref-c-summary-details-value-font-size: 14px;
+    --ref-c-summary-details-total-font-size: 16px;
+    --ref-c-summary-details-total-color: #1c1c1c;
+    --ref-c-summary-details-total-font-weight: 500;
+    --ref-c-summary-details-total-line-height: 24px;
+
+    /* Caret */
+    --ref-c-summary-details-caret-min-width: 24px;
+}
+
+.summary {
+    color: var(--ref-c-summary-details-text-color);
+    border-radius: var(--ref-c-summary-details-border-radius);
+    font-size: var(--ref-c-summary-details-font-size);
+    font-family: var(--ref-c-summary-details-font-family);
+    letter-spacing: var(--ref-c-summary-details-letter-spacing);
+    box-sizing: border-box;
+}
+
+/* Styles for the button element */
+.clickable-row {
+    border: none;
+    background: none;
+    font: inherit;
+    color: inherit;
+    appearance: none;
+    width: 100%;
+
+    /* Button specific styles */
+    cursor: pointer;
+    border-radius: var(--ref-c-summary-details-clickable-border-radius);
+    transition: background-color 0.2s ease;
+    outline: none;
+}
+
+.header-content {
+    min-width: 0;
+}
+
+.caret-container {
+    min-width: var(--ref-c-summary-details-caret-min-width);
+}
+
+.caret-icon {
+    color: var(--ref-c-summary-details-text-color);
+    transition: transform 0.2s ease;
+}
+
+.confirmation-title {
+    font-size: var(--ref-c-summary-details-title-font-size);
+    color: var(--ref-c-summary-details-title-color);
+    font-weight: var(--ref-c-summary-details-title-font-weight);
+    line-height: var(--ref-c-summary-details-title-line-height);
+    font-family: var(--ref-c-summary-details-font-family);
+    letter-spacing: var(--ref-c-summary-details-letter-spacing);
+}
+
+.confirmation-title.cart-summary-title {
+    font-size: var(--ref-c-summary-details-title-font-size);
+    color: var(--ref-c-summary-details-message-color);
+    font-weight: var(--ref-c-summary-details-cart-title-font-weight);
+    line-height: var(--ref-c-summary-details-message-line-height);
+    font-family: var(--ref-c-summary-details-font-family);
+    letter-spacing: var(--ref-c-summary-details-letter-spacing);
+    border-bottom: 1px solid #d9dfe7;
+}
+
+.delivery-message {
+    font-size: var(--ref-c-summary-details-message-font-size);
+    color: var(--ref-c-summary-details-message-color);
+    font-weight: 400;
+    line-height: var(--ref-c-summary-details-message-line-height);
+    font-family: var(--ref-c-summary-details-font-family);
+    letter-spacing: var(--ref-c-summary-details-letter-spacing);
+}
+
+/* Expandable Content Animation */
+.expandable-content {
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out;
+    max-height: 0;
+}
+
+.expandable-content.expanded {
+    max-height: 1000px;
+}
+
+.summary-row {
+    font-size: var(--ref-c-summary-details-row-font-size);
+}
+
+.summary-label {
+    color: var(--ref-c-summary-details-label-color);
+    font-size: var(--ref-c-summary-details-label-font-size);
+    font-weight: 400;
+    line-height: 20px;
+    font-family: var(--ref-c-summary-details-font-family);
+    letter-spacing: var(--ref-c-summary-details-letter-spacing);
+}
+
+.summary-value {
+    font-weight: 400;
+    color: var(--ref-c-summary-details-value-color);
+    white-space: nowrap;
+    font-size: var(--ref-c-summary-details-value-font-size);
+    line-height: 20px;
+    font-family: var(--ref-c-summary-details-font-family);
+    letter-spacing: var(--ref-c-summary-details-letter-spacing);
+}
+
+.summary-row.total {
+    font-size: var(--ref-c-summary-details-total-font-size);
+    color: var(--ref-c-summary-details-total-color);
+    font-weight: var(--ref-c-summary-details-total-font-weight);
+    line-height: var(--ref-c-summary-details-total-line-height);
+    font-family: var(--ref-c-summary-details-font-family);
+    letter-spacing: var(--ref-c-summary-details-letter-spacing);
+}
+
+.order-id-label {
+    font-size: var(--ref-c-summary-details-message-font-size);
+    font-weight: 400;
+    line-height: var(--ref-c-summary-details-message-line-height);
+    color: var(--ref-c-summary-details-message-color);
+    font-family: var(--ref-c-summary-details-font-family);
+    letter-spacing: var(--ref-c-summary-details-letter-spacing);
+}
+
+.order-id-number {
+    font-weight: 500;
+    font-size: var(--ref-c-summary-details-message-font-size);
+    line-height: var(--ref-c-summary-details-message-line-height);
+    color: var(--ref-c-summary-details-message-color);
+    font-family: var(--ref-c-summary-details-font-family);
+    letter-spacing: var(--ref-c-summary-details-letter-spacing);
+}

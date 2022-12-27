@@ -1,0 +1,119 @@
+/*
+ * dynamicContentRenderer.css
+ *
+ * This CSS file styles the DynamicContentRenderer LWC. It employs a layered
+ * approach to styling, prioritizing consumer customization via public `--ref-c-`
+ * styling hooks, then leveraging Salesforce DXP (Lightning Web Runtime)
+ * theme hooks, and finally falling back to default values if neither are defined.
+ */
+
+:host {
+    display: block; /* Ensures the component itself takes up its own space */
+
+    /*
+     * Public Custom Styling Hooks (--ref-c-dynamic-content-renderer-...)
+     *
+     * These variables are defined on the :host element, making them publicly accessible
+     * and overridable by parent components or custom CSS injected into an Experience Site.
+     *
+     * Each hook's default value first attempts to use a DXP (Lightning Web Runtime)
+     * styling hook. If the DXP hook is not defined in the Experience Site's theme,
+     * it then falls back to a hardcoded value (your original CSS value).
+     *
+     * The precedence for styling will be:
+     * 1. Direct override of a `--ref-c-` hook by a consumer.
+     * 2. The value of the `--ref-c-` hook as defined here (which points to a DXP hook).
+     * 3. The value of the DXP hook from the LWR Experience Cloud site's Theme Builder.
+     * 4. The hardcoded fallback value provided within the `var()` function (your component's default).
+     */
+
+    /* Font styling hooks for child components */
+    --ref-c-dynamic-content-renderer-font-family: 'GT America Trial', sans-serif;
+
+    /* Agent/Chatbot Message Bubble Styling */
+    --ref-c-dynamic-content-renderer-agent-background-color: #f7f9fa;
+    --ref-c-dynamic-content-renderer-agent-text-color: #444444;
+    --ref-c-dynamic-content-renderer-agent-border-color: #d9dfe7;
+    --ref-c-dynamic-content-renderer-agent-border-radius: 10px 10px 10px 0;
+
+    /* EndUser Message Bubble Styling */
+    --ref-c-dynamic-content-renderer-enduser-background-color: #d7e3f3;
+    --ref-c-dynamic-content-renderer-enduser-text-color: #444444;
+    --ref-c-dynamic-content-renderer-enduser-border-radius: 10px 10px 0 10px;
+    --ref-c-dynamic-content-renderer-enduser-padding: var(--dxp-g-spacing, 1rem);
+
+    /* Text content styling within any message bubble */
+    --ref-c-dynamic-content-renderer-text-font-size: 0.875rem;
+    --ref-c-dynamic-content-renderer-text-line-height: 1.25rem;
+
+    /* Optional: Global spacing between message bubbles */
+    --ref-c-dynamic-content-renderer-bubble-spacing-bottom: var(--dxp-g-spacing-1, 0.25rem);
+}
+
+/*
+ * Styles for the primary message bubble container.
+ * This targets the `div` element that has `role="region"` and dynamically assigned
+ * classes like `.Agent` or `.EndUser` from `generateMessageBubbleClassname`.
+ */
+:host div[role='region'] {
+    /* UPDATED: Added :host for more specific targeting */
+    display: block; /* Ensures the div behaves as a block for float and margins */
+    clear: both; /* Important for ensuring bubbles don't overlap when floated */
+    margin-bottom: var(--ref-c-dynamic-content-renderer-bubble-spacing-bottom);
+    max-width: 100%; /* Common for chat bubbles to prevent taking full width */
+    word-wrap: break-word; /* Prevents long words/URLs from overflowing the bubble */
+    font-family: var(--ref-c-dynamic-content-renderer-font-family) !important;
+}
+
+/*
+ * Apply font to all child Lightning Web Components
+ * These selectors target the custom element tags for child components
+ */
+:host c-product-search-recommendations,
+:host c-product-details,
+:host c-cart-summary,
+:host c-summary-details,
+:host lightning-formatted-rich-text,
+:host lightning-formatted-text {
+    font-family: var(--ref-c-dynamic-content-renderer-font-family) !important;
+}
+
+/*
+ * Styling specific to Agent and Chatbot message bubbles.
+ * These classes are applied based on the sender's role.
+ */
+.Agent,
+.Chatbot {
+    color: var(--ref-c-dynamic-content-renderer-agent-text-color);
+    background-color: var(--ref-c-dynamic-content-renderer-agent-background-color);
+    border-radius: var(--ref-c-dynamic-content-renderer-agent-border-radius);
+    float: left; /* Aligns agent/chatbot messages to the left */
+    font-family: var(--ref-c-dynamic-content-renderer-font-family) !important;
+    border: 1px solid var(--ref-c-dynamic-content-renderer-agent-border-color);
+}
+
+/*
+ * Styling specific to EndUser message bubbles.
+ * This class is applied when the sender's role is 'EndUser'.
+ */
+.EndUser {
+    background-color: var(--ref-c-dynamic-content-renderer-enduser-background-color);
+    color: var(--ref-c-dynamic-content-renderer-enduser-text-color);
+    margin-left: auto; /* Pushes the end-user's bubble to the right */
+    border-radius: var(--ref-c-dynamic-content-renderer-enduser-border-radius);
+    font-family: var(--ref-c-dynamic-content-renderer-font-family) !important;
+}
+
+/*
+ * Styling for `lightning-formatted-rich-text` and `lightning-formatted-text`
+ * components used within the message bubbles.
+ */
+.Agent lightning-formatted-rich-text,
+.Chatbot lightning-formatted-rich-text,
+.EndUser lightning-formatted-rich-text,
+lightning-formatted-text {
+    /* Targets all instances of lightning-formatted-text */
+    font-size: var(--ref-c-dynamic-content-renderer-text-font-size);
+    line-height: var(--ref-c-dynamic-content-renderer-text-line-height);
+    font-family: var(--ref-c-dynamic-content-renderer-font-family) !important;
+}

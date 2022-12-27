@@ -1,0 +1,59 @@
+<template lwc:render-mode="light">
+    <div
+        if:true={isPriceAvailable}
+        class={layoutClass}>
+        <span
+            if:true={displayNegotiatedPrice}
+            aria-live="assertive"
+            aria-atomic="true"
+            class="price-col slds-p-right_x-small">
+            <span
+                if:true={hasNegotiatedPriceLabel}
+                class="price-col-section slds-text-heading_small slds-p-right_x-small">
+                {negotiatedPriceLabel}:
+            </span>
+            <span class="price-col-section">
+                <lightning-formatted-number
+                    class="negotiated-price"
+                    value={negotiatedPrice}
+                    maximum-fraction-digits="20"
+                    currency-code={currencyCode}
+                    format-style="currency"></lightning-formatted-number>
+            </span>
+        </span>
+        <span
+            if:true={displayOriginalPrice}
+            aria-live="assertive"
+            aria-atomic="true"
+            class="price-col slds-p-right_x-small">
+            <span
+                if:true={hasOriginalPriceLabel}
+                class="price-col-section slds-text-heading_small slds-p-right_x-small">
+                {originalPriceLabel}:
+            </span>
+            <span class="price-col-section">
+                <span
+                    if:true={displayAssistiveText}
+                    class="slds-assistive-text">
+                    {strikethroughAssistiveText}
+                </span>
+                <lightning-formatted-number
+                    class="original-price"
+                    value={originalPrice}
+                    maximum-fraction-digits="20"
+                    currency-code={currencyCode}
+                    format-style="currency"></lightning-formatted-number>
+            </span>
+        </span>
+    </div>
+    <div
+        class="tax-container"
+        if:true={taxInfoVisible}>
+        <p class="tax-info-label">{taxIncludedLabel}</p>
+    </div>
+    <div
+        if:false={isPriceAvailable}
+        class="price-unavailable">
+        {unavailablePriceLabel}
+    </div>
+</template>
