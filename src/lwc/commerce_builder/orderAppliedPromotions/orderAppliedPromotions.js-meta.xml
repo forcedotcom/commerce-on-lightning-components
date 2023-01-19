@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <isExposed>true</isExposed>
+	<targets>
+		<target>lightningCommunity__Page</target>
+		<target>lightningCommunity__Default</target>
+	</targets>
+    <targetConfigs>
+        <targetConfig targets="lightningCommunity__Page">
+            <paletteSection>Commerce</paletteSection>
+            <orgAccess>Commerce.orgHasPromotionsEnabled</orgAccess>
+        </targetConfig>
+        <targetConfig targets="lightningCommunity__Default">
+            <property name="orderSummaryId" type="String" default="{!recordId}"/>
+            <property name="promotionTitle" translatable="true" type="String"  default="Applied Promotions"/>
+            <property name="backgroundColor" type="Color"/>
+            <property name="borderColor" type="Color"/>
+            <property name="borderRadius" type="Integer" min="0" max="20" default="0"/>
+            <property name="textColor" type="Color"/>
+            <property name="amountTextColor" type="Color"/>
+            <designLayout>
+                <designSection>
+                    <designLayoutItems>
+                        <designLayoutProperty name="orderSummaryId"/>
+                        <designLayoutProperty name="promotionTitle"/>
+                        <designLayoutProperty name="backgroundColor"/>
+                        <designLayoutProperty name="borderColor"/>
+                        <designLayoutProperty name="borderRadius"/>
+                        <designLayoutProperty name="textColor"/>
+                        <designLayoutProperty name="amountTextColor"/>
+                    </designLayoutItems>
+                </designSection>
+            </designLayout>
+            <designSubstitute>commerce_builder:orderAppliedPromotionsDesignSubstitute</designSubstitute>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

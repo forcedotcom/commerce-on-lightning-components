@@ -1,0 +1,22 @@
+:host{
+    display: flex;
+    .add-address-button_left {
+        margin: auto auto auto 0;
+    }
+    .add-address-button_center {
+        margin: auto;
+    }
+    .add-address-button_right {
+        margin: auto 0 auto auto;
+    }
+    @media only screen and (max-width: 48em) {
+        .add-address-button_left,
+        .add-address-button_center,
+        .add-address-button_right {
+            -webkit-box-pack: center;
+            -ms-flex-pack: center;
+            justify-content: center;
+            width: 100%;
+        }
+    }
+}

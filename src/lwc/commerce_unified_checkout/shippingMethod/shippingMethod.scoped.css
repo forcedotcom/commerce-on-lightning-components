@@ -1,0 +1,13 @@
+.flex-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.flex-grow {
+    flex: 1 0;
+}
+
+.empty-message {
+    background-color: var(--dxp-g-root-1, #eee);
+    margin-bottom: var(--dxp-g-spacing-medium);
+}

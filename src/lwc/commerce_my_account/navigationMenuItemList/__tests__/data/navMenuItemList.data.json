@@ -1,0 +1,54 @@
+{
+    "data": {
+        "menuItems": [
+            {
+                "actionType": "InternalLink",
+                "actionValue": "/NewB2CStore1/s/category/products/0ZGxx00000001XB",
+                "imageUrl": null,
+                "label": "Products",
+                "subMenu": [],
+                "target": "CurrentWindow"
+            },
+            {
+                "actionType": "ExternalLink",
+                "actionValue": "https://salesforce.com",
+                "imageUrl": null,
+                "label": "External URL New Window",
+                "subMenu": [],
+                "target": "NewWindow"
+            },
+            {
+                "actionType": "InternalLink",
+                "actionValue": "/NewB2CStore1/s/account/Account/00Bxx0000029Y6KEAU",
+                "imageUrl": null,
+                "label": "All Accounts",
+                "subMenu": [],
+                "target": "CurrentWindow"
+            },
+            {
+                "actionType": "InternalLink",
+                "actionValue": "/NewB2CStore1/s/login",
+                "imageUrl": null,
+                "label": "Login Site Page",
+                "subMenu": [],
+                "target": "CurrentWindow"
+            },
+            {
+                "actionType": "ExternalLink",
+                "actionValue": "https://salesforce.com",
+                "imageUrl": null,
+                "label": "External URL Current Window",
+                "subMenu": [],
+                "target": "CurrentWindow"
+            },
+            {
+                "actionType": "InternalLink",
+                "actionValue": null,
+                "imageUrl": null,
+                "label": "Menu item with no actionable URL",
+                "subMenu": [],
+                "target": "CurrentWindow"
+            }
+        ]
+    }
+}

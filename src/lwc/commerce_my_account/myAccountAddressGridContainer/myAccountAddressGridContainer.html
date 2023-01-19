@@ -1,0 +1,83 @@
+<template>
+    <template if:true={_errorMessage}>
+        <b2c_lite_commerce-scoped-notification
+            type="error"
+            message-body={_errorMessage}
+            dismissible="true"
+            ondismissnotification={handleDismissNotification}
+        ></b2c_lite_commerce-scoped-notification>
+    </template>
+    <template if:true={showBothAddressTypes}>
+        <lightning-tabset variant="standard" active-tab-value={activeTabValue}>
+            <lightning-tab label={shippingTabLabel} value="Shipping">
+                <commerce_my_account-my-account-address-grid
+                    my-addresses={shippingAddresses}
+                    preview-account-id={previewAccountId}
+                    address-type="shipping"
+                    page-size={pageSize}
+                    item-spacing={itemSpacing}
+                    show-address-type={showAddressType}
+                    no-address-message-title={noAddressMessageTitle}
+                    no-address-message-text={noAddressMessageText}
+                    card-default-badge-color={cardDefaultBadgeColor}
+                    card-default-border-radius={cardDefaultBorderRadius}
+                    card-default-label={cardDefaultLabel}
+                    footer-edit-label={footerEditLabel}
+                    footer-delete-label={footerDeleteLabel}
+                    show-more-button-label={showMoreButtonLabel}
+                    show-more-button-size={showMoreButtonSize}
+                    show-more-button-width={showMoreButtonWidth}
+                    show-more-button-align={showMoreButtonAlign}
+                    show-more-button-style={showMoreButtonStyle}
+                    is-account-address-manager={isManageAccountAddress}
+                ></commerce_my_account-my-account-address-grid>
+            </lightning-tab>
+            <lightning-tab label={billingTabLabel} value="Billing">
+                <commerce_my_account-my-account-address-grid
+                    my-addresses={billingAddresses}
+                    preview-account-id={previewAccountId}
+                    address-type="billing"
+                    page-size={pageSize}
+                    item-spacing={itemSpacing}
+                    show-address-type={showAddressType}
+                    no-address-message-title={noAddressMessageTitle}
+                    no-address-message-text={noAddressMessageText}
+                    card-default-badge-color={cardDefaultBadgeColor}
+                    card-default-border-radius={cardDefaultBorderRadius}
+                    card-default-label={cardDefaultLabel}
+                    footer-edit-label={footerEditLabel}
+                    footer-delete-label={footerDeleteLabel}
+                    show-more-button-label={showMoreButtonLabel}
+                    show-more-button-size={showMoreButtonSize}
+                    show-more-button-width={showMoreButtonWidth}
+                    show-more-button-align={showMoreButtonAlign}
+                    show-more-button-style={showMoreButtonStyle}
+                    is-account-address-manager={isManageAccountAddress}
+                ></commerce_my_account-my-account-address-grid>
+            </lightning-tab>
+        </lightning-tabset>
+    </template>
+    <template if:false={showBothAddressTypes}>
+        <commerce_my_account-my-account-address-grid
+            my-addresses={shippingAddresses}
+            preview-account-id={previewAccountId}
+            address-type="shipping"
+            page-size={pageSize}
+            item-spacing={itemSpacing}
+            show-address-type={showAddressType}
+            no-address-message-title={noAddressMessageTitle}
+            no-address-message-text={noAddressMessageText}
+            card-default-badge-color={cardDefaultBadgeColor}
+            card-default-border-radius={cardDefaultBorderRadius}
+            card-default-label={cardDefaultLabel}
+            footer-edit-label={footerEditLabel}
+            footer-delete-label={footerDeleteLabel}
+            show-more-button-label={showMoreButtonLabel}
+            show-more-button-size={showMoreButtonSize}
+            show-more-button-width={showMoreButtonWidth}
+            show-more-button-align={showMoreButtonAlign}
+            show-more-button-style={showMoreButtonStyle}
+            is-account-address-manager={isManageAccountAddress}
+        ></commerce_my_account-my-account-address-grid>
+    </template>
+</template>

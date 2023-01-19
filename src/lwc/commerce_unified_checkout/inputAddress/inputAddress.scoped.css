@@ -1,0 +1,24 @@
+:host {
+	--slds-c-form-row-spacing-block-end: var(--dxp-g-spacing-medium, 1rem);
+}
+
+.address-header {
+	padding-bottom: var(--dxp-g-spacing-medium);
+}
+
+.name-fields [lightning-input_input-host] {
+	display: inline-block;
+	vertical-align: text-top;
+}
+
+.name-field:nth-child(1) {
+	padding-right: var(--dxp-g-spacing-xxsmall);
+}
+
+.name-field:nth-child(2) {
+	padding-left: var(--dxp-g-spacing-xxsmall);
+}
+
+.slds-box {
+	border: 1px solid var(--dxp-s-form-element-color-border, #d9d7d5);
+}

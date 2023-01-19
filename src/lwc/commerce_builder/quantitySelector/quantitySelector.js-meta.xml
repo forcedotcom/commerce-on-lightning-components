@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightningCommunity__Page</target>
+        <target>lightningCommunity__Default</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightningCommunity__Page">
+            <paletteSection>Commerce</paletteSection>
+        </targetConfig>
+        <targetConfig targets="lightningCommunity__Default">
+            <property label="Minimum" name="minimum" type="String" default="1"/>
+            <property label="Maximum" name="maximum" type="String" default="1000"/>
+            <property label="Step Size" name="step" type="String" default="1"/>
+            <property label="Hide Label" name="hideLabel" type="Boolean"/>
+            <property label="Hide Buttons" name="hideButtons" type="Boolean"/>
+            <property label="Quantity Selector Label" name="label" type="String" translatable="true" default="QTY" />
+            <property label="Minimum Text" name="minimumValueGuideText" type="String" translatable="true" default="Minimum quantity is {0}" />
+            <property label="Maximum Text" name="maximumValueGuideText" type="String" translatable="true" default="Maximum quantity is {0}" />
+            <property label="Step Size Text" name="stepValueGuideText" type="String" translatable="true" default="Increment quantity is {0}" />
+
+
+            <designLayout>
+                <designSection>
+                    <designLayoutItems>
+                        <designLayoutProperty name="minimum"/>
+                        <designLayoutProperty name="maximum"/>
+                        <designLayoutProperty name="step"/>
+                        <designLayoutProperty name="hideLabel"/>
+                        <designLayoutProperty name="hideButtons"/>
+                        <designLayoutProperty name="label" cbVisibleIf="hideLabel=false"/>
+                        <designLayoutProperty name="minimumValueGuideText"/>
+                        <designLayoutProperty name="maximumValueGuideText"/>
+                        <designLayoutProperty name="stepValueGuideText"/>
+                    </designLayoutItems>
+                </designSection>
+            </designLayout>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

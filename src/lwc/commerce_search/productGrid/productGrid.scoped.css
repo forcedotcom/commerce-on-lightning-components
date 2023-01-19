@@ -1,0 +1,33 @@
+.product-grid-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 1rem;
+}
+
+.grid-item {
+    min-width: 11.25rem;
+    border-color: transparent;
+    display: flex;
+}
+
+.grid-item section {
+    display: flex;
+    flex-grow: 1;
+}
+
+.card-item {
+    flex-grow: 1;
+}
+
+/*  
+    Narrow screens (e.g. phones) 
+    SLDS media query reference: https://www.lightningdesignsystem.com/design-tokens/#category-media-query
+*/
+@media only screen and (max-width: 47.9375em) {
+    /* SLDS token: mqSmall */
+    .product-grid-container {
+        display: block;
+        padding: 0;
+    }
+}

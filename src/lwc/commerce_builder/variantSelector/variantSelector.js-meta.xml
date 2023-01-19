@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightningCommunity__Page</target>
+        <target>lightningCommunity__Default</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightningCommunity__Page">
+            <paletteSection>Commerce</paletteSection>
+        </targetConfig>
+        <targetConfig targets="lightningCommunity__Default">
+            <property label="Product Data Binding" name="product" type="String" default="{!Product.Details}"/>
+            <designLayout>
+                <designSection>
+                    <designLayoutItems>
+                        <designLayoutProperty name="product"/>
+                    </designLayoutItems>
+                </designSection>
+            </designLayout>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

@@ -1,0 +1,51 @@
+<template lwc:render-mode="light">
+    <div class="slds-grid slds-wrap">
+        <fieldset class="slds-grid slds-wrap">
+            <div if:true={_showFilterText} class="slds-align-middle slds-m-right_small filter-text">{filterText}</div>
+            <div class="slds-grid_vertical">
+                <div class="slds-grid slds-wrap">
+                    <lightning-input
+                        type="date"
+                        name={_labels.startDate}
+                        data-id="start-date"
+                        date-style="short"
+                        label={_labels.startDate}
+                        value={startDate}
+                        onchange={handleDateChange}
+                        class={_datePickerClasses}
+                    ></lightning-input>
+                    <lightning-input
+                        type="date"
+                        name={_labels.endDate}
+                        data-id="end-date"
+                        date-style="short"
+                        label={_labels.endDate}
+                        value={endDate}
+                        onchange={handleDateChange}
+                        class={_datePickerClasses}
+                    ></lightning-input>
+                </div>
+                <div if:true={_hasError} class="slds-m-right_small slds-text-color_error">
+                    {_labels.dateValidationError}
+                </div>
+            </div>
+        </fieldset>
+        <div class="button-padding">
+            <lightning-button
+                label={_labels.apply}
+                variant="brand"
+                title={_labels.apply}
+                class="slds-m-right_small"
+                onclick={applyFilter}
+                disabled={_disableButton}
+            ></lightning-button>
+            <lightning-button
+                label={_labels.reset}
+                variant="base"
+                title={_labels.reset}
+                onclick={resetFilter}
+                class="slds-align-middle"
+            ></lightning-button>
+        </div>
+    </div>
+</template>

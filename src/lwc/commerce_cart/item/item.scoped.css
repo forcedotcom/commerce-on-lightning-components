@@ -1,0 +1,201 @@
+/*
+    Styling Hook CSS Custom Properties
+
+    --com-c-cart-item-border-width
+        fallback: --dxp-s-form-element-width-border
+    --com-c-cart-item-border-color
+        fallback: --dxp-s-dropdown-color-border
+
+    --com-c-cart-item-unit-price-font-color
+        fallback: --dxp-g-root-contrast
+    --com-c-cart-item-unit-price-font-size
+        fallback: --dxp-g-font-size-4
+
+    --com-c-cart-item-original-price-font-color
+        fallback: --dxp-g-neutral-3
+    --com-c-cart-item-original-price-font-size
+        fallback: --dxp-g-font-size-4
+
+    --com-c-cart-item-actual-price-font-color
+        fallback: --dxp-g-root-contrast
+    --com-c-cart-item-actual-price-font-size
+        fallback: --dxp-g-font-size-4
+
+    --com-c-cart-item-applied-savings-button-font-size
+        fallback: --dxp-s-button-small-font-size
+    --com-c-cart-item-applied-savings-button-padding
+        fallback: --dxp-g-spacing-xsmall
+    --com-c-cart-item-applied-savings-button-background-color
+        fallback: --dxp-g-success
+    --com-c-cart-item-applied-savings-button-border-color
+        fallback: --dxp-g-success
+    --com-c-cart-item-applied-savings-button-border-radius
+        fallback: 15px
+    --com-c-cart-item-applied-savings-button-text-color
+        fallback: --dxp-g-brand-contrast-1
+    --com-c-cart-item-applied-savings-button-background-hover-color
+        fallback: --dxp-g-success
+    --com-c-cart-item-applied-savings-button-text-hover-color
+        fallback: --dxp-g-brand-contrast-1
+*/
+
+:host {
+    --com-c-cart-applied-savings-button-font-size: var(--com-c-cart-item-applied-savings-button-font-size, var(--dxp-s-button-small-font-size));
+    --com-c-cart-applied-savings-button-padding: var(--com-c-cart-item-applied-savings-button-padding, var(--dxp-g-spacing-xsmall));
+    --com-c-cart-applied-savings-button-background-color: var(--com-c-cart-item-applied-savings-button-background-color, var(--dxp-g-success));
+    --com-c-cart-applied-savings-button-border-color: var(--com-c-cart-item-applied-savings-button-border-color, var(--dxp-g-success));
+    --com-c-cart-applied-savings-button-border-radius: var(--com-c-cart-item-applied-savings-button-border-radius, 15px);
+    --com-c-cart-applied-savings-button-text-color: var(--com-c-cart-item-applied-savings-button-text-color, var(--dxp-g-brand-contrast-1));
+    --com-c-cart-applied-savings-button-background-hover-color: var(--com-c-cart-item-applied-savings-button-background-hover-color, var(--dxp-g-success));
+    --com-c-cart-applied-savings-button-text-hover-color: var(--com-c-cart-item-applied-savings-button-text-hover-color, var(--dxp-g-brand-contrast-1));
+    --com-c--variant-attribute-color: var(--dxp-g-neutral-3);
+    --com-c-variant-attribute-font-size: var(--dxp-g-font-size-4);
+
+    display: flex;
+    padding: var(--dxp-g-spacing-medium);
+    border-bottom: var(--com-c-cart-item-border-width, var(--dxp-s-form-element-width-border)) var(--com-c-cart-item-border-color, var(--dxp-s-dropdown-color-border)) solid;
+}
+
+.product-image{
+    flex: 1;
+    margin-right: var(--dxp-g-spacing-small);;
+    cursor: pointer;
+    /* this is something we agreed upon with UX */
+    height: 130px;
+    width: 130px;
+}
+
+.product-image a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+}
+
+img {
+    max-height: 100%;
+    max-width: 100%;
+}
+
+.main{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex: 6;
+}
+
+.main_details{
+    display: flex;
+}
+
+.main_details_description{
+    flex: 2;
+}
+
+.main_details_currency{
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    flex: 1;
+}
+
+.main_details_description_fields{
+    font-size: var(--dxp-g-font-size-4);
+    color: var(--dxp-g-neutral-3);
+}
+
+.field-label{
+    margin-right: var(--dxp-g-spacing-xsmall);
+}
+
+.description-name-label {
+    font-weight: var(--dxp-c-strong-text-weight);
+}
+
+.main_actions {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+}
+
+.main_actions_selector{
+    display: flex;
+}
+
+.main_actions_quantity {
+    margin: 0 var(--dxp-g-spacing-medium) 0 0;
+}
+
+.unitPrice{
+    color: var(--com-c-cart-item-unit-price-font-color, var(--dxp-g-root-contrast));
+    font-size: var(--com-c-cart-item-unit-price-font-size, var(--dxp-g-font-size-5));
+}
+
+.actualPrice{
+    color: var(--com-c-cart-item-actual-price-font-color, var(--dxp-g-root-contrast));
+    font-size: var(--com-c-cart-item-actual-price-font-size, var(--dxp-g-font-size-5));
+}
+
+.originalPrice {
+    text-decoration: line-through;
+    color: var(--com-c-cart-item-original-price-font-color, var(--dxp-g-neutral-3));
+    font-size: var(--com-c-cart-item-original-price-font-size, var(--dxp-g-font-size-4));
+}
+
+.main_details_currency:last-child > *:first-child{
+    font-weight: var(--dxp-c-strong-text-weight);
+}
+
+/* Phone screens */
+@media only screen and (max-width: 64em) {
+    :host {
+        padding: var(--dxp-g-spacing-medium) 0;
+    }
+
+    .main{
+        flex-direction: column;
+        flex: 2;
+    }
+
+    .main_details{
+        flex-direction: column;
+    }
+    .main_details_description{
+        margin: 0 0 var(--dxp-g-spacing-small) 0;
+        order: 1;
+    }
+
+    .main_details_currency{
+        flex-direction: row;
+        align-items: start;
+    }
+
+    .unitPrice,
+    .totalPrice{
+        margin: 0 var(--dxp-g-spacing-small) 0 0;
+    }
+
+    .main_actions {
+        margin: var(--dxp-g-spacing-small) 0 0 0;
+    }
+
+    .main_actions_selector{
+        flex-direction: column;
+    }
+
+    .unitPrice{
+        order: 3;
+    }
+    .totalPrice{
+        order: 2;
+    }
+}
+
+@media only screen and (max-width: 47.9375em) {
+    .product-image {
+        /* this is something we agreed upon with UX */
+        width: 50px;
+        height: 50px;
+    }
+}

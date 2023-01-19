@@ -1,0 +1,101 @@
+<template lwc:render-mode="light">
+    <section class={cardContainerClass} style={cardContainerStyling}>
+        <div class="imageArea">
+            <figure
+                class="productImage"
+                if:true={showProductImage}
+                style={imageCustomStyling}
+                onkeydown={handleKeydown}
+                onclick={handleProductDetailPageNavigation}
+            >
+                <img src={image.url} alt={image.alternateText} />
+            </figure>
+        </div>
+
+        <div class="fieldsArea">
+            <!--Note: All fields are navigable to PDP, but only one field will have
+                the tab stop in the keyboard navigation to keep the accessibility
+                smooth. The logic of which field will have the tab stop is defined
+                and explained in the resultsTiles/fieldNormalizer utility's
+                generateContentMappedFields() -->
+            <a
+                class="slds-var-p-top_x-small slds-text-link_reset"
+                onkeydown={handleKeydown}
+                onclick={handleProductDetailPageNavigation}
+            >
+                <template for:each={fields} for:item="field">
+                    <div key={field.displayData.name}>
+                        <commerce_search-product-field
+                            configuration={field.configuration}
+                            custom-styles={contentCustomStyles}
+                            display-data={field.displayData}
+                        >
+                        </commerce_search-product-field>
+                    </div>
+                </template>
+            </a>
+        </div>
+
+        <div
+            class="priceArea"
+            style={allContentCustomStyling}
+            if:true={showPrice}
+        >
+            <commerce_search-product-price
+                display-data={pricingInfo}
+                custom-styles={priceCustomStyles}
+                configuration={normalizedConfiguration.priceConfiguration}
+            >
+            </commerce_search-product-price>
+        </div>
+
+        <div class="quantityRuleArea" if:true={showInlineQuantitySelectorText}>
+            <lightning-formatted-text value={quantityRuleCombinedText}>
+            </lightning-formatted-text>
+        </div>
+
+        <div
+            class="callToActionArea"
+            if:true={showCallToActionButton}
+        >
+            <template if:false={isCTAButtonViewOptions}>
+                <div class={quantitySelectorClassList}>
+                    <commerce-quantity-selector
+                        if:true={showInlineQuantitySelector}
+                        onvaluechanged={handleValueChanged}
+                        disabled={disabled}
+                        minimum={quantityRuleMinimum}
+                        maximum={quantityRuleMaximum}
+                        step={quantityRuleIncrement}
+                        label={quantitySelectorLabelText}
+                        step-value-guide-text={incrementText}
+                        minimum-value-guide-text={minimumText}
+                        maximum-value-guide-text={maximumText}
+                    ></commerce-quantity-selector>
+                    <commerce_product_details-add-to-cart-button
+                        if:true={isCTAButtonAddToCart}
+                        aria-label={addToCartButtonAriaLabel}
+                        disabled={addToCartButtonDisabled}
+                        data-product-id={normalizedDisplayData.id}
+                        text={normalizedConfiguration.addToCartButtonText}
+                        class="callToActionButton"
+                        variant={callToActionButtonVariant}
+                        onclick={handleAddToCart}
+                    >
+                    </commerce_product_details-add-to-cart-button>
+                </div>
+            </template>
+            <!-- View Options for a Product -->
+            <commerce_search-call-to-action-anchor-button
+                if:true={isCTAButtonViewOptions}
+                aria-label={viewOptionsButtonAriaLabel}
+                onclick={handleProductDetailPageNavigation}
+                product-id={normalizedDisplayData.id}
+                class="callToActionButton"
+                text={normalizedConfiguration.viewOptionsButtonText}
+                custom-styles={callToActionButtonCustomStyles}
+            >
+            </commerce_search-call-to-action-anchor-button>
+        </div>
+    </section>
+</template>

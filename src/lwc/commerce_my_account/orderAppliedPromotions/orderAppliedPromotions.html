@@ -1,0 +1,11 @@
+<template lwc:render-mode="light">
+    <template if:true={_showAppliedAdjustments}>
+        <commerce_unified_promotions-summary
+            style={defaultOrderAppliedPromotionsStyle}
+            applied-promotions={_adjustments}
+            header-text={promotionTitle}
+            currency-code={_currencyIsoCode}
+        >
+        </commerce_unified_promotions-summary>
+    </template>
+</template>

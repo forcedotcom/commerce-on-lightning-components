@@ -1,0 +1,14 @@
+{
+    "payment_method": {
+        "billing_details": {
+            "name": "Matthew Kosak",
+            "address": {
+                "country": "US",
+                "city": "Salt Lake City",
+                "state": "UT",
+                "postal_code": "84105",
+                "line1": "1785 S Lake St\nAPT  1"
+            }
+        }
+    }
+}

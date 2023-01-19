@@ -1,0 +1,33 @@
+<template lwc:render-mode="light">
+    <ul if:true={_showFields}>
+        <template for:each={_transformedFields} for:item="field">
+            <li key={field.id} class="slds-p-bottom_xxx-small field-item">
+                <span class="slds-grid slds-wrap">
+                    <span if:true={field.showFieldName} title={field.label}>{field.label}</span>
+                    <lightning-formatted-rich-text
+                        if:true={field.showFieldName}
+                        value={_labels.keyValueSeparatorWithSpace}
+                        aria-hidden="true"
+                    ></lightning-formatted-rich-text>
+                    <commerce-field-display
+                        title={field.assistiveText}
+                        currency-code={currencyCode}
+                        type={field.type}
+                        value={field.text}
+                        class={field.cssClass}
+                    ></commerce-field-display>
+                    <!-- Promotions Applied Details Popover -->
+                    <commerce_unified_promotions-applied-details-popover
+                        if:true={field.showInfoIcon}
+                        class="slds-m-left_xxx-small info-icon"
+                        currency-code={currencyCode}
+                        header-label={_labels.popupHeaderText}
+                        applied-promotions={adjustments}
+                        close-button-assistive-text={_labels.closeButtonAssistiveText}
+                        savings-info-bubble-assistive-text={_labels.infoBubbleAssistiveText}
+                    ></commerce_unified_promotions-applied-details-popover>
+                </span>
+            </li>
+        </template>
+    </ul>
+</template>

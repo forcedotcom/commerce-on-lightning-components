@@ -1,0 +1,50 @@
+.adjustment-tiers-container {
+    overflow-x: auto;
+    background-color: var(--com-c-pricing-tiers-background-color);
+    border-radius: var(--com-c-pricing-tiers-border-radius);
+    border-color: var(--com-c-pricing-tiers-border-color);
+}
+
+.tier-row-title {
+    white-space: nowrap;
+    font-weight: var(--dxp-c-strong-text-weight, 700);
+}
+
+.tier {
+    text-align: center;
+    white-space: nowrap;
+}
+.tier-row-title-label {
+    color: var(--com-c-pricing-tiers-row-title-text-color);
+}
+
+.tier-row-value{
+    color: var(--com-c-pricing-tiers-text-color);
+}
+
+.tier-column-title{
+    color: var(--com-c-pricing-tiers-label-text-color);
+}
+
+
+
+.tier-row-title + .tier,
+.tier + .tier {
+    border-left: 1px solid var(--lwc-colorBorderSeparatorAlt2, var(--dxp-g-neutral-2));
+}
+
+lightning-formatted-number {
+    display: block;
+}
+
+lightning-layout {
+    border-style: solid;
+    border-width: var(--dxp-s-form-element-width-border, 1px);
+}
+
+/* Remove right padding from last tier column for desktop view */
+@media only screen and (min-width: 48em) {
+    .tier:last-child {
+        padding-right: 0;
+    }
+}

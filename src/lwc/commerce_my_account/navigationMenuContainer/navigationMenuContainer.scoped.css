@@ -1,0 +1,13 @@
+.navigationCtn {
+    height: 100%;
+    min-height: 100vh;
+    background-color: var(--com-c-navigation-menu-container-background-color_wide);
+}
+@media only screen and (max-width: 48em) {
+    .navigationCtn {
+        min-height: unset;
+        background-color: var(--com-c-navigation-menu-container-background-color_narrow, #fafaf9);
+        padding-left: var(--dxp-g-spacing-small);
+        padding-right: var(--dxp-g-spacing-small);
+    }
+}

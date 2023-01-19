@@ -1,0 +1,60 @@
+<template lwc:render-mode="light">
+    <div class="slds-grid slds-grid_vertical-align-center slds-nowrap">
+        <template if:false={hideLabel}>
+            <label for="number-input" class="slds-m-right_x-small">
+                {fieldLabel}
+            </label>
+        </template>
+        <span
+            class={spanClasses}
+            role="group"
+            aria-label={fieldLabel}
+        >
+            <template if:false={hideButtons}>
+                <button
+                    aria-label={i18n.decrementAltText}
+                    class="number-input__decrement-button slds-button slds-button_neutral slds-p-horizontal_xx-small slds-p-vertical_x-small"
+                    onclick={handleDecrement}
+                    disabled={isDecrementButtonDisabled}
+                >
+                    <lightning-icon
+                        class="number-input__button-icon"
+                        icon-name="utility:dash"
+                        size="x-small"
+                        alternative-text={i18n.decrementAltText}
+                    ></lightning-icon>
+                </button>
+            </template>
+            <input
+                aria-label={labelOrAriaLabel}
+                type="number"
+                id="number-input"
+                class="slds-input number-input__input"
+                min={minOrDefault}
+                max={maxOrDefault}
+                step={step}
+                value={state.formattedValue}
+                disabled={disabled}
+                onchange={handleInputChange}
+                required
+                title=""
+            />
+            <template if:false={hideButtons}>
+                <button
+                    aria-label={i18n.incrementAltText}
+                    class="number-input__increment-button slds-button slds-button_neutral slds-p-horizontal_xx-small slds-p-vertical_x-small"
+                    onclick={handleIncrement}
+                    disabled={isIncrementButtonDisabled}
+                >
+                    <lightning-icon
+                        class="number-input__button-icon"
+                        icon-name="utility:add"
+                        size="x-small"
+                        alternative-text={i18n.incrementAltText}
+                    >
+                    </lightning-icon>
+                </button>
+            </template>
+        </span>
+  </div>
+</template>

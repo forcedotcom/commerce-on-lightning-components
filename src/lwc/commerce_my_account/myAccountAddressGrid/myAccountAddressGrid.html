@@ -1,0 +1,51 @@
+<template lwc:render-mode="light">
+    <div class={gridStyleClass} role="list">
+        <template for:each={myAddresses} for:item="myAddress">
+            <commerce_my_account-my-account-address-card
+                key={myAddress.addressId}
+                name={myAddress.name}
+                first-name={myAddress.firstName}
+                last-name={myAddress.lastName}
+                address-type={myAddress.addressType}
+                street={myAddress.street}
+                city={myAddress.city}
+                region={myAddress.region}
+                country={myAddress.country}
+                postal-code={myAddress.postalCode}
+                is-default={myAddress.isDefault}
+                default-badge-color={cardDefaultBadgeColor}
+                default-border-radius={cardDefaultBorderRadius}
+                default-badge-label={cardDefaultLabel}
+                role="listitem"
+            >
+                <div slot="myAccountAddressFooter">
+                    <commerce_my_account-my-account-address-footer
+                        edit-label={footerEditLabel}
+                        delete-label={footerDeleteLabel}
+                        address-id={myAddress.addressId}
+                        address-name={myAddress.name}
+                        disable={footerDisable}
+                        is-preview-mode={isPreviewMode}
+                    ></commerce_my_account-my-account-address-footer>
+                </div>
+            </commerce_my_account-my-account-address-card>
+        </template>
+    </div>
+    <div class="buttons">
+        <template if:true={showShowMoreAddressesButton}>
+            <button
+                class={customButtonClasses}
+                data-show-more-addresses
+                onclick={handleShowMoreAddressesClicked}
+                type="button"
+                role="button"
+            >
+                {showMoreButtonLabel}
+            </button>
+        </template>
+    </div>
+    <div if:true={showEmptyState} class="slds-grid_vertical slds-align_absolute-center emptyState">
+        <p class="emptyStateTitle">{noAddressMessageTitle}</p>
+        <p>{noAddressMessageText}</p>
+    </div>
+</template>

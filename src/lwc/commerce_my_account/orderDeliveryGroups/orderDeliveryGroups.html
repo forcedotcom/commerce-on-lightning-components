@@ -1,0 +1,39 @@
+<template lwc:render-mode="light">
+    <lightning-accordion
+            if:true={_hasOrderDeliveryGroup}
+            allow-multiple-sections-open
+            active-section-name={_activeSectionName}
+            class="accordion-styling"
+    >
+        <template for:each={orderDeliveryGroups} for:item="group">
+            <lightning-accordion-section name="groupHeader" 
+                key={group.orderDeliveryGroupSummaryId}
+                label={group.groupTitle}>
+                <commerce_my_account-order-delivery-group-container
+                    key={group.orderDeliveryGroupSummaryId}
+                    order-summary-id={orderSummaryId}
+                    currency-code={currencyCode}
+                    field-names={fieldNames}
+                    product-field-mapping={productFieldMapping}
+                    is-multiple-groups={isMultipleGroups}
+                    order-delivery-group={group}
+                    order-delivery-group-summary-id={group.orderDeliveryGroupSummaryId}
+                    other-adjustments-label={otherAdjustmentsLabel}
+                    show-more-product-label={showMoreProductLabel}
+                    page-size={pageSize}
+                    prefix-to-shipping-group={prefixToShippingGroup}
+                    product-unavailable-message={productUnavailableMessage}
+                    show-product-image={showProductImage}
+                    show-total={showTotal}
+                    text-display-info={textDisplayInfo}
+                    total-price-text-color={totalPriceTextColor}
+                ></commerce_my_account-order-delivery-group-container>
+            </lightning-accordion-section>
+        </template>
+    </lightning-accordion>  
+    <commerce-error
+        if:false={_hasOrderDeliveryGroup}
+        error-label={errorMessage}
+        class="slds-grid"
+    ></commerce-error>
+</template>

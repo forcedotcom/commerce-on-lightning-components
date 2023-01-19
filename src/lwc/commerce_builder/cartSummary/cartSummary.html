@@ -1,0 +1,18 @@
+<template lwc:render-mode="light">
+    <div 
+        if:true={displayCartSummary}
+        style={cartSummaryCustomCssStyles}>
+        <commerce_cart-summary
+            cart-totals={cartSummaryTotals}
+            currency-code={currencyCode}
+        >
+            <div slot="headerText"><slot name="headerText"></slot></div>
+            <div slot="promotionsLabel"><slot name="promotionsLabel"></slot></div>
+            <div slot="shippingLabel"><slot name="shippingLabel"></slot></div>
+            <div slot="subtotalLabel"><slot name="subtotalLabel"></slot></div>
+            <div if:true={_showTaxIncludedLabel} slot="taxIncludedLabel"><slot name="taxIncludedLabel"></slot></div>
+            <div slot="taxLabel"><slot name="taxLabel"></slot></div>
+            <div slot="totalLabel"><slot name="totalLabel"></slot></div>
+        </commerce_cart-summary>
+    </div>
+</template>

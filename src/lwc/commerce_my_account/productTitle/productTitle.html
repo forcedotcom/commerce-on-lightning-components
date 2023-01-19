@@ -1,0 +1,8 @@
+<template lwc:render-mode="light">
+    <h3>
+        <a if:true={_isNavigable} href={url} data-productid={productId} onclick={navigateToProductDetailPage}>
+            {name}
+        </a>
+        <span if:false={_isNavigable}>{_productNameWithInvalidLabel}</span>
+    </h3>
+</template>

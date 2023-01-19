@@ -1,0 +1,6 @@
+/* Product Standard Image Container */
+:host {
+    display: flex;
+    align-items: center;
+    justify-content: space-around; /* Use space-evenly once IE11 support is no longer required */
+}

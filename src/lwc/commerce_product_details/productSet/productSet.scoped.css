@@ -1,0 +1,10 @@
+:host {
+    display: flex;
+    flex-direction: column;
+}
+
+.product-set__header {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}

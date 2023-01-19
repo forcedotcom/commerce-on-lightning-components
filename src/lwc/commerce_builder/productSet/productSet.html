@@ -1,0 +1,21 @@
+<template lwc:render-mode="light">
+    <template if:true={isProductSet}>
+        <template if:true={isProductSetLoaded}>
+            <commerce_product_details-product-set
+                product-set={productSet}
+                show-negotiated-price={showNegotiatedPrice}
+                show-original-price={showOriginalPrice}
+                show-tax-indication={showTaxIndication}
+                show-add-all-to-cart-button={showAddAllToCartButton}
+                add-all-to-cart-disabled={isAddAllToCartDisabled}
+                onaddalltocart={handleAddAllToCart}
+                show-product-image={showProductImage}
+                show-product-description={showProductDescription}
+            ></commerce_product_details-product-set>
+        </template>
+
+        <template if:false={isProductSetLoaded}>
+            <commerce_product_details-product-stencil></commerce_product_details-product-stencil>
+        </template>
+    </template>
+</template>

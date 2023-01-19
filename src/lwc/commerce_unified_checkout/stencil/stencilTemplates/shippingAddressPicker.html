@@ -1,0 +1,21 @@
+<template lwc:render-mode="light">
+    <div data-shipping-address>
+        <div class="slds-grid slds-wrap slds-gutters_direct-x-small">
+            <template for:each={items} for:item="item">
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3 slds-p-bottom_medium" key={item.key}>
+                        <div class="slds-box slds-grid slds-grid_vertical">
+                            <div class="slds-col slds-size_1-of-2 slds-p-vertical_large">
+                                <div class="item line-name"></div>
+                            </div>
+                            <div class="slds-col slds-size_4-of-5 slds-p-vertical_small">
+                                <div class="item line-address"></div>
+                            </div>
+                            <div class="slds-col slds-size_3-of-5 slds-p-bottom_large">
+                                <div class="item line-address"></div>
+                            </div>
+                        </div>
+                    </div>
+            </template>
+        </div>
+    </div>
+</template>

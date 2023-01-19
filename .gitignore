@@ -1,0 +1,13 @@
+.DS_Store
+node_modules
+npm-*.log
+yarn-*.log
+package-lock.json
+.vscode
+.yarn/*
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+!.yarn/versions
+.pnp.*
+dist

@@ -1,0 +1,12 @@
+.address-card {
+    display: flex;
+}
+.address-stretch{
+    align-items: stretch;
+}
+.card-address-height {
+    height: 100%;
+}
+.card-address-fit {
+    height: fit-content;
+}

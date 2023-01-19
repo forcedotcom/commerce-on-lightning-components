@@ -1,0 +1,27 @@
+:host {
+    --dxp-c-navigation-list-spacing: var(--dxp-g-spacing-small);
+    --dxp-c-navigation-item-color: var(--dxp-g-root-contrast);
+    --dxp-c-navigation-list-nested-background-color: var(--dxp-g-root);
+    --dxp-c-navigation-bar-background-color: var(--lwc-brandNavigationBarBackgroundColor);
+    --dxp-c-navigation-bar-spacing: var(--dxp-g-spacing-small);
+    --dxp-c-navigation-bar-border-bottom-active: 2px solid var(--dxp-g-brand);
+    --dxp-c-navigation-list-background-color: var(--lwc-brandNavigationBackgroundColor, var(--dxp-g-root));
+    --dxp-c-navigation-list-hover-background-color-contrast: var(--dxp-g-root-1);
+    --dxp-c-navigation-list-color: inherit;
+    --dxp-c-navigation-list-nested-width-min: 11rem;
+    --dxp-c-navigation-list-nested-width-max: 21.75rem;
+    --dxp-c-navigation-list-nested-outline: 1px solid var(--dxp-g-root-contrast);
+    --dxp-c-navigation-list-box-shadow: 0 2px 7px 0 rgba(0, 0, 0, 0.16);
+    --dxp-c-navigation-list-overflow: hidden auto;
+    --dxp-c-navigation-list-z-index: 500;
+    --dxp-c-navigation-list-z-index-mobile: 10000;
+    --dxp-c-navigation-list-chevron-padding-top: var(--dxp-g-spacing-small);
+    --dxp-c-navigation-list-chevron-padding-right: var(--dxp-g-spacing-small);
+    --dxp-c-navigation-text-color: var(--lwc-brandNavigationColorText, var(--dxp-g-root-contrast));
+    --dxp-c-navigation-item-hover-text-decoration: none;
+    --dxp-c-navigation-item-font-size: 0.875rem;
+    --dxp-c-navigation-item-focus-color: var(--dxp-g-root-contrast);
+    --dxp-c-navigation-full-width: 100%;
+    --dxp-c-navigation-full-height: 100%;
+    --dxp-c-navigation-list-max-height: 31.25rem;
+}

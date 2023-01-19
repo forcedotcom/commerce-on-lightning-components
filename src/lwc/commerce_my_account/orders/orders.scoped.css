@@ -1,0 +1,10 @@
+.emptyState {
+    padding-top: calc(5 * var(--dxp-g-spacing-xlarge, 2rem));
+    padding-bottom: calc(5 * var(--dxp-g-spacing-xlarge, 2rem));
+}
+.emptyStateTitle {
+    font-size: var(--dxp-g-font-size-8, 1.5rem);
+}
+lightning-button:hover {
+    text-decoration: underline;
+}

@@ -1,0 +1,60 @@
+<template>
+    <commerce_unified_checkout-checkout
+        data-checkout
+        steps-config='[ { "checkoutStepKey" : "step1", "checkoutStepName" : "step1", "proceedButtonLabel" : "Next" , "isExpanded" : true , "seedComponents" : []},  { "checkoutStepKey" : "step2", "checkoutStepName" : "step2", "proceedButtonLabel" : "Next" , "isExpanded" : true , "seedComponents" : []}, { "checkoutStepKey" : "step3", "checkoutStepName" : "step3", "proceedButtonLabel" : "Next" , "isExpanded" : true , "seedComponents" : []}]'
+    >
+       <commerce_unified_checkout-step slot="checkoutSteps" data-step-key="step1" step="step1" >
+            <commerce_unified_checkout-checkout-test-child
+                slot="checkoutStep"
+                data-child="shipping">
+            </commerce_unified_checkout-checkout-test-child>
+            <commerce_unified_checkout-checkout-test-child
+                slot="checkoutStep"
+                data-child="shipinginstruction">
+            </commerce_unified_checkout-checkout-test-child>
+        </commerce_unified_checkout-step>
+        <commerce_unified_checkout-step slot="checkoutSteps" data-step-key="step2" >
+            <commerce_unified_checkout-checkout-test-child
+                slot="checkoutStep"
+                data-child="delivery">
+            </commerce_unified_checkout-checkout-test-child>
+        </commerce_unified_checkout-step>
+        <commerce_unified_checkout-step slot="checkoutSteps" data-step-key="step3-one-page" >
+            <commerce_unified_checkout-checkout-test-child
+                slot="checkoutStep"
+                data-child="payment">
+            </commerce_unified_checkout-checkout-test-child>
+        </commerce_unified_checkout-step>
+    </commerce_unified_checkout-checkout>
+
+
+    <commerce_unified_checkout-checkout
+        data-checkout-accordion
+        steps-config='[ { "checkoutStepKey" : "step1", "checkoutStepName" : "step1", "proceedButtonLabel" : "Next" , "isExpanded" : true , "seedComponents" : []},  { "checkoutStepKey" : "step2", "checkoutStepName" : "step2", "proceedButtonLabel" : "Next" , "isExpanded" : false , "seedComponents" : []}, { "checkoutStepKey" : "step3", "checkoutStepName" : "step3", "proceedButtonLabel" : "Next" , "isExpanded" : false , "seedComponents" : []}]'
+    >
+        <commerce_unified_checkout-step slot="checkoutSteps" data-step-key="step1" >
+            <commerce_unified_checkout-checkout-test-child
+                slot="checkoutStep"
+                data-child="shipping">
+            </commerce_unified_checkout-checkout-test-child>
+            <commerce_unified_checkout-checkout-test-child
+                slot="checkoutStep"
+                data-child="shipinginstruction">
+            </commerce_unified_checkout-checkout-test-child>
+        </commerce_unified_checkout-step>
+        <commerce_unified_checkout-step slot="checkoutSteps" data-step-key="step2" >
+            <commerce_unified_checkout-checkout-test-child
+                slot="checkoutStep"
+                data-child="delivery">
+            </commerce_unified_checkout-checkout-test-child>
+        </commerce_unified_checkout-step>
+        <commerce_unified_checkout-step slot="checkoutSteps" data-step-key="step3" >
+            <commerce_unified_checkout-checkout-test-child
+                slot="checkoutStep"
+                data-child="payment">
+            </commerce_unified_checkout-checkout-test-child>
+        </commerce_unified_checkout-step>
+    </commerce_unified_checkout-checkout>
+</template>
+
+

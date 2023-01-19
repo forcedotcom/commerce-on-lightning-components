@@ -1,0 +1,13 @@
+.price-container {
+    line-height: 2rem;
+}
+
+.price-line-through {
+    text-decoration: line-through;
+    padding-right: 0.4rem;
+}
+
+/**Only the first 'value' is in bold. This is sometimes list price and sometimes negotiated price, depending on how the values are set*/
+.value:first-child {
+    font-weight: var(--dxp-c-strong-text-weight, 700);
+}

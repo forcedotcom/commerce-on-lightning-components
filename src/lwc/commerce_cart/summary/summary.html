@@ -1,0 +1,95 @@
+<template lwc:render-mode="light">
+    <div if:true={cartTotals} class="slds-p-around_medium">
+        <header class="slds-p-vertical_x-small">
+            <slot name="headerText"></slot>
+        </header>
+        <!-- Subtotal Price Info -->
+        <div
+            if:true={cartTotals.subtotal}
+            class="item subtotal-price slds-p-vertical_x-small"
+            aria-live="assertive"
+            aria-atomic="true"
+            data-subtotal
+        >
+            <slot name="subtotalLabel"></slot>
+            <commerce-formatted-price
+                value={cartTotals.subtotal}
+                currency-code={currencyCode}
+                display-currency-as="symbol"
+            ></commerce-formatted-price>
+        </div>
+
+        <!-- Original Price Info -->
+        <commerce-formatted-price
+            if:true={cartTotals.originalPrice}
+            aria-label={ariaLabelForOriginalPrice}
+            class="original-price"
+            value={cartTotals.originalPrice}
+            currency-code={currencyCode}
+            display-currency-as="symbol"
+        ></commerce-formatted-price>
+
+        <!-- Discount Amount Info ( Promotions ) -->
+        <div
+            if:true={cartTotals.discountAmount}
+            class="item discount-amount slds-p-vertical_x-small"
+            aria-live="polite"
+            aria-atomic="true"
+            data-discount
+        >
+            <slot name="promotionsLabel"></slot>
+            <commerce-formatted-price
+                value={cartTotals.discountAmount}
+                currency-code={currencyCode}
+                display-currency-as="symbol"
+            ></commerce-formatted-price>
+        </div>
+
+        <!-- Shipping Price Info -->
+        <div
+            if:true={cartTotals.shippingPrice}
+            class="item shipping-price slds-p-vertical_x-small"
+            aria-live="assertive"
+            aria-atomic="true"
+            data-shipping
+        >
+            <slot name="shippingLabel"></slot>
+            <commerce-formatted-price
+                value={cartTotals.shippingPrice}
+                currency-code={currencyCode}
+                display-currency-as="symbol"
+            ></commerce-formatted-price>
+        </div>
+
+        <!-- Tax Price Info -->
+        <div
+            if:true={cartTotals.tax}
+            class="item tax-price slds-p-vertical_x-small"
+            aria-live="assertive"
+            aria-atomic="true"
+            data-tax
+        >
+            <slot name="taxLabel"></slot>
+            <commerce-formatted-price
+                value={cartTotals.tax}
+                currency-code={currencyCode}
+                display-currency-as="symbol"
+            ></commerce-formatted-price>
+        </div>
+
+        <!-- Total Price Info -->
+        <div class="item total-price slds-p-vertical_x-small" aria-live="assertive" aria-atomic="true">
+            <slot name="totalLabel"></slot>
+            <commerce-formatted-price
+                value={cartTotals.total}
+                currency-code={currencyCode}
+                display-currency-as="symbol"
+            ></commerce-formatted-price>
+        </div>
+
+        <!-- Tax Included Display -->
+        <div class="tax-included-label">
+            <slot name="taxIncludedLabel"></slot>
+        </div>
+    </div>
+</template>

@@ -1,0 +1,30 @@
+<template lwc:render-mode="light">
+    <div class="slds-box slds-text-align_center">
+        <div class="slds-m-around_x-large">
+            <lightning-icon
+                icon-name="action:approval"
+                class="order-confirmation-icon"
+            ></lightning-icon>
+        </div>
+        <h1
+            class="slds-text-heading_large slds-p-bottom_small header-text"
+            data-automation="order-confirmation-message-header"
+        >
+            {headerText}
+        </h1>
+        <p class="order-confirmation-number" data-automation="order-confirmation-number">
+            {confirmationNumberText}: {orderNumber}
+        </p>
+        <p class="slds-p-vertical_small" data-automation="order-confirmation-message-body">{bodyText}</p>
+        <div class="slds-p-bottom_medium slds-m-horizontal_xx-large">
+            <a
+                href={homePageUrl}
+                onclick={handleClick}
+                class="my-brand slds-button slds-button_brand slds-medium-size_1-of-3"
+                data-automation="continue-shopping-button"
+            >
+                {buttonText}
+            </a>
+        </div>
+    </div>
+</template>

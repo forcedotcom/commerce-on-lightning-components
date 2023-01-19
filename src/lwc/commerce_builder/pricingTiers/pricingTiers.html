@@ -1,0 +1,13 @@
+<template lwc:render-mode="light">
+    <commerce_product_details-pricing-tiers
+        if:true={showTiers}
+        quantity-row-label={quantityRowLabel}
+        discount-row-label={discountRowLabel}
+        currency-code={currencyCode}
+        adjustment-tiers={priceAdjustmentTiers}
+        class="slds-p-vertical_small slds-scrollable_x pricing-tiers"
+        style={pricingTiersCustomStyles}
+    >
+        <div slot="title"><slot name="title"></slot></div>
+    </commerce_product_details-pricing-tiers>
+</template>

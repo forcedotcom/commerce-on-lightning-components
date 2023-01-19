@@ -1,0 +1,40 @@
+<template>
+    <!-- a11y checkout API busy indicator -->
+    <span class="slds-assistive-text" role="status" aria-live="polite">
+        <span if:true={isLoading}>Loading</span>
+    </span>
+
+    <template if:false={showError}>
+        <ul class="checkout-container slds-accordion">
+            <li class="slds-accordion__list-item">
+                <slot name="checkoutSteps"></slot>
+            </li>
+            <li if:true={isOnePageLayout}>
+                <button
+                    disabled={isPlaceOrderDisabled}
+                    data-placeorder
+                    class="slds-button slds-button_brand slds-m-bottom_x-small"
+                    onclick={onClickPlaceOrder}
+                >{_placeOrderAction}
+            </button>
+            </li>
+        </ul>
+    </template>
+    <template if:true={showError}>
+        <b2c_lite_commerce-scoped-notification
+            type="error"
+            message-header={_errorLabels.header}
+            message-body={_errorLabels.body}
+            dismissible={_dismissible}
+        >
+            <div slot="message">
+                <lightning-formatted-url
+                    value={_cartUrl}
+                    tooltip={_errorLabels.returnToCart}
+                    label={_errorLabels.returnToCart}
+                ></lightning-formatted-url>
+            </div>
+        </b2c_lite_commerce-scoped-notification>
+    </template>
+    <span data-ekg="{}" aria-hidden="true"></span>
+</template>

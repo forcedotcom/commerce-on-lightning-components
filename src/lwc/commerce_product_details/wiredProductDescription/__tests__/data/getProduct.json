@@ -1,0 +1,98 @@
+{
+    "attributeSetInfo": {},
+    "defaultImage": {
+        "alternateText": "",
+        "contentVersionId": null,
+        "id": null,
+        "mediaType": "Image",
+        "sortOrder": 0,
+        "thumbnailUrl": null,
+        "title": "image",
+        "url": "/img/b2b/default-product-image.svg"
+    },
+    "fields": {
+        "LastModifiedDate": "2020-05-28T22:18:24Z",
+        "DisplayUrl": null,
+        "IsDeleted": "false",
+        "Description": "The future of espressos is now. The fully connected, intelligent EspresSmart Espresso Machine not only provides the most consistent pours of any of our machines, but it tell you when it needs filter replacements, repairs and cleaning.",
+        "ProductCode": "ESP-IOT-1",
+        "IsActive": "true",
+        "ExternalId": null,
+        "LastViewedDate": null,
+        "LastReferencedDate": null,
+        "StockKeepingUnit": "ESP-IOT-1",
+        "CurrencyIsoCode": "USD",
+        "ExternalDataSourceId": null,
+        "Name": "EspresSmart Espresso Machine",
+        "SystemModstamp": "2020-07-09T22:55:57Z",
+        "IsArchived": "false",
+        "CreatedById": "005xx000001X7VB",
+        "CloneSourceId": null,
+        "QuantityUnitOfMeasure": null,
+        "CreatedDate": "2020-05-28T22:18:24Z",
+        "Family": "Industrial",
+        "LastModifiedById": "005xx000001X7VB"
+    },
+    "id": "01txx0000006i5lAAA",
+    "mediaGroups": [
+        {
+            "developerName": "productListImage",
+            "id": "2mgxx0000000002AAA",
+            "mediaItems": [
+                {
+                    "alternateText": null,
+                    "contentVersionId": "5OUxx0000004CApGAM",
+                    "id": "2pmxx000000001nAAA",
+                    "mediaType": "Image",
+                    "sortOrder": 0,
+                    "thumbnailUrl": null,
+                    "title": "image-capricorn-esp-iot-1-jpg",
+                    "url": "https://img4demo.herokuapp.com/image/capricorn/ESP-IOT-1/jpg"
+                }
+            ],
+            "name": "Product List Image",
+            "usageType": "Listing"
+        },
+        {
+            "developerName": "productDetailImage",
+            "id": "2mgxx0000000001AAA",
+            "mediaItems": [
+                {
+                    "alternateText": "",
+                    "contentVersionId": null,
+                    "id": null,
+                    "mediaType": "Image",
+                    "sortOrder": 0,
+                    "thumbnailUrl": null,
+                    "title": "image",
+                    "url": "/img/b2b/default-product-image.svg"
+                }
+            ],
+            "name": "Product Detail Images",
+            "usageType": "Standard"
+        }
+    ],
+    "primaryProductCategoryPath": {
+        "path": [
+            {
+                "description": null,
+                "id": "0ZGxx000000001dGAA",
+                "name": "Machines"
+            },
+            {
+                "description": null,
+                "id": "0ZGxx000000001hGAA",
+                "name": "Espresso Machines"
+            },
+            {
+                "description": null,
+                "id": "0ZGxx000000001iGAA",
+                "name": "Advanced Espresso Machines"
+            }
+        ]
+    },
+    "productClass": null,
+    "variationAttributeSet": null,
+    "variationInfo": null,
+    "variationParentId": null
+}

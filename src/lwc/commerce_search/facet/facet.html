@@ -1,0 +1,33 @@
+<template>
+    <div class="facet-header">
+        <h2 class="facet-name">{name}</h2>
+        <figure>
+            <lightning-button-icon
+                icon-name={iconName}
+                alternative-text={facetToggleLabel}
+                class="expand-button slds-m-right_x-small"
+                variant="bare"
+                icon-class="slds-m-around_xsmall"
+                size="small"
+                onclick={handleFacetToggle}
+                aria-expanded={ariaExpanded}
+            >
+            </lightning-button-icon>
+        </figure>
+    </div>
+    <div class="facet-body" role="group">
+        <commerce_search-input-facet
+            if:false={isDateTimeOrSlider}
+            facet-name={name}
+            values={values}
+            type={type}
+            class={facetDisplayClasses}
+        ></commerce_search-input-facet>
+        <commerce_search-slider-facet
+            if:true={isSlider}
+            min={minValue}
+            max={maxValue}
+            class={facetDisplayClasses}
+        ></commerce_search-slider-facet>
+    </div>
+</template>

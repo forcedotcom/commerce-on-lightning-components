@@ -1,0 +1,30 @@
+:host {
+    min-width: 0;
+
+    .address-card-body {
+        min-height: 75%;
+    }
+    .address-card-style-class {
+        height: 100%;
+        background-color: var(--com-c-my-account-address-card-background-color, var(--dxp-g-root));
+        border: solid 1px var(--com-c-my-account-address-card-border-color, var(--dxp-g-neutral-1));
+        border-radius: var(--com-c-my-account-address-card-border-radius, 0rem);
+        text-align: var(--com-c-my-account-address-card-text-align, left);
+        color: var(--com-c-my-account-address-card-text-color, var(--dxp-g-root-contrast));
+        padding-top: var(--com-c-my-account-address-card-padding-vertical, var(--dxp-g-spacing-medium));
+        padding-bottom: var(--com-c-my-account-address-card-padding-vertical, var(--dxp-g-spacing-medium));
+        padding-left: var(--com-c-my-account-address-card-padding-horizontal, var(--dxp-g-spacing-medium));
+        padding-right: var(--com-c-my-account-address-card-padding-horizontal, var(--dxp-g-spacing-medium));
+    }
+
+    .name-decoration {
+        font-weight: var(--com-c-my-account-address-card-name-font-weight, var(--dxp-c-strong-text-weight, 700));
+        font-style: var(--com-c-my-account-address-card-name-font-style, normal);
+        text-decoration: var(--com-c-my-account-address-card-name-text-decoration, none);
+    }
+
+    .default-badge-style-class {
+        max-width: 25%;
+        display: block;
+    }
+}

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightningCommunity__Page</target>
+        <target>lightningCommunity__Default</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightningCommunity__Default">
+            <designSubstitute>commerce_unified_checkout:shippingDesignSubstitute</designSubstitute>
+            <property label="Show the customer's default address only." name="summaryModeEnabled" type="Boolean" default="true"/>
+            <property label="Initial Number of Addresses Shown" name="shippingAddressLimit" type="String" datasource="1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20" default="6"/>
+            <property label="Additional Addresses Displayed" name="shippingAddressLimitIncrease" type="String" datasource="1,2,3,4,5,6,7,8,9,10" default="6"/>
+            <property label="Edit Address Label" name="editAddressLabel" type="String" default="Edit" translatable="true" />
+            <property label="New Address Button Label" name="newAddressButtonLabel" type="String" default="New Address" translatable="true" />
+            <property label="Show More Button Label" name="showMoreButtonLabel" type="String" default="Show More" translatable="true" />
+            <property label="Edit Address Heading" name="componentHeaderEditAddressLabel" type="String" default="Edit Address" translatable="true" />
+            <property label="Phone Number" name="phoneNumberLabel" type="String" default="Phone Number" translatable="true" />
+            <property label="Phone Number Ghost Text" name="phoneNumberPlaceholderText" type="String" default="" translatable="true" />
+            <property label="Default Address Checkbox Label" name="makeDefaultAddressLabel" type="String" default="Make this my default address" translatable="true" />
+            <property label="Back to List Label" name="backToListLabel" type="String" default="Back to list" translatable="true" />
+            <designLayout>
+                <designSection>
+                    <designLayoutItems>
+                        <designLayoutProperty name="summaryModeEnabled"/>
+                    </designLayoutItems>
+                </designSection>
+                <designSection name="addressList">
+                    <designLayoutItems>
+                        <designLayoutProperty name="shippingAddressLimit"/>
+                        <designLayoutProperty name="shippingAddressLimitIncrease"/>
+                        <designLayoutProperty name="editAddressLabel"/>
+                        <designLayoutProperty name="newAddressButtonLabel"/>
+                        <designLayoutProperty name="showMoreButtonLabel" />
+                    </designLayoutItems>
+                </designSection>
+                <designSection name="addressForm">
+                    <designLayoutItems>
+                        <designLayoutProperty name="componentHeaderEditAddressLabel"/>
+                        <designLayoutProperty name="phoneNumberLabel"/>
+                        <designLayoutProperty name="phoneNumberPlaceholderText"/>
+                        <designLayoutProperty name="makeDefaultAddressLabel"/>
+                        <designLayoutProperty name="backToListLabel"/>
+                    </designLayoutItems>
+                </designSection>
+            </designLayout>
+        </targetConfig>
+        <targetConfig targets="lightningCommunity__Page">
+            <paletteSection>Commerce</paletteSection>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

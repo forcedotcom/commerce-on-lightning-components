@@ -1,0 +1,109 @@
+<template lwc:render-mode="light">
+    <figure if:true={showProductImage} class="product-image">
+        <a tabindex="-1" href={_productUrl} onclick={handleProductNameClick}>
+            <img src={thumbnailImageUrl} alt={item.ProductDetails.thumbnailImage.alternateText}/>
+        </a>
+    </figure>
+    <div class="main">
+        <div class="main_details">
+            <div class="main_details_description">
+                <a class="main_details_description_name"
+                    href={_productUrl}
+                    onclick={handleProductNameClick}
+                >
+                    <h1 if:true={item} class="description-name-label">{item.name}</h1>
+                </a>
+                <div class="main_details_description_fields">
+                    <div if:true={showSku}>
+                        <lightning-formatted-rich-text
+                            value={skuLabel}
+                            class="field-label"
+                        ></lightning-formatted-rich-text>
+                        <commerce-field-display
+                            value={item.ProductDetails.sku}
+                        ></commerce-field-display>
+                    </div>
+                    <template for:each={_productFieldMapping} for:item="fieldMapping">
+                        <div key={fieldMapping.name}>
+                            <lightning-formatted-rich-text
+                                value={fieldMapping.label}
+                                class="field-label"
+                            ></lightning-formatted-rich-text>
+                            <commerce-field-display
+                                value={fieldMapping.value}
+                                type={fieldMapping.type}
+                                currency-code={currencyIsoCode}
+                            ></commerce-field-display>
+                        </div>
+                    </template>
+                    <commerce_product_information-variant-attributes-display
+                        if:true={showProductVariants}
+                        attributes={variants}
+                    >
+                    </commerce_product_information-variant-attributes-display>
+                </div>
+            </div>
+            <div if:true={showPricePerUnit} class="main_details_currency unitPrice">
+                    <span class="slds-assistive-text">{pricePerItemAssistiveText}</span>
+                    <span>{pricePerItemText}</span>
+            </div>
+            <div if:true={showTotalPrices} class="main_details_currency totalPrice">
+                <div if:true={showActualPrice} class="actualPrice">
+                    <span class="slds-assistive-text">{actualPriceAssistiveText}</span>
+                    <commerce-formatted-price
+                        value={item.amount}
+                        currency-code={currencyIsoCode}
+                        display-currency-as="symbol"
+                    >
+                    </commerce-formatted-price>
+                </div>
+                <div if:true={_showOriginalPrice} class="originalPrice">
+                    <span class="slds-assistive-text">{originalPriceAssistiveText}</span>
+                    <commerce-formatted-price
+                        value={item.listPrice}
+                        currency-code={currencyIsoCode}
+                        display-currency-as="symbol"
+                    >
+                    </commerce-formatted-price>
+                </div>
+            </div>
+        </div>
+        <div class="main_actions">
+            <div class="main_actions_selector">
+                <commerce-quantity-selector
+                    class="main_actions_quantity"
+                    value={quantity}
+                    minimum={minimum}
+                    maximum={maximum}
+                    step={step}
+                    minimum-value-guide-text={minimumValueGuideText}
+                    maximum-value-guide-text={maximumValueGuideText}
+                    step-value-guide-text={incrementValueGuideText}
+                    label={itemName}
+                    hide-label
+                    onvaluechanged={handleValueChanged}
+                >
+                </commerce-quantity-selector>
+                <lightning-button
+                    if:true={showRemoveItem}
+                    variant="base"
+                    label={labels.removeButtonText}
+                    title={removeButtonAssistiveText}
+                    aria-label={removeButtonAssistiveText}
+                    class="main_actions_remove slds-button"
+                    onclick={handleDeleteItem}
+                >
+                </lightning-button>
+            </div>
+            <!-- disabled until implement the popover -->
+            <commerce_cart-applied-savings-button
+                if:true={_showPromotions}
+                disabled
+                text={_promotionsAppliedSavingsButtonText}
+                aria-label={_promotionsAppliedSavingsButtonText}
+                class="discount-price slds-m-top_x-small slds-m-left_x-small"
+            >
+            </commerce_cart-applied-savings-button>
+        </div>
+    </div>
+</template>

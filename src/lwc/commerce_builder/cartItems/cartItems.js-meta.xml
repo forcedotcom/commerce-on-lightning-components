@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightningCommunity__Page</target>
+        <target>lightningCommunity__Default</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightningCommunity__Page">
+            <paletteSection>Commerce</paletteSection>
+        </targetConfig>
+        <targetConfig targets="lightningCommunity__Default">
+            <!-- Item Level Data  -->
+            <property name="items" type="String" default="{!Cart.Items}" translatable="true"/>
+            <property name="hasNextPageItems" type="String" default="{!Cart.Pagination.hasNextPage}"/>
+            <property name="currencyIsoCode" type="String" default="{!Cart.Details.currencyIsoCode}" translatable="true"/>
+            <property name="showRemoveItem" type="Boolean" default="true"/>
+            <property name="displayShowMoreItems" type="Boolean" default="true"/>
+            <!-- Product Details Content -->
+            <property name="showSku" type="Boolean" default="true"/>
+            <property name="skuLabel" type="String" default="SKU#" translatable="true" />
+            <property name="showProductImage" type="Boolean" default="true" />
+            <property name="showProductVariants" type="Boolean" default="true"/>
+            <property name="productFieldMapping" type="B2BProductDetailSummaryFieldMapping" translatable="true"/>
+            <!-- Price Per Unit Content -->
+            <property name="showPricePerUnit" type="Boolean" default="true"/>
+            <property name="pricePerUnitFontColor" type="Color"/>
+            <property name="pricePerUnitFontSize" type="String" default="medium" datasource="java://siteforce.communitybuilder.datasource.SLDSFontSizeDataSource" translatable="true"/>
+
+            <property name="showTotalPrices" type="Boolean" default="true"/>
+
+            <!-- Original Price Content -->
+            <property name="showOriginalPrice" type="Boolean" default="true"/>
+            <property name="originalPriceFontColor" type="Color" default="rgb(116, 116, 116)"/>
+            <property name="originalPriceFontSize" type="String" default="small" datasource="java://siteforce.communitybuilder.datasource.SLDSFontSizeDataSource" translatable="true"/>
+            <!-- Actual Price Content -->
+            <property name="showActualPrice" type="Boolean" default="true"/>
+            <property name="actualPriceFontColor" type="Color"/>
+            <property name="actualPriceFontSize" type="String" default="medium" datasource="java://siteforce.communitybuilder.datasource.SLDSFontSizeDataSource" translatable="true"/>
+            <!-- Promotion Amount Content -->
+            <property name="showPromotions" type="Boolean" default="true"/>
+            <property name="promotionsAppliedSavingsButtonText" type="String" default="Saved {amount}" translatable="true"/>
+            <property name="promotionsAppliedSavingsButtonFontColor" type="Color"/>
+            <property name="promotionsAppliedSavingsButtonFontSize" type="String" default="small" datasource="java://siteforce.communitybuilder.datasource.SLDSFontSizeDataSource" translatable="true"/>
+            <property name="promotionsAppliedSavingsButtonTextHoverColor" type="Color"/>
+            <property name="promotionsAppliedSavingsButtonBackgroundColor" type="Color"/>
+            <property name="promotionsAppliedSavingsButtonBackgroundHoverColor" type="Color"/>
+            <property name="promotionsAppliedSavingsButtonBorderColor" type="Color"/>
+            <property name="promotionsAppliedSavingsButtonBorderRadius" type="Integer" min="0" max="20" default="20"/>
+            <!-- Product Quantity Rule Content -->
+            <property name="minimumValueGuideText" type="String" default="Minimum quantity is {0}" translatable="true"/>
+            <property name="maximumValueGuideText" type="String" default="Maximum quantity is {0}" translatable="true"/>
+            <property name="incrementValueGuideText" type="String" default="Sold in increments of {0}" translatable="true"/>
+            <designLayout>
+                <designSection>
+                    <designLayoutItems>
+                        <designLayoutProperty name="items" cbVisibleIf="items=false"/>
+                        <designLayoutProperty name="hasNextPageItems" cbVisibleIf="items=false"/>
+                        <designLayoutProperty name="currencyIsoCode" cbVisibleIf="items=false"/>
+                        <designLayoutProperty name="showRemoveItem"/>
+                        <designLayoutProperty name="displayShowMoreItems"/>
+                        <designLayoutProperty name="showTotalPrices" />
+                    </designLayoutItems>
+                </designSection>
+                <designSection name="productDetails">
+                    <designLayoutItems>
+                        <designLayoutProperty name="showSku"/>
+                        <designLayoutProperty name="skuLabel" cbVisibleIf="showSku=true"/>
+                        <designLayoutProperty name="showProductImage"/>
+                        <designLayoutProperty name="showProductVariants"/>
+                        <designLayoutProperty name="productFieldMapping"/>
+                    </designLayoutItems>
+                </designSection>
+                <designSection name="pricePerUnit">
+                    <designLayoutItems>
+                        <designLayoutProperty name="showPricePerUnit" />
+                        <designLayoutProperty name="pricePerUnitFontColor" cbVisibleIf="showPricePerUnit=true"/>
+                        <designLayoutProperty name="pricePerUnitFontSize" cbVisibleIf="showPricePerUnit=true"/>
+                    </designLayoutItems>
+                </designSection>
+                <designSection name="originalPrice" cbVisibleIf="showTotalPrices=true">
+                    <designLayoutItems>
+                        <designLayoutProperty name="showOriginalPrice"/>
+                        <designLayoutProperty name="originalPriceFontColor" cbVisibleIf="showOriginalPrice=true"/>
+                        <designLayoutProperty name="originalPriceFontSize" cbVisibleIf="showOriginalPrice=true"/>
+                    </designLayoutItems>
+                </designSection>
+                <designSection name="actualPrice" cbVisibleIf="showTotalPrices=true">
+                    <designLayoutItems>
+                        <designLayoutProperty name="showActualPrice"/>
+                        <designLayoutProperty name="actualPriceFontColor" cbVisibleIf="showActualPrice=true"/>
+                        <designLayoutProperty name="actualPriceFontSize" cbVisibleIf="showActualPrice=true"/>
+                    </designLayoutItems>
+                </designSection>
+                <designSection name="promotionDetails">
+                    <designLayoutItems>
+                        <designLayoutProperty name="showPromotions"/>
+                        <designLayoutProperty name="promotionsAppliedSavingsButtonText" cbVisibleIf="showPromotions=true" />
+                        <designLayoutProperty name="promotionsAppliedSavingsButtonFontSize" cbVisibleIf="showPromotions=true" />
+                        <designLayoutProperty name="promotionsAppliedSavingsButtonFontColor" cbVisibleIf="showPromotions=true" />
+                        <designLayoutProperty name="promotionsAppliedSavingsButtonTextHoverColor" cbVisibleIf="showPromotions=true" />
+                        <designLayoutProperty name="promotionsAppliedSavingsButtonBackgroundColor" cbVisibleIf="showPromotions=true" />
+                        <designLayoutProperty name="promotionsAppliedSavingsButtonBackgroundHoverColor" cbVisibleIf="showPromotions=true" />
+                        <designLayoutProperty name="promotionsAppliedSavingsButtonBorderColor" cbVisibleIf="showPromotions=true" />
+                        <designLayoutProperty name="promotionsAppliedSavingsButtonBorderRadius" cbVisibleIf="showPromotions=true" />
+                    </designLayoutItems>
+                </designSection>
+                <designSection name="productQuantityRule">
+                    <designLayoutItems>
+                        <designLayoutProperty name="minimumValueGuideText"/>
+                        <designLayoutProperty name="maximumValueGuideText"/>
+                        <designLayoutProperty name="incrementValueGuideText"/>
+                    </designLayoutItems>
+                </designSection>
+            </designLayout>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

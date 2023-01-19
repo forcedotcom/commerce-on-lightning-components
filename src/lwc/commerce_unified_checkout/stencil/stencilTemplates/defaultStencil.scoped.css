@@ -1,0 +1,23 @@
+.stencil-item-container {
+    height: var(--dxp-s-body-line-height, 1.5rem);
+}
+
+.stencil-item {
+    height: var(--dxp-s-body-font-size, 1rem);
+    background-color: var(--dxp-g-neutral, #f3f2f2);
+    display: inline-block;
+}
+
+.icon {
+    width: var(--dxp-s-body-font-size, 1rem);
+    border-radius: 50%;
+}
+
+.line {
+    border-radius: var(--dxp-s-form-border-radius, 0.5rem);
+    width: 80%;
+}
+
+.stencil-item-container:nth-child(odd) {
+    width: 70%;
+}

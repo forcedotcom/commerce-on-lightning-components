@@ -1,0 +1,31 @@
+{
+    "menuItems": [
+        {
+            "actionType":"InternalLink",
+            "actionValue":"/b2blwr3/s/myprofile",
+            "imageUrl":null,
+            "label":"Profile",
+            "subMenu":[],
+            "target":"CurrentWindow",
+            "id": "0"
+        },
+        {
+            "actionType":"InternalLink",
+            "actionValue":"/b2blwr3/s/cart",
+            "imageUrl":null,
+            "label":"Cart",
+            "subMenu":[],
+            "target":"CurrentWindow",
+            "id": "1"
+        },
+        {
+            "actionType":"InternalLink",
+            "actionValue":"/b2blwr3/s/order",
+            "imageUrl":null,
+            "label":"Orders",
+            "subMenu":[],
+            "target":"CurrentWindow",
+            "id": "2"
+        }
+    ]
+}

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <isExposed>true</isExposed>
+	<targets>
+		<target>lightningCommunity__Page</target>
+		<target>lightningCommunity__Default</target>
+	</targets>
+	<targetConfigs>
+        <targetConfig targets="lightningCommunity__Page">
+            <paletteSection>Commerce</paletteSection>
+        </targetConfig>
+        <targetConfig targets="lightningCommunity__Default">
+            <property name="showCount" type="Boolean"/>
+            <property name="countType" translatable="false" type="String" datasource="java://siteforce.communitybuilder.datasource.B2BCartCountDataSource" default="TotalProductCount"/>
+            <property name="iconLinkColor" type="Color"/>
+            <property name="iconLinkHoverColor" type="Color"/>
+
+            <designLayout>
+                <designSection>
+                    <designLayoutItems>
+                        <designLayoutComponent name="commerce_builder:cartBadgeDesignInfo" />
+                        <designLayoutProperty name="showCount"/>
+                        <designLayoutProperty name="countType" cbVisibleIf="showCount=true"/>
+                        <designLayoutProperty name="iconLinkColor"/>
+                        <designLayoutProperty name="iconLinkHoverColor"/>
+                    </designLayoutItems>
+                </designSection>
+            </designLayout>
+
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

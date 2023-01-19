@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <isExposed>true</isExposed>
+    <targets>
+		<target>lightningCommunity__Page</target>
+		<target>lightningCommunity__Default</target>
+	</targets>
+    <targetConfigs>
+        <targetConfig targets="lightningCommunity__Page">
+            <paletteSection>Commerce</paletteSection>
+        </targetConfig>
+         <targetConfig targets="lightningCommunity__Default">
+         <designSubstitute>commerce_my_account:myAccountAddressGridDesignSubstitute</designSubstitute>
+           <property label="Preview Account ID" name="previewAccountId" type="String"/>
+            <property label="Card Spacing" name="itemSpacing" type="String"  default="small" datasource="java://siteforce.communitybuilder.datasource.SLDSSpacingDataSource"/>
+            <property label="Show Address Type" name="showAddressType" type="String" default="Shipping" datasource="Shipping, Shipping and billing"/>
+            <property label="Shipping Tab Label" name="shippingTabLabel" type="String" default="Shipping" max="255" translatable="true"/>
+            <property label="Billing Tab Label" name="billingTabLabel" type="String" default="Billing" max="255" translatable="true"/>
+            <property label="Addresses Per page" type="String" name="pageSize" default="10"  
+            datasource="1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20"/>
+            <property label="No Address Message Title" name="noAddressMessageTitle" type="String" default="No Address Yet" translatable="true"/>
+            <property label="No Address Message Text" name="noAddressMessageText" type="String" default="You don't have any address yet" translatable="true"/>
+            <property label="Default Badge Color" name="cardDefaultBadgeColor" type="Color" default="rgb(201,201, 201)"/>
+            <property label="Default Badge Border Radius" name="cardDefaultBorderRadius" type="String" default="50"/>
+            <property label="Default Badge Label" name="cardDefaultLabel" type="String" default="Default" translatable="true"/>
+            
+            <property label="Edit Label" name="footerEditLabel" type="String" default="Edit" translatable="true"/>
+            <property label="Delete Label" name="footerDeleteLabel" type="String" default="Delete" translatable="true"/>
+
+            <property label="Label" name="showMoreButtonLabel" type="String" default="Show More" translatable="true"/>
+            <property label="Button Style" name="showMoreButtonStyle" type="String" default="secondary" datasource="java://siteforce.communitybuilder.datasource.ButtonStyleDataSource"/>
+            <property label="Size" name="showMoreButtonSize" type="String" default="standard" datasource="java://siteforce.communitybuilder.datasource.ButtonSizeDataSource"/>
+            <property label="Width" name="showMoreButtonWidth" type="String" default="standard" datasource="java://siteforce.communitybuilder.datasource.ButtonStretchDataSource"/>
+            <property label="Align" name="showMoreButtonAlign" type="String" default="center"/>
+
+             <designLayout>
+                  <designSection name="addressCardList">
+                    <designLayoutItems>
+                        <designLayoutProperty name="previewAccountId"/>
+                        <designLayoutProperty name="showAddressType"/>
+                        <designLayoutProperty name="shippingTabLabel" cbVisibleIf="showAddressType=Shipping and billing"/>
+                        <designLayoutProperty name="billingTabLabel" cbVisibleIf="showAddressType=Shipping and billing"/>
+                        <designLayoutProperty name="itemSpacing"/>
+                        <designLayoutProperty name="pageSize"/>
+                        <designLayoutProperty name="noAddressMessageTitle"/>
+                        <designLayoutProperty name="noAddressMessageText"/>
+                    </designLayoutItems>
+                  </designSection>
+                <designSection name="defaultBadge">
+                    <designLayoutItems>
+                        <designLayoutProperty name="cardDefaultBadgeColor"/>
+                        <designLayoutProperty name="cardDefaultBorderRadius"/>
+                        <designLayoutProperty name="cardDefaultLabel"/>
+                    </designLayoutItems>
+                </designSection>
+                <designSection name="addressFooter">
+                    <designLayoutItems>
+                        <designLayoutProperty name="footerEditLabel"/>
+                        <designLayoutProperty name="footerDeleteLabel"/>
+                     </designLayoutItems>   
+                </designSection>
+                <designSection name="showMoreButtons">
+                    <designLayoutItems>
+                        <designLayoutProperty name="showMoreButtonLabel"/>
+                        <designLayoutProperty name="showMoreButtonStyle"/>
+                        <designLayoutProperty name="showMoreButtonSize"/>
+                        <designLayoutProperty name="showMoreButtonWidth"/>
+                        <designLayoutProperty name="showMoreButtonAlign"/>
+                     </designLayoutItems>    
+                </designSection>
+            </designLayout>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

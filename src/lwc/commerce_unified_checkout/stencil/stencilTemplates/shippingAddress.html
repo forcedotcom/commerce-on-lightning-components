@@ -1,0 +1,11 @@
+<template lwc:render-mode="light">
+    <div class="stencil-container" data-shipping-address>
+        <template for:each={items} for:item="item">
+            <div class="stencil-item-container slds-m-bottom_x-small" key={item.key}>
+                <div class="stencil-item icon"></div>
+                <div class="stencil-item line slds-m-left_small"></div>
+            </div>
+        </template>
+    </div>
+    <div class="shipping-address-spacer slds-m-around_x-large"></div>
+</template>

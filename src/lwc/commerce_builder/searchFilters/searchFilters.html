@@ -1,0 +1,31 @@
+<template lwc:render-mode="light">
+    <div if:true={isDesktop}>
+        <!-- Filters Panel - shows the category tree and facets for a search result -->
+        <commerce_search-filters-panel
+            display-data={normalizedSearchFilters}
+            onfacetvalueupdate={handleFacetValueUpdateEvent}
+            onclearallfilters={handleClearAllFiltersEvent}
+            oncategoryupdate={handleCategoryUpdateEvent}>
+        </commerce_search-filters-panel>
+    </div>
+    <div if:true={isMobile}>
+        <button
+            class="slds-button slds-button_neutral slds-button_stretch"
+            title={filterHeaderLabel}
+            onclick={handleFilterDialogOpenEvent}
+        >
+            {filterHeaderLabel}
+        </button>
+        <lightning-dialog>
+            <commerce_search-facets-dialog
+                display-data={normalizedSearchFilters}
+                display-count={totalItemCount}
+                onfacetvalueupdate={handleFacetValueUpdateEvent}
+                onclearallfilters={handleClearAllFiltersEvent}
+                oncategoryupdate={handleCategoryUpdateEvent}
+                onclosefacetsdialog={handleFiltersDialogCloseEvent}
+            >
+            </commerce_search-facets-dialog>
+        </lightning-dialog>
+    </div>
+</template>

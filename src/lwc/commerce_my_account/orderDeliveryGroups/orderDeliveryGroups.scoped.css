@@ -1,0 +1,7 @@
+/* Tablet sized screens or smaller (smaller than the SLDS mqLarge responsive threshold) */
+@media only screen and (max-width: 64em) {
+    /* changes the color of the accordion background to lightgray for tablets and mobile size screens */
+    .accordion-styling {
+        --slds-c-accordion-summary-color-background:var( --com-c-my-account-order-products-accordion-color-background_mobile ,#F3F2F2);
+    }
+}

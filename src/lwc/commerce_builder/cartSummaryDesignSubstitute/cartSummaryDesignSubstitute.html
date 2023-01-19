@@ -1,0 +1,32 @@
+<template lwc:render-mode="light">
+    <commerce_builder-cart-summary
+        background-color={backgroundColor}
+        cart-totals={cartTotals}
+        discount-amount-text-color={discountAmountTextColor}
+        discount-amount-text-size={discountAmountTextSize}
+        original-text-color={originalTextColor}
+        original-text-size={originalTextSize}
+        shipping-text-color={shippingTextColor}
+        shipping-text-size={shippingTextSize}
+        show-discount-amount={showDiscountAmount}
+        show-original-price={showOriginalPrice}
+        show-shipping-price={showShippingPrice}
+        show-subtotal-price={showSubtotalPrice}
+        show-tax-included-label={showTaxIncludedLabel}
+        show-tax-price={showTaxPrice}
+        subtotal-text-color={subtotalTextColor}
+        subtotal-text-size={subtotalTextSize}
+        tax-text-color={taxTextColor}
+        tax-text-size={taxTextSize}
+        total-text-color={totalTextColor}
+        total-text-size={totalTextSize}
+    >
+            <div slot="headerText"><slot name="headerText"></slot></div>
+            <div slot="promotionsLabel"><slot name="promotionsLabel"></slot></div>
+            <div slot="shippingLabel"><slot name="shippingLabel"></slot></div>
+            <div slot="subtotalLabel"><slot name="subtotalLabel"></slot></div>
+            <div slot="taxIncludedLabel"><slot name="taxIncludedLabel"></slot></div>
+            <div slot="taxLabel"><slot name="taxLabel"></slot></div>
+            <div slot="totalLabel"><slot name="totalLabel"></slot></div>
+</commerce_builder-cart-summary>
+</template>

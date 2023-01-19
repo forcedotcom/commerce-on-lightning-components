@@ -1,0 +1,41 @@
+.desktop {
+    .results-container {
+        display: flex;
+        flex-direction: row;
+
+        .header {
+            flex: 1 0 70%;
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+        }
+
+        .sorting-menu {
+            flex: 1 0 30%;
+        }
+
+        .filters {
+            flex: 1 0 20%;
+            max-width: 15rem;
+        }
+
+        .results {
+            flex: 1 0 80%;
+        }
+    }
+}
+
+.mobile {
+    .filters-container {
+        display: flex;
+        flex-direction: row;
+
+        .filters {
+            flex: 1 1 0;
+        }
+
+        .sorting-menu {
+            flex: 1 1 0;
+        }
+    }
+}

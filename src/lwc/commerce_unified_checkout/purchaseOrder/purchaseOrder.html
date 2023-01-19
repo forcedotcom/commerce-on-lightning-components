@@ -1,0 +1,45 @@
+<template lwc:render-mode="light">
+    <div class={_showEditLayoutClass}>
+        <h3 if:false={hideHeading}
+            data-heading
+            class="slds-text-heading_small slds-p-bottom_medium">
+            {headerLabel}
+        </h3>
+        <lightning-input
+            data-purchase-order-input
+            name="po-number"
+            label={inputLabel}
+            placeholder={placeholderLabel}
+            required
+        ></lightning-input>
+
+        <template if:true={requireBillingAddress}>
+            <!-- Providing empty phone-number-label below since it is required for input-text -->
+            <div class="slds-p-top_small">
+                <fieldset name="billing-address">
+                    <commerce_unified_checkout-billing-address-group
+                        data-billing-address-group
+                        show-billing-address-heading={showBillingAddressHeading}
+                        billing-address-heading-label={billingAddressFieldsetLegendLabel}
+                        label-same-as-shipping-option={billingAddressSameAsShippingAddressLabel}
+                        phone-number-label="-"
+                        onchangebillingaddressoption={handleBillingAddressOptionChange}
+                    ></commerce_unified_checkout-billing-address-group>
+                </fieldset>
+            </div>
+
+            <b2c_lite_commerce-scoped-notification
+                type="error"
+                message-header={_errorLabels.header}
+                message-body={_errorLabels.body}
+            ></b2c_lite_commerce-scoped-notification>
+        </template>
+    </div>
+
+    <template if:true={_showStencil}>
+        <commerce_unified_checkout-stencil
+            stencil-type={_stencilType}
+            item-count="3"
+        ></commerce_unified_checkout-stencil>
+    </template>
+</template>

@@ -1,0 +1,40 @@
+<template lwc:render-mode="light">
+    <div if:true={isDesktop} class="desktop">
+        <section class="slds-border_bottom results-container">   
+            <div class="header">
+                <div slot="categoryHeader">
+                    <slot name="categoryHeader"></slot>
+                </div>
+                <div slot="searchHeader">
+                    <slot name="searchHeader"></slot>
+                </div>
+            </div>
+            <div class="sorting-menu">
+                <slot name="sortingMenu"></slot>
+            </div>
+        </section>
+        <article class="results-container">
+            <aside class="filters">
+                <slot name="searchFilters"></slot>
+            </aside>
+            <section class="results">
+                <slot name="searchResult"></slot>
+            </section>
+        </article>
+    </div>
+    <div if:true={isMobile} class="mobile">
+        <section class="filters-container">
+            <div class="filters">
+                <slot name="searchFilters"></slot>
+            </div>
+            <div class="sorting-menu">
+                <slot name="sortingMenu"></slot>
+            </div>
+        </section>
+        <section>
+            <slot name="categoryHeader"></slot>
+            <slot name="searchHeader"></slot>
+        </section>
+        <slot name="searchResult"></slot>
+    </div>
+</template>

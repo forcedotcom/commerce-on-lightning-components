@@ -1,0 +1,71 @@
+<template lwc:render-mode="light">
+    <template if:true={showEmptyState}>
+        <section class="empty">
+            <commerce_cart-managed-contents>
+                <section slot="headerLabel">
+                    <slot name="emptyHeaderLabel"></slot>
+                </section>
+                <section slot="headerCount">
+                    <slot name="emptyHeaderCount"></slot>
+                </section>
+                <section slot="cartBody">
+                    <svg width="82" height="78" viewBox="0 0 82 78" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M73.5555 36.856L73.0748 36.7186L73.0654 36.7514L73.0606 36.7853L73.5555 36.856ZM80.8935 11.1731L81.3743 11.3105L81.3759 11.3046L80.8935 11.1731ZM16.8531 7.83765L16.3693 7.96386L16.4668 8.33765H16.8531V7.83765ZM15.8524 4.00189L16.3363 3.87568L16.3348 3.87034L15.8524 4.00189ZM1.00974 4.83575L0.511204 4.79741L0.511009 4.80013L1.00974 4.83575ZM8.84802 9.17183L9.32749 9.03004L9.22156 8.67183H8.84802V9.17183ZM21.5227 52.0322L22.0052 51.9006L22.0022 51.8904L21.5227 52.0322ZM76.7242 51.1984L77.2227 51.2367L77.2229 51.234L76.7242 51.1984ZM27.5265 44.0272H27.0265V44.1005L27.0476 44.1708L27.5265 44.0272ZM27.5265 43.8604H28.0265V43.7793L28.0008 43.7023L27.5265 43.8604ZM71.054 38.3572H31.1955V39.3572H71.054V38.3572ZM73.0606 36.7853C72.9358 37.6586 72.024 38.3572 71.054 38.3572V39.3572C72.4187 39.3572 73.8417 38.3882 74.0505 36.9267L73.0606 36.7853ZM80.4127 11.0357L73.0748 36.7186L74.0363 36.9933L81.3743 11.3104L80.4127 11.0357ZM78.3919 8.33765C79.7501 8.33765 80.8194 9.54431 80.4111 11.0415L81.3759 11.3046C81.9682 9.13289 80.3691 7.33765 78.3919 7.33765V8.33765ZM16.8531 8.33765H78.3919V7.33765H16.8531V8.33765ZM15.3686 4.12811L16.3693 7.96386L17.3369 7.71144L16.3362 3.87568L15.3686 4.12811ZM12.0167 1.5C13.4622 1.5 14.9299 2.51967 15.3701 4.13345L16.3348 3.87034C15.7743 1.81513 13.9066 0.5 12.0167 0.5V1.5ZM5.34581 1.5H12.0167V0.5H5.34581V1.5ZM1.50827 4.8741C1.65281 2.99498 3.40954 1.5 5.34581 1.5V0.5C2.946 0.5 0.700207 2.34046 0.511211 4.79741L1.50827 4.8741ZM5.01227 8.67183C3.12592 8.67183 1.36297 6.90836 1.50847 4.87138L0.511009 4.80013C0.322964 7.43276 2.56254 9.67183 5.01227 9.67183V8.67183ZM8.84802 8.67183H5.01227V9.67183H8.84802V8.67183ZM22.0022 51.8904L9.32749 9.03004L8.36855 9.31362L21.0432 52.174L22.0022 51.8904ZM25.3584 54.5341C23.7585 54.5341 22.4485 53.5265 22.0051 51.9007L21.0403 52.1638C21.5975 54.2069 23.2894 55.5341 25.3584 55.5341V54.5341ZM72.3881 54.5341H25.3584V55.5341H72.3881V54.5341ZM76.2257 51.16C76.0811 53.0391 74.3244 54.5341 72.3881 54.5341V55.5341C74.7879 55.5341 77.0337 53.6937 77.2227 51.2367L76.2257 51.16ZM72.7217 47.3623C74.608 47.3623 76.371 49.1257 76.2255 51.1627L77.2229 51.234C77.411 48.6013 75.1714 46.3623 72.7217 46.3623V47.3623ZM31.3622 47.3623H72.7217V46.3623H31.3622V47.3623ZM27.0476 44.1708C27.6104 46.047 29.3038 47.3623 31.3622 47.3623V46.3623C29.7517 46.3623 28.4432 45.3428 28.0054 43.8835L27.0476 44.1708ZM27.0265 43.8604V44.0272H28.0265V43.8604H27.0265ZM31.1955 38.3572C28.3785 38.3572 26.1023 41.169 27.0521 44.0185L28.0008 43.7023C27.2829 41.5486 29.0093 39.3572 31.1955 39.3572V38.3572ZM38.1991 69.8765C38.1991 73.2846 35.4363 76.0474 32.0283 76.0474V77.0474C35.9886 77.0474 39.1991 73.8369 39.1991 69.8765H38.1991ZM32.0283 63.7057C35.4363 63.7057 38.1991 66.4685 38.1991 69.8765H39.1991C39.1991 65.9162 35.9886 62.7057 32.0283 62.7057V63.7057ZM25.8574 69.8765C25.8574 66.4685 28.6202 63.7057 32.0283 63.7057V62.7057C28.0679 62.7057 24.8574 65.9162 24.8574 69.8765H25.8574ZM32.0283 76.0474C28.6202 76.0474 25.8574 73.2846 25.8574 69.8765H24.8574C24.8574 73.8369 28.0679 77.0474 32.0283 77.0474V76.0474ZM64.5489 77.0474C68.5093 77.0474 71.7198 73.8369 71.7198 69.8765H70.7198C70.7198 73.2846 67.957 76.0474 64.5489 76.0474V77.0474ZM57.378 69.8765C57.378 73.8369 60.5885 77.0474 64.5489 77.0474V76.0474C61.1408 76.0474 58.378 73.2846 58.378 69.8765H57.378ZM64.5489 62.7057C60.5885 62.7057 57.378 65.9162 57.378 69.8765H58.378C58.378 66.4685 61.1408 63.7057 64.5489 63.7057V62.7057ZM71.7198 69.8765C71.7198 65.9162 68.5093 62.7057 64.5489 62.7057V63.7057C67.957 63.7057 70.7198 66.4685 70.7198 69.8765H71.7198Z" fill="#AEAEAE"/>
+                    </svg>
+                    <slot name="emptyBody"></slot>
+                </section>
+            </commerce_cart-managed-contents>
+        </section>
+    </template>
+
+    <template if:true={showIntermediateState}>
+        <section class="intermediate">
+            <commerce_cart-managed-contents>
+                <section slot="headerLabel">
+                    <slot name="intermediateHeaderLabel"></slot>
+                </section>
+                <section slot="headerCount">
+                    <slot name="intermediateHeaderCount"></slot>
+                </section>
+                <section slot="cartBody">
+                    <slot name="intermediateBody"></slot>
+                </section>
+            </commerce_cart-managed-contents>
+        </section>
+    </template>
+
+    <template if:true={showItemState}>
+        <section class="items">
+            <commerce_cart-managed-contents
+                sort-order={sortOrder}
+                show-sort-options
+                show-footer
+                oncartclear={handleCartClear}
+                oncartchangesortorder={handleCartChangeSortOrder}
+                oncartactionprocessing={handleCartActionProcessing}
+            >
+                <section slot="headerLabel">
+                    <slot name="itemsHeaderLabel"></slot>
+                </section>
+                <section slot="headerCount">
+                    <slot name="itemsHeaderCount"></slot>
+                </section>
+                <section slot="cartBody">
+                    <slot name="itemsBody"></slot>
+                </section>
+                <section slot="footerClearCart">
+                    <slot name="footerClearCart"></slot>
+                </section>
+            </commerce_cart-managed-contents>
+        </section>
+    </template>
+
+    <lightning-spinner
+        if:true={isLoadingData}
+        class="cart-spinner"
+        alternative-text={labels.spinnerText}
+        size="large"
+        variant="brand"
+    >
+    </lightning-spinner>
+</template>

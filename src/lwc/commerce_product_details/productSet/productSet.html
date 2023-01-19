@@ -1,0 +1,31 @@
+<template lwc:render-mode="light">
+    <div class="slds-p-right_large slds-p-left_x-small">
+        <div if:true={showAddAllToCartButton} class="product-set__header slds-border_bottom slds-p-vertical_x-small">
+            <commerce_product_details-add-to-cart-button
+                text={addAllToCartButtonText}
+                variant="primary"
+                disabled={isAddToCartDisabled}
+                onclick={handleAddAllToCartClick}
+            ></commerce_product_details-add-to-cart-button>
+        </div>
+        <div class="product-set__items">
+            <template for:each={products} for:item="productItem" for:index="index">
+                <div class="slds-border_bottom slds-p-vertical_medium" key={productItem.index}>
+                    <!-- This is to be used as a building block in the future -->
+                    <commerce_product_details-product-set-item-container
+                        data-index={index}
+                        quantity={productItem.quantity}
+                        show-negotiated-price={showNegotiatedPrice}
+                        show-original-price={showOriginalPrice}
+                        show-tax-indication={showTaxIndication}
+                        product-id={productItem.id}
+                        onquantitychanged={handleQuantityChanged}
+                        onvariantchanged={handleVariantChanged}
+                        show-product-image={showProductImage}
+                        show-product-description={showProductDescription}
+                    ></commerce_product_details-product-set-item-container>
+                </div>
+            </template>
+        </div>
+    </div>
+</template>

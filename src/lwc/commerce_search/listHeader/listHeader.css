@@ -1,0 +1,21 @@
+:host {
+    display: grid;
+}
+
+h1:focus {
+    outline: 0;
+}
+
+/* Narrow screens (e.g. phones) */
+@media only screen and (max-width: 48em) {
+    /* SLDS token: mqMedium */
+    /* for Phone screen size, limiting the large, medium and small */
+    .slds-text-heading_large,
+    .slds-text-heading_medium {
+        font-size: 1.25rem;
+    }
+
+    .slds-text-heading_small {
+        font-size: 1rem;
+    }
+}

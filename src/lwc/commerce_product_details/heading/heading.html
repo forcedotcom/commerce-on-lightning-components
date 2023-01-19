@@ -1,0 +1,13 @@
+<template lwc:render-mode="light">
+    <slot name="heading"></slot>
+    <template for:each={_displayableFields} for:item="field">
+        <div key={field.id} class="slds-grid slds-p-top_x-small">
+            <p class="slds-m-right_xx-small">{field.name}{keyValueSeparator}</p>
+            <commerce-field-display
+                value={field.value}
+                type={field.type}
+                currency-code={currencyCode}
+            ></commerce-field-display>
+        </div>
+    </template>
+</template>

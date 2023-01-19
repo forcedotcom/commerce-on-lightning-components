@@ -1,0 +1,39 @@
+.continue-shopping {
+    background-color: var(--dxp-g-brand);
+    border-color: var(--dxp-g-brand);
+}
+
+.view-cart {
+    color: var(--dxp-g-brand);
+}
+
+.border-styles {
+    --slds-c-modal-sizing-border: 0;
+}
+
+.spinner-container {
+    width: 5rem;
+    height: 5rem;
+}
+
+.scrollable {
+    height: inherit;
+    max-height: 20rem;
+    overflow-y: auto;
+}
+
+.unadded-product-list-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+/* Needed to make unadded products list scrollable for mobile devices */
+@media only screen and (max-width: 48em) {
+    .scrollable {
+        max-height: 10rem;
+    }
+}

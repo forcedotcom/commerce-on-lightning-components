@@ -1,0 +1,21 @@
+<template lwc:render-mode="light">
+        <div class="header-labels">
+            <span class="slds-p-right_small">
+                <slot name="label"></slot>
+            </span>
+            <span>
+                <slot name="countLabel"></slot>
+            </span>
+        </div>
+        <lightning-combobox
+            class="sort-menu"
+            if:true={showSortOptions}
+            name="sort"
+            label={sortByLabel}
+            value={_sortOrder.value}
+            placeholder={_sortOrder.label}
+            options={sortingOptions}
+            onchange={handleChangeSortSelection}
+        >
+        </lightning-combobox>
+</template>

@@ -1,0 +1,40 @@
+:host {
+    display: flex;
+}
+
+.popover-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.promotion-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    font-weight: var(--dxp-c-strong-text-weight, 500);
+}
+
+.promotion-details span {
+    width: 70%;
+}
+
+/*
+    Styling Hook CSS Custom Properties
+    --com-c-my-account-order-products-details-discount-amount-color - the text color of the discount amount in the popover 
+*/
+commerce-formatted-price {
+    white-space: nowrap;
+    color: var(--com-c-my-account-order-products-details-discount-amount-color, var(--dxp-g-root-contrast));
+}
+
+/* Tablet sized screens or smaller (smaller than the SLDS mqLarge responsive threshold) */
+@media only screen and (max-width: 64em) {
+    .field-properties {
+        flex-direction: column;
+    }
+}
+
+commerce-field-display {
+    /* Preserves white space for plain text values with newlines, which we want. */
+    white-space: pre-line;
+}

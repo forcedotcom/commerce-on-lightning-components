@@ -1,0 +1,23 @@
+<template lwc:render-mode="light">
+    <nav if:true={hasBreadcrumbs} aria-label={componentNameLabel} class="commerce-breadcrumb" style={customStyles}>
+        <ol class={computedTextSizeClass}>
+            <template iterator:it={breadcrumbs}>
+                <li key={it.value.label}>
+                    <template if:false={it.last}>
+                        <a href="javascript:void(0);" onclick={handleNavigation} data-index={it.index}>
+                            {it.value.label}
+                        </a>
+                    </template>
+                    <template if:true={it.last}>
+                        <template if:true={showLastItemAsLink}>
+                            <a href="javascript:void(0);" onclick={handleNavigation} data-index={it.index}>
+                                {it.value.label}
+                            </a>
+                        </template>
+                        <template if:false={showLastItemAsLink}>{it.value.label}</template>
+                    </template>
+                </li>
+            </template>
+        </ol>
+    </nav>
+</template>

@@ -1,0 +1,19 @@
+{
+    "presets": [
+        [
+            "@babel/preset-typescript",
+            {
+                "allowDeclareFields": true
+            }
+        ]
+    ],
+    "plugins": [
+        [
+            "@babel/plugin-syntax-decorators",
+            {
+                "decoratorsBeforeExport": true
+            }
+        ],
+        "@babel/plugin-syntax-class-properties"
+    ]
+}

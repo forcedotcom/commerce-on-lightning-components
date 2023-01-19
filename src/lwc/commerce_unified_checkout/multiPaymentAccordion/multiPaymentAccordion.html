@@ -1,0 +1,45 @@
+<template>
+    <div class="accordion-container">
+        <ul class="slds-accordion">
+            <li class="slds-accordion__list-item">
+                <commerce_unified_checkout-multi-payment-accordion-section
+                    data-accordion-section
+                    data-accordion-section-key="credit-card"
+                    onsectionselected={handleSectionSelected}
+                    section-name="credit-card"
+                    section-label={cardPaymentLabel}
+                    is-expanded={isCreditCardExpanded}>
+                    <commerce_unified_checkout-payment-with-billing
+                        show-component-header={_showComponentHeader}
+                        show-billing-address-heading={showBillingAddressHeading}
+                        billing-address-fieldset-legend-label={billingAddressFieldsetLegendLabel}
+                        billing-address-same-as-shipping-address-label={billingAddressSameAsShippingAddressLabel}
+                        phone-number-label={_phoneNumberLabel}
+                        phone-number-placeholder-text={_phoneNumberPlaceholderText}>
+                    </commerce_unified_checkout-payment-with-billing>
+                </commerce_unified_checkout-multi-payment-accordion-section>
+            </li>
+            <li class="slds-accordion__list-item">
+                <commerce_unified_checkout-multi-payment-accordion-section
+                    data-accordion-section
+                    data-accordion-section-key="purchase-order"
+                    onsectionselected={handleSectionSelected}
+                    section-name="purchase-order"
+                    section-label={headerLabel}
+                    is-expanded={isPurchaseOrderExpanded}>
+                    <commerce_unified_checkout-purchase-order
+                        show-billing-address-heading={showBillingAddressHeading}
+                        builder-mode={builderMode}
+                        hide-heading="true"
+                        require-billing-address={requireBillingAddress}
+                        billing-address-fieldset-legend-label={billingAddressFieldsetLegendLabel}
+                        billing-address-same-as-shipping-address-label={billingAddressSameAsShippingAddressLabel}
+                        header-label={headerLabel}
+                        input-label={inputLabel}
+                        placeholder-label={placeholderLabel}>
+                    </commerce_unified_checkout-purchase-order>
+                </commerce_unified_checkout-multi-payment-accordion-section>
+            </li>
+        </ul>
+    </div>
+</template>

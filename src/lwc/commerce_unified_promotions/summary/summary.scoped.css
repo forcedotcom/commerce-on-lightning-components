@@ -1,0 +1,60 @@
+/*
+    Styling Hook CSS Custom Properties
+
+    Font Color:
+        --com-c-cart-applied-promotions-font-color - the font color for the content.
+
+    Background Color:
+        --com-c-cart-applied-promotions-background-color - the background color of promotions section.
+
+    Section:
+        --com-c-cart-applied-promotions-border - the border for the promotions section.
+        --com-c-cart-applied-promotions-border-radius - the border radius for the promotions section.
+
+    Heading:
+        --com-c-cart-applied-promotions-heading-font-size - the font size of the heading.
+        --com-c-cart-applied-promotions-heading-font-weight - the font weight of the heading.
+        --com-c-cart-applied-promotions-heading-font-color - the font color of the heading.
+
+    Promotions:
+        --com-c-cart-applied-promotions-font-size - the font size of each item / "row".
+        --com-c-cart-applied-promotions-font-weight - the font weight of each item / "row".
+
+    Discount Amount:
+        --com-c-cart-discount-amount-font-color - the font color of the discount amount.
+*/
+:host {
+    color: var(--com-c-cart-applied-promotions-font-color, var(--dxp-g-root-contrast));
+}
+
+.summary-section {
+    border: var(--com-c-cart-applied-promotions-border, 1px solid);
+    border-color: var(--com-c-cart-applied-promotions-border-color, var(--dxp-s-form-element-color-border));
+    border-radius: var(--com-c-cart-applied-promotions-border-radius, 0);
+    background-color: var(--com-c-cart-applied-promotions-background-color, var(--dxp-g-root));
+    box-shadow: var(--com-c-cart-applied-promotions-box-shadow);
+    -webkit-box-shadow: var(--com-c-cart-applied-promotions-box-shadow);
+}
+
+.summary-header {
+    color: var(--com-c-cart-applied-promotions-heading-font-color, var(--dxp-g-root-contrast));
+    font-size: var(--com-c-cart-applied-promotions-heading-font-size, var(--dxp-g-font-size-5));
+    font-weight: var(--com-c-cart-applied-promotions-heading-font-weight, var(--dxp-c-strong-text-weight));
+}
+
+.applied-promotion {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    font-size: var(--com-c-cart-applied-promotions-font-size, var(--dxp-g-font-size-5));
+    font-weight: var(--com-c-cart-applied-promotions-font-weight, var(--dxp-s-text-heading-medium-font-weight));
+}
+
+.applied-promotion dt {
+    display: flex;
+}
+
+.applied-promotion dd {
+    white-space: nowrap;
+    color: var(--com-c-cart-discount-amount-font-color, var(--dxp-g-root-contrast));
+}

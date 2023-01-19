@@ -1,0 +1,87 @@
+:host {
+    display: flex;
+    justify-content: center;
+}
+
+commerce_product_details-gallery-image {
+    width: 400px;
+    height: 400px;
+    border-color: var(--com-carousel-image-border-color, var(--dxp-s-form-element-color-border));
+}
+
+.images.carousel-above .desktop-featured-image-carousel,
+.images.carousel-below .desktop-featured-image-carousel {
+    padding-left: 0;
+    padding-right: 0;
+    width: 400px;
+}
+
+.images.carousel-after .desktop-featured-image-carousel,
+.images.carousel-before .desktop-featured-image-carousel {
+    height: 400px;
+    padding-bottom: 0;
+    padding-top: 0;
+}
+
+commerce_product_details-horizontal-scroller {
+    align-self: stretch;
+}
+
+.mobile-gallery-image {
+    width: 200px;
+    height: 200px;
+}
+
+/* Outer Container to hold Image Slider & Image Carousel */
+.images {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    align-items: center;
+}
+
+/* Image Slider for Desktop */
+.image-lightbox {
+    display: flex;
+    align-items: center;
+    height: 70vh; /* Fixed height to provide a constant image container while image sizes may vary */
+}
+
+.image-lightbox div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-grow: 1;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+}
+
+.image-lightbox img {
+    flex: 0 0 auto; /* IE11 sizing quirk that is resolved by flexbox */
+    max-height: 100%;
+    max-width: 100%;
+}
+
+/* Narrow screens (e.g. phones) */
+@media only screen and (max-width: 48em) {
+    /* SLDS token: mqSmall */
+    .images {
+        align-self: center;
+    }
+}
+
+/* SLDS token: slds_show-small */
+@media only screen and (min-width: 480px) {
+    .images.carousel-above {
+        flex-direction: column-reverse;
+    }
+    .images.carousel-after {
+        flex-direction: row;
+        justify-content: center;
+    }
+    .images.carousel-before {
+        flex-direction: row-reverse;
+        justify-content: center;
+    }
+}

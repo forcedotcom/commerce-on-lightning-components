@@ -1,0 +1,24 @@
+<template lwc:render-mode="light">
+    <commerce_unified_checkout-shipping
+        builder-mode={_isBuilderMode}
+        shipping-address-limit={shippingAddressLimit}
+        shipping-address-limit-increase={shippingAddressLimitIncrease}
+        edit-address-label={editAddressLabel}
+        new-address-button-label={newAddressButtonLabel}
+        show-more-button-label={showMoreButtonLabel}
+        addresses={_addresses}
+        initial-value={_initialValue}
+        component-header-edit-address-label={componentHeaderEditAddressLabel}
+        make-default-address-label={makeDefaultAddressLabel}
+        show-new-address-form={_showNewAddressForm}
+        show-new-address-button={_showNewAddressButton}
+        show-address-list={_showAddressList}
+        show-show-more-addresses-button={_showShowMoreAddressButton}
+        back-to-list-label={backToListLabel}
+        phone-number-label={phoneNumberLabel}
+        phone-number-placeholder-text={phoneNumberPlaceholderText}
+
+        read-only={_isReadOnly}
+    >
+    </commerce_unified_checkout-shipping>
+</template>

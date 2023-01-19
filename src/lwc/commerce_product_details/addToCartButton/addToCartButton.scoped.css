@@ -1,0 +1,18 @@
+:host {
+    display: inline-flex;
+}
+
+button {
+    text-transform: uppercase;
+    flex-grow: 1;
+
+    background-color: var(--com-c-product-details-add-to-cart-button-background-color, var(--dxp-g-brand));
+    border-color: var(--com-c-product-details-add-to-cart-button-border-color, var(--dxp-g-brand));
+    border-radius: var(--com-c-product-details-add-to-cart-button-border-radius, 0rem);
+    color: var(--com-c-product-details-add-to-cart-button-text-color, var(--dxp-g-brand-contrast));
+}
+
+button:hover:enabled {
+    background-color: var(--com-c-product-details-add-to-cart-button-background-hover-color, var(--dxp-g-brand-1));
+    color: var(--com-c-product-details-add-to-cart-button-text-hover-color, var(--dxp-g-brand-contrast-1));
+}

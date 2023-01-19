@@ -1,0 +1,9 @@
+li:last-child .separator {
+    display: none;
+}
+
+li {
+    color: var(--com-c--variant-attribute-color, var(--dxp-g-root-contrast));
+    font-size: var(--com-c-variant-attribute-font-size, var(--dxp-g-font-size-2));
+    display: var(--com-c-variant-attribute-display, inline-block);
+}

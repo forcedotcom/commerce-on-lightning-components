@@ -1,0 +1,28 @@
+@import '../stencil.scoped.css';
+
+.stencil-item-container-payment {
+    width: 100%;
+    margin-bottom: var(--lwc-spacingMedium, 1rem);
+}
+
+.line-small-payment {
+    border-radius: var(--dxp-s-form-border-radius, 0.5rem);
+    width: 15%;
+    display: block;
+}
+
+.line-box-payment {
+    border-radius: var(--dxp-s-form-border-radius, 0.5rem);
+    height: var(--dxp-g-font-size-10, 2rem);
+    width: 100%;
+    display: block;
+}
+
+.line-payment {
+    border-radius: var(--dxp-s-form-border-radius, 0.5rem);
+    width: 15%;
+}
+
+.pamyment-spacer {
+    height: var(--dxp-s-body-small-font-size, 0.5rem);
+}

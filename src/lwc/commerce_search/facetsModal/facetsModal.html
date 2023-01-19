@@ -1,0 +1,18 @@
+<template lwc:render-mode="light">
+    <section class="filters-panel">
+        <!-- Filters Panel - shows the category tree and facets for a search result -->
+        <commerce_search-filters-panel
+            display-data={filterPanelDisplayData}
+            onfacetvalueupdate={handleFacetValueUpdate}
+        >
+        </commerce_search-filters-panel>
+    </section>
+    <section>
+        <button
+            class="slds-button slds-button_brand slds-button_stretch results-button"
+            onclick={handleCloseModal}
+        >
+            {displayCountLabel}
+        </button>
+    </section>
+</template>

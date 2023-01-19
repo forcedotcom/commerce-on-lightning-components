@@ -1,0 +1,13 @@
+<template lwc:render-mode="light">
+    <template for:each={_actions} for:item="_action">
+        <button
+            key={_action.name}
+            data-event={_action.eventName}
+            class="slds-button slds-button_neutral slds-button_stretch"
+            onclick={handleAction}
+            aria-label={_action.assistiveText}
+        >
+            {_action.name}
+        </button>
+    </template>
+</template>

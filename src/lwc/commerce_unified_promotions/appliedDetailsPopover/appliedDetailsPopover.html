@@ -1,0 +1,58 @@
+<template lwc:render-mode='light'>
+    <lightning-popup-source
+        class="field-properties"
+        aria-describedby="applied-details-popover-body"
+        aria-labelledby="applied-details-popover-heading"
+        onclickout={closePopover}
+    >
+        <lightning-button-icon
+            if:true={showSavingsInfoIcon}
+            alternative-text={savingsInfoBubbleAssistiveText}
+            class="slds-m-right_x-small"
+            icon-name="utility:info"
+            onclick={handleClickAction}
+            size="small"
+            slot="source"
+            variant="bare"
+        ></lightning-button-icon>
+        <div class="popover-header slds-popover__header slds-border_bottom slds-p-vertical_x-small">
+            <p id="applied-details-popover-heading" class="slds-text-heading_medium">{headerLabel}</p>
+            <lightning-button-icon
+                size="large"
+                variant="bare"
+                icon-name="utility:close"
+                class="slds-p-slds-popover__close"
+                alternative-text={closeButtonAssistiveText}
+                onclick={closePopover}
+            ></lightning-button-icon>
+        </div>
+        <div id="applied-details-popover-body" class="slds-popover__body slds-popover__body_small">
+            <template for:each={displayableAppliedPromotions} for:item="promotion">
+                <div key={promotion.id} class="slds-p-vertical_xx-small promotion">
+                    <div class="slds-grid slds-grid_vertical slds-p-vertical_x-small">
+                        <div class="promotion-details">
+                            <span>{promotion.name}</span>
+                            <commerce-formatted-price
+                                if:true={promotion.discountAmount}
+                                currency-code={currencyCode}
+                                display-currency-as="symbol"
+                                class={discountAmountStylesClass}
+                                title={promotion.formattedDiscountAmount}
+                                value={promotion.discountAmount}
+                            ></commerce-formatted-price>
+                        </div>
+                        <lightning-accordion allow-multiple-sections-open 
+                        if:true={promotion.termsAndConditions}>
+                            <lightning-accordion-section label={termsAndConditionsTitleText}>
+                                <commerce-field-display
+                                value={promotion.termsAndConditions}
+                                currency-code={currencyCode}
+                            ></commerce-field-display>
+                            </lightning-accordion-section>
+                        </lightning-accordion>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </lightning-popup-source>
+</template>

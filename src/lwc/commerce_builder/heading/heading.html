@@ -1,0 +1,9 @@
+<template lwc:render-mode="light">
+    <commerce_product_details-heading
+        class="slds-p-bottom_small"
+        currency-code={currencyCode}
+        fields={productFieldsData}
+    >
+        <div slot="heading"><slot name="heading"></slot></div>
+    </commerce_product_details-heading>
+</template>

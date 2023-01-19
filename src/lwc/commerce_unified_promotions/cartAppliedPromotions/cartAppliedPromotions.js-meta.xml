@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+	<isExposed>true</isExposed>
+	<targets>
+		<target>lightningCommunity__Page</target>
+		<target>lightningCommunity__Default</target>
+	</targets>
+	<targetConfigs>
+        <targetConfig targets="lightningCommunity__Page">
+            <paletteSection>Commerce</paletteSection>
+            <orgAccess>Commerce.orgHasPromotionsEnabled</orgAccess>
+        </targetConfig>
+		<targetConfig targets="lightningCommunity__Default">
+            <designSubstitute>commerce_unified_promotions:cartAppliedPromotionsDesignSubstitute</designSubstitute>
+            <!-- Applied Promotions Content -->
+            <property name="backgroundColor" type="Color"/>
+            <!-- Header Content -->
+            <property name="appliedPromotionsTitleText" type="String" translatable="true" default="Promotions"/>
+            <property name="appliedPromotionsTitleFontSize" type="String" default="medium" datasource="java://siteforce.communitybuilder.datasource.SLDSFontSizeDataSource"/>
+            <property name="appliedPromotionsTitleTextColor" type="Color"/>
+            <!-- Promotions Content -->
+            <property name="appliedPromotionsFontSize" type="String" default="small" datasource="java://siteforce.communitybuilder.datasource.SLDSFontSizeDataSource"/>
+            <property name="appliedPromotionsTextColor" type="Color"/>
+            <property name="showDiscountAmount" type="Boolean" default="true"/>
+            <property name="discountAmountTextColor" type="Color"/>
+            <!-- Terms and Conditions -->
+            <property name="showTermsAndConditions" type="Boolean" default="true"/>
+            <property name="termsAndConditionsTitleText" type="String" translatable="true" default="Terms and Conditions"/>
+
+            <designLayout>
+                <designSection>
+                    <designLayoutItems>
+                        <designLayoutProperty name="backgroundColor"/>
+                    </designLayoutItems>
+                </designSection>
+                <designSection name="header">
+                    <designLayoutItems>
+                        <designLayoutProperty name="appliedPromotionsTitleText"/>
+                        <designLayoutProperty name="appliedPromotionsTitleFontSize"/>
+                        <designLayoutProperty name="appliedPromotionsTitleTextColor"/>
+                    </designLayoutItems>
+                </designSection>
+                <designSection name="promotions">
+                    <designLayoutItems>
+                        <designLayoutProperty name="appliedPromotionsFontSize"/>
+                        <designLayoutProperty name="appliedPromotionsTextColor"/>
+                        <designLayoutProperty name="showDiscountAmount"/>
+                        <designLayoutProperty cbVisibleIf="showDiscountAmount" name="discountAmountTextColor"/>
+                    </designLayoutItems>
+                </designSection>
+                <designSection name="termsAndConditions" >
+                    <designLayoutItems>
+                        <designLayoutProperty name="showTermsAndConditions"/>
+                        <designLayoutProperty cbVisibleIf="showTermsAndConditions" name="termsAndConditionsTitleText"/>
+                    </designLayoutItems>
+                </designSection>
+            </designLayout>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

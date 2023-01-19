@@ -1,0 +1,31 @@
+<template lwc:render-mode="light">
+    <div class="slds-form-element__control">
+        <template for:each={transformedOptions} for:item="option">
+            <span class="slds-radio" key={option.value}>
+                <input
+                    type="radio"
+                    name={name}
+                    id={option.indexId}
+                    checked={option.isChecked}
+                    value={option.value}
+                    required={required}
+                    disabled={disabled}
+                    onchange={handleChange}
+                    onblur={handleBlur}
+                    onfocus={handleFocus}
+                />
+                <label class="slds-radio__label" for={option.indexId}>
+                    <span class="slds-radio_faux"></span>
+                    <span class="slds-form-element__label">{option.label}</span>
+                    <span if:true={option.isDefault} class="defaultLabel">{badgeLabel}</span>
+                </label>
+                <lightning-button data-edit
+                    variant="base"
+                    label={editAddressLabel}
+                    onclick={handleEdit}
+                    value={option.value}>
+                </lightning-button>
+            </span>
+        </template>
+    </div>
+</template>

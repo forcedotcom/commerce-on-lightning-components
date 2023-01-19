@@ -1,0 +1,24 @@
+:host {
+    display: flex;
+}
+
+.accordion-section {
+    flex-grow: 1;
+}
+
+.accordion-summary {
+    padding: var(--dxp-g-spacing-large);
+    background-color: var(--dxp-g-neutral);
+}
+
+.accordion-label {
+    margin-left: var(--dxp-g-spacing-medium);
+    display: inline-block;
+}
+
+.accordion-content {
+    padding: var(--dxp-g-spacing-large);
+    border-top-width: var(--sds-c-accordion-sizing-border);
+    border-top-style: solid;
+    border-top-color: var(--dxp-g-neutral);
+}

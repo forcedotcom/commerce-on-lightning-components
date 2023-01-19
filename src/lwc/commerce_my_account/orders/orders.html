@@ -1,0 +1,79 @@
+<template lwc:render-mode="light">
+    <commerce_my_account-orders-refinements
+        show-filter={showFilter}
+        filter-text={filterText}
+        start-date={startDate}
+        end-date={endDate}
+        show-sort-by={showSortBy}
+        sort-options={sortOptions}
+        count={_totalOrdersCount}
+        small-layout={_smallLayout}
+    >
+    </commerce_my_account-orders-refinements>
+    <div
+        if:true={_showListOfOrders}
+        role={_ariaRoleForOrders}
+        aria-label={listTitle}
+    >
+        <template
+            for:each={_normalizedOrders}
+            for:item="order"
+            for:index="index"
+        >
+            <commerce_my_account-order
+                key={order.id}
+                order={order}
+                actions={actions}
+                columns={_columns}
+                details-label={detailsLabel}
+                fieldset-tab-index={order.fieldsetTabIndex}
+                onshiftfocus={handleShiftfocus}
+                class="slds-m-bottom_medium"
+                role={_ariaRoleForOrder}
+                data-order-id={order.id}
+                data-index={index}
+            ></commerce_my_account-order>
+        </template>
+    </div>
+    <div
+        if:true={_showEmptyState}
+        class="slds-grid_vertical slds-align_absolute-center emptyState"
+    >
+        <p class="emptyStateTitle">{noOrderMessageTitle}</p>
+        <p>{noOrderMessageText}</p>
+    </div>
+    <lightning-spinner
+        if:true={isLoadingMore}
+        class="slds-is-relative slds-align_absolute-center slds-m-around_large"
+        variant="brand"
+        alternative-text={_spinnerText}
+    ></lightning-spinner>
+
+    <footer
+        if:true={hasNextPage}
+        class="slds-p-around_small slds-align_absolute-center"
+    >
+        <lightning-button
+            if:false={_showGotoList}
+            variant="base"
+            label={showMoreLabel}
+            aria-label={showMoreAssistiveText}
+            onclick={handleShowMoreItems}
+        >
+        </lightning-button>
+
+        <template if:true={_showGotoList}>
+            <a href={ordersUrl} onclick={handleNavigateToOrders}>{showMoreLabel}</a>
+        </template>
+    </footer>
+    <commerce-error
+        if:true={_hasError}
+        error-label={errorMessage}
+        class="slds-grid slds-m-top_small"
+    ></commerce-error>
+    <lightning-spinner
+        if:true={_showPageSpinner}
+        alternative-text={_spinnerText}
+        size="large"
+    ></lightning-spinner>
+</template>

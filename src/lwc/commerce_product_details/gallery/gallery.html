@@ -1,0 +1,79 @@
+<template lwc:render-mode="light">
+    <div class={carouselPositionClasses}>
+        <!-- Product Image ( Desktop Flow ) -->
+        <commerce_product_details-gallery-image
+            class="slds-show_small slds-p-around_xx-small slds-border_top slds-border_right slds-border_bottom slds-border_left"
+            selectable={expandable}
+            url={desktopUrl}
+            alternative-text={imageResolvedAlternativeText}
+            onselected={handleImageClicked}            
+        ></commerce_product_details-gallery-image>
+
+        <!-- Product Image Carousel ( Desktop Flow ) -->
+        <commerce_product_details-carousel
+            if:true={showCarousel}
+            class="slds-show_small slds-p-around_small desktop-featured-image-carousel"
+            images={thumbnailImages}
+            orientation={carouselOrientation}
+            page-size={carouselPageSize}            
+            paginate
+            selected-index={selectedImageIndex}
+            onselectionchanged={handleThumbnailImageSelected}
+            oncarouseldisplayed={handleCarouselDisplayed}
+        ></commerce_product_details-carousel>
+        <!-- Mobile display and dots -->
+        <commerce_product_details-horizontal-scroller
+            class="slds-hide_small"
+            show-next-trigger={hasMultipleImages}
+            show-previous-trigger={hasMultipleImages}
+            onshownext={showNextImage}
+            onshowprevious={showPreviousImage}
+        >
+            <commerce_product_details-gallery-image
+                class="mobile-gallery-image slds-p-around_xx-small slds-border_top slds-border_right slds-border_bottom slds-border_left"
+                selectable={expandable}
+                url={mobileUrl}
+                alternative-text={imageResolvedAlternativeText}
+                onselected={handleImageClicked}
+            ></commerce_product_details-gallery-image>
+        </commerce_product_details-horizontal-scroller>
+        <commerce_product_details-dot-indicators
+            if:true={showCarousel}
+            class="slds-hide_small"
+            count={numberOfImages}
+            selected-index={selectedImageIndex}
+        ></commerce_product_details-dot-indicators>
+    </div>
+
+    <!-- Product Image Modal -->
+    <lightning-dialog>
+        <div class="image-lightbox">
+            <!-- Lightbox Image Carousel ( Desktop Flow ) -->
+            <commerce_product_details-carousel
+                if:true={showCarousel}
+                class="slds-show_small slds-p-around_medium"
+                images={thumbnailImages}
+                orientation="vertical"
+                page-size={carouselPageSize}
+                paginate
+                selected-index={selectedImageIndex}
+                onselectionchanged={handleThumbnailImageSelected}
+            ></commerce_product_details-carousel>
+            <div>
+                <!-- Product Image Slider -->
+                <img src={imageUrl} alt={lightboxImageAlternativeText}/>
+                <!-- Lightbox Image Carousel ( Mobile Flow ) -->
+                <commerce_product_details-carousel
+                    if:true={showCarousel}
+                    class="slds-hide_small slds-p-vertical_medium"
+                    style={mobileLightboxCarouselStyles}
+                    images={thumbnailImages}
+                    orientation="horizontal"
+                    page-size={carouselPageSize}
+                    selected-index={selectedImageIndex}
+                    onselectionchanged={handleThumbnailImageSelected}
+                ></commerce_product_details-carousel>
+            </div>
+        </div>
+    </lightning-dialog>
+</template>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightningCommunity__Page</target>
+        <target>lightningCommunity__Default</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightningCommunity__Default">
+            <!-- Purchase Order -->
+            <property label="Heading" name="headerLabel" type="String" default="Purchase Order" translatable="true" />
+            <property label="Purchase Order Number Field Label" name="inputLabel" type="String" default="Purchase Order Number" translatable="true" />
+            <property label="Purchase Order Number Field Ghost Text" name="placeholderLabel" type="String" default="" translatable="true" />
+            <!-- billing address -->
+            <property label="Require Billing Address for Purchase Order" name="requireBillingAddress" type="Boolean" default="true"/>
+            <property label="Show Heading" name="showBillingAddressHeading" type="Boolean" default="true"/>
+            <property label="Heading" name="billingAddressFieldsetLegendLabel" type="String" default="Billing Address" translatable="true" />
+            <property label="Use Same Address for Billing Checkbox Label" name="billingAddressSameAsShippingAddressLabel" type="String" default="Same as shipping address" translatable="true" />
+            <designLayout>
+                <designSection name="purchaseOrderForm">
+                    <designLayoutItems>
+                        <designLayoutProperty name="headerLabel"/>
+                        <designLayoutProperty name="inputLabel"/>
+                        <designLayoutProperty name="placeholderLabel"/>
+                    </designLayoutItems>
+                </designSection>
+                <designSection name="billingAddressForm">
+                    <designLayoutItems>
+                        <designLayoutProperty name="requireBillingAddress"/>
+                        <designLayoutProperty name="showBillingAddressHeading"/>
+                        <designLayoutProperty name="billingAddressFieldsetLegendLabel"/>
+                        <designLayoutProperty name="billingAddressSameAsShippingAddressLabel"/>
+                    </designLayoutItems>
+                </designSection>
+            </designLayout>
+        </targetConfig>
+        <targetConfig targets="lightningCommunity__Page">
+            <paletteSection>Commerce</paletteSection>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

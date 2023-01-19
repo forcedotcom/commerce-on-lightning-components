@@ -1,0 +1,25 @@
+<template lwc:render-mode="light">
+    <div class="slds-grid slds-wrap">
+        <commerce_my_account-date-filter
+            if:true={showFilter}
+            start-date={startDate}
+            end-date={endDate}
+            filter-text={filterText}
+        ></commerce_my_account-date-filter>
+        <commerce_my_account-apply-sort
+            if:true={_showSortByForLargeLayout}
+            sort-options={sortOptions}
+            class="slds-container--right slds-align-middle"
+        ></commerce_my_account-apply-sort>
+    </div>
+    <div class="slds-grid">
+        <div if:true={_showTotalRecord} tabindex="-1" class="slds-text-body_small slds-m-top_x-small record-count">
+            {_totalRecordsCount}
+        </div>
+        <commerce_my_account-apply-sort
+            if:true={_showSortByForSmallLayout}
+            sort-options={sortOptions}
+            class="slds-container--right slds-align-middle"
+        ></commerce_my_account-apply-sort>
+    </div>
+</template>

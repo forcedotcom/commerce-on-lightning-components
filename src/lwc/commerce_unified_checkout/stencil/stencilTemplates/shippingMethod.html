@@ -1,0 +1,11 @@
+<template lwc:render-mode="light">
+    <div class="stencil-container" data-shipping-method>
+        <template for:each={items} for:item="item">
+            <div class="stencil-item-container" key={item.key}>
+                <div class="stencil-item icon"></div>
+                <div class="stencil-item line-method slds-m-left_small"></div>
+                <div class="stencil-item line-method stencil-item-end slds-float_right"></div>
+            </div>
+        </template>
+    </div>
+</template>

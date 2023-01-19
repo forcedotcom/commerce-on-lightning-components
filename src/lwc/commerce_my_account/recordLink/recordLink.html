@@ -1,0 +1,8 @@
+<template lwc:render-mode="light">
+    <a if:true={_hasRecordId} href={_url} aria-label={assistiveTextLabel} onclick={navigateToRecord}>{label}</a>
+    <lightning-spinner
+        if:false={_hasRecordId}
+        class="slds-is-relative slds-m-horizontal_large spinner"
+        size="small"
+    ></lightning-spinner>
+</template>

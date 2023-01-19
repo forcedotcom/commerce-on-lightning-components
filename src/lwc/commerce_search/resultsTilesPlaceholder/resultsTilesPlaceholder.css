@@ -1,0 +1,114 @@
+.list-header,
+.sort-menu,
+.text {
+    background-color: rgb(242, 242, 243);
+}
+
+.product-card {
+    background-color: rgb(233, 234, 236);
+}
+
+.list-header,
+.sort-menu {
+    border-radius: var(--sds-c-badge-radius-border);
+    margin-bottom: 1rem;
+    height: 1.5rem;
+    width: 10rem;
+}
+
+.searchResults-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.filter-panel-container {
+    flex: 1 0 20%;
+    max-width: 15rem;
+}
+
+.product-grid-container {
+    flex: 1 0 80%;
+    padding: 1rem;
+}
+
+.product-grid {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.grid-item {
+    min-width: 11.25rem;
+}
+
+.text {
+    border-radius: var(--sds-c-badge-radius-border);
+    height: var(--dxp-g-spacing-xsmall);
+    width: 5rem;
+    margin-bottom: 1rem;
+}
+
+.product-card {
+    border-radius: var(--dxp-g-spacing-xsmall);
+    margin: 1.5rem 0.75rem;
+}
+
+.product-image {
+    width: 100%;
+    position: relative;
+    padding-top: 100%;
+}
+
+.product-price {
+    height: 5rem;
+}
+
+.spinner-container {
+    position: relative;
+}
+
+.mobile {
+    display: none;
+}
+
+.desktop {
+    display: flex;
+}
+
+.slds-spinner_container {
+    background-color: var(--sds-c-button-color-background);
+}
+
+/*  
+    Narrow screens (e.g. phones) 
+    SLDS media query reference: https://www.lightningdesignsystem.com/design-tokens/#category-media-query
+*/
+@media only screen and (max-width: 47.9375em) {
+    /* SLDS token: mqSmall */
+    .filter-panel-container,
+    .sort-menu {
+        display: none;
+    }
+
+    .product-grid-container {
+        display: block;
+        padding: 0.5rem;
+    }
+
+    .product-grid {
+        padding: 0;
+    }
+
+    .product-card {
+        width: 100%;
+        margin: 0;
+    }
+
+    .desktop {
+        display: none;
+    }
+
+    .mobile {
+        display: block;
+    }
+}

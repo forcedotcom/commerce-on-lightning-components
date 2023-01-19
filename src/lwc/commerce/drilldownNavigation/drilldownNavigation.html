@@ -1,0 +1,33 @@
+<template lwc:render-mode="light">
+    <template if:false={showMobileMenu}>
+        <community_navigation-drilldown-navigation-bar
+            menu-items={viewMenuItems}
+            menu-alignment={alignment}
+            show-back-label={showBackLabel}
+            show-app-launcher={showAppLauncher}
+            custom-theme-styles-bar={customThemeStylesBar}
+            custom-theme-styles-list={customThemeStylesList}
+        ></community_navigation-drilldown-navigation-bar>
+    </template>
+
+    <template if:true={showMobileMenu}>
+        <template if:true={showMobileTrigger}>
+            <lightning-button-icon
+                icon-name="utility:rows"
+                alternative-text={mobileTriggerLabel}
+                variant="bare"
+                size="large"
+                onclick={handleNavigationTriggerClicked}
+            ></lightning-button-icon>
+        </template>
+        <template if:true={mobileMenuOpen}>
+            <community_navigation-drilldown-navigation-list
+                menu-items={viewMenuItems}
+                is-mobile-view={showMobileMenu}
+                onclosesubmenus={focusMobileNavigationTrigger}
+                show-back-label={showBackLabel}
+                custom-theme-styles={customThemeStylesList}
+            ></community_navigation-drilldown-navigation-list>
+        </template>
+    </template>
+</template>

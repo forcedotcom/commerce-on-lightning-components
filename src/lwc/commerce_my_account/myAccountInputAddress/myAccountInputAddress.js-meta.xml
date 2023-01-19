@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <isExposed>true</isExposed>
+    <targets>
+		<target>lightningCommunity__Page</target>
+		<target>lightningCommunity__Default</target>
+	</targets>
+      <targetConfigs>
+        <targetConfig targets="lightningCommunity__Page">
+            <paletteSection>Commerce</paletteSection>
+        </targetConfig>
+         <targetConfig targets="lightningCommunity__Default">
+            <property label="Show Page Title" name="showComponentHeader" type="Boolean" default="true"/>
+            <property label="Show all address types" name="showDifferentAddressTypes" type="Boolean" default="true"/>
+            <property label="Add Page Title" name="componentHeaderNewAddressLabel" type="String" default="New Address" translatable="true" />
+            <property label="Edit Page Title" name="componentHeaderEditAddressLabel" type="String" default="Edit Address" translatable="true" />
+            <property label="Make Default Address Label" name="makeDefaultAddressLabel" type="String" default="Make this my default address" translatable="true" />
+            <property label="Width (25-100%)" name="formWidth" type="Integer" min="25" max="100" default="50"/>
+        
+             <designLayout>
+                  <designSection name="addressForm">
+                     <designLayoutItems>
+                        <designLayoutProperty name="showComponentHeader"/>
+                        <designLayoutProperty name="showDifferentAddressTypes"/>
+                        <designLayoutProperty name="componentHeaderNewAddressLabel" cbVisibleIf="showComponentHeader"/>
+                        <designLayoutProperty name="componentHeaderEditAddressLabel" cbVisibleIf="showComponentHeader"/>
+                        <designLayoutProperty name="makeDefaultAddressLabel"/>
+                        <designLayoutProperty name="formWidth"/>
+                    </designLayoutItems>
+                  </designSection>
+            </designLayout>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

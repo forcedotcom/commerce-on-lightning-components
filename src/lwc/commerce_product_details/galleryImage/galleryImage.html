@@ -1,0 +1,8 @@
+<template lwc:render-mode="light">
+    <figure class="slds-align_absolute-center">
+        <button if:true={selectable} onclick={handleImageClicked} class="image-container">
+            <img src={resolvedUrl} alt={alternativeText}/>
+        </button>
+        <img if:false={selectable} src={resolvedUrl} alt={alternativeText}/>
+    </figure>
+</template>

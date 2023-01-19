@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightningCommunity__Page</target>
+        <target>lightningCommunity__Default</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightningCommunity__Page">
+            <paletteSection>Commerce</paletteSection>
+        </targetConfig>
+        <targetConfig targets="lightningCommunity__Default">            
+            <property name="showCarousel" type="Boolean" default="true"/>
+            <property name="carouselPageSize" type="Integer" default="1"/>
+            <property label="Carousel Position" name="carouselPosition" type="String" datasource="java://siteforce.communitybuilder.datasource.B2BCarouselOrientationDataSource" default="before" translatable="true"/>
+            <property name="imageBorderColor" type="Color"/>
+            <property label="Product Data Binding" name="product" type="String" default="{!Product.Details}"/>
+            <designLayout>
+                <designSection>
+                    <designLayoutItems>
+                        <designLayoutProperty name="showCarousel"/>
+                        <designLayoutProperty name="carouselPageSize"/>
+                        <designLayoutProperty name="carouselPosition"/>
+                        <designLayoutProperty name="imageBorderColor"/>
+                        <designLayoutProperty name="product"/>                        
+                    </designLayoutItems>
+                </designSection>
+            </designLayout>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

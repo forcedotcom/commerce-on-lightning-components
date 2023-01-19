@@ -1,0 +1,33 @@
+{
+    "name": "@salesforce/commerce-on-lightning-components",
+    "version": "0.0.1",
+    "private": true,
+    "description": "Commerce on Lightning LWR component source code (for reference purposes)",
+    "license": "UNLICENSED",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/forcedotcom/commerce-on-lightning-components.git"
+    },
+    "files": [
+        "src/lwc/**"
+    ],
+    "scripts": {
+        "build": "yarn build:clean && yarn build:ts && yarn build:components && yarn build:scss",
+        "build:clean": "rm -rf dist",
+        "build:components": "cpx 'src/lwc/**/*.{css,html,js,js-meta.xml,md,svg}' dist/lwc \"$@\" && cpx 'src/aura/**/*.{app,cmp,css,design,js,svg}' dist/aura",
+        "build:scss": "sass --no-source-map src/lwc:dist/lwc",
+        "build:ts": "babel src/lwc/ --out-dir dist/lwc --extensions '.ts'"
+    },
+    "devDependencies": {
+        "@babel/cli": "7.19.3",
+        "@babel/core": "7.19.6",
+        "@babel/plugin-syntax-class-properties": "7.12.13",
+        "@babel/plugin-syntax-decorators": "7.19.0",
+        "@babel/preset-typescript": "7.18.6",
+        "cpx2": "4.2.0",
+        "prettier": "2.6.2",
+        "sass": "1.56.2",
+        "typescript": "4.6.4"
+    },
+    "packageManager": "yarn@3.3.1"
+}

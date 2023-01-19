@@ -1,0 +1,55 @@
+/**
+ * Style customizations supported by the apply coupon input form.
+ *
+ * .reveal-coupon
+ *    Reveal Font Size:
+ *        --com-c-cart-reveal-coupon-form-button-font-size - The font size of the reveal coupon button.
+ *
+ *    Reveal Font Color:
+ *        --com-c-cart-reveal-coupon-form-button-font-color - the color of the reveal coupon button text, specified as a valid CSS color representation.
+ *
+ * .input-box
+ *    Input Background Color:
+ *        --com-c-cart-coupon-input-box-background-color - The background color of the coupon input box, specified as a valid CSS color representation.
+ *
+ *    Input Font Color:
+ *        --com-c-cart-coupon-input-box-font-color - The color of the coupon input box text, specified as a valid CSS color representation.
+ *
+ *    Input Border Radius:
+ *        --com-c-cart-coupon-input-box-border-radius - The radius of the coupon input box, specified as a CSS length.
+ *
+ */
+
+/*
+  The custom input box label using <span> should not be displayed.
+  It is added only for accessibility purposes.
+*/
+span {
+    display: none;
+}
+
+.reveal-coupon {
+    color: var(--com-c-cart-reveal-coupon-form-button-font-color, var(--dxp-g-root-contrast));
+    font-size: var(--com-c-cart-reveal-coupon-form-button-font-size, var(--dxp-g-font-size-5));
+}
+
+.coupon-input-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--dxp-g-spacing-small);
+}
+
+.input {
+    flex-grow: 1;
+}
+
+.input-box {
+    background-color: var(--com-c-cart-coupon-input-box-background-color, var(--dxp-s-form-element-color-background));
+    color: var(--com-c-cart-coupon-input-box-font-color, var(--dxp-g-root-contrast));
+    border-radius: var(--com-c-cart-coupon-input-box-border-radius, 4px);
+}
+
+.apply-btn {
+    align-items: flex-start;
+    flex-grow: 1;
+}

@@ -1,0 +1,43 @@
+<template lwc:render-mode="light">
+    <commerce_cart-items
+        items={_items}
+        currency-iso-code={_currencyIsoCode}
+        display-show-more={displayShowMoreButton}
+        show-remove-item={showRemoveItem}
+        show-product-image={showProductImage}
+        show-product-variants={showProductVariants}
+        show-price-per-unit={showPricePerUnit}
+        price-per-unit-font-color={pricePerUnitFontColor}
+        price-per-unit-font-size={pricePerUnitFontSize}
+        original-price-font-color={originalPriceFontColor}
+        original-price-font-size={originalPriceFontSize}
+        actual-price-font-color={actualPriceFontColor}
+        actual-price-font-size={actualPriceFontSize}
+        show-total-prices={showTotalPrices}
+        show-original-price={showOriginalPrice}
+        show-actual-price={showActualPrice}
+        show-sku={showSku}
+        sku-label={skuLabel}
+        minimum-value-guide-text={minimumValueGuideText}
+        maximum-value-guide-text={maximumValueGuideText}
+        increment-value-guide-text={incrementValueGuideText}
+        show-promotions={showPromotions}
+        promotions-applied-savings-button-text={promotionsAppliedSavingsButtonText}
+        promotions-applied-savings-button-font-color={promotionsAppliedSavingsButtonFontColor}
+        promotions-applied-savings-button-font-size={promotionsAppliedSavingsButtonFontSize}
+        promotions-applied-savings-button-text-hover-color={promotionsAppliedSavingsButtonTextHoverColor}
+        promotions-applied-savings-button-background-color={promotionsAppliedSavingsButtonBackgroundColor}
+        promotions-applied-savings-button-background-hover-color={promotionsAppliedSavingsButtonBackgroundHoverColor}
+        promotions-applied-savings-button-border-color={promotionsAppliedSavingsButtonBorderColor}
+        promotions-applied-savings-button-border-radius={promotionsAppliedSavingsButtonBorderRadius}
+        product-field-mapping={productFieldMappingValue}
+        oncartshowmore={handleCartShowMore}
+        ondeletecartitem={handleDeleteCartItem}
+        onupdatecartitem={handleUpdateCartItem}
+        onnavigatetoproduct={handleProductNavigation}
+    >
+        <section slot="showMore">
+            <slot name="showMore"></slot>
+        </section>
+    </commerce_cart-items>
+</template>

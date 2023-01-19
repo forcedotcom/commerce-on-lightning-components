@@ -1,0 +1,16 @@
+.footer-container {
+    flex-direction: row;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.clear-cart-button:hover{
+    text-decoration: underline;
+}
+
+@media only screen and (max-width: 64em) {
+    .container {
+        flex-direction: column;
+        justify-content: center;
+    }
+}

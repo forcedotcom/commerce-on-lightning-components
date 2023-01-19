@@ -1,0 +1,12 @@
+<template lwc:render-mode="light">
+    <div if:true={displayCartAppliedPromotions}
+         class="slds-m-top_medium"
+         style={cartAppliedPromotionsCssStyles}>
+        <commerce_unified_promotions-summary
+            applied-promotions={appliedPromotions}
+            header-text={appliedPromotionsTitleText}
+            currency-code={_currencyCode}
+            terms-and-conditions-header-text={termsAndConditionsTitleText}>
+        </commerce_unified_promotions-summary>
+    </div>
+</template>

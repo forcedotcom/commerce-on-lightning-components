@@ -1,0 +1,8 @@
+:host {
+    display: inline-flex;
+}
+
+a {
+    text-transform: var(--dxp-s-text-heading-extra-large-text-transform);
+    flex-grow: 1;
+}

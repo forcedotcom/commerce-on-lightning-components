@@ -1,0 +1,61 @@
+<template lwc:render-mode="light">
+    <div if:true={_isShowEmptyMessage} class="slds-p-around_small empty-message">
+        {_emptyMessage}
+    </div>
+
+    <div
+        if:false={_isShowEmptyMessage}
+        class="slds-form-element"
+        data-shipping-method-edit>
+        <div class="slds-form-element__control">
+            <template for:each={transformedOptions} for:item="option">
+                <span class="slds-radio" key={option.value}>
+                    <input
+                        type="radio"
+                        name={name}
+                        id={option.indexId}
+                        checked={option.isChecked}
+                        value={option.value}
+                        required={_required}
+                        disabled={isDisabled}
+                        onchange={handleShippingMethodChange}
+                    />
+                    <label
+                        class="
+                            slds-radio__label
+                            flex-container
+                        "
+                        for={option.indexId}
+                    >
+                        <span><span class="slds-radio_faux"></span>&nbsp;</span>
+                        <span
+                            id={option.labelAria}
+                            data-id={option.labelAria}
+                            class="slds-form-element__label flex-grow"
+                        >{option.label}</span
+                        >
+                        <b2b_buyer_pricing-formatted-price
+                            class="
+                                slds-form-element__label
+                                slds-m-left_medium
+                                slds-align_right
+                            "
+                            id={option.priceAria}
+                            value={option.shippingFee}
+                            currency-code={option.currencyIsoCode}
+                            display-currency-as="symbol"
+                        >
+                        </b2b_buyer_pricing-formatted-price>
+                    </label>
+                </span>
+            </template>
+        </div>
+    </div>
+
+    <b2c_lite_commerce-scoped-notification
+        type="error"
+        message-header={_errorLabels.header}
+        message-body={_errorLabels.body}
+        dismissible={_dismissible}
+    ></b2c_lite_commerce-scoped-notification>
+</template>

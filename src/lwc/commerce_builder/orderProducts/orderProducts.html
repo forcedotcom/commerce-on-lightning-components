@@ -1,0 +1,23 @@
+
+ <template lwc:render-mode="light">
+    <commerce_my_account-order-delivery-groups
+        order-summary-id={orderSummaryId}
+        currency-code={_currencyCode}
+        error-message={_errorMessage}
+        field-names={_itemFieldNames}
+        product-field-mapping={_productFieldMapping}
+        is-multiple-groups={isMultipleGroups}
+        order-delivery-groups={_orderDeliveryGroups}
+        other-adjustments-label={otherAdjustmentsLabel}
+        show-more-product-label={showMoreProductLabel}
+        onnavigatetoproductdetailpage={handleProductDetailNavigation}
+        page-size={_pageSize}
+        prefix-to-shipping-group={prefixToShippingGroup}
+        product-unavailable-message={productUnavailableMessage}
+        show-product-image={showProductImage}
+        style={orderProductsCustomCssStyles}
+        show-total={showTotal}
+        text-display-info={textDisplayInfo}
+        total-price-text-color={totalPriceTextColor}
+    ></commerce_my_account-order-delivery-groups>
+</template>

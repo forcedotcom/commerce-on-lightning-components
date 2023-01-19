@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightningCommunity__Page</target>
+        <target>lightningCommunity__Default</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightningCommunity__Page">
+            <paletteSection>Commerce</paletteSection>
+        </targetConfig>
+        <targetConfig targets="lightningCommunity__Default">
+            <property label="Show Heading" name="showHeaderLabel" type="Boolean" default="true"/>
+            <property label="Shipping Instructions Heading" name="headerLabel" type="String" default="Shipping Instructions" translatable="true" />
+            <property label="Instructions Ghost Text" name="placeholderLabel" type="String" default="" translatable="true" />
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

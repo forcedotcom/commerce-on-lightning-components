@@ -1,0 +1,33 @@
+<template lwc:render-mode="light">
+    <div class="slds-grid slds-wrap">
+        <template for:each={_updatedFields} for:item="field">
+            <div class={_fieldItemclasses} key={field.id}>
+                <span
+                    if:true={field.showFieldName}
+                    title={field.name}
+                    class="slds-no-space"
+                >
+                    <span aria-hidden="true" class={field.classNames}
+                        >{field.name}</span
+                    ><lightning-formatted-rich-text
+                        value={_keyValueSeparatorWithSpace}
+                        aria-hidden="true"
+                    ></lightning-formatted-rich-text>
+                </span>
+                <commerce-field-display
+                    if:false={field.isReference}
+                    value={field.value}
+                    type={field.type}
+                    currency-code={currencyCode}
+                ></commerce-field-display>
+                <commerce_my_account-record-field-value
+                    if:true={field.isReference}
+                    record-id={field.value}
+                    field={field.fieldName}
+                    class={field.classNames}
+                    is-link={field.showLink}
+                ></commerce_my_account-record-field-value>
+            </div>
+        </template>
+    </div>
+</template>

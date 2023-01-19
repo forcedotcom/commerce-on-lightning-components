@@ -1,0 +1,53 @@
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightningCommunity__Page</target>
+        <target>lightningCommunity__Default</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightningCommunity__Page">
+            <paletteSection>Commerce</paletteSection>
+        </targetConfig>
+        <targetConfig targets="lightningCommunity__Default">
+            <property label="Include Home" name="showHomeLink" type="Boolean" default="false" />
+            <property label="Show last item as link" name="showLastItemAsLink" type="Boolean" default="false" />
+            <property label="Hide on mobile" name="hideOnMobile" type="Boolean" default="false" />
+            <property label="Max number of levels on mobile" name="maxDepthOnMobile" type="String" datasource="1,2,3" default="3" />
+
+            <!-- Text styles -->
+            <property label="Text Size" name="textSize" type="String" datasource="java://siteforce.communitybuilder.datasource.SLDSFontSizeDataSource" default="small" />
+            <property label="Link Color" name="linkColor" type="Color" />
+            <property label="Link Hover Color" name="linkHoverColor" type="Color" />
+            <property label="Text Color" name="textColor" type="Color" />
+
+            <!-- Divider Styles -->
+            <property label="Divider" name="divider" type="String" datasource="java://siteforce.communitybuilder.datasource.BreadcrumbsDividerDataSource" default="chevron" />
+            <property label="Color" name="dividerColor" type="Color" />
+
+            <designLayout>
+                <designSection>
+                    <designLayoutItems>
+                        <designLayoutProperty name="showHomeLink"/>
+                        <designLayoutProperty name="showLastItemAsLink"/>
+                        <designLayoutProperty name="hideOnMobile"/>
+                        <designLayoutProperty name="maxDepthOnMobile" cbVisibleIf="hideOnMobile=false"/>
+                    </designLayoutItems>
+                </designSection>
+                <designSection name="textStyles">
+                    <designLayoutItems>
+                        <designLayoutProperty name="textSize"/>
+                        <designLayoutProperty name="linkColor"/>
+                        <designLayoutProperty name="linkHoverColor"/>
+                        <designLayoutProperty name="textColor" cbVisibleIf="showLastItemAsLink=false"/>
+                    </designLayoutItems>
+                </designSection>
+                <designSection name="dividerStyles">
+                    <designLayoutItems>
+                        <designLayoutProperty name="divider"/>
+                        <designLayoutProperty name="dividerColor"/>
+                    </designLayoutItems>
+                </designSection>
+            </designLayout>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

@@ -1,0 +1,23 @@
+<template lwc:render-mode="light">
+    <div class="container">
+        <commerce-quantity-selector
+            onvaluechanged={handleValueChanged}
+            disabled={disabled}
+            minimum={quantityRuleMinimum}
+            value={currentQuantity}
+            maximum={quantityRuleMaximum}
+            step={quantityRuleIncrement}
+            label={quantitySelectorLabel}
+            step-value-guide-text={incrementText}
+            minimum-value-guide-text={minimumText}
+            maximum-value-guide-text={maximumText}
+        ></commerce-quantity-selector>
+        <commerce_product_details-add-to-cart-button
+            onclick={handleAddToCart}
+            disabled={buttonDisabled}
+            variant={buttonVariant}
+            text={buttonText}
+            icon-name={iconName}
+        ></commerce_product_details-add-to-cart-button>
+    </div>
+</template>

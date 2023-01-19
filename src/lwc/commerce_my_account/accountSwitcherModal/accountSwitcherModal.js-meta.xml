@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightningCommunity__NavMenu_Modal</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightningCommunity__NavMenu_Modal">
+            <modalType>AccountSwitcher</modalType>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

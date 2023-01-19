@@ -1,0 +1,49 @@
+<template lwc:render-mode="light">
+    <section
+        aria-label={titleText}
+        class="slds-card details-card"
+    >
+        <header if:true={hasTitleText} class="slds-card__header slds-m-bottom_x-small">
+            <h2 class="slds-text-title_bold">{titleText}</h2>
+        </header>
+        <template if:false={_fieldsData}>
+            <div
+                class="slds-align_absolute-center slds-is-relative spinner-container"
+            >
+                <lightning-spinner
+                    alternative-text={_labels.spinnerText}
+                    variant="brand"
+                ></lightning-spinner>
+            </div>
+        </template>
+
+        <template if:true={_fieldsData}>
+            <div
+                class="slds-m-horizontal_medium slds-m-bottom_x-small"
+            >
+                <template for:each={_fieldsData} for:item="item">
+                    <div
+                        class="field-item slds-grid slds-wrap slds-m-bottom_xx-small slds-m-right_x-small"
+                        key={item.name}
+                    >
+                        <lightning-formatted-rich-text
+                            value={item.label}
+                            class="slds-truncate_container_75"
+                        ></lightning-formatted-rich-text>
+                        <commerce-field-display
+                            if:false={item.isReference}
+                            value={item.value}
+                            type={item.type}
+                            currency-code={_currencyCode}
+                        ></commerce-field-display>
+                        <commerce_my_account-record-field-value
+                            if:true={item.isReference}
+                            record-id={item.value}
+                            field={item.field}
+                        ></commerce_my_account-record-field-value>
+                    </div>
+                </template>
+            </div>
+        </template>
+    </section>
+</template>

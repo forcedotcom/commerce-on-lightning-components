@@ -1,0 +1,12 @@
+<template lwc:render-mode="light">
+    <commerce_product_details-gallery
+        if:true={displayGallery}
+        carousel-page-size={carouselPageSize}
+        carousel-position={carouselPosition}
+        show-carousel={showCarousel}
+        images={images}
+        expandable={isImageGalleryExpandable}
+        style={productGalleryCustomStyles}
+    >
+    </commerce_product_details-gallery>
+</template>

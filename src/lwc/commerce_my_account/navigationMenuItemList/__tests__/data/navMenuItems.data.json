@@ -1,0 +1,130 @@
+{
+    "menuItems": [
+        {
+            "actionType": "InternalLink",
+            "actionValue": "/TestB2BLWR3/s/",
+            "imageUrl": null,
+            "label": "Home 2",
+            "subMenu": [],
+            "target": "CurrentWindow",
+            "id": "0"
+        },
+        {
+            "actionType": "InternalLink",
+            "actionValue": "/TestB2BLWR3/s/myprofile",
+            "imageUrl": null,
+            "label": "My Profile",
+            "subMenu": [],
+            "target": "CurrentWindow",
+            "id": "1"
+        },
+        {
+            "actionType": "InternalLink",
+            "actionValue": "/TestB2BLWR3/s/category/products/0ZGxx00000002t3",
+            "imageUrl": null,
+            "label": "Products",
+            "subMenu": [],
+            "target": "CurrentWindow",
+            "id": "2"
+        },
+        {
+            "actionType": "ExternalLink",
+            "actionValue": "http://salesforce.com",
+            "imageUrl": null,
+            "label": "Salesforce.com",
+            "subMenu": [],
+            "target": "NewWindow",
+            "id": "3"
+        },
+        {
+            "actionType": "InternalLink",
+            "actionValue": "/TestB2BLWR3/s/account/Account/Default",
+            "imageUrl": null,
+            "label": "Default Accounts List",
+            "subMenu": [],
+            "target": "CurrentWindow",
+            "id": "4"
+        },
+        {
+            "actionType": "InternalLink",
+            "actionValue": "/TestB2BLWR3/s/account/Account/00Bxx0000029Y6KEAU",
+            "imageUrl": null,
+            "label": "All Accounts List",
+            "subMenu": [],
+            "target": "CurrentWindow",
+            "id": "5"
+        },
+        {
+            "actionType": "InternalLink",
+            "actionValue": "/TestB2BLWR3/s/account/Account/00Bxx0000029Y6IEAU",
+            "imageUrl": null,
+            "label": "Recent Accounts",
+            "subMenu": [],
+            "target": "CurrentWindow",
+            "id": "6"
+        },
+        {
+            "actionType": "InternalLink",
+            "actionValue": "/TestB2BLWR3/s/account/Account/00Bxx0000029Y6cEAE",
+            "imageUrl": null,
+            "label": "My Accounts List",
+            "subMenu": [],
+            "target": "CurrentWindow",
+            "id": "7"
+        },
+        {
+            "actionType": "InternalLink",
+            "actionValue": "/TestB2BLWR3/s/order-sri",
+            "imageUrl": null,
+            "label": "Order",
+            "subMenu": [],
+            "target": "CurrentWindow",
+            "id": "8"
+        },
+        {
+            "actionType": "InternalLink",
+            "actionValue": "/TestB2BLWR3/s/OrderSummary/1Osxx0000004Eh6CBE",
+            "imageUrl": null,
+            "label": "Order Summary 2",
+            "subMenu": [],
+            "target": "CurrentWindow",
+            "id": "9"
+        },
+        {
+            "actionType": "InternalLink",
+            "actionValue": "/TestB2BLWR3/s/OrderSummary/1Osxx0000004Eh6CAE",
+            "imageUrl": null,
+            "label": "Order Summary",
+            "subMenu": [],
+            "target": "CurrentWindow",
+            "id": "10"
+        },
+        {
+            "actionType": "InternalLink",
+            "actionValue": "/TestB2BLWR3/s/global-search/Sri",
+            "imageUrl": null,
+            "label": "Search Sri",
+            "subMenu": [],
+            "target": "CurrentWindow",
+            "id": "11"
+        },
+        {
+            "actionType": "InternalLink",
+            "actionValue": "/TestB2BLWR3/s/custom-page",
+            "imageUrl": null,
+            "label": "My Profile",
+            "subMenu": [],
+            "target": "CurrentWindow",
+            "id": "12"
+        },
+        {
+            "actionType": "InternalLink",
+            "actionValue": "/TestB2BLWR3/s/custom-page-1",
+            "imageUrl": null,
+            "label": "My Profile",
+            "subMenu": [],
+            "target": "CurrentWindow",
+            "id": "13"
+        }
+    ]
+}

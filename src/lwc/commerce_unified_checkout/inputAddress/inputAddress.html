@@ -1,0 +1,129 @@
+<template lwc:render-mode="light">
+    <div class={formBorderClass}>
+        <template if:true={showBackToListLink}>
+            <div class="slds-m-bottom_small">
+                <lightning-button
+                    data-back-to-list-link
+                    icon-name="utility:chevronleft"
+                    variant="base"
+                    label={backToListLabel}
+                    onclick={handleCloseNewAddressFormClicked}
+                >
+                </lightning-button>
+            </div>
+        </template>
+        <h3 if:false={isNewAddressMode} class="address-header slds-text-heading_small">
+            <span>{componentHeaderEditAddressLabel}</span>
+        </h3>
+        <template if:true={showPersonName}>
+            <!-- ---------------------------------------------------- -->
+            <!-- Some countries display last name before first name.  -->
+            <!-- Getter lastNameFirst determines this information.    -->
+            <!-- If the getter lastNameFirst returns true,            -->
+            <!-- last name field is displayed first.                  -->
+            <!-- ---------------------------------------------------- -->
+            <div class="slds-form-element__row name-fields">
+                <lightning-input
+                    if:true={isLastNameFirst}
+                    data-lastname-field
+                    data-validate
+                    read-only={disabled}
+                    class="slds-size_1-of-2 name-field"
+                    label={labels.lastNameLabel}
+                    name="lastname"
+                    autocomplete="family-name"
+                    oncommit={handleLastNameChange}
+                    required
+                    value={lastName}
+                ></lightning-input>
+                <lightning-input
+                    data-firstname-field
+                    data-validate
+                    read-only={disabled}
+                    class="slds-size_1-of-2 name-field"
+                    label={labels.firstNameLabel}
+                    name="firstname"
+                    autocomplete="given-name"
+                    oncommit={handleFirstNameChange}
+                    required
+                    value={firstName}
+                ></lightning-input>
+                <lightning-input
+                    if:false={isLastNameFirst}
+                    data-lastname-field
+                    data-validate
+                    read-only={disabled}
+                    class="slds-size_1-of-2 name-field"
+                    label={labels.lastNameLabel}
+                    name="lastname"
+                    autocomplete="family-name"
+                    oncommit={handleLastNameChange}
+                    required
+                    value={lastName}
+                ></lightning-input>
+            </div>
+        </template>
+        <!-- lightning-input-address has a number of deficiencies:
+            1. Country comes at the top to emulate behaviour in Aloha
+            2. Country isn't a "required" field
+            3. One can select "--None--" as a country
+            4. It comes with its own fieldset / legend and may be confusing since we'd have another fieldset on top of it
+            with the name added
+            5. Doesn't allow setting focus on the first invalid element
+            6. Order of the fields would change depending on a user's _salesforce_ locale
+            7. It's a heavy component, bringing in many dependencies (autocompletes, dual listboxes, native and desktop selects, etc)
+            8. It doesn't support disabled options (for example to have separators in the list of countries between
+            most used countries given a region and the rest)
+            9. Layout of the fields is not optimal for mobile (states text gets cut off)
+        -->
+        <lightning-input-address
+            country-disabled={disableCountryDropdown}
+            required
+            read-only={disabled}
+            city={city}
+            city-label={labels.cityLabel}
+            country={country}
+            country-label={labels.countryLabel}
+            country-options={countryOptions}
+            data-address-fields
+            data-validate
+            onchange={handleAddressChange}
+            postal-code={postalCode}
+            postal-code-label={labels.postalCodeLabel}
+            province={province}
+            province-label={labels.provinceLabel}
+            province-options={provinceOptions}
+            street={street}
+            street-label={labels.streetLabel}
+            variant="label-hidden"
+            locale={customLocale}
+        ></lightning-input-address>
+
+        <template if:true={showPhoneNumber}>
+            <lightning-input
+                data-phonenumber-field
+                data-validate
+                read-only={disabled}
+                placeholder={phoneNumberPlaceholderText}
+                label={phoneNumberLabel}
+                type="tel"
+                name="phonenumber"
+                autocomplete="tel"
+                oncommit={handlePhoneNumberChange}
+                required
+                value={phoneNumber}
+            ></lightning-input>
+        </template>
+
+        <template if:true={showDefaultAddress}>
+            <lightning-input
+                data-default-address-checkbox
+                disabled={isDefaultDisabled}
+                label={makeDefaultAddressLabel}
+                type="checkbox"
+                onchange={handleIsDefaultAddressChange}
+                checked={isDefaultAddress}
+            ></lightning-input>
+        </template>
+    </div>
+</template>

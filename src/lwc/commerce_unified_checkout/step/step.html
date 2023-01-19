@@ -1,0 +1,35 @@
+<template>
+    <section class={sectionClassList}>
+        <div class="slds-accordion__summary">
+            <h2 class="slds-accordion__summary-heading slds-text-heading_medium">
+                {label}
+            </h2>
+            <lightning-button data-edit
+                              variant="base"
+                              if:true={showEditButton}
+                              aria-label={ariaEditButtonLabel}
+                              aria-controls={definedLabel}
+                              label={editButtonLabel}
+                              onclick={onClickEdit}>
+            </lightning-button>
+        </div>
+        <div class="slds-accordion__content" id={definedLabel}>
+            <!-- Component goes in here -->
+            <div class="checkout-step-component">
+                <slot name="checkoutStep"
+                      onslotchange={handleSlotChange}
+                ></slot>
+            </div>
+
+            <div class="next" if:false={hideButton}>
+                <button
+                    data-proceed
+                    class="slds-button slds-button_brand"
+                    onclick={onClickProceed}
+                    disabled={disableButton}
+                >{proceedButtonLabel}
+                </button>
+            </div>
+        </div>
+    </section>
+</template>

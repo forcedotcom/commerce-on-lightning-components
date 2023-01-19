@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightningCommunity__Page</target>
+        <target>lightningCommunity__Default</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightningCommunity__Page">
+            <paletteSection>Commerce</paletteSection>
+        </targetConfig>
+        <targetConfig targets="lightningCommunity__Default">
+            <property label="Product Data Binding" name="product" type="String" default="{!Product.Details}"/>
+            <property label="Show Actual Price" name="showNegotiatedPrice" type="Boolean" default="true"/>
+            <property label="Show Original Price" name="showOriginalPrice" type="Boolean" default="true"/>
+            <property label="Show Tax Indication" name="showTaxIndication" type="Boolean" default="true"/>
+            
+            <!-- Header -->
+            <property label="Show Add All to Cart" name="showAddAllToCartButton" type="Boolean" default="true"/>
+
+            <!-- Products -->
+            <property label="Show Product Image" name="showProductImage" type="Boolean" default="true"/>
+            <property label="Show Product Description" name="showProductDescription" type="Boolean" default="true"/>
+
+
+            <designLayout>
+                <designSection name="productContent">
+                    <designLayoutItems>
+                        <designLayoutProperty name="product"/>
+                        <designLayoutProperty name="showNegotiatedPrice"/>
+                        <designLayoutProperty name="showOriginalPrice"/>
+                        <designLayoutProperty name="showTaxIndication"/>
+                    </designLayoutItems>
+                </designSection>
+
+                <designSection name="header">
+                    <designLayoutItems>
+                        <designLayoutProperty name="showAddAllToCartButton"></designLayoutProperty>
+                    </designLayoutItems>
+                </designSection>
+
+                <designSection name="products">
+                    <designLayoutItems>
+                        <designLayoutProperty name="showProductImage"></designLayoutProperty>
+                        <designLayoutProperty name="showProductDescription"></designLayoutProperty>
+                    </designLayoutItems>
+                </designSection>
+            </designLayout>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

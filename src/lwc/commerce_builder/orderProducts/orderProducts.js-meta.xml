@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>57.0</apiVersion>
+    <isExposed>true</isExposed>
+    <targets>
+		<target>lightningCommunity__Page</target>
+		<target>lightningCommunity__Default</target>
+	</targets>
+
+    <targetConfigs>
+        <targetConfig targets="lightningCommunity__Page">
+            <paletteSection>Commerce</paletteSection>
+        </targetConfig>
+        <targetConfig targets="lightningCommunity__Default">
+            <property name="orderSummaryId" type="String" default="{!recordId}"/>
+            <property name="adjustmentsAmountTextColor" type="Color"/>
+            <property name="otherAdjustmentsLabel" translatable="true" type="String" default="Other Adjustments"/>
+            <property name="prefixToShippingGroup" translatable="true" type="String" default="Ship To:"/>
+            <property name="productFieldMapping" type="String" translatable="true" />
+            <property name="productUnavailableMessage" translatable="true" type="String" default="(No More Available)"/>
+            <property name="shippingGroupFieldMapping" type="String" translatable="true" />
+            <property name="showProductImage" type="Boolean" default="true"/>
+            <property name="showTotal" type="Boolean" default="true"/>
+            <property name="totalPriceTextColor" type="Color" />
+            <property name="showMoreProductLabel" label="Show More Label" type="String" default="Show More" translatable="true" />
+            <property name="textDisplayInfo" type="String" default='{"headingTag": "p","textStyle": "body-regular"}'/>
+            <designLayout>
+                <designSection>
+                    <designLayoutItems>
+                        <designLayoutProperty name="orderSummaryId"/>
+                    </designLayoutItems>
+                </designSection>
+
+                <designSection name="Shipping">
+                        <designLayoutItems>
+                            <designLayoutProperty name="prefixToShippingGroup"/>
+                            <designLayoutProperty name="shippingGroupFieldMapping"/>
+                        </designLayoutItems>
+                    </designSection>
+                    <designSection name="Product">
+                    <designLayoutItems>
+                            <designLayoutProperty name="showProductImage"/>
+                            <designLayoutProperty name="showTotal"/>
+                            <designLayoutProperty name="productFieldMapping"/>
+                            <designLayoutProperty name="productUnavailableMessage"/>
+                            <designLayoutProperty name="otherAdjustmentsLabel"/>
+                            <designLayoutProperty name="adjustmentsAmountTextColor"/>
+                            <designLayoutProperty name="totalPriceTextColor"/>
+                            <designLayoutProperty name="textDisplayInfo"/>
+                            <designLayoutProperty name="showMoreProductLabel"/>
+                        </designLayoutItems>
+                    </designSection>
+            </designLayout>
+            <designSubstitute>commerce_builder:orderProductsDesignSubstitute</designSubstitute>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

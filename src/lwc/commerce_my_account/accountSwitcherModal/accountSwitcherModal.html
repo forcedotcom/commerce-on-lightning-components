@@ -1,0 +1,23 @@
+<template>
+    <lightning-modal-header label={labels.headerLabel}></lightning-modal-header>
+    <lightning-modal-body>
+        <commerce_my_account-account-switcher-list
+            class="reset-modal-body-spacings"
+            onaccountselect={handleAccountSelect}
+            onaccountsloadsuccess={handleAccountsLoadSuccess}
+            onaccountsloadfailure={handleAccountsLoadFailure}
+        ></commerce_my_account-account-switcher-list>
+    </lightning-modal-body>
+    <lightning-modal-footer if:true={showAccountsLoadFailureActions}>
+        <lightning-button
+            class="slds-m-right_small"
+            label={labels.cancelActionLabel}
+            onclick={handleCancel}
+        ></lightning-button>
+        <lightning-button
+            label={labels.tryAgainActionLabel}
+            variant="brand"
+            onclick={handleTryAgain}
+        ></lightning-button>
+    </lightning-modal-footer>
+</template>

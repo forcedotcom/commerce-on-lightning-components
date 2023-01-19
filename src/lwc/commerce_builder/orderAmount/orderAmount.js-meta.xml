@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>56.0</apiVersion>
+    <isExposed>true</isExposed>
+    <targets>
+		<target>lightningCommunity__Page</target>
+		<target>lightningCommunity__Default</target>
+	</targets>
+
+    <targetConfigs>
+        <targetConfig targets="lightningCommunity__Page">
+            <paletteSection>Commerce</paletteSection>
+        </targetConfig>
+        <targetConfig targets="lightningCommunity__Default">
+            <property name="orderSummaryId" type="String" default="{!recordId}"/>
+            <property name="totalsCardTitle" translatable="true" type="String"  default="Totals"/>
+
+            <property name="totalsCardBackgroundColor" type="Color"/>
+            <property name="totalsCardBorderColor" type="Color"/>
+            <property name="totalsCardBorderRadius" type="Integer" min="0" max="20" default="0"/>
+            <property name="totalsCardTextColor" type="Color"/>
+
+            <property name="showHorizontalLineAboveLastField" type="Boolean" default="true"/>
+            <property name="showLastFieldAsBold" type="Boolean" default="true"/>
+
+            <property name="netTaxOrdersFieldMapping" translatable="true" type="OrderSummaryTotalsNetTaxFieldsMapping"/>
+            <property name="grossTaxOrdersFieldMapping" translatable="true" type="OrderSummaryTotalsGrossTaxFieldsMapping"/>
+
+            <designLayout>
+                <designSection>
+                    <designLayoutItems>
+                        <designLayoutProperty name="orderSummaryId"/>
+                        <designLayoutProperty name="totalsCardTitle"/>
+                        <designLayoutProperty name="totalsCardBackgroundColor"/>
+                        <designLayoutProperty name="totalsCardBorderColor"/>
+                        <designLayoutProperty name="totalsCardBorderRadius"/>
+                        <designLayoutProperty name="totalsCardTextColor"/>
+                        <designLayoutProperty name="showHorizontalLineAboveLastField"/>
+                        <designLayoutProperty name="showLastFieldAsBold"/>
+                    </designLayoutItems>
+                </designSection>
+                <designSection name="netTaxOrders">
+                    <designLayoutItems>
+                        <designLayoutProperty name="netTaxOrdersFieldMapping"/>
+                    </designLayoutItems>
+                </designSection>
+                <designSection name="grossTaxOrders">
+                    <designLayoutItems >
+                        <designLayoutProperty name="grossTaxOrdersFieldMapping"/>
+                    </designLayoutItems>
+                </designSection>
+            </designLayout>
+            <designSubstitute>commerce_my_account:orderAmountDesignSubstitute</designSubstitute>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

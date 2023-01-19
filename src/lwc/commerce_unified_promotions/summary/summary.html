@@ -1,0 +1,36 @@
+<template lwc:render-mode="light">
+    <section class="summary-section slds-p-around_medium">
+        <h2 class="summary-header slds-p-vertical_x-small">
+            {headerText}
+        </h2>
+        <template iterator:it={appliedPromotionsDisplayList}>
+            <dl
+                class="applied-promotion slds-p-vertical_x-small"
+                key={it.value.id}
+            >
+                <dt class="slds-p-right_medium">
+                    <span title={it.value.name}
+                    >
+                        {it.value.name}
+                    </span>
+                    <b2b_buyer_promotions-terms-and-conditions-popover
+                        if:true={it.value.termsAndConditions}
+                        class="slds-m-left_xx-small"
+                        header-text={termsAndConditionsHeaderText}
+                        body-text={it.value.termsAndConditions}
+                    ></b2b_buyer_promotions-terms-and-conditions-popover>
+                </dt>
+                <dd class="slds-text-align_right">
+                    <b2b_buyer_pricing-formatted-price
+                        if:true={it.value.discountAmount}
+                        currency-code={currencyCode}
+                        display-currency-as="symbol"
+                        title={it.value.discountAmount}
+                        value={it.value.discountAmount}
+                    >
+                    </b2b_buyer_pricing-formatted-price>
+                </dd>
+            </dl>
+        </template>
+    </section>
+</template>

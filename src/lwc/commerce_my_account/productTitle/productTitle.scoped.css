@@ -1,0 +1,5 @@
+h3 a,
+h3 span {
+    white-space: normal;
+    word-break: break-all;
+}

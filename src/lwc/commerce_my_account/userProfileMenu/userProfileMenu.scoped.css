@@ -1,0 +1,166 @@
+.icon-color{ 
+    --sds-c-icon-color-foreground-default: var(--dxp-s-button-color);
+ }
+ .menu-nubbin {
+    display: none;
+}
+.dropdown-ctn {
+    background-color: var(--dxp-g-root);
+}
+.login-text{
+    font-size: small; 
+    margin: auto;
+    font-weight: var(--com-c-my-account-user-profile-login-link-font-weight);
+    font-style: var(--com-c-my-account-user-profile-login-link-font-style);
+    text-decoration: var(--com-c-my-account-user-profile-login-link-text-decoration);
+    padding: 0.2rem;
+}
+.login-link {
+    color: var(--com-c-my-account-user-profile-login-link-color, var(--dxp-s-link-text-color));
+}
+.login-link:hover,
+.login-link:focus {
+    color: var(--com-c-my-account-user-profile-login-link-hover-color, var(--dxp-g-brand-1));
+    background-color: var(--dxp-g-brand-1);
+}
+.menu-button:hover {
+    background-color: var(--dxp-g-root-1);
+}
+.menu-button {
+    color: var(--dxp-s-link-text-color);
+    margin-inline-end: 0.75rem; 
+}
+.menu-trigger {
+    max-width: 5rem;
+    border-color: var(--dxp-g-neutral);
+    flex-basis: auto;
+    overflow: hidden;
+    padding: 0.25rem;
+}
+.menu-trigger-p {
+    margin-inline-end: 0.75rem;
+    line-height: 0.85rem;
+    font-size: 0.75rem;
+}
+.profile-menu-item {
+    color: inherit;
+    background-color: transparent;
+}
+a.profile-menu-item {
+    color: var(--dxp-g-root-contrast);
+    background-color: var(--dxp-g-root);
+}
+a.profile-menu-item:hover,
+a.profile-menu-item:focus,
+a.profile-menu-item_hover {
+    color: var(--dxp-g-root-contrast);
+    background-color: var(--dxp-g-root);
+}
+.slds-dropdown__list a.menu-item {
+    color: var(--dxp-g-root-contrast);
+}
+.slds-dropdown__list a.menu-item_hover {
+    color: var(--dxp-g-root-contrast);
+}
+.slds-dropdown__list a.menu-item-bg-hover-color {
+    background-color: var(--dxp-g-root-1);
+}
+.menu-trigger-ctn {
+    flex-direction: row-reverse;
+}
+.menu-trigger-ctn .menu-trigger-p {
+    color: var(--dxp-s-anchor-text-color); 
+    text-shadow: 0 0 0.25rem var(--dxp-s-anchor-text-color);
+    text-align: left;
+}
+.menu-trigger-ctn .menu-trigger-p:hover {
+    color: var(--dxp-s-anchor-text-color-hover);
+}
+.company-name-max-width {
+    max-width: 6.8rem;
+}
+.guest-login-max-width {
+    max-width: 5rem;
+}
+.user-profile-menu-list li:nth-last-child(2) {
+    border-bottom: 1px solid #e5e5e5;
+    max-width: none;
+    width: 100vw;
+}
+li.company-name:nth-child(2) {
+    margin-top: -1.563rem;
+    font-weight: bold;
+}
+/*Mobile screens*/
+@media only screen and (max-width: 47.9375em) {
+    .company-name-max-width {
+        max-width: 1.8rem;
+    }
+    .menu-trigger-icon {
+        margin: 0;
+    }
+    .dropdown-ctn {
+        max-width: none;
+        width: 95vw;
+        position: fixed;
+        box-sizing: inherit;
+        margin: 0;
+        inset-inline-start: 2.5vw;
+        padding: 0;
+    }
+    .profile-menu-item,
+    .profile-menu-item_hover {
+        font-size: 1rem;
+        text-align: left;
+        line-height: 3.125rem;
+        padding: 0;
+        padding-inline-start: 1.25rem; 
+        padding-inline-end: 1.25rem;
+    }
+    .menu-nubbin {
+        display: block;
+        width: 1rem;
+        height: 1rem;
+        position: absolute;
+        transform: rotate(45deg);
+        background-color: inherit;
+        inset-inline-start: 50%;
+        top: -0.5rem;
+        margin-inline-start: -0.5rem;
+        margin-inline-end: -0.5rem; 
+        box-shadow: rgba(0, 0, 0, 0.16) -1px -1px 0px 0px;
+    }
+
+    .login-text {
+        display: none;
+    }
+}
+
+.menu_ul {
+    max-height: 80vh;
+}
+
+@media only screen and (min-width: 63.9375em)  and (max-width: 105em) {
+    .company-name-max-width {
+        max-width: 5.5vw;
+    }
+    .guest-login-max-width {
+        max-width: 5.5vw;
+    }
+}
+
+/*Tablet screens*/
+@media only screen and (min-width: 47.9375em) and (max-width: 63.9375em) {
+    .profile-menu-item,
+    .profile-menu-item_hover {
+        font-size: 1rem;
+        text-align: left;
+        line-height: 3.125rem;
+        padding: 0;
+        padding-inline-start: 1.25rem; 
+        padding-inline-end: 1.25rem;
+    }
+    .company-name-max-width {
+        max-width: 1.8rem;
+    }
+}

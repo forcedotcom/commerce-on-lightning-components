@@ -1,0 +1,83 @@
+<template lwc:render-mode="light">
+    <!-- Display the value with the default text formatting -->
+    <lightning-formatted-rich-text if:true={isDefaultDisplayType} value={value}></lightning-formatted-rich-text>
+
+    <!-- Type is CURRENCY -->
+    <commerce-formatted-price
+        if:true={isCurrencyType}
+        value={value}
+        currency-code={currencyCode}
+        display-currency-as="symbol"
+    ></commerce-formatted-price>
+
+    <!-- Type is DATETIME -->
+    <lightning-formatted-date-time
+        if:true={isDateTimeType}
+        value={value}
+        year="numeric"
+        month="numeric"
+        day="numeric"
+        hour="2-digit"
+        minute="2-digit"
+        time-zone={timezone}
+    ></lightning-formatted-date-time>
+
+    <!-- Type DATE -->
+    <lightning-formatted-date-time if:true={isDateType} value={value} time-zone="UTC"></lightning-formatted-date-time>
+
+    <!-- Type is DOUBLE or INTEGER -->
+    <lightning-formatted-number if:true={isNumberType} value={value}></lightning-formatted-number>
+
+    <!-- Type is EMAIL -->
+    <lightning-formatted-email if:true={isEmailType} value={value} hide-icon></lightning-formatted-email>
+
+    <!-- Type is PERCENT -->
+    <lightning-formatted-number
+        if:true={isPercentType}
+        value={value}
+        format-style="percent-fixed"
+        maximum-fraction-digits="18"
+    ></lightning-formatted-number>
+
+    <!-- Type is PHONE -->
+    <lightning-formatted-phone if:true={isPhoneType} value={value}></lightning-formatted-phone>
+
+    <!-- Type is TIME -->
+    <lightning-formatted-time if:true={isTimeType} value={value}></lightning-formatted-time>
+
+    <!-- Type is URL -->
+    <lightning-formatted-url if:true={isUrlType} value={value}></lightning-formatted-url>
+
+    <!-- Type is ADDRESS -->
+    <lightning-formatted-address
+        if:true={isAddressType}
+        street={value.street}
+        city={value.city}
+        country={value.country}
+        province={value.state}
+        postal-code={value.postalcode}
+        latitude={value.latitude}
+        longitude={value.longitude}
+    ></lightning-formatted-address>
+
+    <lightning-formatted-location
+        if:true={isLocationType}
+        latitude={value.latitude}
+        longitude={value.longitude}
+    ></lightning-formatted-location>
+
+    <!-- Type is BOOLEAN or CHECKBOX -->
+    <lightning-icon
+        if:true={isTrueBooleanType}
+        alternative-text={yesAssistiveText}
+        icon-name="utility:check"
+        size="xx-small"
+    ></lightning-icon>
+
+    <lightning-icon
+        if:true={isFalseBooleanType}
+        alternative-text={noAssistiveText}
+        icon-name="utility:steps"
+        size="xx-small"
+    ></lightning-icon>
+</template>
