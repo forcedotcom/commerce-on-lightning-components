@@ -61,7 +61,6 @@ interface CheckoutStore {
     // not a CheckoutInformation
     wiredCheckoutInformation?: CheckoutInformation;
 
-    // TODO: move the below properties to separate generic checkout properties that
     // share a single wire adapter that updates checkout status not directly related
     // to the checkout API state
 
@@ -87,7 +86,6 @@ let delay = _delay;
 
 /**
  * disable retry delays for tests
- * TODO: use jest timer mocks instead; however, they are currently not working for this use case
  */
 export function mockDelay(fn?: (milliseconds: number) => Promise<never>): void {
     delay = fn ? fn : _delay;
@@ -189,7 +187,6 @@ function parseCheckoutResponse(responseAndData: FetchResponseAndData): CheckoutI
         // when a PATCH fails
         throw responseAndData.data;
     }
-    // TODO: some (most) status 422 are not buyer recoverable
     // those should be thrown wrapped in an Error
     if (!responseAndData.data) {
         throw new Error(CheckoutError.NULL_CHECKOUT_JSON);
@@ -449,7 +446,6 @@ async function _waitForCheckout(state: State<CheckoutStore>): Promise<CheckoutIn
  * implements updateGuestEmail
  */
 function _updateGuestEmail(state: State<CheckoutStore>, guestEmail: string): string {
-    // Store is aware of StoreAdapter-controlled entries (W-9547157)
     // The following will become state['guestEmail'][StoreAdapterConfig].data
     state.set('guestEmail', guestEmail);
     return guestEmail;
@@ -522,8 +518,6 @@ function checkoutInformationConnector(adapter: Adapter<CheckoutStore>): void {
                 // the last round of changes not to uplift when there are many changes in
                 // quick succession
                 //
-                // note: W-11618770 changed blackout timer from throttle to debounce so we can remove this
-                // however, it still behaves as a throttle so it needs revisiting...
                 adapter.load();
             });
         }
@@ -804,7 +798,6 @@ export function paymentClientRequest(paymentsData: PaymentsData): Promise<Paymen
  */
 export async function placeOrder(): Promise<OrderConfirmation> {
     const result: OrderConfirmation = await dsPlaceOrder(activeCheckoutId());
-    // TODO: as of release 244 there may be a race condition between emptying the cart and placing the order
     cartSummaryChanged();
     return result;
 }

@@ -91,7 +91,6 @@ export default class NavigationMenu extends LightningElement {
     }
 
     /**
-     * TODO: replace with simple reload when W-10538960 is done
      * @private
      */
     private triggerNavigationWire(): void {
@@ -110,7 +109,6 @@ export default class NavigationMenu extends LightningElement {
 
         event.stopPropagation();
 
-        // TODO(seckardt,priand): W-9678712
         //  This code here is a dirty workaround to make the navigation work in off-core mode.
         //  We need to target a better solution/removal.
         if (type === 'InternalLink' && href) {

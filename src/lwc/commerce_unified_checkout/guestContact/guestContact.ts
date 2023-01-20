@@ -180,7 +180,6 @@ export default class GuestContact extends LightningElement implements CheckoutSa
     /**
      * This method called when user clicks on "Next" button for this step.
      * Reject promise if data is invalid, thus short-circuiting checkout.ts#proceedToNextStep
-     * TODO: update email contact in the data store
      */
     @api
     public async checkoutSave(): Promise<void> {

@@ -231,9 +231,6 @@ export default class FacetsModal extends LightningElement {
 
     /**
      * Handler for the 'facetvalueupdate' event fired from filtersPanel
-     * TODO: Once the facetModal is initated from ResultsTiles (LWC component),
-     *  these handlers has to be merged with ResultsTiles.
-     *  Trust story: W-7866234
      * @param {Object} evt the event object
      */
     handleFacetValueUpdate(evt: CustomEvent): void {

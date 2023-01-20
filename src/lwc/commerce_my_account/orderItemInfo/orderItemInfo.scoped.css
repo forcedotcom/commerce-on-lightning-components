@@ -33,7 +33,6 @@ figure + .item-details {
 }
 
 /* Note: currently the dxp text block component doesn't seem to support css custom vars
- * see line 204 for more info here: https://git.soma.salesforce.com/communities/ui-dxp-components/blob/main/packages/%40dxp/caa-components/src/modules/dxp_base/textBlock/textBlock.js
 */
 .text-block{
     --dxp-c-text-block-text-color: var(--com-c-my-account-order-products-total-price-text-color)

@@ -11,7 +11,6 @@ const contentMappedStyles = new SimpleStyleMap({
     'justify-self': 'content-justify-self',
 });
 const imageMappedStyles = new SimpleStyleMap({
-    // TODO: pending image customizations
 });
 
 // Return the style string generators.

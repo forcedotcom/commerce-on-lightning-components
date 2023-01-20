@@ -104,7 +104,6 @@ export async function fetchServiceResponseAndData(
  * like fetchService returns parsed JSON body
  * except on error throws parsed JSON body of error if available
  * mimics expected behavior of feb 2 commit 70f0123a
- * https://git.soma.salesforce.com/communities/experience-components/pull/34
  */
 export async function fetchServiceData<T>(
     executorOrRequestInfo: RequestInfo,

@@ -99,7 +99,6 @@ export async function updateShippingAddress(
     inputParams: DeliveryGroup,
     checkoutId: string
 ): Promise<FetchResponseAndData> {
-    // TODO: using checkoutId 'active' here returns status 400; API or docs need fixing
     const url = prefixUrl(`checkouts/${checkoutId}`);
     return fetchServiceResponseAndData(url, {
         method: 'PATCH',

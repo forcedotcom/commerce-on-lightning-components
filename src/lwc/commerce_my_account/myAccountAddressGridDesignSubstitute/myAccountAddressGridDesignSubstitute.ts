@@ -76,9 +76,6 @@ export default class MyAccountAddressGridDesignSubstitute extends LightningEleme
     /**
      * This component can not yet be migrated to light-dom because the LightningTabset component
      * does flip the order of the tabs in light-dom.
-     * This should be changed when this bug was fixed:
-     * W-11926607
-     * https://gus.lightning.force.com/lightning/r/ADM_Work__c/a07EE000019AamCYAS/view
      *
      * public static renderMode = 'light';
      */

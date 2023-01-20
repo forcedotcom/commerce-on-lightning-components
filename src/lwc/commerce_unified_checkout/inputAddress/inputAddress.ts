@@ -54,7 +54,6 @@ export default class InputAddress extends LightningElement {
     }
 
     public set disabled(value: boolean) {
-        // TODO: need to be using read-only instead of disabled for all components
         // CheckoutMode when focus should not jump away
         this._isDisabled = value;
     }

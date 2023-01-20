@@ -62,9 +62,6 @@ export default class CartItems extends LightningElement {
     /**
      * This component has a slot, which can't be displayed in a design substitute yet,
      * so mock data for the builder will have to be provided like this
-     * Note: This is part of a temporary workaround while we wait for this bugfix: W-11279690.
-     * Any session context usage will be removed once the bug is fixed and we add back
-     * the design substitute, work that is tracked in W-11613971.
      */
     get _items(): CartItemData[] | undefined {
         return isPreviewMode ? sampleCartItemData : this.items;
@@ -82,9 +79,6 @@ export default class CartItems extends LightningElement {
 
     /**
      * @description Always display the "Show More" button if in the builder or if displayShowMore === true
-     * Note: This is part of a temporary workaround while we wait for this bugfix: W-11279690.
-     * Any session context usage will be removed once the bug is fixed and we add back
-     * the design substitute, work that is tracked in W-11613971.
      * @readonly
      */
     get displayShowMoreButton(): boolean {
@@ -240,7 +234,6 @@ export default class CartItems extends LightningElement {
     /**
      * @description Convert the custom fields string into an array
      * @readonly
-     * @todo get the right types
      */
     get productFieldMappingValue(): InputField[] {
         return this.productFieldMapping ? JSON.parse(this.productFieldMapping) : [];

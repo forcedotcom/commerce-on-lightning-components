@@ -9,7 +9,7 @@ svg:hover, svg:focus {
 /**
  * In order to stay consistent with the badge colors used in other page header
  * elements (e.g. the notification bell icon), this overrides the badge background
- * color set by the class .slds-notification-badge (see W-9689523).
+ * color set by the class .slds-notification-badge.
  */
 .slds-notification-badge {
     background: var(--lwc-colorBackgroundNotificationBadge, rgb(234, 0, 30));

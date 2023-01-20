@@ -22,9 +22,6 @@ export default class MyAccountAddressGridContainer extends LightningElement {
     /**
      * This component can not yet be migrated to light-dom because the LightningTabset component
      * does flip the order of the tabs in light-dom.
-     * This should be changed when this bug was fixed:
-     * W-11926607
-     * https://gus.lightning.force.com/lightning/r/ADM_Work__c/a07EE000019AamCYAS/view
      *
      * public static renderMode = 'light';
      */
@@ -71,7 +68,6 @@ export default class MyAccountAddressGridContainer extends LightningElement {
 
     /**
      * get the list of shipping addresses from store adapter
-     * // TODO: This needs to be removed as api property
      */
     @api
     get shippingAddresses(): MyAccountAddress[] {
@@ -83,7 +79,6 @@ export default class MyAccountAddressGridContainer extends LightningElement {
 
     /**
      * get the list of billing addresses from store adapter
-     * // TODO: This needs to be removed as api property
      */
     @api
     get billingAddresses(): MyAccountAddress[] {

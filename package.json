@@ -1,6 +1,9 @@
 {
     "name": "@salesforce/commerce-on-lightning-components",
     "version": "0.0.1",
+    "author": {
+        "name": "Michael McMahon"
+    },
     "private": true,
     "description": "Commerce on Lightning LWR component source code (for reference purposes)",
     "license": "UNLICENSED",

@@ -36,9 +36,6 @@ export default class CartContents extends LightningElement {
 
     /**
      * @description Empty state is shown if we are in the builder, or if the count is zero
-     * Note: The use of isPreviewMode is part of a temporary workaround while we wait for this bugfix: W-11279690.
-     * Any session context usage will be removed once the bug is fixed and we add back
-     * the design substitute, work that is tracked in W-11613971.
      * @readonly
      */
     get showEmptyState(): boolean {
@@ -55,9 +52,6 @@ export default class CartContents extends LightningElement {
 
     /**
      * @description Items state is shown if we are in the builder, or if the count is not zero
-     * Note: The use of isPreviewMode is part of a temporary workaround while we wait for this bugfix: W-11279690.
-     * Any session context usage will be removed once the bug is fixed and we add back
-     * the design substitute, work that is tracked in W-11613971.
      * @readonly
      */
     get showItemState(): boolean {

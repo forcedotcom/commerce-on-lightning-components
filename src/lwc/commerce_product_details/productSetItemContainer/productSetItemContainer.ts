@@ -131,7 +131,6 @@ export default class ProductSetItemContainer extends LightningElement {
             return;
         }
 
-        // TODO This will be removed when we can use building blocks with a repeater to wrap this component in a data provider.
         const dataProvider = this.querySelector('commerce_data_provider-product-data-provider') as HTMLElement;
 
         dataProvider.dispatchEvent(

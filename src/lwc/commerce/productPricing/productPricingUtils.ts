@@ -18,6 +18,6 @@ export default function displayOriginalPrice(
     const originalPriceIsAvailableAndGreaterThanNegotiatedPrice =
         originalPriceExists && negotiatedPriceExists && Number(originalPrice) > Number(negotiatedPrice);
 
-    // Display the original price if both the original and negotiated prices are available and need to be shown, and the original price is greater than the negotiated price (W-6847766)
+    // Display the original price if both the original and negotiated prices are available and need to be shown, and the original price is greater than the negotiated price
     return showBothPrices && originalPriceIsAvailableAndGreaterThanNegotiatedPrice;
 }

@@ -275,7 +275,6 @@ export default class CartAppliedCoupons extends LightningElement {
     @wire(CartCouponsAdapter)
     private couponsInfo({ data }: { data: CouponSummaryCollectionData }): void {
         if (data) {
-            //TODO W-11032999 in future we should refactor _isCouponApplied
             this._isCouponApplied = data.cartCoupons.coupons.length > this._appliedCoupons.length;
             this._appliedCoupons = transformCouponContents(
                 data.cartCoupons,

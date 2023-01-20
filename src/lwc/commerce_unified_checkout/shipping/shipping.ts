@@ -212,7 +212,6 @@ export default class Shipping extends LightningElement implements CheckoutSavabl
             }
         }
 
-        // TODO: need to capture server initiated apex errors (we capture our own apex errors already)
     }
 
     private dispatchShowSummaryModeEvent(): void {
@@ -542,9 +541,6 @@ export default class Shipping extends LightningElement implements CheckoutSavabl
                     // make the new address the selected one
                     this._initValue = address.addressId;
                 } else if (!isSameContactPointAddress(this.address, address)) {
-                    // TODO: there's a race condition in above logic where addressHandler might
-                    // not have loaded the new address now in edit mode yet. in this case
-                    // we save again even though it's not necessarily needed.
                     await updateContactPointAddress({
                         ...address,
                         addressType: 'Shipping',
@@ -561,11 +557,8 @@ export default class Shipping extends LightningElement implements CheckoutSavabl
 
             if (!isSameDeliveryAddress(this.shippingAddress, address)) {
                 const deliveryAddressGroup: DeliveryGroup = {
-                    // TODO: pass addressId (as id) here after checkout API supports it
                     deliveryAddress: address,
 
-                    // TODO: desiredDeliveryDate is required
-                    // this will be addressed in future work. for now make something up
                     desiredDeliveryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
                     // shipping instructions are not required and do not change when not provided
                 };
@@ -660,12 +653,9 @@ export default class Shipping extends LightningElement implements CheckoutSavabl
         }
         // ensure selected value exists or select something else
         //
-        // TODO: we need to reselect a delivery address after a page refresh, even harder
-        //       because the selected address might not be loaded.
         let dispatchNeeded = false;
         if (!this._initValue && this._addresses.length) {
             // if nothing selected and no default address available select the first (default or most recently updated)
-            // note: see W-11417249 on if no default nothing selected works poorly with address cards
             this._initValue = this._addresses[0].addressId;
             this._isDirty = true;
             dispatchNeeded = true;

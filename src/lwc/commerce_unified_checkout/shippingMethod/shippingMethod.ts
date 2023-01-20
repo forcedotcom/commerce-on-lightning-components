@@ -190,7 +190,6 @@ export default class ShippingMethod extends LightningElement implements Checkout
         }
 
         // captures !payload.loaded, async checkout API
-        // TODO: shipping method selection need not wait to present availableDeliveryMethods
         this._isLoading = !checkoutStatusIsReady(payload.data?.checkoutStatus);
 
         // here we see what delivery methods are available for the selected delivery group/address.
@@ -241,7 +240,6 @@ export default class ShippingMethod extends LightningElement implements Checkout
             }
         }
 
-        // TODO: need to capture server initiated apex errors (we capture our own apex errors already)
     }
 
     /**

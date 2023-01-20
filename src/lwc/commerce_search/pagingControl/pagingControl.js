@@ -285,7 +285,6 @@ export default class PagingControl extends LightningElement {
 
     /**
      * Gets the symbol for range symbol.
-     * Note: TODO: do we need to take this from locale?
      *
      * @type {String}
      * @readonly

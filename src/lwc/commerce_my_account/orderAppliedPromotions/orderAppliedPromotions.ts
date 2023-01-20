@@ -125,7 +125,6 @@ export default class OrderAppliedPromotions extends LightningElement {
         };
         const errorInfo = getErrorInfo(error, errorLabels);
 
-        // TODO: implement error handling logic to make finding error info easier
         console.error(errorInfo);
     }
 }
