@@ -11,6 +11,11 @@ To browse the components in a JavaScript format, simply take these steps:
 1. Run `yarn build`
 The JavaScript form of the components will be generated in the `/dist` directory.
 
+## Additional Documentation
+More information regarding the development of custom components for Salesforce Commerce storefronts can be found [here](https://developer.salesforce.com/docs/atlas.en-us.b2b_b2c_comm_dev.meta/b2b_b2c_comm_dev/b2b_b2c_comm_custom_component.htm). Developers will find these sections of particular interest:
+* [Client-side JS API](https://developer.salesforce.com/docs/atlas.en-us.b2b_b2c_comm_dev.meta/b2b_b2c_comm_dev/b2b_b2c_comm_display_lwc_apis.htm): describes the wire adapters and imperative methods in the `commerce/*Api` libraries that customers may use to interact with Commerce data, i.e. Commerce Connect API endpoints. This documentation includes links to the Connect APIs that these libraries utilize, which describe the data structures.
+* [Custom Checkout Component Guide](https://developer.salesforce.com/docs/atlas.en-us.b2b_b2c_comm_dev.meta/b2b_b2c_comm_dev/b2b_b2c_comm_create_checkout_component.htm): captures the interactions between checkout-related components, including the functional interface custom checkout component developers can leverage.
+
 ## Organization
 Components are currently organized by feature and / or functional purpose via namespaces, e.g. [`commerce`](src/lwc/commerce) and [`commerce_builder`](src/lwc/commerce_builder). At a high level, we have these important namespaces / areas:
 * **[commerce](src/lwc/commerce)**: Common components and libraries shared across a Commerce storefront.
@@ -47,6 +52,10 @@ Notable libraries and syntax customers will need to remove or replace include:
 
 ### Dependency source code is not included
 Only the source code for the Commerce storefront components is included in this repository; the source code for any components or libraries used by the Commerce components - whether publicly available or internal - is not provided. In many cases, the source code is unnecessary since the component (e.g. `lightning/input`) or library (e.g. `commerce/cartApi`) is already publicly available.
+
+In the case of the [client-side JS API](https://developer.salesforce.com/docs/atlas.en-us.b2b_b2c_comm_dev.meta/b2b_b2c_comm_dev/b2b_b2c_comm_display_lwc_apis.htm) (i.e. references to libraries like `commerce/cartApi`), these libraries directly utilize the associated, public Connect API endpoints and operations. This means that the data returned by wire adapters and imperative methods will (with very, very, very few exceptions) match the response structure of the Connect API as-documented. To add further clarity, the internal `commerce/*ApiInternal` libraries are implementation details with two responsibilities:
+* Constructing requests (URLs and payloads) for the Connect API and dispatching those requests
+* Client-side caching and data coordination that is auto-magic, e.g. adding an item to the cart automatically triggers refreshes of cart items, cart summary information, and coupons
 
 ### TypeScript typings are incomplete
 Source code files are written in TypeScript and contain extensive uses of custom types; many of these types are not currently shaped in a way that allows them to be beneficially shared. While the type names may provide some helpful information, customers that find this information distracting should examine the components in their JavaScript format, which excludes the type information.
