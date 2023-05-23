@@ -28,5 +28,10 @@ jobs:
               with:
                   node-version: ${{ matrix.node-version }}
                   cache: 'npm'
+              env:
+                  GH_TOKEN: ${{ secrets.GH_TOKEN }}
+                  GIST_ID_CLONES: ${{ secrets.GIST_ID_CLONES }}
+                  GIST_ID_POPULAR_PATHS: ${{ secrets.GIST_ID_POPULAR_PATHS }}
+                  GIST_ID_POPULAR_REFERRERS: ${{ secrets.GIST_ID_POPULAR_REFERRERS }}
             - run: npm ci
             - run: npm run gh:traffic
