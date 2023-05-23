@@ -1,61 +1,122 @@
-# commerce-on-lightning-components
-Salesforce Commerce on Lightning LWR storefront out-of-the-box component source code for reference and educational purposes. The contents of this repository reflect the latest form of the components made available in the current release of Salesforce Commerce, providing customers a starting point for the development of their own storefront components.
+# @salesforce/commerce-components
 
-# Usage
-_:warning: The source code for Salesforce out-of-the-box components is provided for reference and educational purposes only; component implementations can and will change as features and functionality are revised, extended, and / or deprecated. Unless documented as a part of a Salesforce release, the properties, events, styles, and behaviors of these components are neither guaranteed nor supported for direct use by customers. See the [Caveats](#caveats) section below._
+![recipes-logo](recipes-logo.png)
 
-To begin browsing the component source code in its native TypeScript format, simply clone the repository and start loooking around.
+🌟 Welcome to the Commerce on Lightning Web Components Starter Kit! 🛍️
 
-To browse the components in a JavaScript format, simply take these steps:
-1. Run `yarn install`
-1. Run `yarn build`
-The JavaScript form of the components will be generated in the `/dist` directory.
+We're excited to present you with an ongoing development journey that aims to provide comprehensive building blocks for every aspect of your commerce storefront. If you're a customer or partner looking to create a remarkable commerce storefront that dazzles your users, then you've come to the right place.
 
-## Additional Documentation
-More information regarding the development of custom components for Salesforce Commerce storefronts can be found [here](https://developer.salesforce.com/docs/atlas.en-us.b2b_b2c_comm_dev.meta/b2b_b2c_comm_dev/b2b_b2c_comm_custom_component.htm). Developers will find these sections of particular interest:
-* [Client-side JS API](https://developer.salesforce.com/docs/atlas.en-us.b2b_b2c_comm_dev.meta/b2b_b2c_comm_dev/b2b_b2c_comm_display_lwc_apis.htm): describes the wire adapters and imperative methods in the `commerce/*Api` libraries that customers may use to interact with Commerce data, i.e. Commerce Connect API endpoints. This documentation includes links to the Connect APIs that these libraries utilize, which describe the data structures.
-* [Custom Checkout Component Guide](https://developer.salesforce.com/docs/atlas.en-us.b2b_b2c_comm_dev.meta/b2b_b2c_comm_dev/b2b_b2c_comm_create_checkout_component.htm): captures the interactions between checkout-related components, including the functional interface custom checkout component developers can leverage.
+While the project is still in active development, we're committed to gradually releasing the essential components you need. Each release will bring you closer to achieving a seamless and efficient commerce experience. The goal is that with our meticulously crafted reference components at your disposal, you'll be able to effortlessly assemble dynamic product catalogs, seamless shopping carts, intuitive checkout processes, and so much more. You can focus on what truly matters – crafting a storefront that not only meets your customers' expectations but exceeds them.
 
-## Organization
-Components are currently organized by feature and / or functional purpose via namespaces, e.g. [`commerce`](src/lwc/commerce) and [`commerce_builder`](src/lwc/commerce_builder). At a high level, we have these important namespaces / areas:
-* **[commerce](src/lwc/commerce)**: Common components and libraries shared across a Commerce storefront.
-* **[commerce_builder](src/lwc/commerce_builder)**: Top-level LWCs that are available in the Experience Builder palette - that is, the components you can drag-and-drop.
-* Other **commerce_** namespaces: Storefront feature areas containing the inner LWCs that support the components available in the Experience Builder.
+Join us on this exciting adventure as we shape the future of commerce storefront development together. Happy coding and happy commerce building! ✨🚀
 
-The feature areas are organized as follows:
-* **[commerce_cart](src/lwc/commerce_cart)**: Components related to the shopping cart, including the cart badge and components on the Cart page.
-* **[commerce_my_account](src/lwc/commerce_my_account)**: Components related the user and their account, including profile information and shopper account settings.
-* **[commerce_product_details](src/lwc/commerce_product_details)**: Components that provide an organized display of product information, primarily seen on the Product Detail page.
-* **[commerce_product_information](src/lwc/commerce_product_information)**: Supporting components that support the display of product information via other area-specific components.
-* **[commerce_search](src/lwc/commerce_search)**: Components involved in triggering searches and displaying search results and category products.
-* **[commerce_unified_checkout](src/lwc/commerce_unified_checkout)**: Components that choreograph and support the shopper checkout experience.
-* **[commerce_unified_coupons](src/lwc/commerce_unified_coupons)**: Components that display and manage shopper coupons, as seen on the Cart page.
-* **[commerce_unified_promotions](src/lwc/commerce_unified_promotions)**: Components that display shopping promotion information, as seen on the Cart page.
+---
 
-## Caveats
-In an effort to provide immediate value to customers, Salesforce is providing the exact, unaltered source code for its out-of-the-box components to customers. This promptness means that the source code cannot be immediately used (i.e. copy-pasted) by customers to create their own components as it contains references to internal libraries and evolving internal features that may not be available to customers. While Salesforce works to refine our source code and components to make them more directly reusable and composable, customers should be aware of these limitations of the component source code we provide.
+## The Hopefully Obvious
 
-### Components use internal libraries and technologies that are unavailable to customers
-As Salesforce-provided components, the source code references other internal libraries, components, and features that are unfamiliar and / or unavailable to customers. Customers will need to remove these references from their custom code, which will generate errors when they attempt to upload their components using SFDX.
+As you might expect, this project is organized as an SFDX (Salesforce DX) project. And because this is a project that consists almost exclusively of Lightning Web Components (LWC) intended for use in a B2B/B2C on LWR commerce storefront, everything essential is thus located in the [`force-app/main/default/lwc`](force-app/main/default/lwc) directory.
 
-Notable libraries and syntax customers will need to remove or replace include:
-* LWC library imports from
-    * the `experience` namespace
-    * the `commerce` namespace, with the exception of the public `commerce/*Api` libraries
-    * the `commerce_*` namespaces
-    * some `lightning` libraries, such as those named `lightning/private*`, `lightning/internal*`, and `lightning/toast`
-* Imports from the `@app` scoped module
-* References to components in the `commerce` and `commerce_*` namespaces
-* `<designSubstitute>` elements in the `*.js-meta.xml` files for components
-* `datasource="java://*"` attributes in the `*.js-meta.xml` files for components
-* Additional parameters from the component `@slot <name>` JsDoc tags, e.g. `@slot mySlot ({parameters})` should be changed to`@slot mySlot`
+---
 
-### Dependency source code is not included
-Only the source code for the Commerce storefront components is included in this repository; the source code for any components or libraries used by the Commerce components - whether publicly available or internal - is not provided. In many cases, the source code is unnecessary since the component (e.g. `lightning/input`) or library (e.g. `commerce/cartApi`) is already publicly available.
+## Installation
 
-In the case of the [client-side JS API](https://developer.salesforce.com/docs/atlas.en-us.b2b_b2c_comm_dev.meta/b2b_b2c_comm_dev/b2b_b2c_comm_display_lwc_apis.htm) (i.e. references to libraries like `commerce/cartApi`), these libraries directly utilize the associated, public Connect API endpoints and operations. This means that the data returned by wire adapters and imperative methods will (with very, very, very few exceptions) match the response structure of the Connect API as-documented. To add further clarity, the internal `commerce/*ApiInternal` libraries are implementation details with two responsibilities:
-* Constructing requests (URLs and payloads) for the Connect API and dispatching those requests
-* Client-side caching and data coordination that is auto-magic, e.g. adding an item to the cart automatically triggers refreshes of cart items, cart summary information, and coupons
+<details>
+<summary>Installing the components using a Scratch Org</summary>
 
-### TypeScript typings are incomplete
-Source code files are written in TypeScript and contain extensive uses of custom types; many of these types are not currently shaped in a way that allows them to be beneficially shared. While the type names may provide some helpful information, customers that find this information distracting should examine the components in their JavaScript format, which excludes the type information.
+1.  Set up your environment. Follow the steps in the [Quick Start: Lightning Web Components](https://trailhead.salesforce.com/content/learn/projects/quick-start-lightning-web-components/) Trailhead project. The steps include:
+
+    -   Enable Dev Hub in your Org
+    -   Install Salesforce CLI
+    -   Install Visual Studio Code
+    -   Install the Visual Studio Code Salesforce extensions, including the Lightning Web Components extension
+
+2.  If you haven't already done so, authorize your hub org and provide it with an alias (**myhuborg** in the command below):
+
+    ```shell
+    sf org login web -d -a myhuborg
+    ```
+
+3.  Clone the repositoty `forcedotcom/commerce-on-lightning-components`:
+
+    ```shell
+    git clone https://github.com/forcedotcom/commerce-on-lightning-components.git
+    cd commerce-on-lightning-components
+    ```
+
+4.  Create a scratch org and provide it with an alias (**commerce-components** in the command below):
+
+    ```shell
+    sf org create scratch -f config/project-scratch-def.json -a commerce-components
+    ```
+
+5.  Push the app to your scratch org:
+
+    ```shell
+    sf project deploy start
+    ```
+
+6.  Open the scratch org:
+
+    ```shell
+    sf org open
+    ```
+
+    </details>
+
+<details>
+<summary>Optional Installation Instructions</summary>
+
+This repository contains several files that are relevant if you want to integrate modern web development tooling to your Salesforce development processes, or to your continuous integration/continuous deployment processes.
+
+### Code Formatting
+
+[Prettier](https://prettier.io/) is a code formatter used to ensure consistent formatting across your code base. To use Prettier with Visual Studio Code, install [this extension](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) from the Visual Studio Code Marketplace. The [.prettierignore](.prettierignore) and [.prettierrc](.prettierrc) files are provided as part of this repository to control the behavior of the Prettier formatter.
+
+### Code Linting
+
+[ESLint](https://eslint.org/) is a popular JavaScript linting tool used to identify stylistic errors and erroneous constructs. To use ESLint with Visual Studio Code, install [this extension](https://marketplace.visualstudio.com/items?itemName=salesforce.salesforcedx-vscode-lwc) from the Visual Studio Code Marketplace. The [.eslintrc.cjs](force-app/main/default/lwc/.eslintrc.cjs) file is provided as part of this repository to control the behavior of the linting process in the context of Lightning Web Components development.
+
+### Pre-Commit Hook
+
+This repository also comes with a [package.json](package.json) file that makes it easy to set up a pre-commit hook that enforces code formatting and linting by running Prettier and ESLint every time you `git commit` changes.
+
+To set up the formatting and linting pre-commit hook:
+
+1. Install [Node.js](https://nodejs.org) if you haven't already done so
+2. Run `npm install` in your project's root folder to install the ESLint and Prettier modules (Note: Mac users should verify that Xcode command line tools are installed before running this command.)
+
+Prettier and ESLint will now run automatically every time you commit changes. The commit will fail if linting errors are detected. You can also run the formatting and linting from the command line using the following commands (check out [package.json](package.json) for the full list):
+
+```shell
+npm run lint
+npm run format
+```
+
+</details>
+
+---
+
+## Components
+
+### Worth Knowing
+
+The components themselves can be roughly divided into two categories. On the one hand, you will find purely presentational components for various aspects of a commerce storefront, but on the other hand, you will also find components that are designed to bridge the gap between the presentational layer and the layer that actively sets them into effect, i.e. the layer of declarative tools like the Experience Builder. These components are easily recognized by the _builder_ prefix.
+
+Close observers may discern that even these _builder_ components, conceptualized as smart components, do not retrieve their data through the customary channel of one or more `@wire` adapters in LWC. This is a specialty of the newer LWR experiences, which include the ones based on our B2B/B2C commerce storefront templates. Integral to these experiences are what we refer to as data providers, offering a versatile means of fetching an extensive range of data. Subsequently, this data seamlessly "flows" into components through the utilization of expressions and data binding, serving as input for `@api` properties on our LWCs.
+
+### Overview
+
+| Name/FQN                                                                      | Description                                                    | Application Area |
+| :---------------------------------------------------------------------------- | :------------------------------------------------------------- | :--------------- |
+| [`productPricing`](force-app/main/default/lwc/productPricing)                 | Displays pricing information for products.                     | PDP              |
+| [`productPricingTiers`](force-app/main/default/lwc/productPricingTiers)       | Displays pricing information for products with discount tiers. | PDP              |
+| [`productVariantSelector`](force-app/main/default/lwc/productVariantSelector) | Displays options for selecting product variations.             | PDP              |
+
+---
+
+## Resources
+
+-   [Salesforce Extensions Documentation](https://developer.salesforce.com/tools/vscode/)
+-   [Salesforce CLI Setup Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_intro.htm)
+-   [Salesforce DX Developer Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_intro.htm)
+-   [Salesforce CLI Command Reference](https://developer.salesforce.com/docs/atlas.en-us.sfdx_cli_reference.meta/sfdx_cli_reference/cli_reference.htm)

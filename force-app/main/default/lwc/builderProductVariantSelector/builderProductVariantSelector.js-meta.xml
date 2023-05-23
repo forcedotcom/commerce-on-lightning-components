@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <isExposed>true</isExposed>
+    <masterLabel>Custom Product Variants</masterLabel>
+    <description>Displays options for selecting product variations.</description>
+    <targets>
+        <target>lightningCommunity__Page</target>
+        <target>lightningCommunity__Default</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightningCommunity__Default">
+            <property label="Product Data Binding" name="product" type="String" default="{!Product.Details}" />
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

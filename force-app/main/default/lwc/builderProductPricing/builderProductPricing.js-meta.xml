@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+	<isExposed>true</isExposed>
+    <masterLabel>Custom Product Pricing Information</masterLabel>
+    <description>Displays pricing information for products.</description>
+	<targets>
+		<target>lightningCommunity__Page</target>
+		<target>lightningCommunity__Default</target>
+	</targets>
+	<targetConfigs>
+        <targetConfig targets="lightningCommunity__Default">
+            <property label="Show Actual Price" name="showNegotiatedPrice" type="Boolean" default="true" />
+            <property label="Actual Price Text Color" name="negotiatedPriceTextColor" type="Color" />
+            <property
+                label="Actual Price Text Size"
+                name="negotiatedPriceTextSize"
+                type="String"
+                datasource="small,medium,large"
+                default="small"
+            />
+            <property
+                label="Actual Price Label"
+                name="negotiatedPriceLabel"
+                type="String"
+                default="Your Price"
+                translatable="true"
+            />
+            <property label="Show Original Price" name="showOriginalPrice" type="Boolean" default="true" />
+            <property label="Original Price Text Color" name="originalPriceTextColor" type="Color" />
+            <property
+                label="Original Price Text Size"
+                name="originalPriceTextSize"
+                type="String"
+                datasource="small,medium,large"
+                default="small"
+            />
+            <property
+                label="Original Price Label"
+                name="originalPriceLabel"
+                type="String"
+                default="Original Price"
+                translatable="true"
+            />
+            <property
+                label="Unavailable Price Label"
+                name="unavailablePriceLabel"
+                type="String"
+                default="Price Unavailable"
+                translatable="true"
+            />
+            <property label="Show Tax Indication" name="showTaxIndication" type="Boolean" default="true" />
+            <property
+                label="Tax Label"
+                name="taxIncludedLabel"
+                type="String"
+                default="Tax Included"
+                translatable="true"
+            />
+            <property label="Tax Label Color" name="taxLabelColor" type="Color" />
+            <property
+                label="Tax Label Size"
+                name="taxLabelSize"
+                type="String"
+                datasource="small,medium,large"
+                default="medium"
+            />
+            <property label="Product Data Binding" name="product" type="String" default="{!Product.Details}" />
+            <property
+                label="Product Pricing Data Binding"
+                name="productPricing"
+                type="String"
+                default="{!Product.Pricing}"
+            />
+            <property label="Product Tax Data Binding" name="productTax" type="String" default="{!Product.Tax}" />
+            <property
+                label="Product Variant Data Binding"
+                name="productVariant"
+                type="String"
+                default="{!Product.SelectedVariant}"
+            />
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

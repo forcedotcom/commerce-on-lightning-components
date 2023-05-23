@@ -1,0 +1,18 @@
+<template lwc:render-mode="light">
+    <c-product-pricing
+        if:true={displayPricing}
+        class="slds-p-vertical_small"
+        negotiated-price-label={negotiatedPriceLabel}
+        original-price-label={originalPriceLabel}
+        unavailable-price-label={unavailablePriceLabel}
+        negotiated-price={negotiatedPrice}
+        original-price={originalPrice}
+        show-negotiated-price={showNegotiatedPrice}
+        show-original-price={showOriginalPrice}
+        currency-code={currencyCode}
+        show-tax-indication={showTaxIndication}
+        tax-included-label={taxIncludedLabel}
+        tax-locale-type={taxLocaleType}
+        tax-rate={taxRatePercentage}
+        style={priceStyles}></c-product-pricing>
+</template>

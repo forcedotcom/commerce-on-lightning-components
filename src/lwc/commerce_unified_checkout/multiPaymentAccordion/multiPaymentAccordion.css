@@ -1,6 +1,0 @@
-ul {
-    border-width: var(--sds-c-accordion-sizing-border);
-    border-style: solid;
-    border-color: var(--dxp-g-neutral);
-    border-radius: var(--dxp-s-form-border-radius, 0.25rem);
-}
