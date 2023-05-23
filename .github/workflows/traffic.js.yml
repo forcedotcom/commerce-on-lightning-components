@@ -8,7 +8,8 @@ name: GitHub Traffic Data Retrieval
 
 on:
     schedule:
-        - cron: '0/5 * * * *'
+        - cron: '0 0/12 * * *'
+          # Cron job at minute 0 past every 12th hour from 0 through 23, i.e. every midnight and noon
 
 jobs:
     build:
