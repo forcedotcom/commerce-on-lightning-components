@@ -1,8 +1,0 @@
-:host {
-    display: grid;
-    word-break: break-word;
-}
-
-.bold-string-title {
-    font-weight: 700;
-}

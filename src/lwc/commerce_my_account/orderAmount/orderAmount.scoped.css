@@ -1,6 +1,0 @@
-commerce_my_account-order-totals-with-fields {
-    --com-c-order-totals-background-color: var(--com-c-my-account-order-summary-amount-background-color);
-    --com-c-order-totals-text-color: var(--com-c-my-account-order-summary-amount-text-color);
-    --com-c-order-totals-border-color: var(--com-c-my-account-order-summary-amount-border-color);
-    --com-c-order-totals-border-radius: var(--com-c-my-account-order-summary-amount-border-radius);
-}

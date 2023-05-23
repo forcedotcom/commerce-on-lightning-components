@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightningCommunity__Page</target>
+        <target>lightningCommunity__Default</target>
+    </targets>
+    <masterLabel>Custom Product Pricing Tiers</masterLabel>
+    <description>Displays pricing information for products with discount tiers.</description>
+    <targetConfigs>
+        <targetConfig targets="lightningCommunity__Default">
+            <property
+                label="Quantity Row Label"
+                name="quantityRowLabel"
+                type="String"
+                translatable="true"
+                default="Quantity"
+            />
+            <property
+                label="Discount Row Label"
+                name="discountRowLabel"
+                type="String"
+                translatable="true"
+                default="Discount per Unit"
+            />
+            <property
+                label="Tier Border Radius (0px - 100px)"
+                name="borderRadius"
+                type="Integer"
+                min="0"
+                max="100"
+                default="0"
+            />
+            <property label="Tier Background Color" name="backgroundColor" type="Color" default="rgba(0,0,0,0)" />
+            <property label="Tier Row Title Text Color" name="rowTitleTextColor" type="Color" />
+            <property label="Tier Column Title Text Color" name="labelTextColor" type="Color" />
+            <property label="Tier Price Text Color" name="textColor" type="Color" />
+            <property label="Tier Price Text Border Color" name="borderColor" type="Color" />
+
+            <property
+                label="Product Pricing Data Binding"
+                name="productPricing"
+                type="String"
+                default="{!Product.Pricing}"
+            />
+            <property label="Product Data Binding" name="product" type="String" default="{!Product.Details}" />
+            <property
+                label="Product Variant Selection Data Binding"
+                name="productVariant"
+                type="String"
+                default="{!Product.SelectedVariant}"
+            />
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

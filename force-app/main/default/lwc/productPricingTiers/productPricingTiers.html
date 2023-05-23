@@ -1,0 +1,31 @@
+<template lwc:render-mode="light">
+    <div class="pricing-tiers">
+        <slot name="title"></slot>
+
+        <lightning-layout
+            tabindex="0"
+            class="slds-p-around_x-small adjustment-tiers-container">
+            <lightning-layout-item class="tier-row-title slds-p-right_medium">
+                <div class="tier-row-title-label">{quantityRowLabel}:</div>
+                <div class="tier-row-title-label">{discountRowLabel}:</div>
+            </lightning-layout-item>
+
+            <template
+                for:each={normalizedAdjustmentTiers}
+                for:item="tier">
+                <lightning-layout-item
+                    key={tier.id}
+                    padding="horizontal-medium"
+                    class="tier">
+                    <div class="tier-column-title">{tier.lowerBound} - {tier.upperBound}</div>
+                    <lightning-formatted-number
+                        value={tier.adjustmentValue}
+                        class="tier-row-value"
+                        maximum-fraction-digits="20"
+                        currency-code={currencyCode}
+                        format-style={tier.adjustmentValueFormat}></lightning-formatted-number>
+                </lightning-layout-item>
+            </template>
+        </lightning-layout>
+    </div>
+</template>

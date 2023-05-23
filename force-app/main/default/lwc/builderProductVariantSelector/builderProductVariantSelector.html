@@ -1,0 +1,9 @@
+<template lwc:render-mode="light">
+    <c-product-variant-selector
+        if:true={isDisplayable}
+        class="slds-p-vertical_small"
+        product={product}
+        onvariantselected={handleVariantOptionChanged}>
+        <div slot="heading"><slot name="heading"></slot></div>
+    </c-product-variant-selector>
+</template>

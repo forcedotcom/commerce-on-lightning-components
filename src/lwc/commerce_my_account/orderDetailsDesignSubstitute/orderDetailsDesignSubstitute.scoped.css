@@ -1,6 +1,0 @@
-commerce_my_account-order-details-display {
-    --com-c-order-details-display-background-color: var(--com-c-my-account-order-details-background-color);
-    --com-c-order-details-display-color: var(--com-c-my-account-order-details-font-color);
-    --com-c-order-details-display-border-color: var(--com-c-my-account-order-details-border-color);
-    --com-c-order-details-display-border-radius: var(--com-c-my-account-order-details-border-radius);
-}
