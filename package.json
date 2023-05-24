@@ -23,6 +23,8 @@
         "url": "https://github.com/forcedotcom/commerce-on-lightning-components.git"
     },
     "devDependencies": {
+        "@commitlint/cli": "17.6.3",
+        "@commitlint/config-conventional": "17.6.3",
         "@lwc/eslint-plugin-lwc": "1.6.2",
         "@prettier/plugin-xml": "2.2.0",
         "@sa11y/jest": "5.0.1",
