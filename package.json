@@ -12,6 +12,7 @@
         "format:verify": "prettier --check \"force-app/main/default/lwc/**/*.{css,html,js,json,md,xml,yaml,yml}\"",
         "postinstall": "husky install",
         "precommit": "lint-staged",
+        "ready": "npm run lint && npm run format:verify && npm run test",
         "test": "npm run test:unit",
         "test:unit": "sfdx-lwc-jest --skipApiVersionCheck",
         "test:unit:watch": "sfdx-lwc-jest --watch --skipApiVersionCheck",

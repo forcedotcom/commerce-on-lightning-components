@@ -106,11 +106,13 @@ Close observers may discern that even these _builder_ components, conceptualized
 
 ### Overview
 
-| Name/FQN                                                                      | Description                                                    | Application Area |
-| :---------------------------------------------------------------------------- | :------------------------------------------------------------- | :--------------- |
-| [`productPricing`](force-app/main/default/lwc/productPricing)                 | Displays pricing information for products.                     | PDP              |
-| [`productPricingTiers`](force-app/main/default/lwc/productPricingTiers)       | Displays pricing information for products with discount tiers. | PDP              |
-| [`productVariantSelector`](force-app/main/default/lwc/productVariantSelector) | Displays options for selecting product variations.             | PDP              |
+<!-- prettier-ignore -->
+| Name/FQN                                                                      | Description                                                    | Application Area |                                Builder Support                                 |
+|:------------------------------------------------------------------------------|:---------------------------------------------------------------|:-----------------|:------------------------------------------------------------------------------:|
+| [`productPricing`](force-app/main/default/lwc/productPricing)                 | Displays pricing information for products.                     | PDP              |     [:white_check_mark:](force-app/main/default/lwc/builderProductPricing)     |
+| [`productPricingTiers`](force-app/main/default/lwc/productPricingTiers)       | Displays pricing information for products with discount tiers. | PDP              |  [:white_check_mark:](force-app/main/default/lwc/builderProductPricingTiers)   |
+| [`productVariantSelector`](force-app/main/default/lwc/productVariantSelector) | Displays options for selecting product variations.             | PDP              | [:white_check_mark:](force-app/main/default/lwc/builderProductVariantSelector) |
+| [`searchSortMenu`](force-app/main/default/lwc/searchSortMenu)                 | Displays options for changing the search sort order.           | Search/PLP       |                                                                                |
 
 ---
 
