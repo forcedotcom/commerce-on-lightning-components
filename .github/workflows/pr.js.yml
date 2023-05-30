@@ -8,7 +8,7 @@ name: PR Build
 
 on:
     pull_request:
-        branches: ['release', 'rc/**']
+        branches: ['release', 'rc/**', 'feature/**']
     push:
         branches: ['rc/**']
 

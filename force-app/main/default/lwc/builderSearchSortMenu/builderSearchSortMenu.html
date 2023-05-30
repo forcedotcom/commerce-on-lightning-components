@@ -1,0 +1,13 @@
+<template lwc:render-mode="light">
+    <div class="slds-grid slds-grid_vertical-align-center">
+        <div class="slds-col slds-show_large">
+            <slot name="sortMenuLabel"></slot>
+        </div>
+        <div class="slds-col slds-m-left_xx-small">
+            <c-search-sort-menu
+                sort-rules={sortRules}
+                sort-rule-id={sortRuleId}
+                onsearchsort={handleSearchSortEvent}></c-search-sort-menu>
+        </div>
+    </div>
+</template>
