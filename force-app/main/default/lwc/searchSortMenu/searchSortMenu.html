@@ -1,0 +1,11 @@
+<template lwc:render-mode="light">
+    <lightning-combobox
+        id="sort-menu"
+        class="slds-m-around_none"
+        variant="label-hidden"
+        value={activeOption.value}
+        placeholder={activeOption.label}
+        options={_options}
+        onchange={handleChange}
+        dropdown-alignment="right"></lightning-combobox>
+</template>
