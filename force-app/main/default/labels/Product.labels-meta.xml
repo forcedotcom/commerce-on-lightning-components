@@ -14,4 +14,46 @@
         <protected>false</protected>
         <shortDescription>Product_Variant_Selector_productVariantSelectorPlaceholderText</shortDescription>
     </labels>
+    <labels>
+        <fullName>Product_QuantitySelector_rangeOverflow</fullName>
+        <value>Enter a value between {min} and {max} in increments of {step}.</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Product_QuantitySelector_rangeOverflow</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Product_QuantitySelector_rangeUnderflow</fullName>
+        <value>Enter a value between {min} and {max} in increments of {step}.</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Product_QuantitySelector_rangeUnderflow</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Product_QuantitySelector_stepMismatch</fullName>
+        <value>Enter a value between {min} and {max} in increments of {step}.</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Product_QuantitySelector_stepMismatch</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Product_QuantitySelector_patternMismatch</fullName>
+        <value>Enter a valid number.</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Product_QuantitySelector_patternMismatch</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Product_QuantitySelector_outOfStock</fullName>
+        <value>Out of stock</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Product_QuantitySelector_outOfStock</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Product_QuantitySelectorPopover_quantityHelp</fullName>
+        <value>Quantity help</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Product_QuantitySelectorPopover_quantityHelp</shortDescription>
+    </labels>
 </CustomLabels>

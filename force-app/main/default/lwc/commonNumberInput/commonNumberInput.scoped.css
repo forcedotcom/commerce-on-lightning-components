@@ -1,0 +1,60 @@
+:host {
+    --ref-c-common-number-input-width: var(--dxp-c-number-input-width, 5.5rem);
+    --ref-c-common-number-input-height: var(--dxp-c-number-input-height, 2.5rem);
+}
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+input[type='number'] {
+    -moz-appearance: textfield;
+}
+input,
+button {
+    border: none;
+}
+label {
+    white-space: nowrap;
+}
+span {
+    border: var(--dxp-s-form-element-width-border, 1px) solid var(--dxp-g-neutral-1);
+    border-radius: var(--ref-c-common-number-input-border-radius, 0);
+}
+span.error {
+    border: var(--dxp-s-form-element-width-border, 1px) solid var(--dxp-g-destructive);
+}
+.number-input__input {
+    width: var(--ref-c-common-number-input-width);
+    height: calc(var(--ref-c-common-number-input-height) - 2 * var(--dxp-s-form-element-width-border, 1px));
+    outline: 0;
+    text-align: center;
+}
+.number-input__decrement-button {
+    border-right: var(--dxp-s-form-element-width-border, 1px) solid var(--dxp-g-neutral-1);
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+    border-top-left-radius: inherit;
+    border-bottom-left-radius: inherit;
+}
+.number-input__increment-button {
+    border-left: var(--dxp-s-form-element-width-border, 1px) solid var(--dxp-g-neutral-1);
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+    border-top-right-radius: inherit;
+    border-bottom-right-radius: inherit;
+}
+.number-input__button-icon {
+    --sds-c-icon-color-foreground-default: var(--dxp-g-root-contrast);
+}
+.number-input__increment-button:focus,
+.number-input__decrement-button:focus,
+.number-input__input:focus {
+    --slds-c-input-shadow: 0 0 3px var(--dxp-g-neutral-1);
+}
+button[disabled] .number-input__button-icon {
+    --sds-c-icon-color-foreground-default: var(--dxp-g-neutral);
+}
+.hidden-input {
+    display: none;
+}

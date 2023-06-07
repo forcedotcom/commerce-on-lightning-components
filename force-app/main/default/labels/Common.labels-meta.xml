@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+    <labels>
+        <fullName>Common_NumberInput_decrementAltText</fullName>
+        <value>Decrement quantity</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Common_NumberInput_decrementAltText</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Common_NumberInput_incrementAltText</fullName>
+        <value>Increase quantity</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Common_NumberInput_incrementAltText</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Common_NumberInput_inputAriaLabel</fullName>
+        <value>Enter a value to change your quantity</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Common_NumberInput_inputAriaLabel</shortDescription>
+    </labels>
+</CustomLabels>
