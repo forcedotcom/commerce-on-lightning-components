@@ -20,6 +20,7 @@ module.exports = {
         ],
         'prettier/prettier': 'error',
         'jsdoc/check-tag-names': ['warn', { definedTags: ['slot'] }],
+        'no-unused-expressions': ['error', { allowShortCircuit: true, allowTernary: true }],
     },
     overrides: [
         {

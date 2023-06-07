@@ -1,0 +1,7 @@
+:host {
+    width: 1rem;
+}
+.close-btn {
+    right: 0;
+    position: absolute;
+}

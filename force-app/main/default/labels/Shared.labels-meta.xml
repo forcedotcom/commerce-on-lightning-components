@@ -7,4 +7,11 @@
         <protected>false</protected>
         <shortDescription>Shared_required</shortDescription>
     </labels>
+    <labels>
+        <fullName>Shared_closeButtonAssistiveText</fullName>
+        <value>Close dialog</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Shared_closeButtonAssistiveText</shortDescription>
+    </labels>
 </CustomLabels>

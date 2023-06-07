@@ -1,0 +1,37 @@
+<template lwc:render-mode="light">
+    <span class="slds-grid slds-grid_vertical-align-center">
+        <c-product-quantity-selector-popover
+            if:true={showRulePopover}
+            increment-text={stepText}
+            minimum-text={minimumText}
+            maximum-text={maximumText}></c-product-quantity-selector-popover>
+        <c-common-number-input
+            value={inputValue}
+            min={rulesAsNumbers.minimum}
+            max={ruleOrInventoryMaximum}
+            step={rulesAsNumbers.step}
+            disabled={isDisabled}
+            custom-validity={customErrorMessage}
+            field-label={label}
+            field-described-by={ariaDescribedByLabel}
+            hide-buttons={hideButtons}
+            hide-label={hideLabel}
+            onvaluechanged={handleQuantityChanged}
+            onvaliditychanged={handleValidityChanged}></c-common-number-input>
+    </span>
+    <template lwc:if={showNotification}>
+        <p
+            lwc:if={hasError}
+            class={computedClasses}
+            role="alert"
+            id={ariaDescribedByLabel}>
+            {notificationText}
+        </p>
+        <p
+            lwc:else
+            class={computedClasses}
+            id={ariaDescribedByLabel}>
+            {notificationText}
+        </p>
+    </template>
+</template>

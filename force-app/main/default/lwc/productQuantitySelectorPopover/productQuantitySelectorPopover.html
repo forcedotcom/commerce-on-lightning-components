@@ -1,0 +1,29 @@
+<template lwc:render-mode="light">
+    <experience-popup-source aria-describedby="popup-body">
+        <lightning-button-icon
+            icon-name="utility:info"
+            size="small"
+            onclick={openPopup}
+            alternative-text={i18n.quantityHelpLabel}
+            slot="source"
+            variant="bare"
+            class="slds-m-right_x-small"></lightning-button-icon>
+        <lightning-button-icon
+            size="small"
+            class="slds-popover__close close-btn"
+            variant="bare"
+            icon-name="utility:close"
+            onclick={closePopup}
+            title={i18n.closeButtonText}
+            alternative-text={i18n.closeButtonText}></lightning-button-icon>
+        <div
+            id="popup-body"
+            class="slds-popover__body">
+            <ul class="slds-list_dotted">
+                <li if:true={showMinText}>{minimumText}</li>
+                <li if:true={showMaxText}>{maximumText}</li>
+                <li if:true={showIncrementText}>{incrementText}</li>
+            </ul>
+        </div>
+    </experience-popup-source>
+</template>
