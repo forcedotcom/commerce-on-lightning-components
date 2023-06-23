@@ -6,10 +6,8 @@
  * root or https://opensource.org/licenses/apache-2-0/
  */
 import { api, LightningElement, wire } from 'lwc';
+import { generateStyleProperties } from 'experience/styling';
 import { SessionContextAdapter } from 'commerce/contextApi';
-// TODO: This is a temporary solution/import and should be replaced with `experience/styling`,
-//  once this bundle is publicly available. The file `./styling` can then be removed!
-import { generateStyleProperties } from './styling';
 import { priceAdjustmentTiers } from './designTimeData'; // <-- design-time only
 
 /**

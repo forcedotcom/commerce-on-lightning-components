@@ -6,23 +6,31 @@
  * root or https://opensource.org/licenses/apache-2-0/
  */
 import { api, LightningElement, wire } from 'lwc';
+import { generateStyleProperties } from 'experience/styling';
 import { AppContextAdapter } from 'commerce/contextApi';
 
-// TODO: This is a temporary solution/import and should be replaced with `experience/styling`,
-//  once this bundle is publicly available. The file `./styling` can then be removed!
-import { createStyleString } from './styling';
+const textSizeToStyle = new Map([
+    ['small', 'var(--dxp-s-text-heading-small-font-size)'],
+    ['medium', 'var(--dxp-s-text-heading-medium-font-size)'],
+    ['large', 'var(--dxp-s-text-heading-large-font-size)'],
+]);
 
 /**
  * @typedef {{[key: string]: *}} JsonData
  */
 
+/**
+ * Gets the associated dxp CSS font size property for the given text size.
+ * @private
+ * @param {('small' | 'medium' | 'large')} textSize The size of heading to be reflected by the returned CSS class.
+ * @returns {string} The dxp CSS property matching the requested size, if one exists; otherwise, 'initial'.
+ */
+function getTextSizeStyle(textSize) {
+    return textSizeToStyle.get(textSize) ?? 'initial';
+}
+
 export default class BuilderProductPricing extends LightningElement {
     static renderMode = 'light';
-    static textSizeToStyle = new Map([
-        ['small', 'var(--dxp-s-text-heading-small-font-size)'],
-        ['medium', 'var(--dxp-s-text-heading-medium-font-size)'],
-        ['large', 'var(--dxp-s-text-heading-large-font-size)'],
-    ]);
 
     /**
      * Product data.
@@ -98,13 +106,13 @@ export default class BuilderProductPricing extends LightningElement {
     @api unavailablePriceLabel;
 
     /**
-     * Whether or not to display the Original price
+     * Whether to display the Original price
      * @type {?boolean}
      */
     @api showOriginalPrice;
 
     /**
-     * Whether or not to show the VAT Tax section.
+     * Whether to show the VAT Tax section.
      * @type {?boolean}
      */
     @api showTaxIndication;
@@ -180,13 +188,13 @@ export default class BuilderProductPricing extends LightningElement {
      * @returns {string} Default styles
      */
     get priceStyles() {
-        return createStyleString({
+        return generateStyleProperties({
             '--ref-c-product-pricing-tax-info-label-color': this.taxLabelColor || 'initial',
-            '--ref-c-product-pricing-tax-info-label-size': this.getTextSizeStyle(this.taxLabelSize),
+            '--ref-c-product-pricing-tax-info-label-size': getTextSizeStyle(this.taxLabelSize),
             '--ref-c-product-pricing-original-price-label-color': this.originalPriceTextColor || 'initial',
-            '--ref-c-product-pricing-original-price-label-size': this.getTextSizeStyle(this.originalPriceTextSize),
+            '--ref-c-product-pricing-original-price-label-size': getTextSizeStyle(this.originalPriceTextSize),
             '--ref-c-product-pricing-negotiated-price-label-color': this.negotiatedPriceTextColor || 'initial',
-            '--ref-c-product-pricing-negotiated-price-label-size': this.getTextSizeStyle(this.negotiatedPriceTextSize),
+            '--ref-c-product-pricing-negotiated-price-label-size': getTextSizeStyle(this.negotiatedPriceTextSize),
         });
     }
 
@@ -232,15 +240,5 @@ export default class BuilderProductPricing extends LightningElement {
      */
     renderedCallback() {
         this.classList.toggle('slds-hide', !this.displayPricing);
-    }
-
-    /**
-     * Gets the associated dxp CSS font size property for the given text size.
-     * @private
-     * @param {('small' | 'medium' | 'large')} textSize The size of heading to be reflected by the returned CSS class.
-     * @returns {string} The dxp CSS property matching the requested size, if one exists; otherwise, 'initial'.
-     */
-    getTextSizeStyle(textSize) {
-        return BuilderProductPricing.textSizeToStyle.get(textSize) ?? 'initial';
     }
 }
