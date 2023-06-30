@@ -28,7 +28,7 @@ import { computeSortOptions } from './utils';
 
 /**
  * An event fired when the user changes the sort rule/order.
- * @event SortMenu#SearchSortEvent
+ * @event SearchSortMenu#SearchSortEvent
  * @type {CustomEvent}
  * @property {object} detail CustomEvent details
  * @property {string} [detail.sortRuleId] The selected sort rule ID
@@ -36,9 +36,9 @@ import { computeSortOptions } from './utils';
 
 /**
  * A UI control for user to select the sort order for search result
- * @fires SortMenu#SearchSortEvent event
+ * @fires SearchSortMenu#SearchSortEvent event
  */
-export default class SortMenu extends LightningElement {
+export default class SearchSortMenu extends LightningElement {
     static renderMode = 'light';
 
     /**
@@ -94,7 +94,7 @@ export default class SortMenu extends LightningElement {
      * If it's the same as current one, no further actions; otherwise, fire a customer event
      * @private
      * @param {CustomEvent<{ value: string }>} event The change event object
-     * @fires SortMenu#SearchSortEvent
+     * @fires SearchSortMenu#SearchSortEvent
      */
     handleChange({ detail: { value } }) {
         if (value && value !== this.sortRuleId) {

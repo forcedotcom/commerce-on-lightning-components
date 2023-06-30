@@ -16,24 +16,29 @@ export { isVariantSupportedProductClass } from './productVariantSelectorUtils';
  */
 
 /**
+ * An event fired when the user changes the variant selection
+ * @event ProductVariantSelector#variantselected
+ * @type {CustomEvent}
+ * @property {object} detail CustomEvent details
+ * @property {boolean} detail.isValid
+ *  Represents whether the selected _`options`_ are valid, i.e. relate
+ *  to an existing variant.
+ * @property {Array<string>} detail.options
+ *  The selected variant options.
+ * @property {string} [detail.productId]
+ *  The unique product identifier the selected _`option`_s relate to.
+ * @property {string} [detail.urlName]
+ *  The product URL the selected _`option`_s relate to.
+ */
+
+/**
  * Displays a list of dropdowns that represent the variant attributes
  * associated with a product. On each dropdown change it emits a `variantselected` event.
  * The width should be set by the consumer as it consumes all available width allocated.
- * @fires VariantSelector#variantselected
+ * @fires ProductVariantSelector#variantselected
  */
-export default class VariantSelector extends LightningElement {
+export default class ProductVariantSelector extends LightningElement {
     static renderMode = 'light';
-
-    /**
-     * An event fired when the user changes the variant selection
-     *
-     * Properties:
-     * - Bubbles: false
-     * - Cancelable: false
-     * - Composed: false
-     * @event VariantSelector#variantselected
-     * @type {CustomEvent}
-     */
 
     /**
      * A product variant attribute value option
@@ -115,6 +120,7 @@ export default class VariantSelector extends LightningElement {
     /**
      * An object representing selected product details and its variants
      * @type {?JsonData}
+     * @private
      * @example
      * {
      *   id: string;
@@ -143,6 +149,7 @@ export default class VariantSelector extends LightningElement {
     /**
      * An object representing the state of all the variants of selected product
      * @type {?JsonData}
+     * @private
      * @example
      * {
      *   variants: Array<Variant>;
@@ -157,6 +164,8 @@ export default class VariantSelector extends LightningElement {
      * The type of product. Valid product types include 'VariationParent'
      * and 'Variation'. Only 'Variation' products are available to buy.
      * @type {?string}
+     * @readonly
+     * @private
      */
     get productClass() {
         return this.product?.productClass;
@@ -166,6 +175,8 @@ export default class VariantSelector extends LightningElement {
      * Currently Selected Options represented as an array of
      * ordered string values (matching the variant option order).
      * @type {Array<string>}
+     * @readonly
+     * @private
      * @example
      * ['Red', 'Large']
      */
@@ -176,6 +187,8 @@ export default class VariantSelector extends LightningElement {
     /**
      * The list of available variant options
      * @type {?Array<Variant>}
+     * @readonly
+     * @private
      */
     get variants() {
         return this._variantState?.variants;
@@ -183,12 +196,14 @@ export default class VariantSelector extends LightningElement {
 
     /**
      * A list of valid variants
+     * @type {?Array<Array<string>>}
+     * @readonly
+     * @private
      * @example
      * [
      *   ['Small', 'Blue', 'Cotton'],
      *   ['Medium', 'Yellow', 'Cotton'],
      * ]
-     * @type {?Array<Array<string>>}
      */
     get validVariantsList() {
         return this._variantState?.validVariants;
@@ -199,6 +214,8 @@ export default class VariantSelector extends LightningElement {
      * The key represents the valid variant attribute values as a string and the value
      * is an object with the product id and the valid variant attribute values as a list.
      * @type {Map<string, JsonData>}
+     * @readonly
+     * @private
      * @example
      * [
      *   'Red_Small_Cotton',
@@ -225,6 +242,8 @@ export default class VariantSelector extends LightningElement {
     /**
      * The label for required variant options
      * @type {string}
+     * @readonly
+     * @private
      */
     get requiredPicklistLabel() {
         return Labels.labelRequired;
@@ -233,6 +252,8 @@ export default class VariantSelector extends LightningElement {
     /**
      * The label for the placeholder text
      * @type {string}
+     * @readonly
+     * @private
      */
     get placeholderLabel() {
         return Labels.placeholderText;
@@ -261,6 +282,7 @@ export default class VariantSelector extends LightningElement {
      * @type {Array<string>}
      * @example
      * ['Red', 'Large']
+     * @readonly
      */
     @api
     get currentlySelectedOptions() {
@@ -277,6 +299,7 @@ export default class VariantSelector extends LightningElement {
     /**
      * Whether the valid variants list contains the currently selected options
      * @type {boolean}
+     * @readonly
      * @private
      */
     get validVariantsListContainsSelectedOptions() {
@@ -296,6 +319,7 @@ export default class VariantSelector extends LightningElement {
      * This representation includes a 'value' property.
      * Additionally, the selected options has the 'selected' property set
      * @type {Array<NormalizedVariant>}
+     * @readonly
      * @private
      */
     get normalizedVariants() {
@@ -341,6 +365,7 @@ export default class VariantSelector extends LightningElement {
      * Checks whether the available options list has been created.
      * Populates the available options list if it hasn't already been created.
      * @type {boolean}
+     * @readonly
      * @private
      */
     get checkAndPopulateAvailableOptionsList() {
@@ -365,6 +390,7 @@ export default class VariantSelector extends LightningElement {
      *  Index of the variant that the option belongs to
      * @returns {boolean}
      *  True if option is in selectedOptions, otherwise false.
+     * @private
      */
     isOptionSelected(optionValue, variantIndex) {
         const currentlySelectedOptions = this.currentlySelectedOptions;
@@ -388,6 +414,7 @@ export default class VariantSelector extends LightningElement {
      *      - the option value is in the list of available options
      *  False if
      *      - the option value is not in the list of available options
+     * @private
      */
     isOptionAvailable(optionValue, variantIndex) {
         return (
@@ -420,21 +447,21 @@ export default class VariantSelector extends LightningElement {
      * Handler for the 'change' event fired whenever a variant selection changes
      * It fires a custom event 'variantselected'
      * @private
-     * @fires VariantSelector#variantselected
+     * @fires ProductVariantSelector#variantselected
      */
     handleChange() {
         const isValid = this.checkValidity();
         const currentVariantSelectionsAsStr = this.currentlySelectedOptions.join('_');
-        const productId = this.variantSelectionToProductIdMap?.get(currentVariantSelectionsAsStr)?.productId;
+        const selection = this.variantSelectionToProductIdMap?.get(currentVariantSelectionsAsStr);
+        const productId = selection?.productId;
+        const urlName = selection?.urlName || undefined;
         this.dispatchEvent(
             new CustomEvent(VARIANT_SELECTED_EVT, {
-                bubbles: false,
-                composed: false,
-                cancelable: false,
                 detail: {
-                    productId: productId,
-                    isValid: isValid,
+                    productId,
+                    isValid,
                     options: this.currentlySelectedOptions,
+                    urlName,
                 },
             })
         );

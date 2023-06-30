@@ -1,13 +1,14 @@
 .slds-assistive-text + .original-price {
     text-decoration: line-through;
 }
-table {
+.price-container {
     width: auto;
+    line-height: 2rem;
 }
-tr {
+.price-col {
     vertical-align: baseline;
 }
-td {
+.price-col-section {
     font-weight: var(--dxp-s-body-font-weight, 300);
 }
 .price-label:first-child {
@@ -38,12 +39,12 @@ td {
     );
 }
 @media only screen and (max-width: 48em) {
-    table {
+    .price-container {
         width: 100%;
         display: flex;
         justify-content: center;
     }
-    td:first-child {
+    .price-col-section:first-child {
         text-align: right;
     }
     .price-unavailable {

@@ -1,51 +1,51 @@
 <template lwc:render-mode="light">
-    <table
+    <div
         if:true={isPriceAvailable}
-        role="presentation">
-        <tbody>
-            <tr
-                if:true={displayNegotiatedPrice}
-                aria-live="assertive"
-                aria-atomic="true">
-                <td
-                    if:true={hasNegotiatedPriceLabel}
-                    class="slds-text-heading_small slds-p-right_x-small">
-                    {negotiatedPriceLabel}:
-                </td>
-                <td>
-                    <lightning-formatted-number
-                        class="negotiated-price price-label"
-                        value={negotiatedPrice}
-                        maximum-fraction-digits="20"
-                        currency-code={currencyCode}
-                        format-style="currency"></lightning-formatted-number>
-                </td>
-            </tr>
-            <tr
-                if:true={displayOriginalPrice}
-                aria-live="assertive"
-                aria-atomic="true">
-                <td
-                    if:true={hasOriginalPriceLabel}
-                    class="slds-text-heading_small slds-p-right_x-small">
-                    {originalPriceLabel}:
-                </td>
-                <td>
-                    <span
-                        if:true={displayAssistiveText}
-                        class="slds-assistive-text">
-                        {strikethroughAssistiveText}
-                    </span>
-                    <lightning-formatted-number
-                        class="original-price price-label"
-                        value={originalPrice}
-                        maximum-fraction-digits="20"
-                        currency-code={currencyCode}
-                        format-style="currency"></lightning-formatted-number>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+        class={layoutClass}>
+        <span
+            if:true={displayNegotiatedPrice}
+            aria-live="assertive"
+            aria-atomic="true"
+            class="price-col slds-col slds-p-right_x-small">
+            <span
+                if:true={hasNegotiatedPriceLabel}
+                class="price-col-section slds-text-heading_small slds-p-right_x-small">
+                {negotiatedPriceLabel}:
+            </span>
+            <span class="price-col-section">
+                <lightning-formatted-number
+                    class="negotiated-price price-label"
+                    value={negotiatedPrice}
+                    maximum-fraction-digits="20"
+                    currency-code={currencyCode}
+                    format-style="currency"></lightning-formatted-number>
+            </span>
+        </span>
+        <span
+            if:true={displayOriginalPrice}
+            aria-live="assertive"
+            aria-atomic="true"
+            class="price-col slds-col slds-p-right_x-small">
+            <span
+                if:true={hasOriginalPriceLabel}
+                class="price-col-section slds-text-heading_small slds-p-right_x-small">
+                {originalPriceLabel}:
+            </span>
+            <span class="price-col-section">
+                <span
+                    if:true={displayAssistiveText}
+                    class="slds-assistive-text">
+                    {strikethroughAssistiveText}
+                </span>
+                <lightning-formatted-number
+                    class="original-price price-label"
+                    value={originalPrice}
+                    maximum-fraction-digits="20"
+                    currency-code={currencyCode}
+                    format-style="currency"></lightning-formatted-number>
+            </span>
+        </span>
+    </div>
     <div
         class="tax-container"
         if:true={taxInfoVisible}>

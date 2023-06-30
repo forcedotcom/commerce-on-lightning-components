@@ -25,7 +25,7 @@
                         required>
                         <option
                             selected
-                            value="">
+                            value>
                             {placeholderLabel}
                         </option>
                         <template
@@ -35,7 +35,7 @@
                                 if:true={option.disabled}
                                 key={option.value}
                                 value={option.value}
-                                selected
+                                selected={option.selected}
                                 disabled>
                                 {option.label}
                             </option>
@@ -43,7 +43,7 @@
                                 if:false={option.disabled}
                                 key={option.value}
                                 value={option.value}
-                                selected>
+                                selected={option.selected}>
                                 {option.label}
                             </option>
                         </template>

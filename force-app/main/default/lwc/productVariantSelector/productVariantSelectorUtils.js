@@ -164,6 +164,7 @@ export const transformSelectedOptions = (attributes, attributeInfo) => {
  *           value: 'Polyester',
  *         },
  *       ],
+ *      urlName: 'friendly_url'
  *     },
  *   ]
  *
@@ -171,7 +172,8 @@ export const transformSelectedOptions = (attributes, attributeInfo) => {
  *   new Map([
  *     Red_Large_Polyester, {
  *       productId: '01txx0000006iTlAAI',
- *       attributes: ['Red', 'Large', 'Polyester']
+ *       attributes: ['Red', 'Large', 'Polyester'],
+ *       urlName: 'friendly_url'
  *     }
  *   ])
  */
@@ -181,6 +183,7 @@ export const transformVariantSelectionToProductIdMap = (attributesToProductMappi
             attributesToProductIdMap.set(item.canonicalKey, {
                 productId: item.productId,
                 attributes: item.selectedAttributes.map((attribute) => attribute.value),
+                urlName: item.urlName,
             });
         }
         return attributesToProductIdMap;

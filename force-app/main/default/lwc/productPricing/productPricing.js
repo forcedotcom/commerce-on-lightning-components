@@ -11,53 +11,54 @@ import displayOriginalPriceEvaluator from './productPricingUtils';
 
 export default class ProductPricing extends LightningElement {
     static renderMode = 'light';
+
     /**
-     * Assistive text, required because screen-readers do not read out strikethrough styling
-     * @returns {string} '(crossed out)'
-     * @private
+     * The desired layout of price text.
+     * horizontal will display on single line, with original/list price first (if visible)
+     * vertical will display on 2 lines, with original/list price last (if visible)
+     * @type {?('horizontal' | 'vertical')}
      */
-    get strikethroughAssistiveText() {
-        return Labels.strikethroughAssistiveText;
-    }
+    @api
+    layout;
 
     /**
      * The localized negotiated price label for the item.
-     * @type {string}
+     * @type {?string}
      */
     @api
     negotiatedPriceLabel;
 
     /**
      * The localized original price label for the item.
-     * @type {string}
+     * @type {?string}
      */
     @api
     originalPriceLabel;
 
     /**
      * The localized label to display when no pricing is available
-     * @type {string}
+     * @type {?string}
      */
     @api
     unavailablePriceLabel;
 
     /**
      * The localized negotiated price of the item.
-     * @type {string}
+     * @type {?string}
      */
     @api
     negotiatedPrice;
 
     /**
      * The localized original price of the item.
-     * @type {string}
+     * @type {?string}
      */
     @api
     originalPrice;
 
     /**
      * The ISO 4217 currency code for the product detail page
-     * @type {string}
+     * @type {?string}
      */
     @api
     currencyCode;
@@ -85,7 +86,7 @@ export default class ProductPricing extends LightningElement {
 
     /**
      * The Tax Included label text.
-     * @type {string}
+     * @type {?string}
      */
     @api
     taxIncludedLabel;
@@ -93,7 +94,7 @@ export default class ProductPricing extends LightningElement {
     /**
      * Tax locale type for the product.
      * Possible values are "Gross" and "Net"
-     * @type {string}
+     * @type {?('Gross' | 'Net')}
      */
     @api
     taxLocaleType;
@@ -101,27 +102,37 @@ export default class ProductPricing extends LightningElement {
     /**
      * Tax rate for the product.
      * When a given product is exempt, taxRate will be 0
-     * @type {number}
+     * @type {?number}
      */
     @api
     taxRate;
+
+    /**
+     * Assistive text, required because screen-readers do not read out strikethrough styling
+     * @type {string}
+     * @private
+     * @readonly
+     */
+    get strikethroughAssistiveText() {
+        return Labels.strikethroughAssistiveText;
+    }
 
     /**
      * Gets whether Tax Information can be shown. Will only be true
      * when taxLocaleType is "Gross", showTaxIndication is configured to be shown and
      * taxRate is not 0 or when taxRate is undefined (this scenario occurs when CommerceTax perm is not enabled)
      * @type {boolean}
+     * @readonly
+     * @private
      */
     get taxInfoVisible() {
-        if (this.showTaxIndication) {
-            return this.isPriceAvailable && this.taxLocaleType === 'Gross' && this.taxRate !== 0;
-        }
-        return false;
+        return this.showTaxIndication && this.isPriceAvailable && this.taxLocaleType === 'Gross' && this.taxRate !== 0;
     }
 
     /**
      * Whether to display the original price
      * @returns {boolean} true if the original (list) price should be displayed, otherwise false
+     * @readonly
      * @private
      */
     get displayOriginalPrice() {
@@ -137,6 +148,7 @@ export default class ProductPricing extends LightningElement {
      * Whether to display the negotiated price
      * @returns {boolean}
      * true if negotiated price is available and option to display it is also true
+     * @readonly
      * @private
      */
     get displayNegotiatedPrice() {
@@ -148,6 +160,7 @@ export default class ProductPricing extends LightningElement {
      * @returns {boolean}
      * true if both negotiated and original prices are displayed
      * @private
+     * @readonly
      */
     get displayAssistiveText() {
         return this.displayNegotiatedPrice && this.displayOriginalPrice;
@@ -158,6 +171,7 @@ export default class ProductPricing extends LightningElement {
      * @returns {boolean}
      * true if negotiated price exists and needs to be shown, otherwise false
      * @private
+     * @readonly
      */
     get isPriceAvailable() {
         return this.showNegotiatedPrice && !!this.negotiatedPrice;
@@ -168,6 +182,7 @@ export default class ProductPricing extends LightningElement {
      * @returns {boolean}
      * true if a negotiated price label has been supplied, otherwise false
      * @private
+     * @readonly
      */
     get hasNegotiatedPriceLabel() {
         return !!this.negotiatedPriceLabel;
@@ -178,8 +193,22 @@ export default class ProductPricing extends LightningElement {
      * @returns {boolean}
      * true if an original (list) price label has been supplied, otherwise false
      * @private
+     * @readonly
      */
     get hasOriginalPriceLabel() {
         return !!this.originalPriceLabel;
+    }
+
+    /**
+     * Gets classes based on horizontal or vertical layout.
+     * Note: for horizontal it reverses display so that originalPrice is first.
+     * @type {string}
+     * @private
+     * @readonly
+     */
+    get layoutClass() {
+        return `slds-grid price-container ${
+            this.layout === 'horizontal' ? 'slds-grid_reverse slds-grid_align-end' : 'slds-grid_vertical'
+        }`;
     }
 }
