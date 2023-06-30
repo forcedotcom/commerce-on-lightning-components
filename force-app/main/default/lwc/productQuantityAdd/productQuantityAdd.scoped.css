@@ -1,0 +1,25 @@
+div {
+    display: flex;
+}
+c-common-button {
+    flex-grow: 1;
+    height: 2.5rem;
+    width: max-content;
+    margin-right: var(--dxp-g-spacing-small);
+}
+c-product-quantity-selector {
+    margin-right: var(--dxp-g-spacing-small);
+}
+@media only screen and (max-width: 48em) {
+    div {
+        flex-direction: column;
+        align-items: center;
+    }
+    c-product-quantity-selector {
+        margin-bottom: var(--dxp-g-spacing-medium, 1rem);
+    }
+    c-common-button {
+        align-self: stretch;
+        width: auto;
+    }
+}

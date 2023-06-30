@@ -1,0 +1,14 @@
+<template lwc:render-mode="light">
+    <c-product-quantity-add
+        button-text={normalizedButtonText}
+        button-variant="primary"
+        disabled={isActionButtonDisabled}
+        quantity-rule={quantityRule}
+        available-quantity={availableQuantity}
+        minimum-text={normalizedMinimumText}
+        maximum-text={normalizedMaximumText}
+        increment-text={normalizedIncrementText}
+        quantity-selector-label={quantitySelectorLabel}
+        out-of-stock-text={outOfStockText}
+        onaddproducttocart={handleAddToCart}></c-product-quantity-add>
+</template>

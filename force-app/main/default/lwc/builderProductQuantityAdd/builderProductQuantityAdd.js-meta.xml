@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightningCommunity__Page</target>
+        <target>lightningCommunity__Default</target>
+    </targets>
+    <masterLabel>Custom Product Quantity Add Button</masterLabel>
+    <description>Displays a quantity selector along with an action button.</description>
+    <targetConfigs>
+        <targetConfig targets="lightningCommunity__Default">
+            <property label="Product Data Binding" name="product" type="String" default="{!Product.Details}" />
+            <property
+                label="Product Variant Selection Data Binding"
+                name="productVariant"
+                type="String"
+                default="{!Product.SelectedVariant}"
+            />
+            <property
+                label="Product Inventory Data Binding"
+                name="productInventory"
+                type="String"
+                default="{!Product.Inventory}"
+            />
+            <property label="Button Text" name="buttonText" type="String" translatable="true" default="Add To Cart" />
+            <property
+                label="Button Processing Text"
+                name="buttonProcessingText"
+                type="String"
+                translatable="true"
+                default="Adding..."
+            />
+            <property
+                label="Quantity Selector Label"
+                name="quantitySelectorLabel"
+                type="String"
+                translatable="true"
+                default="QTY"
+            />
+            <property
+                label="Minimum Text"
+                name="minimumValueGuideText"
+                type="String"
+                translatable="true"
+                default="Minimum quantity is {0}"
+            />
+            <property
+                label="Maximum Text"
+                name="maximumValueGuideText"
+                type="String"
+                translatable="true"
+                default="Maximum quantity is {0}"
+            />
+            <property
+                label="Step Size Text"
+                name="stepValueGuideText"
+                type="String"
+                translatable="true"
+                default="Increment quantity is {0}"
+            />
+            <property
+                label="Out of Stock Text"
+                name="outOfStockText"
+                type="String"
+                translatable="true"
+                default="Out of Stock"
+            />
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

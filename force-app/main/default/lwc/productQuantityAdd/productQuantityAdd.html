@@ -1,0 +1,33 @@
+<template lwc:render-mode="light">
+    <div class="container">
+        <c-product-quantity-selector
+            onvaliditychanged={handleValidityChanged}
+            onvaluechanged={handleValueChanged}
+            onoutofstock={handleOutOfStock}
+            disabled={disabled}
+            minimum={quantityRuleMinimum}
+            value={currentQuantity}
+            maximum={quantityRuleMaximum}
+            step={quantityRuleIncrement}
+            available-quantity={availableQuantity}
+            label={quantitySelectorLabel}
+            hide-out-of-stock="true"
+            step-value-guide-text={incrementText}
+            minimum-value-guide-text={minimumText}
+            maximum-value-guide-text={maximumText}
+            out-of-stock-text={outOfStockText}></c-product-quantity-selector>
+        <c-common-button
+            onclick={handleAddToCart}
+            disabled={buttonDisabled}
+            variant={buttonVariant}
+            assistive-text={computedAddToCartButtonText}>
+            <lightning-icon
+                if:true={hasIcon}
+                icon-name={iconName}
+                class="slds-p-right_small"
+                variant={buttonIconVariant}
+                size="small"></lightning-icon>
+            {computedAddToCartButtonText}
+        </c-common-button>
+    </div>
+</template>
