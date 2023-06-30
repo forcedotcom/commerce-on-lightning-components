@@ -6,7 +6,7 @@
         <target>lightningCommunity__Default</target>
     </targets>
     <masterLabel>Custom Product Quantity Selector</masterLabel>
-    <description>Displays a number input field based on product quantity rules (PQR).</description>
+    <description>Displays a number input field constrained by product quantity rules (PQR).</description>
     <targetConfigs>
         <targetConfig targets="lightningCommunity__Default">
             <property label="Minimum" name="minimum" type="String" default="1" />

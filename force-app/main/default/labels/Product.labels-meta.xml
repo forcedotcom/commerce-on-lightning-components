@@ -56,4 +56,81 @@
         <protected>false</protected>
         <shortDescription>Product_QuantitySelectorPopover_quantityHelp</shortDescription>
     </labels>
+    <labels>
+        <fullName>Product_PurchaseOptions_modalCartTitleSuccess</fullName>
+        <value>Item was added to cart</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Product_PurchaseOptions_modalCartTitleSuccess</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Product_PurchaseOptions_modalCartActionView</fullName>
+        <value>View Cart</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Product_PurchaseOptions_modalCartActionView</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Product_PurchaseOptions_modalCartActionContinue</fullName>
+        <value>Continue Shopping</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Product_PurchaseOptions_modalCartActionContinue</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Product_PurchaseOptions_toastWishlistSuccess</fullName>
+        <value>Item was added to list.</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Product_PurchaseOptions_toastWishlistSuccess</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Product_PurchaseOptions_toastWishlistError</fullName>
+        <value>We couldn’t add this item to the list. Try again.</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Product_PurchaseOptions_toastWishlistError</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Product_PurchaseOptions_errorAccessInsufficient</fullName>
+        <value>You don’t have permission to complete this action.</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Product_PurchaseOptions_errorAccessInsufficient</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Product_PurchaseOptions_errorLimitMinimum</fullName>
+        <value>This product has a minimum purchase limit. Check quantity limits.</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Product_PurchaseOptions_errorLimitMinimum</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Product_PurchaseOptions_errorLimitMaximum</fullName>
+        <value>This product has a maximum purchase limit. Check quantity limits.</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Product_PurchaseOptions_errorLimitMaximum</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Product_PurchaseOptions_errorLimitIncrement</fullName>
+        <value>Always purchase this product in set increments. Check product increments.</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Product_PurchaseOptions_errorLimitIncrement</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Product_PurchaseOptions_errorLimitExceeded</fullName>
+        <value>Your cart is full.</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Product_PurchaseOptions_errorLimitExceeded</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Product_PurchaseOptions_errorDefault</fullName>
+        <value>An unexpected error occurred. Try again later.</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Product_PurchaseOptions_errorDefault</shortDescription>
+    </labels>
 </CustomLabels>

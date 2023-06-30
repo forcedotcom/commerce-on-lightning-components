@@ -14,4 +14,18 @@
         <protected>false</protected>
         <shortDescription>Shared_closeButtonAssistiveText</shortDescription>
     </labels>
+    <labels>
+        <fullName>Shared_success</fullName>
+        <value>Success</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Shared_success</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Shared_error</fullName>
+        <value>Error</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Shared_error</shortDescription>
+    </labels>
 </CustomLabels>

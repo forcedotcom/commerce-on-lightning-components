@@ -1,0 +1,10 @@
+.product-purchase-options {
+    display: flex;
+}
+
+.product-purchase-options > c-common-button {
+    flex-grow: 1;
+    height: 2.5rem;
+    width: max-content;
+    margin-right: var(--dxp-g-spacing-small);
+}

@@ -1,0 +1,27 @@
+<template lwc:render-mode="light">
+    <div class="product-purchase-options">
+        <c-product-quantity-add
+            style={cartButtonStyles}
+            button-text={normalizedButtonText}
+            button-variant="primary"
+            disabled={isCartButtonDisabled}
+            quantity-rule={quantityRule}
+            available-quantity={availableQuantity}
+            minimum-text={normalizedMinimumText}
+            maximum-text={normalizedMaximumText}
+            increment-text={normalizedIncrementText}
+            quantity-selector-label={quantitySelectorLabel}
+            out-of-stock-text={outOfStockText}
+            onvaluechanged={handleQuantityChanged}
+            onaddproducttocart={handleAddToCart}></c-product-quantity-add>
+        <c-common-button
+            if:true={showWishlistButton}
+            style={wishlistButtonStyles}
+            disabled={isWishlistButtonDisabled}
+            variant="primary"
+            assistive-text={wishlistButtonText}
+            onclick={handleAddToWishlist}>
+            {wishlistButtonText}
+        </c-common-button>
+    </div>
+</template>

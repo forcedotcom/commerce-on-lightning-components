@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightningCommunity__Page</target>
+        <target>lightningCommunity__Default</target>
+    </targets>
+    <masterLabel>Custom Product Purchase Options</masterLabel>
+    <description>Displays a product quantity selector along with an Add to Cart and an Add to Wishlist button.</description>
+    <targetConfigs>
+        <targetConfig targets="lightningCommunity__Default">
+            <!-- Data Binding -->
+            <property label="Product Data Binding" name="product" type="String" default="{!Product.Details}" />
+            <property
+                label="Product Variant Selection Data Binding"
+                name="productVariant"
+                type="String"
+                default="{!Product.SelectedVariant}"
+            />
+            <property
+                label="Product Inventory Data Binding"
+                name="productInventory"
+                type="String"
+                default="{!Product.Inventory}"
+            />
+
+            <!-- "Add to Cart" Button -->
+            <property
+                label="Cart Button Text"
+                name="cartButtonText"
+                type="String"
+                translatable="true"
+                default="Add To Cart"
+            />
+            <property
+                label="Cart Button Processing Text"
+                name="cartButtonProcessingText"
+                type="String"
+                translatable="true"
+                default="Adding..."
+            />
+            <property label="Cart Button Text Color" name="cartButtonColor" type="Color" />
+            <property label="Cart Button Hover Color" name="cartButtonColorHover" type="Color" />
+            <property label="Cart Button Background Color" name="cartButtonColorBackground" type="Color" />
+            <property label="Cart Button Background Hover Color" name="cartButtonColorBackgroundHover" type="Color" />
+            <property label="Cart Button Border Color" name="cartButtonColorBorder" type="Color" />
+            <property
+                label="Cart Button Border Radius"
+                name="cartButtonRadiusBorder"
+                type="Integer"
+                min="0"
+                max="50"
+                default="0"
+            />
+
+            <!-- "Add to Wishlist" Button -->
+            <property label="Show Wishlist Button" name="showWishlistButton" type="Boolean" />
+            <property
+                label="Wishlist Button Text"
+                name="wishlistButtonText"
+                type="String"
+                translatable="true"
+                default="Add To List"
+            />
+            <property label="Wishlist Button Text Color" name="wishlistButtonColor" type="Color" />
+            <property label="Wishlist Button Hover Color" name="wishlistButtonColorHover" type="Color" />
+            <property label="Wishlist Button Background Color" name="wishlistButtonColorBackground" type="Color" />
+            <property
+                label="Wishlist Button Background Hover Color"
+                name="wishlistButtonColorBackgroundHover"
+                type="Color"
+            />
+            <property label="Wishlist Button Border Color" name="wishlistButtonColorBorder" type="Color" />
+            <property
+                label="Wishlist Button Border Radius"
+                name="wishlistButtonRadiusBorder"
+                type="Integer"
+                min="0"
+                max="50"
+                default="0"
+            />
+
+            <!-- Quantity Selector & Product Quantity Rules -->
+            <property
+                label="Quantity Selector Label"
+                name="quantitySelectorLabel"
+                type="String"
+                translatable="true"
+                default="QTY"
+            />
+            <property
+                label="Minimum Text"
+                name="minimumValueGuideText"
+                type="String"
+                translatable="true"
+                default="Minimum quantity is {0}"
+            />
+            <property
+                label="Maximum Text"
+                name="maximumValueGuideText"
+                type="String"
+                translatable="true"
+                default="Maximum quantity is {0}"
+            />
+            <property
+                label="Step Size Text"
+                name="stepValueGuideText"
+                type="String"
+                translatable="true"
+                default="Increment quantity is {0}"
+            />
+            <property
+                label="Out of Stock Text"
+                name="outOfStockText"
+                type="String"
+                translatable="true"
+                default="Out of Stock"
+            />
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>
