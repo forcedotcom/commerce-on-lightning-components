@@ -31,6 +31,11 @@ export default class ProductQuantitySelectorPopover extends LightningElement {
      */
     @api
     maximumText;
+
+    /**
+     * Gets or sets the Increment Text
+     * @type {string}
+     */
     @api
     incrementText;
 

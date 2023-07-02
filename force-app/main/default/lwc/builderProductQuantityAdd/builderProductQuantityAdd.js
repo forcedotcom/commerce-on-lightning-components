@@ -102,7 +102,7 @@ export default class BuilderProductQuantityAdd extends LightningElement {
         return text && value ? text?.replace('{0}', Number(value)) : null;
     }
 
-    get normalizedMaximumGuideText() {
+    get normalizedMaximumText() {
         const text = this.maximumValueGuideText;
         const value = this.quantityRule?.maximum;
         return text && value ? text?.replace('{0}', Number(value)) : null;
