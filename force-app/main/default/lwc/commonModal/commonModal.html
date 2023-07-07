@@ -3,10 +3,13 @@
     <template lwc:if={hasMessageText}>
         <lightning-modal-body>{message}</lightning-modal-body>
         <lightning-modal-footer>
-            <div class="slds-grid">
-                <div if:true={hasSecondaryAction}>
+            <div class="slds-grid slds-wrap">
+                <div
+                    class="slds-col slds-size_1-of-1 slds-large-size_1-of-2 slds-p-around_x-small"
+                    if:true={hasSecondaryAction}>
                     <c-common-button
                         variant="secondary"
+                        width="stretch"
                         assistive-text={secondaryActionLabel}
                         onclick={handleSecondaryAction}>
                         {secondaryActionLabel}
@@ -15,9 +18,10 @@
 
                 <div
                     if:true={hasPrimaryAction}
-                    class="slds-col_bump-left">
+                    class="slds-col slds-size_1-of-1 slds-large-size_1-of-2 slds-p-around_x-small">
                     <c-common-button
                         variant="primary"
+                        width="stretch"
                         assistive-text={primaryActionLabel}
                         onclick={handlePrimaryAction}>
                         {primaryActionLabel}
@@ -28,10 +32,13 @@
     </template>
     <template lwc:else>
         <lightning-modal-body>
-            <div class="slds-grid">
-                <div if:true={hasSecondaryAction}>
+            <div class="slds-grid slds-wrap">
+                <div
+                    class="slds-col slds-size_1-of-1 slds-large-size_1-of-2 slds-p-around_x-small"
+                    if:true={hasSecondaryAction}>
                     <c-common-button
                         variant="secondary"
+                        width="stretch"
                         assistive-text={secondaryActionLabel}
                         onclick={handleSecondaryAction}>
                         {secondaryActionLabel}
@@ -40,9 +47,10 @@
 
                 <div
                     if:true={hasPrimaryAction}
-                    class="slds-col_bump-left">
+                    class="slds-col slds-size_1-of-1 slds-large-size_1-of-2 slds-p-around_x-small">
                     <c-common-button
                         variant="primary"
+                        width="stretch"
                         assistive-text={primaryActionLabel}
                         onclick={handlePrimaryAction}>
                         {primaryActionLabel}
