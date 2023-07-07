@@ -1,0 +1,25 @@
+<template lwc:render-mode="light">
+    <ul
+        class={layoutContainerClass}
+        role="listbox"
+        aria-label={ariaLabelForSearchResults}
+        onkeydown={handleKeyDown}>
+        <template iterator:it={normalizedDisplayData}>
+            <li
+                key={it.value.id}
+                class="grid-item slds-border_bottom"
+                style={layoutCustomStyles}
+                role="option">
+                <section class={layoutSpacingClasses}>
+                    <c-search-product-card
+                        class="slds-grid card-item"
+                        data-id={it.value.id}
+                        configuration={cardConfiguration}
+                        display-data={it.value}
+                        onshowproduct={handleNavigateToProductPage}
+                        onaddproducttocart={handleAddToCart}></c-search-product-card>
+                </section>
+            </li>
+        </template>
+    </ul>
+</template>

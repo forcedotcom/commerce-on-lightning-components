@@ -2,11 +2,11 @@
     display: flex;
 }
 .slds-button {
-    display: var(--ref-c-common-button-display, inline-flex);
     background: var(--ref-c-common-button-color-background, transparent) none;
     border-color: var(--ref-c-common-button-color-border, transparent);
     border-radius: var(--ref-c-common-button-radius-border, var(--dxp-s-button-radius-border));
     color: var(--ref-c-common-button-color, var(--dxp-s-button-color, var(--dxp-g-default)));
+    display: var(--ref-c-common-button-display, inline-flex);
 }
 .slds-button:hover:enabled {
     color: var(--ref-c-common-button-color-hover, var(--dxp-s-button-color-hover, var(--dxp-g-brand-1)));

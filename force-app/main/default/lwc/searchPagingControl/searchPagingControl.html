@@ -1,0 +1,62 @@
+<template lwc:render-mode="light">
+    <section
+        class="limitHitTextSection"
+        if:true={showMessageForResultsLimit}>
+        <p>{label.resultsLimitHitText}</p>
+    </section>
+
+    <nav class="pageControlPart">
+        <button
+            class="slds-m-horizontal_small slds-button slds-button_neutral nav-direction"
+            disabled={disablePaginationPrevious}
+            aria-disabled={disablePaginationPrevious}
+            onclick={handlePaginationPrevious}>
+            <lightning-icon
+                icon-name="utility:chevronleft"
+                size="xx-small"
+                alternative-text={label.previous}></lightning-icon>
+        </button>
+
+        <template
+            for:each={pageNumbers}
+            for:item="pageNumObj">
+            <template if:true={pageNumObj.isRange}>
+                <div
+                    key={pageNumObj.id}
+                    class="slds-m-horizontal_small range-symbol-container">
+                    {rangeSymbol}
+                </div>
+            </template>
+            <template if:false={pageNumObj.isRange}>
+                <template if:true={pageNumObj.isCurrentPage}>
+                    <span
+                        class="slds-m-horizontal_small slds-button slds-button_brand nav-button-current"
+                        key={pageNumObj.id}
+                        aria-current="page">
+                        {pageNumObj.pageNumber}
+                    </span>
+                </template>
+                <template if:false={pageNumObj.isCurrentPage}>
+                    <button
+                        class="slds-m-horizontal_small slds-button slds-button_neutral nav-button"
+                        key={pageNumObj.id}
+                        value={pageNumObj.pageNumber}
+                        onclick={handlePaginationPage}>
+                        {pageNumObj.pageNumber}
+                    </button>
+                </template>
+            </template>
+        </template>
+
+        <button
+            class="slds-m-horizontal_small slds-button slds-button_neutral nav-direction"
+            disabled={disablePaginationNext}
+            aria-disabled={disablePaginationNext}
+            onclick={handlePaginationNext}>
+            <lightning-icon
+                icon-name="utility:chevronright"
+                size="xx-small"
+                alternative-text={label.next}></lightning-icon>
+        </button>
+    </nav>
+</template>

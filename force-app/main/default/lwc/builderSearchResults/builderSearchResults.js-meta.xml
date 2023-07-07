@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightningCommunity__Page</target>
+        <target>lightningCommunity__Default</target>
+    </targets>
+    <masterLabel>Custom Search Results</masterLabel>
+    <description>Displays the search results.</description>
+    <targetConfigs>
+        <targetConfig targets="lightningCommunity__Default">
+            <property name="searchResults" type="String" default="{!Search.Results}" />
+            <property name="searchResultsFields" type="String" default="{!Search.Name}" />
+            <property name="resultsLayout" type="String" default="grid" datasource="grid,list" />
+            <property name="gridMaxColumnsDisplayed" type="String" default="3" datasource="1,2,3,4,5,6,7,8" />
+            <property name="gridColumnSpacing" type="String" default="large" datasource="none,small,medium,large" />
+            <property name="gridRowSpacing" type="String" default="small" datasource="none,small,medium,large" />
+            <property name="listRowSpacing" type="String" default="small" datasource="none,small,medium,large" />
+            <property name="currentPage" type="String" default="{!Search.Pagination.currentPage}" />
+            <property name="cardBackgroundColor" type="Color" />
+            <property name="cardBorderColor" type="Color" />
+            <property name="cardBorderRadius" type="String" default="1" datasource="1,2,3,4,5,6,7,8" />
+            <property name="cardAlignment" type="String" default="center" datasource="left,center,right" />
+            <property name="cardDividerColor" type="Color" />
+            <property name="showProductImage" type="Boolean" default="true" />
+            <property name="showNegotiatedPrice" type="Boolean" default="true" />
+            <property name="showOriginalPrice" type="Boolean" default="true" />
+            <property name="negotiatedPriceTextColor" type="Color" />
+            <property name="negotiatedPriceTextSize" type="String" default="medium" datasource="small,medium,large" />
+            <property name="originalPriceTextColor" type="Color" />
+            <property name="originalPriceTextSize" type="String" default="medium" datasource="small,medium,large" />
+
+            <!-- Card Content Mapping-->
+            <property
+                name="cardContentMapping"
+                type="String"
+                default='[{"name": "Name", "showLabel": false, "label": "Product Name", "fontSize": "medium"}]'
+            />
+
+            <!-- Call to Action Section -->
+            <property name="showCallToActionButton" type="Boolean" default="false" />
+            <property
+                name="addToCartButtonStyle"
+                type="String"
+                default="primary"
+                datasource=",primary,secondary,tertiary"
+            />
+            <property name="addToCartButtonText" type="String" translatable="true" default="Add to cart" />
+            <property name="addToCartButtonProcessingText" type="String" translatable="true" default="Adding..." />
+            <property name="viewOptionsButtonText" type="String" translatable="true" default="View options" />
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

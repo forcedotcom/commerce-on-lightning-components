@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+    <labels>
+        <fullName>Search_Results_searchResults</fullName>
+        <value>Search Results</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Search_Results_searchResults</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Search_Results_previous</fullName>
+        <value>Previous</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Search_Results_previous</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Search_Results_next</fullName>
+        <value>Next</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Search_Results_next</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Search_Results_resultsLimitHitText</fullName>
+        <value>Results are limited to 5,000 after the first page. Use sort options or filters to adjust your results.</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Search_Results_resultsLimitHitText</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Search_ProductCard_addToCartAriaLabel</fullName>
+        <value>Add to cart: {productTitle}</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Search_ProductCard_addToCartAriaLabel</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Search_ProductCard_viewOptionsAriaLabel</fullName>
+        <value>View Options: {productTitle}</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Search_ProductCard_viewOptionsAriaLabel</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Search_ProductCard_variationAttribute</fullName>
+        <value>{name}: {value}</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Search_ProductCard_variationAttribute</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Search_ProductCard_subscriptionOptions</fullName>
+        <value>Subscription Options Available</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Search_ProductCard_subscriptionOptions</shortDescription>
+    </labels>
+</CustomLabels>

@@ -1,0 +1,29 @@
+.product-grid-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 1rem;
+}
+.grid-item {
+    min-width: 11.25rem;
+    border-color: transparent;
+    border-bottom-color: var(--ref-c-search-product-grid-list-color-border, transparent);
+    display: flex;
+    align-items: end;
+}
+.grid-item section {
+    display: flex;
+    flex-grow: 1;
+}
+.card-item {
+    flex-grow: 1;
+}
+.product-grid-container .grid-item {
+    flex-basis: var(--ref-c-search-product-grid-container-basis, 25%);
+}
+@media only screen and (max-width: 47.9375em) {
+    .product-grid-container {
+        display: block;
+        padding: 0;
+    }
+}
