@@ -1,0 +1,106 @@
+<template lwc:render-mode="light">
+    <section class={cardContainerClass}>
+        <div class="imageArea">
+            <figure
+                class="productImage"
+                if:true={showProductImage}
+                onkeydown={handleKeydown}
+                onclick={handleProductDetailPageNavigation}>
+                <experience-picture
+                    alternative-text={image.alternateText}
+                    url={image.url}
+                    images={image.images}
+                    loading="lazy"></experience-picture>
+            </figure>
+        </div>
+
+        <div class="fieldsArea">
+            <!--Note: All fields are navigable to PDP, but only one field will have
+                the tab stop in the keyboard navigation to keep the accessibility
+                smooth. The logic of which field will have the tab stop is defined
+                and explained in the resultsTiles/fieldNormalizer utility's
+                generateContentMappedFields() -->
+            <a
+                class="slds-var-p-top_x-small slds-text-link_reset"
+                onkeydown={handleKeydown}
+                onclick={handleProductDetailPageNavigation}>
+                <template
+                    for:each={fields}
+                    for:item="field">
+                    <div key={field.displayData.name}>
+                        <c-search-product-field
+                            configuration={field.configuration}
+                            display-data={field.displayData}></c-search-product-field>
+                    </div>
+                </template>
+            </a>
+        </div>
+
+        <div
+            class="subscriptionArea"
+            if:true={isSubscriptionProduct}>
+            <lightning-formatted-text value={subscriptionOptionsLabelText}></lightning-formatted-text>
+        </div>
+
+        <template if:false={isSubscriptionProduct}>
+            <div
+                class="priceArea"
+                if:true={showPrice}>
+                <c-product-pricing
+                    negotiated-price={pricingInfo.negotiatedPrice}
+                    original-price={pricingInfo.listingPrice}
+                    show-negotiated-price={showNegotiatedPrice}
+                    show-original-price={showOriginalPrice}
+                    currency-code={pricingInfo.currencyIsoCode}
+                    layout="horizontal"></c-product-pricing>
+            </div>
+
+            <div
+                class="quantityRuleArea"
+                if:true={showInlineQuantitySelectorText}>
+                <lightning-formatted-text value={quantityRuleCombinedText}></lightning-formatted-text>
+            </div>
+        </template>
+
+        <div
+            if:true={showCallToActionButton}
+            class="callToActionArea">
+            <template if:false={isCTAButtonViewOptions}>
+                <div class={quantitySelectorClassList}>
+                    <c-product-quantity-selector
+                        if:true={showInlineQuantitySelector}
+                        onvaluechanged={handleValueChanged}
+                        disabled={disabled}
+                        minimum={quantityRuleMinimum}
+                        maximum={quantityRuleMaximum}
+                        step={quantityRuleIncrement}
+                        label={quantitySelectorLabelText}
+                        step-value-guide-text={incrementText}
+                        minimum-value-guide-text={minimumText}
+                        maximum-value-guide-text={maximumText}></c-product-quantity-selector>
+                    <c-common-button
+                        if:true={isCTAButtonAddToCart}
+                        assistive-text={addToCartButtonAriaLabel}
+                        disabled={addToCartButtonDisabled}
+                        data-product-id={displayData.id}
+                        class="callToActionButton"
+                        variant={actionButtonVariant}
+                        onclick={handleAddToCart}>
+                        {addToCartButtonText}
+                    </c-common-button>
+                </div>
+            </template>
+            <!-- View Options for a Product -->
+            <c-common-link
+                if:true={isCTAButtonViewOptions}
+                href={_productUrl}
+                assistive-text={viewOptionsButtonAriaLabel}
+                data-product-id={displayData.id}
+                class="callToActionButton"
+                variant={actionButtonVariant}
+                onclick={handleProductDetailPageNavigation}>
+                {configuration.viewOptionsButtonText}
+            </c-common-link>
+        </div>
+    </section>
+</template>

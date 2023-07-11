@@ -1,0 +1,33 @@
+:host {
+    display: block;
+}
+.limitHitTextSection {
+    display: flex;
+    justify-content: center;
+}
+.pageControlPart {
+    display: flex;
+    justify-content: center;
+}
+.nav-button-current,
+.nav-direction,
+.nav-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--sds-c-slider-thumb-radius-border);
+    outline: none;
+    width: 32px;
+    height: 32px;
+    transition: 0.2s ease-out;
+    line-height: 1.875rem;
+}
+.nav-button {
+    border-style: none;
+}
+.range-symbol-container {
+    text-align: center;
+    width: 32px;
+    height: 32px;
+    padding-top: 3px;
+}

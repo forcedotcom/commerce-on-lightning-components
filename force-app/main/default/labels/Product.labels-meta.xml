@@ -133,4 +133,25 @@
         <protected>false</protected>
         <shortDescription>Product_PurchaseOptions_errorDefault</shortDescription>
     </labels>
+    <labels>
+        <fullName>Product_ModalAddToCart_actionViewCart</fullName>
+        <value>View Cart</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Product_ModalAddToCart_actionViewCart</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Product_ModalAddToCart_actionContinueShopping</fullName>
+        <value>Continue Shopping</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Product_ModalAddToCart_actionContinueShopping</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Product_ModalAddToCart_messageSuccessfullyAddedToCart</fullName>
+        <value>Item was added to cart</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Product_ModalAddToCart_messageSuccessfullyAddedToCart</shortDescription>
+    </labels>
 </CustomLabels>

@@ -1,0 +1,85 @@
+<template lwc:render-mode="light">
+    <div
+        class={allContentCustomClasses}
+        style={allContentCustomStyling}
+        tabindex={getTabindex}>
+        <!-- Show the label if needed -->
+        <lightning-formatted-rich-text
+            if:true={isLabelAvailable}
+            class="slds-p-right_x-small"
+            value={label}
+            title={label}
+            disable-linkify></lightning-formatted-rich-text>
+
+        <!-- Display the value with the default text formatting -->
+        <lightning-formatted-rich-text
+            if:true={isDefaultDisplayType}
+            value={value}
+            title={value}
+            disable-linkify></lightning-formatted-rich-text>
+
+        <!-- Type is BOLD STRING -->
+        <lightning-formatted-rich-text
+            if:true={isBoldStringType}
+            value={value}
+            title={value}
+            class="bold-string-title"
+            disable-linkify></lightning-formatted-rich-text>
+
+        <!-- Type is CURRENCY -->
+        <lightning-formatted-number
+            if:true={isCurrencyType}
+            value={value}
+            format-style="currency"
+            title={value}></lightning-formatted-number>
+
+        <!-- Type is DATETIME or DATE -->
+        <lightning-formatted-date-time
+            if:true={isDateTimeType}
+            value={value}
+            title={value}></lightning-formatted-date-time>
+
+        <!-- Type is DOUBLE or INTEGER -->
+        <lightning-formatted-number
+            if:true={isNumberType}
+            value={value}
+            title={value}></lightning-formatted-number>
+
+        <!-- Type is EMAIL -->
+        <lightning-formatted-email
+            if:true={isEmailType}
+            value={value}
+            title={value}></lightning-formatted-email>
+
+        <!-- Type is PERCENT -->
+        <lightning-formatted-number
+            if:true={isPercentType}
+            value={value}
+            format-style="percent-fixed"
+            maximum-fraction-digits="17"
+            title={value}></lightning-formatted-number>
+
+        <!-- Type is PHONE -->
+        <lightning-formatted-phone
+            if:true={isPhoneType}
+            value={value}
+            title={value}></lightning-formatted-phone>
+
+        <!-- Type is TIME -->
+        <lightning-formatted-time
+            if:true={isTimeType}
+            value={value}
+            title={value}></lightning-formatted-time>
+
+        <!-- Type is URL -->
+        <lightning-formatted-url
+            if:true={isUrlType}
+            value={value}
+            title={value}></lightning-formatted-url>
+
+        <!-- Type is VARIATION -->
+        <lightning-formatted-rich-text
+            if:true={isVariationType}
+            value={value}></lightning-formatted-rich-text>
+    </div>
+</template>

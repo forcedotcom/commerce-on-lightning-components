@@ -12,41 +12,49 @@ import {
     generateButtonStyleClass,
     generateElementAlignmentClass,
 } from 'experience/styling';
-export default class CommonButton extends LightningElement {
+
+export default class CommonLink extends LightningElement {
     static renderMode = 'light';
     @api
     disabled = false;
 
     /**
-     * The assistive text for the button.
+     * Hyperlink URL.
+     * @type {?string}
+     */
+    @api
+    href;
+
+    /**
+     * The assistive text for the anchor element (or button element in disabled state).
      * @type {?string}
      */
     @api
     assistiveText;
 
     /**
-     * The button variant.
+     * The anchor/button variant.
      * @type {?('primary' | 'secondary' | 'tertiary')}
      */
     @api
     variant;
 
     /**
-     * The button size.
+     * The anchor/button size.
      * @type {?('small' | 'large')}
      */
     @api
     size;
 
     /**
-     * The width of the button.
+     * The anchor/button width.
      * @type {?('stretch' | 'standard')}
      */
     @api
     width;
 
     /**
-     * The alignment of the content inside the button.
+     * The alignment of the content inside the anchor/button.
      * @type {?('center' | 'left' | 'right')}
      */
     @api
@@ -54,9 +62,9 @@ export default class CommonButton extends LightningElement {
 
     @api
     focus() {
-        this.querySelector('button')?.focus();
+        this.querySelector('a')?.focus();
     }
-    get buttonClasses() {
+    get anchorClasses() {
         return [
             'slds-button',
             generateButtonStyleClass(this.variant ?? null),
@@ -64,5 +72,16 @@ export default class CommonButton extends LightningElement {
             generateButtonStretchClass(this.width ?? null),
             generateElementAlignmentClass(this.alignment ?? null),
         ].join(' ');
+    }
+
+    /**
+     * Makes sure that {@link Event.prototype.preventDefault} gets called when
+     * the `href` attribute is either `undefined` or blank.
+     * @param {Event} event The caught event
+     */
+    handleClick(event) {
+        if (typeof this.href !== 'string' || this.href.trim().length === 0) {
+            event.preventDefault();
+        }
     }
 }

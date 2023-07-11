@@ -1,0 +1,14 @@
+:host {
+    display: grid;
+    word-break: break-word;
+}
+:host > div {
+    align-self: var(--ref-c-search-product-field-align-self, auto);
+    font-size: var(--ref-c-search-product-field-font-size, inherit);
+    font-weight: var(--ref-c-search-product-field-font-weight, inherit);
+    justify-self: var(--ref-c-search-product-field-justify-self, auto);
+    padding: var(--ref-c-search-product-field-padding, 0);
+}
+.bold-string-title {
+    font-weight: 700;
+}

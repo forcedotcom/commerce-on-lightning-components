@@ -17,7 +17,7 @@ import {
     createWishlistItemAddAction,
     dispatchAction,
 } from 'commerce/actionApi';
-import Modal from 'c/commonModal';
+import CommonModal from 'c/commonModal';
 import {
     errorAccessInsufficient,
     errorDefault,
@@ -271,13 +271,12 @@ export default class BuilderProductPurchaseOptions extends LightningElement {
         productId &&
             dispatchAction(this, createCartItemAddAction(productId, detail.quantity), {
                 onSuccess: () => {
-                    Modal.open({
+                    CommonModal.open({
                         label: modalCartTitleSuccess,
+                        size: 'small',
                         secondaryActionLabel: modalCartActionContinue,
                         primaryActionLabel: modalCartActionView,
-                        onprimaryactionclick: () => {
-                            navigate(this.navContext, cartPage);
-                        },
+                        onprimaryactionclick: () => navigate(this.navContext, cartPage),
                     });
                 },
                 onError: (error) => {

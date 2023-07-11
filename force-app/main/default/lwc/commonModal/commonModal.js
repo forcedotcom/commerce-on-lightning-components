@@ -15,7 +15,7 @@ import LightningModal from 'lightning/modal';
  * @fires CommonModal#primaryactionclick
  * @fires CommonModal#secondaryactionclick
  * @example
- *  ActionModal.open({
+ *  CommonModal.open({
  *    label: 'Custom Modal', // <-- Required
  *    size: 'small', // <-- Optional, defaults to 'medium'
  *    description: 'This is a custom modal showcase', // <-- Optional
@@ -29,7 +29,7 @@ import LightningModal from 'lightning/modal';
  *    },
  *  });
  * @example Manual `close` handling
- *  ActionModal.open({
+ *  CommonModal.open({
  *    label: 'Custom Modal',
  *    secondaryActionLabel: 'Cancel',
  *    primaryActionLabel: 'Submit',
