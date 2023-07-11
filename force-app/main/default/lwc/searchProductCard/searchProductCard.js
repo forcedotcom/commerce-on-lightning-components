@@ -167,7 +167,7 @@ import { i18n } from './labels';
  *  Whether to show the product image.
  * @property {string} viewOptionsButtonText
  *  The text for the View Options button, a type of "Call to Action" button.
- * @property {boolean} showQuantityRules
+ * @property {boolean} showQuantitySelector
  *  Whether to show the quantity rules and inline quantity selector in product card.
  * @property {string} minimumQuantityGuideText
  *  The text showing the minimum quantity value of a product.
@@ -496,7 +496,7 @@ export default class SearchProductCard extends LightningElement {
      * @private
      */
     get quantityRules() {
-        if (!this.displayData?.purchaseQuantityRule && this.configuration?.showQuantityRules) {
+        if (!this.displayData?.purchaseQuantityRule && this.configuration?.showQuantitySelector) {
             return {
                 minimum: QUANTITY_RULES.DEFAULT_MIN.toString(),
                 maximum: QUANTITY_RULES.DEFAULT_MAX.toString(),
@@ -570,7 +570,7 @@ export default class SearchProductCard extends LightningElement {
             ((this.displayData?.productClass === PRODUCT_CLASS.SIMPLE ||
                 this.displayData?.productClass === PRODUCT_CLASS.VARIATION) &&
                 Boolean(this.quantityRules) &&
-                !this.configuration?.showQuantityRules) ||
+                !this.configuration?.showQuantitySelector) ||
             this.isSubscriptionProduct
         );
     }
@@ -595,7 +595,7 @@ export default class SearchProductCard extends LightningElement {
      * @private
      */
     get showInlineQuantitySelector() {
-        return !!(this.quantityRules && this.configuration?.showQuantityRules);
+        return !!(this.quantityRules && this.configuration?.showQuantitySelector);
     }
 
     /**
@@ -607,7 +607,7 @@ export default class SearchProductCard extends LightningElement {
     get showInlineQuantitySelectorText() {
         return !!(
             !this.isCTAButtonViewOptions &&
-            this.configuration?.showQuantityRules &&
+            this.configuration?.showQuantitySelector &&
             this.configuration?.showQuantityRulesText &&
             this.displayData?.purchaseQuantityRule
         );
