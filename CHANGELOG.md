@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.0](https://github.com/forcedotcom/commerce-on-lightning-components/compare/v1.1.0...v1.2.0) (2023-07-11)
+
+
+### Features
+
+* provide components [`c/searchResults`](force-app/main/default/lwc/searchResults) and [`c/builderSearchResults`](force-app/main/default/lwc/builderSearchResults) ([#11](https://github.com/forcedotcom/commerce-on-lightning-components/issues/11)) ([c0ae9ff](https://github.com/forcedotcom/commerce-on-lightning-components/commit/c0ae9ff617ab70146ac707257e3065023c7e0e1b))
+    * Includes common component [`c/commonLink`](force-app/main/default/lwc/commonLink)
+    * Includes components [`c/searchPagingControl`](force-app/main/default/lwc/searchPagingControl), [`c/searchProductCard`](force-app/main/default/lwc/searchProductCard), [`c/searchProductField`](force-app/main/default/lwc/searchProductField), [`c/searchProductGrid`](force-app/main/default/lwc/searchProductGrid)
+    * Includes utility [`c/productGalleryUtils`](force-app/main/default/lwc/productGalleryUtils)
+
+
+### Bug Fixes
+
+* **modal:** adjust styling/display of [`c/commonModal`](force-app/main/default/lwc/commonModal) ([02ee54e](https://github.com/forcedotcom/commerce-on-lightning-components/commit/02ee54ed3b93dcf1307b94cdf0bfe92a0073631b))
+
 ## [1.1.0](https://github.com/forcedotcom/commerce-on-lightning-components/compare/v1.0.0...v1.1.0) (2023-07-06)
 
 
