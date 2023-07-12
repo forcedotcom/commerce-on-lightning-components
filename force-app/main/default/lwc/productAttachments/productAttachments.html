@@ -1,0 +1,23 @@
+<template lwc:render-mode="light">
+    <ul style={cssProperties}>
+        <template
+            for:each={files}
+            for:item="file">
+            <li
+                key={file.name}
+                class="slds-p-bottom_small">
+                <lightning-icon
+                    icon-name="utility:file"
+                    size="small"
+                    title={file.name}></lightning-icon>
+                <a
+                    target={target}
+                    class="slds-p-left_x-small"
+                    href={file.url}
+                    rel={rel}>
+                    {file.name}
+                </a>
+            </li>
+        </template>
+    </ul>
+</template>
