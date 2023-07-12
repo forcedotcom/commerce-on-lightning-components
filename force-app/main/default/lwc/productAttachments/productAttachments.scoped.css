@@ -1,0 +1,6 @@
+li {
+    display: inline-block;
+}
+li:not(:last-child) {
+    padding-right: var(--ref-c-product-attachments-spacing, var(--dxp-g-spacing-small));
+}
