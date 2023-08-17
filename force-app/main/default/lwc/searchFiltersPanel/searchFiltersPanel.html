@@ -1,0 +1,26 @@
+<template lwc:render-mode="light">
+    <div class="filters-header">
+        <h2 class="filters-title">{filtersHeader}</h2>
+        <lightning-button
+            class="clear-all"
+            variant="base"
+            label={clearAllLabel}
+            onclick={handleClearAll}></lightning-button>
+    </div>
+    <section class="category-tree-section">
+        <c-search-category-tree display-data={categories}></c-search-category-tree>
+    </section>
+    <template
+        for:each={facets}
+        for:item="facet">
+        <section
+            class="facets-section"
+            key={facet.id}>
+            <c-search-facet
+                key={facet.id}
+                display-data={facet}
+                data-facetid={facet.id}
+                onfacetvaluetoggle={handleFacetValueToggle}></c-search-facet>
+        </section>
+    </template>
+</template>

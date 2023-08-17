@@ -1,0 +1,57 @@
+<template lwc:render-mode="light">
+    <h2 class="slds-truncate">{_categoryHeader}</h2>
+
+    <ul class="categories">
+        <template
+            for:each={_ancestorCategories}
+            for:item="category">
+            <li
+                key={category.id}
+                class="slds-p-top_medium slds-text-body_small slds-truncate">
+                <lightning-button-icon
+                    icon-name="utility:chevronleft"
+                    alternative-text={category.backActionAssistiveText}
+                    variant="bare"
+                    icon-class="slds-m-bottom_xxx-small slds-m-right_xx-small"
+                    size="small"
+                    onclick={handleCategoryUpdate}
+                    data-categoryid={category.id}></lightning-button-icon>
+                <div
+                    class="slds-text-link_reset category-item"
+                    onclick={handleCategoryUpdate}
+                    onkeydown={handleKeydown}
+                    data-categoryid={category.id}
+                    aria-hidden="true">
+                    {category.categoryName}
+                </div>
+            </li>
+        </template>
+        <li
+            if:true={_isSelectedCategoryVisible}
+            key={_selectedCategory.id}
+            class="slds-p-top_medium slds-text-body_small slds-truncate">
+            <a
+                class="slds-text-link_reset selected-category"
+                tabindex="0"
+                data-categoryid={_selectedCategory.id}>
+                {_selectedCategory.label}
+            </a>
+        </li>
+        <template
+            for:each={selectedCategoryItems}
+            for:item="child">
+            <li
+                key={child.id}
+                class="slds-p-top_medium slds-p-left_x-large slds-text-body_small slds-truncate">
+                <a
+                    class="slds-text-link_reset category-item"
+                    tabindex="0"
+                    onclick={handleCategoryUpdate}
+                    onkeydown={handleKeydown}
+                    data-categoryid={child.id}>
+                    {child.label}
+                </a>
+            </li>
+        </template>
+    </ul>
+</template>

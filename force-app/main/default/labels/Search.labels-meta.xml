@@ -56,4 +56,131 @@
         <protected>false</protected>
         <shortDescription>Search_ProductCard_subscriptionOptions</shortDescription>
     </labels>
+    <labels>
+        <fullName>Search_Facets_categoryHeader</fullName>
+        <value>Category</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Search_Facets_categoryHeader</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Search_Facets_backActionAssistiveText</fullName>
+        <value>Back to {categoryName}</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Search_Facets_backActionAssistiveText</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Search_Facets_toggleFilterExpandedAssistiveText</fullName>
+        <value>Toggle filter, expanded</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Search_Facets_toggleFilterExpandedAssistiveText</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Search_Facets_toggleFilterCollapsedAssistiveText</fullName>
+        <value>Toggle filter, collapsed</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Search_Facets_toggleFilterCollapsedAssistiveText</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Search_Facets_filtersHeader</fullName>
+        <value>Filters</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Search_Facets_filtersHeader</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Search_Results_oneResultSearchHeaderShort</fullName>
+        <value>{count} Result</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Search_Results_oneResultSearchHeaderShort</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Search_Results_multipleResultSearchHeaderShort</fullName>
+        <value>{count} Results</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Search_Results_multipleResultSearchHeaderShort</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Search_Results_oneCategoryHeader</fullName>
+        <value>{count} Item</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Search_Results_oneCategoryHeader</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Search_Results_multipleCategoryHeader</fullName>
+        <value>{count} Items</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Search_Results_multipleCategoryHeader</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Search_Facets_clearButton</fullName>
+        <value>Clear All</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Search_Facets_clearButton</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Search_Facets_cancelButton</fullName>
+        <value>Cancel</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Search_Facets_cancelButton</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Search_Results_allCategoriesName</fullName>
+        <value>All Categories</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Search_Results_allCategoriesName</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Search_Facets_backActionAssistiveText</fullName>
+        <value>Back to {categoryName}</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Search_Facets_backActionAssistiveText</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Search_Facets_showMore</fullName>
+        <value>Show More</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Search_Facets_showMore</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Search_Facets_showLess</fullName>
+        <value>Show Less</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Search_Facets_showLess</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Search_Facets_showMoreAriaLabel</fullName>
+        <value>Show More {name}</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Search_Facets_backActionAssistiveText</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Search_Facets_showLessAriaLabel</fullName>
+        <value>Show Less {name}</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Search_Facets_backActionAssistiveText</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Commerce_Search_Facets_modalLabel</fullName>
+        <value>Filter Search Results</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Commerce_Search_Facets_modalLabel</shortDescription>
+    </labels>
+
 </CustomLabels>

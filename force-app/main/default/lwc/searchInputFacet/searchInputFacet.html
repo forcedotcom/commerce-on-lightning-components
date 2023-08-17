@@ -1,0 +1,20 @@
+<template lwc:render-mode="light">
+    <template
+        for:each={displayedValues}
+        for:item="value">
+        <c-search-facet-item
+            class="slds-p-top_medium"
+            key={value.id}
+            value={value}
+            type={type}
+            focus-on-init={value.focusOnInit}></c-search-facet-item>
+    </template>
+    <fieldset class="show-more slds-p-top_small">
+        <lightning-button
+            if:true={displayShowMore}
+            variant="base"
+            label={showMoreOrLessLabel}
+            aria-label={facetAriaLabel}
+            onclick={handleShowMoreOrLess}></lightning-button>
+    </fieldset>
+</template>
