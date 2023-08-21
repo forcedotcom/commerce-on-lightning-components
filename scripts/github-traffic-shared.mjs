@@ -105,7 +105,7 @@ export async function writeGist(context, stats) {
                 },
             })
             .then(
-                ({ data }) => {
+                () => {
                     console.log(`[${category}] Successfully updated Gist '${gistId}' on GitHub`);
                 },
                 (error) => {

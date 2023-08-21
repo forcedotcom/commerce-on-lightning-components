@@ -42,7 +42,13 @@ export function updateClones(context) {
                     if (Reflect.has(stats.clones, clone.timestamp)) {
                         // Key already exists -> Check for changes
                         const entry = Reflect.get(stats.clones, clone.timestamp);
-                        if (entry.count !== clone.count) {
+                        if (entry.count < clone.count) {
+                            // Only update existing key if the new value is bigger than the currently
+                            // stored one. This check is important because the traffic stats don't
+                            // cover the whole last 14 days, but indeed only cover "T - 14d", i.e.
+                            // there is a high chance that the data of the 14th day in the past gets
+                            // reduced (because not the whole day is taking into account anymore) if
+                            // we don't add this check here.
                             stats.count -= entry.count; // <- Reduce overall count by old value
                             stats.count += clone.count; // <- Add new value to overall count
                             Reflect.set(stats.clones, clone.timestamp, {
