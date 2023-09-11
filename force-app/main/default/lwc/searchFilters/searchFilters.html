@@ -1,0 +1,14 @@
+<template lwc:render-mode="light">
+    <div if:true={isDesktop}>
+        <!-- Filters Panel - shows the category tree and facets for a search result -->
+        <c-search-filters-panel display-data={normalizedSearchFilters}></c-search-filters-panel>
+    </div>
+    <div if:false={isDesktop}>
+        <button
+            class="slds-button slds-button_neutral slds-button_stretch"
+            title={filterHeaderLabel}
+            onclick={handleOpenSearchFiltersModal}>
+            {filterHeaderLabel}
+        </button>
+    </div>
+</template>

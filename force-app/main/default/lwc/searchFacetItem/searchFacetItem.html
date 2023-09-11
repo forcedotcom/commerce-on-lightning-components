@@ -1,0 +1,21 @@
+<template lwc:render-mode="light">
+    <lightning-input
+        label={value.name}
+        variant="label-hidden"
+        type={type}
+        checked={value.checked}
+        onclick={handleFacetValueToggle}
+        onkeyup={handleKeyPress}
+        data-id={value.id}
+        data-checked={value.checked}
+        data-displayname={value.name}></lightning-input>
+    <!-- Note: Adding the label outside since the lightning-input label is
+        not truncating based on it's container. The screen reader still picks
+        the internal label for accessibility, so we are adding a span with title
+        for every other scenarios. -->
+    <span
+        class="slds-form-element__label slds-truncate"
+        aria-hidden="true">
+        {value.name}
+    </span>
+</template>
