@@ -1,0 +1,14 @@
+.selected-category {
+    font-weight: var(--dxp-c-strong-text-weight, 700);
+    margin-left: 1.1rem;
+}
+.category-item {
+    display: inline-block;
+    font-weight: var(--dxp-c-strong-text-weight, 400);
+}
+@media only screen and (max-width: 48em) {
+    .categories,
+    h2 {
+        padding: 0 1.5rem;
+    }
+}

@@ -1,0 +1,10 @@
+:host {
+    display: grid;
+    grid-template-columns: var(--dxp-g-spacing-medium) auto;
+    grid-column-gap: var(--dxp-g-spacing-small);
+}
+@media only screen and (max-width: 48em) {
+    .input-facet-value {
+        padding-top: 1.25rem;
+    }
+}

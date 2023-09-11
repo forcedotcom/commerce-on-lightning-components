@@ -1,0 +1,30 @@
+<template lwc:render-mode="light">
+    <section class="modal-body-content dialog-body-height slds-scrollable">
+        <c-search-filters-panel
+            display-data={normalizedDisplayData}
+            onfacetvalueupdate={handleFacetValueUpdate}
+            oncategoryupdate={handleCategoryUpdate}></c-search-filters-panel>
+    </section>
+    <section>
+        <section>
+            <button
+                type="button"
+                class="clear-search-filters-modal-panel slds-button slds-button_brand slds-float_left"
+                onclick={handleClearAllFilters}>
+                {clearButtonLabel}
+            </button>
+            <button
+                type="button"
+                class="cancel-search-filters-modal-panel slds-button slds-button_brand slds-float_right"
+                onclick={handleCloseModal}>
+                {cancelButtonLabel}
+            </button>
+        </section>
+        <button
+            type="button"
+            class="slds-button slds-button_brand slds-button_stretch slds-m-top_small"
+            onclick={handleCloseModal}>
+            {displayCountLabel}
+        </button>
+    </section>
+</template>

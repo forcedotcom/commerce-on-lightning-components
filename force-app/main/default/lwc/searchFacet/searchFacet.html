@@ -1,0 +1,33 @@
+<template lwc:render-mode="light">
+    <div class="facet-header">
+        <h2 class="facet-name">{name}</h2>
+        <figure>
+            <lightning-button-icon
+                icon-name={iconName}
+                alternative-text={facetToggleLabel}
+                class="expand-button slds-m-right_x-small"
+                variant="bare"
+                icon-class="slds-m-around_xsmall"
+                size="small"
+                onclick={handleFacetHeaderToggle}
+                aria-expanded={_expanded}></lightning-button-icon>
+        </figure>
+    </div>
+    <div
+        class="facet-body"
+        role="group">
+        <c-search-input-facet
+            if:false={isDateTimeOrSlider}
+            facet-name={name}
+            values={values}
+            type={type}
+            class={facetDisplayClasses}
+            onfacetvaluetoggle={handleFacetToggle}></c-search-input-facet>
+        <c-search-slider-facet
+            if:true={isSlider}
+            min={minValue}
+            max={maxValue}
+            class={facetDisplayClasses}
+            onfacetvaluetoggle={handleFacetToggle}></c-search-slider-facet>
+    </div>
+</template>
