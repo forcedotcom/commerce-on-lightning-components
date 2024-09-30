@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightningCommunity__Page</target>
+        <target>lightningCommunity__Default</target>
+    </targets>
+    <masterLabel>Custom Search Paging Control</masterLabel>
+    <description>Displays pagination control for search page.</description>
+    <targetConfigs>
+        <targetConfig targets="lightningCommunity__Default">
+            <property name="currentPageNumber" type="String" default="{!Search.Pagination.currentPage}" />
+            <property name="pageSize" type="String" default="{!Search.Results.pageSize}" />
+            <property name="totalItemCount" type="String" default="{!Search.Results.total}" />
+            <property name="maximumPagesDisplayed" type="String" default="5" />
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>
