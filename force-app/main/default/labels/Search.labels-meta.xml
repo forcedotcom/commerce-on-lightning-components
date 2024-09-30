@@ -141,13 +141,6 @@
         <shortDescription>Search_Results_allCategoriesName</shortDescription>
     </labels>
     <labels>
-        <fullName>Search_Facets_backActionAssistiveText</fullName>
-        <value>Back to {categoryName}</value>
-        <language>en_US</language>
-        <protected>false</protected>
-        <shortDescription>Search_Facets_backActionAssistiveText</shortDescription>
-    </labels>
-    <labels>
         <fullName>Search_Facets_showMore</fullName>
         <value>Show More</value>
         <language>en_US</language>
