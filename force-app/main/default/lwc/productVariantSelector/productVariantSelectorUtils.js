@@ -83,10 +83,13 @@ export const transformVariantOptions = (attributeInfo) => {
     return Object.values(attributeInfo || [])
         .filter(Boolean)
         .map((attribute) => {
-            const options = (attribute?.availableValues || []).map((value) => ({
-                label: value,
-                value: value,
-            }));
+            const options = (attribute?.availableValues || []).map((value) => {
+                const option = attribute?.options?.find((o) => o?.apiName === value);
+                return {
+                    label: option?.label,
+                    value: option?.apiName,
+                };
+            });
             return {
                 id: attribute?.fieldEnumOrId,
                 label: attribute?.label,
