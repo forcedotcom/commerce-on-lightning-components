@@ -434,7 +434,7 @@ export default class ProductVariantSelector extends LightningElement {
             this._selectedAttributeIndex = +event.target.dataset.index;
 
             this._availableOptions = this.checkAndPopulateAvailableOptionsList
-                ? this._availableOptionsList && this._availableOptionsList[this._selectedAttributeIndex]
+                ? this._availableOptionsList?.[this._selectedAttributeIndex]
                 : getAvailableOptions(
                       this._selectedAttributeIndex,
                       this.currentlySelectedOptions,
