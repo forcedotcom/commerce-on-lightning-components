@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2025, salesforce.com, inc.
+ * All rights reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ * For full license text, see the LICENSE file in the repo
+ * root or https://opensource.org/licenses/apache-2.0/
+ */
 module.exports = {
     extends: ['@salesforce/eslint-config-lwc/recommended', 'plugin:jsdoc/recommended'],
     plugins: ['notice', 'prettier', 'jsdoc'],
@@ -32,5 +39,11 @@ module.exports = {
                 node: true,
             },
         },
+        {
+            files: ['*.config.js', '.eslintrc.cjs'],
+            env: {
+                node: true,
+            },
+        },
     ],
-}; 
+};
