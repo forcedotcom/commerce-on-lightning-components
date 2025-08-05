@@ -1,0 +1,71 @@
+/*
+ * productPricing.scoped.css
+ *
+ * This CSS file styles the ProductPricing LWC. It employs a layered
+ * approach to styling, prioritizing consumer customization via public `--ref-c-`
+ * styling hooks, then leveraging Salesforce DXP (Lightning Web Runtime)
+ * theme hooks, and finally falling back to default values if neither are defined.
+ */
+
+:host {
+    --ref-c-product-pricing-negotiated-price-label-font-size: var(--dxp-s-text-heading-medium-font-size, 1.25rem);
+    --ref-c-product-pricing-price-font-weight-medium: var(--dxp-g-font-weight-medium, 500);
+    --ref-c-product-pricing-line-height: var(--dxp-g-line-height-text, 1.5rem);
+}
+
+.slds-assistive-text + .original-price {
+    text-decoration: line-through;
+}
+.price-container {
+    width: auto;
+    line-height: var(--ref-c-product-pricing-line-height);
+}
+.price-col {
+    vertical-align: baseline;
+}
+.price-col-section {
+    font-weight: var(--dxp-s-body-font-weight, 300);
+}
+.negotiated-price {
+    color: var(
+        --ref-c-common-product-pricing-negotiated-price-label-color,
+        var(--com-c-product-details-negotiated-price-label-color)
+    );
+    font-size: var(
+        --ref-c-product-pricing-negotiated-price-label-font-size,
+        var(--com-c-product-details-negotiated-price-label-size)
+    );
+    font-weight: var(--ref-c-product-pricing-price-font-weight-medium);
+}
+.tax-info-label {
+    color: var(--ref-c-common-product-pricing-tax-info-label-color, var(--com-c-product-details-tax-info-label-color));
+    font-size: var(
+        --ref-c-common-product-pricing-tax-info-label-size,
+        var(--com-c-product-details-tax-info-label-size)
+    );
+}
+.original-price {
+    color: var(
+        --ref-c-common-product-pricing-original-price-label-color,
+        var(--com-c-product-details-original-price-label-color)
+    );
+    font-size: var(
+        --ref-c-common-product-pricing-original-price-label-size,
+        var(--com-c-product-details-original-price-label-size)
+    );
+}
+@media only screen and (max-width: 48em) {
+    .price-container {
+        width: 100%;
+        display: flex;
+    }
+    .price-col-section:first-child {
+        text-align: right;
+    }
+    .price-unavailable {
+        text-align: center;
+    }
+    .tax-container {
+        text-align: center;
+    }
+}

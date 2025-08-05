@@ -1,0 +1,58 @@
+<template lwc:render-mode="light">
+    <div
+        class="cart-summary slds-grid slds-grid_vertical"
+        role="region"
+        aria-label={i18n.cartSummaryRegionLabel}>
+        <c-summary-details
+            details={cartSummary}
+            is-cart-summary></c-summary-details>
+
+        <div class={loadingContainerClass}>
+            <template if:true={shouldWaitForExpressPayment}>
+                <template if:false={isExpressLoaded}>
+                    <div class="spinner-overlay">
+                        <lightning-spinner
+                            alternative-text={i18n.loadingSpinnerAltText}
+                            size="x-small"></lightning-spinner>
+                    </div>
+                </template>
+            </template>
+
+            <div
+                class={expressContainerClass}
+                style={expressContainerStyle}>
+                <c-express-payment
+                    lwc:ref="expressPaymentComponent"
+                    entry-id={entryId}
+                    express-payment-url={expressPaymentUrl}
+                    onexpressloaded={handleExpressLoaded}></c-express-payment>
+            </div>
+
+            <template if:true={shouldShowButton}>
+                <c-common-button
+                    variant={button.variant}
+                    width="stretch"
+                    disabled={button.disabled}
+                    assistive-text={button.assistiveText}
+                    data-button-class={button.class}
+                    onclick={handleButtonClick}>
+                    {button.buttonLabel}
+                    <lightning-icon
+                        icon-name="utility:new_window"
+                        size="xx-small"
+                        class="slds-m-left_x-small checkout-icon"></lightning-icon>
+                </c-common-button>
+            </template>
+        </div>
+
+        <template if:true={shouldShowFooter}>
+            <div
+                class="cart-summary-footer-container slds-col slds-p-bottom_medium slds-p-horizontal_medium"
+                data-id="footer">
+                <lightning-formatted-rich-text
+                    class="cart-summary-footer"
+                    value={footerMessage}></lightning-formatted-rich-text>
+            </div>
+        </template>
+    </div>
+</template>

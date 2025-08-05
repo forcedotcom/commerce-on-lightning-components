@@ -1,0 +1,176 @@
+/*
+ * commonCarousel.css
+ *
+ * This CSS file styles the CommonCarousel LWC. It employs a layered
+ * approach to styling, prioritizing consumer customization via public `--ref-c-`
+ * styling hooks, then leveraging Salesforce DXP (Lightning Web Runtime)
+ * theme hooks, and finally falling back to default values if neither are defined.
+ */
+
+:host {
+    display: block;
+    --ref-c--common-carousel-image-border-radius: 8px 8px 0 0;
+}
+
+/* ===== CAROUSEL SCROLL CONTAINER ===== */
+/* Generic horizontal scroller with smooth scrolling and snap behavior */
+.carousel-scroll-container {
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    box-sizing: border-box;
+    scroll-padding-inline: var(--dxp-g-spacing-small, 0.5rem);
+    padding-bottom: var(--dxp-g-spacing-medium, 0.75rem);
+    -ms-overflow-style: none;
+    border-radius: var(--ref-c--common-carousel-image-border-radius);
+    scrollbar-width: thin;
+}
+
+/* ===== IMAGE CAROUSEL STYLES ===== */
+/* Container for product detail image gallery */
+.image-carousel-container {
+    width: 100%;
+}
+/* Remove gaps and padding for image carousel */
+.image-carousel-container .carousel-scroll-container {
+    gap: 0;
+}
+/* Full-width image slides */
+.image-carousel-slide {
+    width: 100%;
+    min-width: 100%;
+}
+/* Responsive image styling with cover fit */
+.image-carousel-image {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    display: block;
+}
+
+/* ===== PRODUCT CARDS CAROUSEL STYLES ===== */
+/* Container for product recommendation cards */
+.product-cards-carousel-container {
+    /* Add padding to the parent container */
+    padding-inline: var(--dxp-g-spacing-small, 0.5rem);
+    padding-block: var(--dxp-g-spacing-small, 0.5rem);
+    padding-bottom: 0px;
+    padding-right: 0px;
+}
+
+/* ===== PRODUCT CARD STYLING ===== */
+/* Each card occupies 85% of the viewport so the next card peeks in */
+.product-card {
+    flex: 0 0 calc(85% - var(--dxp-g-spacing-small, 0.5rem));
+    width: calc(85% - var(--dxp-g-spacing-small, 0.5rem));
+    margin-right: var(--dxp-g-spacing-small, 0.5rem);
+    padding: 0; /* Reset UA/SLDS padding */
+    background: var(--dxp-g-root, #fff);
+    border-radius: var(--dxp-s-button-small-radius-border, 4px);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    cursor: pointer;
+    transition: box-shadow 0.15s ease;
+    display: flex;
+    flex-direction: column;
+    scroll-snap-align: start;
+    border-width: 0; /* Reset SLDS button border */
+}
+/* Remove margin from last card */
+.product-card:last-child {
+    margin-right: 0;
+}
+
+/* Enhanced shadow on hover/focus for better UX */
+.product-card:hover,
+.product-card:focus {
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+/* ===== SINGLE CARD LAYOUT ===== */
+/* When only one card exists, stretch it to full width */
+.carousel-scroll-container > .product-card:only-child {
+    flex: 0 0 100%;
+    width: 100%;
+    margin-right: 0;
+}
+
+/* ===== PRODUCT CARD IMAGE ===== */
+/* Fixed height container for product images */
+.product-image-container {
+    width: 100%;
+    line-height: 0;
+    overflow: hidden;
+}
+/* Responsive image with cover fit */
+.product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* ===== PRODUCT CARD INFORMATION ===== */
+/* Container for product details (name, description, price) */
+.product-info {
+    padding: var(--dxp-g-spacing-small, 0.75rem);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+/* ===== PRODUCT NAME STYLING ===== */
+/* Product name with single-line text truncation */
+.product-name {
+    min-width: 0;
+    overflow: hidden;
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+/* Text truncation for long product names */
+.product-name .product-link {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left;
+}
+
+/* ===== PRODUCT DESCRIPTION STYLING ===== */
+/* Description text with two-line truncation */
+.description-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    font-size: 0.75rem;
+    color: var(--dxp-g-neutral-8, #706e6b);
+    text-align: left;
+}
+
+/* ===== PRODUCT PRICING ===== */
+/* Price display with auto margin to push to bottom */
+.product-price {
+    font-weight: 600;
+    margin-top: auto;
+    text-align: left;
+}
+
+/* ===== ACCESSIBILITY: REDUCED MOTION ===== */
+/* Respect user preference for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .carousel-scroll-container {
+        scroll-behavior: auto;
+    }
+    .product-card {
+        transition: none;
+    }
+}

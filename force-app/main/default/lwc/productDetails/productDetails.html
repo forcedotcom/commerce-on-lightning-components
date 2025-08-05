@@ -1,0 +1,189 @@
+<template lwc:render-mode="light">
+    <div
+        class="slds-grid slds-grid_vertical"
+        role="main"
+        aria-labelledby="product-title">
+        <div class="slds-col">
+            <c-common-carousel
+                display-mode="productDetailImageCarousel"
+                product-image-links={productImageLinks}></c-common-carousel>
+        </div>
+        <div
+            class="slds-col slds-p-horizontal_medium slds-p-top_small"
+            lwc:if={product}>
+            <lightning-formatted-rich-text
+                class="product-title"
+                value={product.name}></lightning-formatted-rich-text>
+        </div>
+        <template lwc:if={product}>
+            <template lwc:if={product.pr}>
+                <div
+                    class="slds-col slds-p-horizontal_medium slds-p-vertical_x-small"
+                    aria-label={i18n.pricingSectionAssistiveText}>
+                    <c-product-pricing
+                        negotiated-price={product.pr.cur}
+                        original-price={product.pr.orig}
+                        currency-code={product.ccy}
+                        show-negotiated-price="true"
+                        show-original-price="true"
+                        show-tax-indication="true"></c-product-pricing>
+                </div>
+            </template>
+        </template>
+        <div
+            class="slds-col slds-p-horizontal_medium"
+            lwc:if={product}>
+            <lightning-formatted-rich-text
+                class="product-description"
+                value={product.dscr}></lightning-formatted-rich-text>
+        </div>
+        <template lwc:if={product}>
+            <template lwc:if={product.features}>
+                <div
+                    class="slds-col slds-p-horizontal_medium"
+                    aria-label={i18n.featuresSectionAssistiveText}>
+                    <ul class="slds-list_dotted">
+                        <template
+                            for:each={product.features}
+                            for:item="feature"
+                            for:index="index">
+                            <li key={feature}>
+                                <lightning-formatted-rich-text
+                                    class="product-feature"
+                                    value={feature}></lightning-formatted-rich-text>
+                            </li>
+                        </template>
+                    </ul>
+                </div>
+            </template>
+        </template>
+        <!-- VARIANTS SELECTION -->
+        <div
+            class="variants-container slds-col slds-p-horizontal_medium slds-p-top_x-small"
+            aria-label={i18n.variantsSectionAssistiveText}>
+            <div class="variants-list">
+                <template
+                    for:each={variantOptions}
+                    for:item="variant">
+                    <div key={variant.id}>
+                        <div class="variant-message">
+                            <lightning-formatted-rich-text value={variant.lbl}></lightning-formatted-rich-text>
+                            <span
+                                class="variant-selected-value slds-p-left_x-small"
+                                aria-live="polite">
+                                <lightning-formatted-rich-text
+                                    value={variant.selectedValue}></lightning-formatted-rich-text>
+                            </span>
+                        </div>
+                        <div
+                            class="variant-options slds-p-top_x-small"
+                            role="group"
+                            aria-labelledby="variant-{variant.id}">
+                            <template
+                                for:each={variant.options}
+                                for:item="option">
+                                <button
+                                    key={option.val}
+                                    class={option.class}
+                                    data-variant-name={variant.id}
+                                    data-value={option.val}
+                                    onclick={handleVariantClick}
+                                    style={option.style}
+                                    disabled={option.disabled}
+                                    aria-disabled={option.disabled}
+                                    aria-pressed={option.ariaPressed}
+                                    aria-label={option.ariaLabel}
+                                    lwc:if={option.isColor}></button>
+                                <c-common-button
+                                    key={option.val}
+                                    variant="neutral"
+                                    class={option.class}
+                                    data-variant-name={variant.id}
+                                    data-value={option.val}
+                                    onclick={handleVariantClick}
+                                    disabled={option.disabled}
+                                    aria-disabled={option.disabled}
+                                    aria-pressed={option.ariaPressed}
+                                    aria-label={option.ariaLabel}
+                                    lwc:else>
+                                    {option.name}
+                                </c-common-button>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+        <!-- QUANTITY SELECTION -->
+        <div
+            class="slds-col slds-p-horizontal_medium slds-p-top_x-small"
+            aria-label={i18n.quantitySectionAssistiveText}>
+            <div class="quantity-title slds-p-right_x-small">{i18n.quantityLabelAssistiveText}</div>
+            <div
+                class="quantity-value"
+                role="status"
+                aria-live="polite">
+                {quantity}
+            </div>
+        </div>
+        <div
+            class="slds-col slds-p-horizontal_medium slds-p-top_x-small"
+            role="group"
+            aria-label={i18n.quantityControlsAssistiveText}>
+            <c-common-button
+                title={i18n.decreaseQuantityAssistiveText}
+                aria-label={i18n.decreaseQuantityAssistiveText}
+                variant="secondary"
+                disabled={isDecrementDisabled}
+                class="quantity-decrement-button slds-p-right_xx-small"
+                onclick={decrement}>
+                -
+            </c-common-button>
+            <c-common-button
+                title={i18n.increaseQuantityAssistiveText}
+                aria-label={i18n.increaseQuantityAssistiveText}
+                variant="secondary"
+                disabled={isIncrementDisabled}
+                class="quantity-increment-button"
+                onclick={increment}>
+                +
+            </c-common-button>
+        </div>
+        <div
+            class="slds-col slds-p-horizontal_medium slds-p-top_x-small slds-p-bottom_medium"
+            aria-label={i18n.addToCartAssistiveText}>
+            <div class={loadingContainerClass}>
+                <template if:false={isExpressLoaded}>
+                    <div class="spinner-overlay">
+                        <lightning-spinner
+                            alternative-text={i18n.loadingSpinnerAltText}
+                            size="x-small"></lightning-spinner>
+                    </div>
+                </template>
+
+                <div
+                    class={expressContainerClass}
+                    style={expressContainerStyle}>
+                    <c-express-payment
+                        lwc:ref="expressPaymentComponent"
+                        entry-id={entryId}
+                        express-payment-url={expressPaymentUrl}
+                        disabled={isAddToCartDisabled}
+                        pdp
+                        onexpressloaded={handleExpressLoaded}></c-express-payment>
+                </div>
+
+                <template if:true={shouldShowAddToCartButton}>
+                    <c-common-button
+                        class="button-checkout"
+                        variant={addToCartButtonVariant}
+                        width="stretch"
+                        onclick={handleAddToCart}
+                        disabled={isAddToCartDisabled}>
+                        {i18n.addToCartAssistiveText}
+                    </c-common-button>
+                </template>
+            </div>
+        </div>
+    </div>
+</template>
