@@ -8,150 +8,101 @@
         <shortDescription>Product_Pricing_strikethroughAssistiveText</shortDescription>
     </labels>
     <labels>
-        <fullName>Product_Variant_Selector_productVariantSelectorPlaceholderText</fullName>
-        <value>Select...</value>
+        <fullName>Product_addToCartAssistiveText</fullName>
+        <value>Add To Cart</value>
         <language>en_US</language>
         <protected>false</protected>
-        <shortDescription>Product_Variant_Selector_productVariantSelectorPlaceholderText</shortDescription>
+        <shortDescription>Product_addToCartAssistiveText</shortDescription>
     </labels>
     <labels>
-        <fullName>Product_QuantitySelector_rangeOverflow</fullName>
-        <value>Enter a value between {min} and {max} in increments of {step}.</value>
+        <fullName>Product_quantityLabelAssistiveText</fullName>
+        <value>Quantity</value>
         <language>en_US</language>
         <protected>false</protected>
-        <shortDescription>Product_QuantitySelector_rangeOverflow</shortDescription>
+        <shortDescription>Product_quantityLabelAssistiveText</shortDescription>
     </labels>
     <labels>
-        <fullName>Product_QuantitySelector_rangeUnderflow</fullName>
-        <value>Enter a value between {min} and {max} in increments of {step}.</value>
+        <fullName>Product_quantityLabelText</fullName>
+        <value>Qty</value>
         <language>en_US</language>
         <protected>false</protected>
-        <shortDescription>Product_QuantitySelector_rangeUnderflow</shortDescription>
+        <shortDescription>Product_quantityLabelText</shortDescription>
     </labels>
     <labels>
-        <fullName>Product_QuantitySelector_stepMismatch</fullName>
-        <value>Enter a value between {min} and {max} in increments of {step}.</value>
+        <fullName>Product_originalPriceLabelText</fullName>
+        <value>Original price</value>
         <language>en_US</language>
         <protected>false</protected>
-        <shortDescription>Product_QuantitySelector_stepMismatch</shortDescription>
+        <shortDescription>Product_originalPriceLabelText</shortDescription>
     </labels>
     <labels>
-        <fullName>Product_QuantitySelector_patternMismatch</fullName>
-        <value>Enter a valid number.</value>
+        <fullName>Product_currentPriceLabelText</fullName>
+        <value>Current price</value>
         <language>en_US</language>
         <protected>false</protected>
-        <shortDescription>Product_QuantitySelector_patternMismatch</shortDescription>
+        <shortDescription>Product_currentPriceLabelText</shortDescription>
     </labels>
     <labels>
-        <fullName>Product_QuantitySelector_outOfStock</fullName>
-        <value>Out of stock</value>
+        <fullName>Product_currentPriceAssistiveText</fullName>
+        <value>Current price</value>
         <language>en_US</language>
         <protected>false</protected>
-        <shortDescription>Product_QuantitySelector_outOfStock</shortDescription>
+        <shortDescription>Product_currentPriceAssistiveText</shortDescription>
     </labels>
     <labels>
-        <fullName>Product_QuantitySelectorPopover_quantityHelp</fullName>
-        <value>Quantity help</value>
+        <fullName>Product_originalPriceAssistiveText</fullName>
+        <value>Original price strikethrough</value>
         <language>en_US</language>
         <protected>false</protected>
-        <shortDescription>Product_QuantitySelectorPopover_quantityHelp</shortDescription>
+        <shortDescription>Product_originalPriceAssistiveText</shortDescription>
     </labels>
     <labels>
-        <fullName>Product_PurchaseOptions_modalCartTitleSuccess</fullName>
-        <value>Item was added to cart</value>
+        <fullName>Product_pricingSectionAssistiveText</fullName>
+        <value>Product Pricing</value>
         <language>en_US</language>
         <protected>false</protected>
-        <shortDescription>Product_PurchaseOptions_modalCartTitleSuccess</shortDescription>
+        <shortDescription>Product_pricingSectionAssistiveText</shortDescription>
     </labels>
     <labels>
-        <fullName>Product_PurchaseOptions_modalCartActionView</fullName>
-        <value>View Cart</value>
+        <fullName>Product_featuresSectionAssistiveText</fullName>
+        <value>Product Features</value>
         <language>en_US</language>
         <protected>false</protected>
-        <shortDescription>Product_PurchaseOptions_modalCartActionView</shortDescription>
+        <shortDescription>Product_featuresSectionAssistiveText</shortDescription>
     </labels>
     <labels>
-        <fullName>Product_PurchaseOptions_modalCartActionContinue</fullName>
-        <value>Continue Shopping</value>
+        <fullName>Product_variantsSectionAssistiveText</fullName>
+        <value>Product Variants</value>
         <language>en_US</language>
         <protected>false</protected>
-        <shortDescription>Product_PurchaseOptions_modalCartActionContinue</shortDescription>
+        <shortDescription>Product_variantsSectionAssistiveText</shortDescription>
     </labels>
     <labels>
-        <fullName>Product_PurchaseOptions_toastWishlistSuccess</fullName>
-        <value>Item was added to list.</value>
+        <fullName>Product_quantitySectionAssistiveText</fullName>
+        <value>Quantity Selection</value>
         <language>en_US</language>
         <protected>false</protected>
-        <shortDescription>Product_PurchaseOptions_toastWishlistSuccess</shortDescription>
+        <shortDescription>Product_quantitySectionAssistiveText</shortDescription>
     </labels>
     <labels>
-        <fullName>Product_PurchaseOptions_toastWishlistError</fullName>
-        <value>We couldn’t add this item to the list. Try again.</value>
+        <fullName>Product_quantityControlsAssistiveText</fullName>
+        <value>Quantity Controls</value>
         <language>en_US</language>
         <protected>false</protected>
-        <shortDescription>Product_PurchaseOptions_toastWishlistError</shortDescription>
+        <shortDescription>Product_quantityControlsAssistiveText</shortDescription>
     </labels>
     <labels>
-        <fullName>Product_PurchaseOptions_errorAccessInsufficient</fullName>
-        <value>You don’t have permission to complete this action.</value>
+        <fullName>Product_decreaseQuantityAssistiveText</fullName>
+        <value>Decrease quantity</value>
         <language>en_US</language>
         <protected>false</protected>
-        <shortDescription>Product_PurchaseOptions_errorAccessInsufficient</shortDescription>
+        <shortDescription>Product_decreaseQuantityAssistiveText</shortDescription>
     </labels>
     <labels>
-        <fullName>Product_PurchaseOptions_errorLimitMinimum</fullName>
-        <value>This product has a minimum purchase limit. Check quantity limits.</value>
+        <fullName>Product_increaseQuantityAssistiveText</fullName>
+        <value>Increase quantity</value>
         <language>en_US</language>
         <protected>false</protected>
-        <shortDescription>Product_PurchaseOptions_errorLimitMinimum</shortDescription>
-    </labels>
-    <labels>
-        <fullName>Product_PurchaseOptions_errorLimitMaximum</fullName>
-        <value>This product has a maximum purchase limit. Check quantity limits.</value>
-        <language>en_US</language>
-        <protected>false</protected>
-        <shortDescription>Product_PurchaseOptions_errorLimitMaximum</shortDescription>
-    </labels>
-    <labels>
-        <fullName>Product_PurchaseOptions_errorLimitIncrement</fullName>
-        <value>Always purchase this product in set increments. Check product increments.</value>
-        <language>en_US</language>
-        <protected>false</protected>
-        <shortDescription>Product_PurchaseOptions_errorLimitIncrement</shortDescription>
-    </labels>
-    <labels>
-        <fullName>Product_PurchaseOptions_errorLimitExceeded</fullName>
-        <value>Your cart is full.</value>
-        <language>en_US</language>
-        <protected>false</protected>
-        <shortDescription>Product_PurchaseOptions_errorLimitExceeded</shortDescription>
-    </labels>
-    <labels>
-        <fullName>Product_PurchaseOptions_errorDefault</fullName>
-        <value>An unexpected error occurred. Try again later.</value>
-        <language>en_US</language>
-        <protected>false</protected>
-        <shortDescription>Product_PurchaseOptions_errorDefault</shortDescription>
-    </labels>
-    <labels>
-        <fullName>Product_ModalAddToCart_actionViewCart</fullName>
-        <value>View Cart</value>
-        <language>en_US</language>
-        <protected>false</protected>
-        <shortDescription>Product_ModalAddToCart_actionViewCart</shortDescription>
-    </labels>
-    <labels>
-        <fullName>Product_ModalAddToCart_actionContinueShopping</fullName>
-        <value>Continue Shopping</value>
-        <language>en_US</language>
-        <protected>false</protected>
-        <shortDescription>Product_ModalAddToCart_actionContinueShopping</shortDescription>
-    </labels>
-    <labels>
-        <fullName>Product_ModalAddToCart_messageSuccessfullyAddedToCart</fullName>
-        <value>Item was added to cart</value>
-        <language>en_US</language>
-        <protected>false</protected>
-        <shortDescription>Product_ModalAddToCart_messageSuccessfullyAddedToCart</shortDescription>
+        <shortDescription>Product_increaseQuantityAssistiveText</shortDescription>
     </labels>
 </CustomLabels>

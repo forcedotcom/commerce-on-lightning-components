@@ -9,7 +9,7 @@ import { LightningElement, api } from 'lwc';
 import { Labels } from './labels';
 import displayOriginalPriceEvaluator from './productPricingUtils';
 
-export default class ProductPricing extends LightningElement {
+export default class CommonProductPricing extends LightningElement {
     static renderMode = 'light';
 
     /**
@@ -208,7 +208,7 @@ export default class ProductPricing extends LightningElement {
      */
     get layoutClass() {
         return `slds-grid price-container ${
-            this.layout === 'horizontal' ? 'slds-grid_reverse slds-grid_align-end' : 'slds-grid_vertical'
+            this.layout === 'horizontal' ? 'slds-grid_reverse slds-grid_align-end' : ''
         }`;
     }
 }

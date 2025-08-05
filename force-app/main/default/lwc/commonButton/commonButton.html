@@ -3,6 +3,9 @@
         aria-label={assistiveText}
         class={buttonClasses}
         disabled={disabled}>
-        <slot></slot>
+        <template lwc:if={label}>{label}</template>
+        <template lwc:else>
+            <slot></slot>
+        </template>
     </button>
 </template>

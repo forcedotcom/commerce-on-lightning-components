@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+    <labels>
+        <fullName>Order_confirmationTitle</fullName>
+        <value>Your order is confirmed.</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Order_confirmationTitle</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Order_subtotalLabel</fullName>
+        <value>Subtotal</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Order_subtotalLabel</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Order_promotionsLabel</fullName>
+        <value>Promotions</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Order_promotionsLabel</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Order_shippingLabel</fullName>
+        <value>Shipping</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Order_shippingLabel</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Order_shippingDiscountLabel</fullName>
+        <value>Shipping Discount</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Order_shippingDiscountLabel</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Order_taxesLabel</fullName>
+        <value>Taxes</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Order_taxesLabel</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Order_totalLabel</fullName>
+        <value>Total</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Order_totalLabel</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Order_tbdLabel</fullName>
+        <value>TBD</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Order_tbdLabel</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Order_freeShippingLabel</fullName>
+        <value>Free</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Order_freeShippingLabel</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Order_defaultDeliveryMessage</fullName>
+        <value>Your order is confirmed.</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Order_defaultDeliveryMessage</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Order_footerMessage</fullName>
+        <value>What else can I help you with?</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Order_footerMessage</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Order_orderSummaryAssistiveText</fullName>
+        <value>Order Summary</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Order_orderSummaryAssistiveText</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Order_cartSummaryAssistiveText</fullName>
+        <value>Cart Summary</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Order_cartSummaryAssistiveText</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Order_toggleExpandAssistiveText</fullName>
+        <value>Expand order details</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Order_toggleExpandAssistiveText</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Order_toggleCollapseAssistiveText</fullName>
+        <value>Collapse order details</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Order_toggleCollapseAssistiveText</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Order_toggleExpandCartAssistiveText</fullName>
+        <value>Expand cart details</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Order_toggleExpandCartAssistiveText</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Order_toggleCollapseCartAssistiveText</fullName>
+        <value>Collapse cart details</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Order_toggleCollapseCartAssistiveText</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Order_orderItemsAssistiveText</fullName>
+        <value>Order Items</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Order_orderItemsAssistiveText</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Order_cartItemsAssistiveText</fullName>
+        <value>Cart Items</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Order_cartItemsAssistiveText</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Order_orderTotalsAssistiveText</fullName>
+        <value>Order Total Breakdown</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Order_orderTotalsAssistiveText</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Order_cartTotalsAssistiveText</fullName>
+        <value>Cart Total Breakdown</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Order_cartTotalsAssistiveText</shortDescription>
+    </labels>
+    <labels>
+        <fullName>Order_orderIdLabel</fullName>
+        <value>Order ID</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Order_orderIdLabel</shortDescription>
+    </labels>
+</CustomLabels>

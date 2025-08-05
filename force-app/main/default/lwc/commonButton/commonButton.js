@@ -18,6 +18,13 @@ export default class CommonButton extends LightningElement {
     disabled = false;
 
     /**
+     * The label text for the button.
+     * @type {?string}
+     */
+    @api
+    label;
+
+    /**
      * The assistive text for the button.
      * @type {?string}
      */
@@ -59,6 +66,7 @@ export default class CommonButton extends LightningElement {
     get buttonClasses() {
         return [
             'slds-button',
+            'button_icon-border',
             generateButtonStyleClass(this.variant ?? null),
             generateButtonSizeClass(this.size ?? null),
             generateButtonStretchClass(this.width ?? null),

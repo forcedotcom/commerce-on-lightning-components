@@ -107,6 +107,10 @@
         --ref-c-common-button-secondary-color-border,
         var(--ref-c-common-button-color-border, var(--dxp-s-button-color, var(--dxp-g-brand)))
     );
+    color: var(
+        --ref-c-common-button-secondary-color,
+        var(--ref-c-common-button-color, var(--dxp-s-button-color-contrast, var(--dxp-g-brand-contrast)))
+    );
     transition: var(--ref-c-common-button-secondary-transition, var(--dxp-c-button-outline-brand-transition));
 }
 .slds-button.slds-button_outline-brand:focus:enabled,
@@ -219,4 +223,7 @@
         --ref-c-common-button-large-radius-border,
         var(--ref-c-common-button-radius-border, var(--dxp-s-button-large-radius-border))
     );
+}
+.button_icon-border {
+    box-shadow: none;
 }

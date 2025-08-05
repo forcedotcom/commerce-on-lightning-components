@@ -8,13 +8,6 @@
         <shortDescription>Shared_required</shortDescription>
     </labels>
     <labels>
-        <fullName>Shared_closeButtonAssistiveText</fullName>
-        <value>Close dialog</value>
-        <language>en_US</language>
-        <protected>false</protected>
-        <shortDescription>Shared_closeButtonAssistiveText</shortDescription>
-    </labels>
-    <labels>
         <fullName>Shared_success</fullName>
         <value>Success</value>
         <language>en_US</language>
