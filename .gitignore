@@ -28,3 +28,4 @@ build
 .vscode
 jest-report
 .pnp.*
+yarn.lock
