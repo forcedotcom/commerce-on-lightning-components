@@ -1,0 +1,30 @@
+<!-- Product Variants Component -->
+<template lwc:render-mode="light">
+    <div class="variants-container slds-var-p-around_medium">
+        <div class="variants-list">
+            <template
+                for:each={variantOptions}
+                for:item="variant">
+                <div key={variant.name}>
+                    <p class="variant-message">{variant.message}</p>
+                    <div class="variant-options">
+                        <template
+                            for:each={variant.Option}
+                            for:item="option">
+                            <c-common-button
+                                label={option.value}
+                                variant="neutral"
+                                class={option.class}
+                                data-variant-name={variant.name}
+                                data-value={option.value}
+                                onclick={handleVariantClick}
+                                key={option.value}>
+                                {option.value}
+                            </c-common-button>
+                        </template>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+</template>

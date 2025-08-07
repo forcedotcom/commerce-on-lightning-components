@@ -1,0 +1,61 @@
+/* ===== PRODUCTS DESCRIPTION STYLING ===== */
+/* Description text for the products section */
+.products-description {
+    font-size: var(--dxp-g-font-size-3, 0.875rem);
+}
+
+/* ===== CATEGORIES DESCRIPTION STYLING ===== */
+/* Description text for the categories section */
+.categories-description {
+    font-size: var(--dxp-g-font-size-3, 0.875rem);
+}
+
+.categoryLayout {
+    line-height: 30px;
+}
+
+/* ===== CATEGORY BUTTON STYLING ===== */
+/* Pill-shaped category filter buttons */
+.category-button {
+    font-size: var(--dxp-g-font-size-2, 0.75rem);
+    border-radius: 999px; /* Pill shape */
+    color: var(--dxp-g-offline-3, #000);
+    background-color: var(--dxp-g-root, #fff);
+    border: 1px solid var(--dxp-g-neutral-2, #e0e0e0);
+    padding: 0.375em 1.25em;
+    transition: box-shadow 0.2s, border-color 0.2s, background 0.2s;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 20.563em; /* Prevent buttons from becoming too wide */
+    min-width: 0;
+    display: inline-block;
+}
+
+/* ===== CATEGORY BUTTON INTERACTIONS ===== */
+/* Enhanced shadow and border on hover/focus for better UX */
+.category-button:hover,
+.category-button:focus {
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08);
+    border-color: var(--dxp-g-neutral-3, #d0d0d0);
+    background: var(--dxp-g-root, #fff);
+    outline: none;
+}
+
+/* Reduced shadow on active state for tactile feedback */
+.category-button:active {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border-color: var(--dxp-g-neutral-2, #e0e0e0);
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+/* Smaller buttons on mobile devices for better touch targets */
+@media (max-width: 30em) {
+    .category-button {
+        font-size: var(--dxp-g-font-size-1, 0.7rem);
+        padding: 0.25em 1em;
+        max-width: 20.563em; /* Smaller max width on mobile */
+    }
+}
