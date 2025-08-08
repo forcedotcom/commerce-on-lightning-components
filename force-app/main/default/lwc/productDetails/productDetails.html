@@ -149,41 +149,31 @@
                 +
             </c-common-button>
         </div>
+        <!-- APPLE PAY BUTTON -->
+        <div
+            class="slds-col slds-p-horizontal_medium slds-p-top_small"
+            aria-label={i18n.addToCartAssistiveText}
+            lwc:if={showApplePay}>
+            <c-common-button
+                class="button-checkout apple-pay-button"
+                variant="primary"
+                width="stretch"
+                disabled={isAddToCartDisabled}>
+                 Pay
+            </c-common-button>
+        </div>
+        <!-- ADD TO CART BUTTON -->
         <div
             class="slds-col slds-p-horizontal_medium slds-p-top_x-small slds-p-bottom_medium"
             aria-label={i18n.addToCartAssistiveText}>
-            <div class={loadingContainerClass}>
-                <template if:false={isExpressLoaded}>
-                    <div class="spinner-overlay">
-                        <lightning-spinner
-                            alternative-text={i18n.loadingSpinnerAltText}
-                            size="x-small"></lightning-spinner>
-                    </div>
-                </template>
-
-                <div
-                    class={expressContainerClass}
-                    style={expressContainerStyle}>
-                    <c-express-payment
-                        lwc:ref="expressPaymentComponent"
-                        entry-id={entryId}
-                        express-payment-url={expressPaymentUrl}
-                        disabled={isAddToCartDisabled}
-                        pdp
-                        onexpressloaded={handleExpressLoaded}></c-express-payment>
-                </div>
-
-                <template if:true={shouldShowAddToCartButton}>
-                    <c-common-button
-                        class="button-checkout"
-                        variant={addToCartButtonVariant}
-                        width="stretch"
-                        onclick={handleAddToCart}
-                        disabled={isAddToCartDisabled}>
-                        {i18n.addToCartAssistiveText}
-                    </c-common-button>
-                </template>
-            </div>
+            <c-common-button
+                class="button-checkout"
+                variant="secondary"
+                width="stretch"
+                onclick={handleAddToCart}
+                disabled={isAddToCartDisabled}>
+                {i18n.addToCartAssistiveText}
+            </c-common-button>
         </div>
     </div>
 </template>

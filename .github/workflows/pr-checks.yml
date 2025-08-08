@@ -1,0 +1,223 @@
+name: Pull Request Checks
+
+on:
+    pull_request:
+        types: [opened, synchronize, reopened]
+    push:
+        branches: [main, develop]
+
+permissions:
+    contents: read
+    pull-requests: write
+
+jobs:
+    validate:
+        name: Validate Code
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v3
+              with:
+                  fetch-depth: 0 # Fetch all history for better git operations
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v3
+              with:
+                  node-version: '18'
+                  cache: 'npm'
+
+            - name: Cache Jest
+              uses: actions/cache@v3
+              with:
+                  path: ~/.cache/jest
+                  key: ${{ runner.os }}-jest-${{ hashFiles('**/package-lock.json') }}
+                  restore-keys: |
+                      ${{ runner.os }}-jest-
+
+            - name: Install Dependencies
+              run: npm ci
+
+            - name: Run Linting
+              run: npm run lint
+              continue-on-error: false
+
+            - name: Check Code Formatting
+              run: npm run format:verify
+              continue-on-error: false
+
+            - name: Run Tests with Coverage and Check Warnings
+              run: |
+                  # Run tests and capture output
+                  TEST_OUTPUT=$(npm run test:unit:coverage:ci 2>&1)
+                  TEST_EXIT_CODE=$?
+
+                  # Display test output
+                  echo "$TEST_OUTPUT"
+
+                  # Check for test failures first
+                  if [ $TEST_EXIT_CODE -ne 0 ]; then
+                      echo "❌ Tests failed"
+                      exit 1
+                  fi
+
+                  # Check for unexpected warnings/errors
+                  UNEXPECTED_WARNINGS=$(echo "$TEST_OUTPUT" | grep -E "(console\.warn|console\.error|console\.log|Warning|Error)" | grep -v "grep -E" || true)
+
+                  if [ -n "$UNEXPECTED_WARNINGS" ]; then
+                      echo "❌ Unexpected test warnings or errors detected:"
+                      echo "$UNEXPECTED_WARNINGS"
+                      exit 1
+                  else
+                      echo "✅ No unexpected test warnings or errors detected"
+                  fi
+              env:
+                  CI: true # Ensures test output is optimized for CI
+              continue-on-error: false
+
+            - name: Upload Coverage Report
+              uses: actions/upload-artifact@v3
+              with:
+                  name: coverage-report
+                  path: coverage/
+                  retention-days: 7
+
+            - name: Check Coverage Threshold
+              run: |
+                  if [ -f "coverage/lcov-report/index.html" ]; then
+                      echo "Coverage report generated successfully"
+                  else
+                      echo "Coverage report not found"
+                      exit 1
+                  fi
+
+                  # Check if coverage meets thresholds (90% as defined in jest.config.js)
+                  COVERAGE_THRESHOLD=90
+
+                  # Extract coverage percentages from lcov.info
+                  if [ -f "coverage/lcov.info" ]; then
+                      echo "Checking coverage thresholds..."
+                      
+                      # Check statements coverage
+                      STATEMENTS_COVERAGE=$(grep -o "SF:[0-9]*" coverage/lcov.info | wc -l)
+                      STATEMENTS_HIT=$(grep -o "LH:[0-9]*" coverage/lcov.info | awk -F: '{sum+=$2} END {print sum}')
+                      if [ "$STATEMENTS_HIT" -eq 0 ]; then
+                          STATEMENTS_HIT=0
+                      fi
+                      STATEMENTS_PERCENT=$((STATEMENTS_HIT * 100 / STATEMENTS_COVERAGE))
+                      
+                      echo "Statements coverage: $STATEMENTS_PERCENT%"
+                      
+                      if [ "$STATEMENTS_PERCENT" -lt "$COVERAGE_THRESHOLD" ]; then
+                          echo "❌ Statements coverage ($STATEMENTS_PERCENT%) is below threshold ($COVERAGE_THRESHOLD%)"
+                          exit 1
+                      fi
+                      
+                      echo "✅ Coverage thresholds met"
+                  else
+                      echo "❌ Coverage report (lcov.info) not found"
+                      exit 1
+                  fi
+
+            - name: Comment PR with Coverage Report
+              if: github.event_name == 'pull_request'
+              uses: actions/github-script@v6
+              with:
+                  script: |
+                      const fs = require('fs');
+                      const path = require('path');
+
+                      try {
+                          const coveragePath = path.join(process.cwd(), 'coverage', 'lcov-report', 'index.html');
+                          if (fs.existsSync(coveragePath)) {
+                              const coverageContent = fs.readFileSync(coveragePath, 'utf8');
+                              const coverageMatch = coverageContent.match(/<span class="strong">(\d+\.?\d*)%<\/span>/);
+                              
+                              if (coverageMatch) {
+                                  const coverage = coverageMatch[1];
+                                  const comment = `## 📊 Code Coverage Report
+                                  
+                                  **Overall Coverage: ${coverage}%**
+                                  
+                                  ✅ Coverage meets the required threshold of 90%
+                                  
+                                  [View detailed coverage report](${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}/artifacts)`;
+                                  
+                                  github.rest.issues.createComment({
+                                      issue_number: context.issue.number,
+                                      owner: context.repo.owner,
+                                      repo: context.repo.repo,
+                                      body: comment
+                                  });
+                              }
+                          }
+                      } catch (error) {
+                          console.log('Could not create coverage comment:', error.message);
+                      }
+
+    code-quality:
+        name: Code Quality
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v3
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v3
+              with:
+                  node-version: '18'
+                  cache: 'npm'
+
+            - name: Install Dependencies
+              run: npm ci
+
+            - name: Check LWC Component Structure
+              run: |
+                  # Check if all LWC components have required files
+                  for dir in force-app/main/default/lwc/*/; do
+                    if [ ! -f "${dir}${dir%/}.js" ] || [ ! -f "${dir}${dir%/}.html" ]; then
+                      echo "Error: Component ${dir%/} is missing required files"
+                      exit 1
+                    fi
+                  done
+
+    security:
+        name: Security Checks
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v3
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v3
+              with:
+                  node-version: '18'
+                  cache: 'npm'
+
+            - name: Install Dependencies
+              run: npm ci
+
+            - name: Run npm audit
+              run: npm audit --production
+
+            - name: Run npm outdated
+              run: npm outdated || true # Don't fail the build if there are outdated packages
+
+    commit-message:
+        name: Commit Message Check
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+              with:
+                  fetch-depth: 0
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v3
+              with:
+                  node-version: '18'
+                  cache: 'npm'
+
+            - name: Install Dependencies
+              run: npm ci
+
+            - name: Check Commit Messages
+              run: npx commitlint --from=HEAD~1 --to=HEAD

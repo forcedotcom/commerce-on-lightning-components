@@ -29,50 +29,6 @@ export default class ExpressPayment extends LightningElement {
     @api expressPaymentUrl;
 
     /**
-     * PDP flag to indicate if this is a product detail page.
-     * @type {boolean}
-     */
-    @api pdp;
-
-    /**
-     * Flag to disable the express payment component.
-     * @type {boolean}
-     */
-    @api disabled = false;
-
-    /**
-     * Sendds basket data via postMessage to the express payment iframe
-     * @param {object} basketData - The basket data to send
-     * @param {number} basketData.orderTotal - The total order amount
-     * @param {string} basketData.currency - The currency code (e.g., 'USD')
-     * @param {string} basketData.id - The basket/order ID
-     */
-    @api
-    sendBasketData(basketData) {
-        if (!basketData) {
-            console.warn('Cannot send basket data - missing required data');
-            return;
-        }
-
-        try {
-            // Try to target the express payment iframe directly
-            const iframe = this.template.querySelector('iframe');
-
-            if (iframe && iframe.contentWindow) {
-                iframe.contentWindow.postMessage(
-                    {
-                        type: 'basketDataAvailable',
-                        data: { basketData },
-                    },
-                    '*'
-                );
-            }
-        } catch (error) {
-            console.warn('Failed to send basket data postMessage:', error);
-        }
-    }
-
-    /**
      * Returns the URL for the express iframe
      * @returns {string} URL for iframe
      */
@@ -80,19 +36,7 @@ export default class ExpressPayment extends LightningElement {
         if (!this.expressPaymentUrl || !this.entryId) {
             return '';
         }
-        let url = `${this.expressPaymentUrl}?id=${this.entryId}`;
-        if (this.pdp) {
-            url += `&pdp=true`;
-        }
-        return url;
-    }
-
-    /**
-     * Returns the CSS classes for the container div
-     * @returns {string} CSS classes for container
-     */
-    get containerClass() {
-        return this.disabled ? 'express-container disabled' : 'express-container';
+        return `${this.expressPaymentUrl}?id=${this.entryId}`;
     }
 
     connectedCallback() {
@@ -126,34 +70,6 @@ export default class ExpressPayment extends LightningElement {
     disconnectedCallback() {
         this._removeGlobalListener();
         this.clearLoadTimeout();
-    }
-
-    /**
-     * Update the SKU in the iframe via postMessage
-     * @param {string} sku - The product SKU to update to
-     * @public
-     */
-    @api
-    updateSku(sku) {
-        const iframe = this.template.querySelector('iframe');
-        if (iframe && iframe.contentWindow) {
-            if (sku) {
-                iframe.contentWindow.postMessage(
-                    {
-                        type: 'UPDATE_SKU',
-                        sku: sku,
-                    },
-                    '*'
-                );
-            } else {
-                iframe.contentWindow.postMessage(
-                    {
-                        type: 'CLEAR_SKU',
-                    },
-                    '*'
-                );
-            }
-        }
     }
 
     /**
@@ -230,10 +146,7 @@ export default class ExpressPayment extends LightningElement {
             this.dispatchEvent(
                 new CustomEvent('payment', {
                     bubbles: true,
-                    detail: {
-                        orderId: event.data.payload.orderId,
-                        paymentMethod: event.data.payload.PAYMENT_METHOD,
-                    },
+                    detail: event.data.payload.orderId,
                 })
             );
         }
@@ -242,10 +155,7 @@ export default class ExpressPayment extends LightningElement {
             this.dispatchEvent(
                 new CustomEvent('payment', {
                     bubbles: true,
-                    detail: {
-                        status: 'failure',
-                        paymentMethod: event.data.payload.PAYMENT_METHOD,
-                    },
+                    detail: { status: 'failure' },
                 })
             );
         }
@@ -254,10 +164,7 @@ export default class ExpressPayment extends LightningElement {
             this.dispatchEvent(
                 new CustomEvent('payment', {
                     bubbles: true,
-                    detail: {
-                        status: 'cancel',
-                        paymentMethod: event.data.payload.PAYMENT_METHOD,
-                    },
+                    detail: { status: 'cancel' },
                 })
             );
         }

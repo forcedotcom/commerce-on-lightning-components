@@ -17,9 +17,7 @@
         <template lwc:elseif={isProductDetails}>
             <c-product-details
                 product={dynamicComponentData.product}
-                entry-id={entryId}
-                onaddtocart={handleAddToCart}
-                onpayment={handlePayment}></c-product-details>
+                onaddtocart={handleAddToCart}></c-product-details>
         </template>
         <template lwc:elseif={isCartSummary}>
             <c-cart-summary

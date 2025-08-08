@@ -213,56 +213,6 @@ jest.mock(
 );
 
 jest.mock(
-    '@salesforce/label/c.Common_Payment_Completed',
-    () => {
-        return {
-            default: 'Paid with {0}',
-        };
-    },
-    { virtual: true }
-);
-
-jest.mock(
-    '@salesforce/label/c.Common_Payment_Failed',
-    () => {
-        return {
-            default: '{0} failed',
-        };
-    },
-    { virtual: true }
-);
-
-jest.mock(
-    '@salesforce/label/c.Common_Payment_Canceled',
-    () => {
-        return {
-            default: '{0} was canceled',
-        };
-    },
-    { virtual: true }
-);
-
-jest.mock(
-    '@salesforce/label/c.Common_Payment_Succeeded_NoPaymentMethod',
-    () => {
-        return {
-            default: 'Payment succeeded',
-        };
-    },
-    { virtual: true }
-);
-
-jest.mock(
-    '@salesforce/label/c.Common_Payment_Failed_NoPaymentMethod',
-    () => {
-        return {
-            default: 'Payment failed',
-        };
-    },
-    { virtual: true }
-);
-
-jest.mock(
     '@salesforce/label/c.TextMessage_categoryRecommendations',
     () => {
         return {
@@ -1033,136 +983,53 @@ describe('c-dynamic-content-renderer', () => {
 
         describe('handlePayment', () => {
             it('should send order completed message when event detail is provided', () => {
-                const event = { detail: { orderId: 'ORD-123', paymentMethod: 'googlepay' } };
+                const event = { detail: 'ORD-123' };
 
                 element.handlePayment(event);
 
                 expect(mockSendTextMessage).toHaveBeenCalledWith(
-                    '{"orderCompleted": {"className":"orderCompleted","orderNumber": "ORD-123","paymentMethod": "googlepay"}}'
+                    '{"orderCompleted": {"className":"orderCompleted","orderNumber": "ORD-123"}}'
                 );
             });
 
-            it('should send fallback failed message when event detail is null', () => {
+            it('should send apple pay failed message when event detail is null', () => {
                 const event = { detail: null };
-
-                element.handlePayment(event);
-
-                expect(mockSendTextMessage).toHaveBeenCalledWith('Payment failed');
-            });
-
-            it('should send fallback failed message when event detail is empty string', () => {
-                const event = { detail: '' };
-
-                element.handlePayment(event);
-
-                expect(mockSendTextMessage).toHaveBeenCalledWith('Payment failed');
-            });
-
-            it('should send fallback failed message when event detail is false', () => {
-                const event = { detail: false };
-
-                element.handlePayment(event);
-
-                expect(mockSendTextMessage).toHaveBeenCalledWith('Payment failed');
-            });
-
-            it('should send Apple Pay failed message when event detail has failure status and payment method is applepay', () => {
-                const event = { detail: { status: 'failure', paymentMethod: 'applepay' } };
 
                 element.handlePayment(event);
 
                 expect(mockSendTextMessage).toHaveBeenCalledWith('Apple Pay failed');
             });
 
-            it('should send Apple Pay canceled message when event detail has cancel status and payment method is applepay', () => {
-                const event = { detail: { status: 'cancel', paymentMethod: 'applepay' } };
+            it('should send apple pay failed message when event detail is empty string', () => {
+                const event = { detail: '' };
 
                 element.handlePayment(event);
 
-                expect(mockSendTextMessage).toHaveBeenCalledWith('Apple Pay was canceled');
+                expect(mockSendTextMessage).toHaveBeenCalledWith('Apple Pay failed');
             });
 
-            it('should send Google Pay failed message when event detail has failure status and payment method is googlepay', () => {
-                const event = { detail: { status: 'failure', paymentMethod: 'googlepay' } };
+            it('should send apple pay failed message when event detail is false', () => {
+                const event = { detail: false };
 
                 element.handlePayment(event);
 
-                expect(mockSendTextMessage).toHaveBeenCalledWith('Google Pay failed');
+                expect(mockSendTextMessage).toHaveBeenCalledWith('Apple Pay failed');
             });
 
-            it('should send Google Pay canceled message when event detail has cancel status and payment method is googlepay', () => {
-                const event = { detail: { status: 'cancel', paymentMethod: 'googlepay' } };
+            it('should send apple pay failed message when event detail has failure status', () => {
+                const event = { detail: { status: 'failure' } };
 
                 element.handlePayment(event);
 
-                expect(mockSendTextMessage).toHaveBeenCalledWith('Google Pay was canceled');
-            });
-        });
-
-        describe('orderCompletedText', () => {
-            it('[googlepay] should return dynamic payment message when payment method is available', () => {
-                const entry = {
-                    entryPayload: JSON.stringify({
-                        abstractMessage: {
-                            staticContent: {
-                                text: JSON.stringify({
-                                    orderCompleted: {
-                                        className: 'orderCompleted',
-                                        orderNumber: 'ORD-123',
-                                        paymentMethod: 'googlepay',
-                                    },
-                                }),
-                            },
-                        },
-                    }),
-                    sender: { role: CHATBOT },
-                };
-                element.conversationEntry = entry;
-
-                expect(element.orderCompletedText).toBe('Paid with Google Pay');
+                expect(mockSendTextMessage).toHaveBeenCalledWith('Apple Pay failed');
             });
 
-            it('[applepay] should return dynamic payment message when payment method is available', () => {
-                const entry = {
-                    entryPayload: JSON.stringify({
-                        abstractMessage: {
-                            staticContent: {
-                                text: JSON.stringify({
-                                    orderCompleted: {
-                                        className: 'orderCompleted',
-                                        orderNumber: 'ORD-123',
-                                        paymentMethod: 'applepay',
-                                    },
-                                }),
-                            },
-                        },
-                    }),
-                    sender: { role: CHATBOT },
-                };
-                element.conversationEntry = entry;
+            it('should send apple pay canceled message when event detail has cancel status', () => {
+                const event = { detail: { status: 'cancel' } };
 
-                expect(element.orderCompletedText).toBe('Paid with Apple Pay');
-            });
+                element.handlePayment(event);
 
-            it('should return generic payment succeeded message when payment method is not available', () => {
-                const entry = {
-                    entryPayload: JSON.stringify({
-                        abstractMessage: {
-                            staticContent: {
-                                text: JSON.stringify({
-                                    orderCompleted: {
-                                        className: 'orderCompleted',
-                                        orderNumber: 'ORD-123',
-                                    },
-                                }),
-                            },
-                        },
-                    }),
-                    sender: { role: CHATBOT },
-                };
-                element.conversationEntry = entry;
-
-                expect(element.orderCompletedText).toBe('Payment succeeded');
+                expect(mockSendTextMessage).toHaveBeenCalledWith('Apple Pay canceled');
             });
         });
     });

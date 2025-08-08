@@ -28,16 +28,7 @@ export default class SummaryDetails extends LightningElement {
      * id: String
      * }
      */
-    _details = {};
-
-    @api
-    set details(value) {
-        this._details = value;
-    }
-
-    get details() {
-        return this._details;
-    }
+    @api details = {};
 
     /**
      * Flag indicating if the component is rendering in cart summary mode.

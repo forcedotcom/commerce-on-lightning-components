@@ -8,11 +8,6 @@
 import applePayFailedLabel from '@salesforce/label/c.Common_ApplePay_paymentFailed';
 import applePayCanceledLabel from '@salesforce/label/c.Common_ApplePay_paymentCanceled';
 import applePayCompletedLabel from '@salesforce/label/c.Common_ApplePay_paymentCompleted';
-import paymentCompletedLabel from '@salesforce/label/c.Common_Payment_Completed';
-import paymentFailedLabel from '@salesforce/label/c.Common_Payment_Failed';
-import paymentCanceledLabel from '@salesforce/label/c.Common_Payment_Canceled';
-import fallbackPaymentSucceededLabel from '@salesforce/label/c.Common_Payment_Succeeded_NoPaymentMethod';
-import fallbackPaymentFailedLabel from '@salesforce/label/c.Common_Payment_Failed_NoPaymentMethod';
 import categoryRecommendationTextMessageLabel from '@salesforce/label/c.TextMessage_categoryRecommendations';
 import productSelectionTextMessageLabel from '@salesforce/label/c.TextMessage_productSelection';
 import addToCartMessageLabel from '@salesforce/label/c.TextMessage_addProductToCart';
@@ -25,11 +20,6 @@ export {
     applePayFailedLabel,
     applePayCanceledLabel,
     applePayCompletedLabel,
-    paymentCompletedLabel,
-    paymentFailedLabel,
-    paymentCanceledLabel,
-    fallbackPaymentSucceededLabel,
-    fallbackPaymentFailedLabel,
     categoryRecommendationTextMessageLabel,
     productSelectionTextMessageLabel,
     addToCartMessageLabel,

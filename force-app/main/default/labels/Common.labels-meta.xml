@@ -50,41 +50,6 @@
         <shortDescription>Common_ApplePay_paymentCompleted</shortDescription>
     </labels>
     <labels>
-        <fullName>Common_Payment_Completed</fullName>
-        <value>Paid with {0}</value>
-        <language>en_US</language>
-        <protected>false</protected>
-        <shortDescription>Common_Payment_Completed</shortDescription>
-    </labels>
-    <labels>
-        <fullName>Common_Payment_Canceled</fullName>
-        <value>{0} was canceled</value>
-        <language>en_US</language>
-        <protected>false</protected>
-        <shortDescription>Common_Payment_Canceled</shortDescription>
-    </labels>
-    <labels>
-        <fullName>Common_Payment_Failed</fullName>
-        <value>{0} failed</value>
-        <language>en_US</language>
-        <protected>false</protected>
-        <shortDescription>Common_Payment_Canceled</shortDescription>
-    </labels>
-    <labels>
-        <fullName>Common_Payment_Succeeded_NoPaymentMethod</fullName>
-        <value>Payment succeeded</value>
-        <language>en_US</language>
-        <protected>false</protected>
-        <shortDescription>Common_Payment_Succeeded</shortDescription>
-    </labels>
-    <labels>
-        <fullName>Common_Payment_Failed_NoPaymentMethod</fullName>
-        <value>Payment failed</value>
-        <language>en_US</language>
-        <protected>false</protected>
-        <shortDescription>Common_Payment_Failed_NoPaymentMethod</shortDescription>
-    </labels>
-    <labels>
         <fullName>Common_Carousel_AddToCart</fullName>
         <value>Add to Cart</value>
         <language>en_US</language>

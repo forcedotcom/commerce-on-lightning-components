@@ -18,7 +18,6 @@ import {
     quantityControlsAssistiveText,
     decreaseQuantityAssistiveText,
     increaseQuantityAssistiveText,
-    loadingSpinnerAltText,
 } from './labels';
 
 export default class ProductDetails extends LightningElement {
@@ -34,20 +33,6 @@ export default class ProductDetails extends LightningElement {
         this._productData = value;
     }
 
-    @api entryId = '';
-
-    /**
-     * @description Tracks whether the express payment component has finished loading
-     * @type {boolean}
-     */
-    isExpressLoaded = false;
-
-    /**
-     * @description Tracks whether the express payment is available
-     * @type {boolean}
-     */
-    isExpressAvailable = false;
-
     i18n = {
         addToCartAssistiveText,
         quantityLabelAssistiveText,
@@ -60,25 +45,9 @@ export default class ProductDetails extends LightningElement {
         quantityControlsAssistiveText,
         decreaseQuantityAssistiveText,
         increaseQuantityAssistiveText,
-        loadingSpinnerAltText,
     };
 
-    _selectedVariants = {};
-
-    get selectedVariants() {
-        return this._selectedVariants;
-    }
-
-    set selectedVariants(value) {
-        const previousSku = this.sku;
-        this._selectedVariants = value;
-        const newSku = this.sku;
-
-        // Update SKU in express payment iframe if it changed
-        if (previousSku !== newSku) {
-            this.updateExpressPaymentSku(newSku);
-        }
-    }
+    selectedVariants = {};
 
     get productImageLinks() {
         return this.getFilteredImages();
@@ -101,9 +70,6 @@ export default class ProductDetails extends LightningElement {
         return this.productVariants.reduce((accSelectedVariants, variant) => {
             if (variant?.selected) {
                 accSelectedVariants[variant.id] = variant.selected;
-            }
-            if (variant?.opts?.length === 1 && this.isVariantOrderable(variant.id, variant.opts[0].val)) {
-                accSelectedVariants[variant.id] = variant.opts[0].val;
             }
             return accSelectedVariants;
         }, {});
@@ -323,6 +289,13 @@ export default class ProductDetails extends LightningElement {
 
     _quantity;
 
+    /**
+     * Show or Hide the Apple Pay button
+     * @type {boolean}
+     */
+    @api
+    showApplePay = false;
+
     @api
     get quantity() {
         if (!this._quantity) {
@@ -356,92 +329,5 @@ export default class ProductDetails extends LightningElement {
 
     get isAddToCartDisabled() {
         return Object.keys(this.selectedVariants).length !== this.productVariants.length;
-    }
-
-    get expressPaymentUrl() {
-        return this.product?.expressPaymentUrl || '';
-    }
-
-    /**
-     * @description Handles the expressLoaded event from c-express-payment component
-     * @param {CustomEvent} event - The expressloaded event containing availability detail
-     */
-    handleExpressLoaded(event) {
-        this.isExpressLoaded = true;
-        this.isExpressAvailable = event.detail?.available || false;
-
-        // Send initial SKU to the iframe once it's loaded
-        if (this.isExpressAvailable) {
-            this.updateExpressPaymentSku(this.sku);
-        }
-    }
-
-    /**
-     * @description Gets the CSS classes for the loading container that wraps express payment and buttons.
-     * @returns {string} CSS classes based on loading state.
-     */
-    get loadingContainerClass() {
-        const baseClasses = 'loading-container';
-        return this.isExpressLoaded ? `${baseClasses} loaded` : baseClasses;
-    }
-
-    /**
-     * @description Gets the CSS classes for the express payment container.
-     * @returns {string} CSS classes based on loading state and availability.
-     */
-    get expressContainerClass() {
-        const baseClasses = 'express-container slds-col';
-        return this.isExpressLoaded ? `${baseClasses} slds-p-bottom_x-small` : baseClasses;
-    }
-
-    /**
-     * @description Gets the inline styles for the express container to visually hide it if not available.
-     * This is necessary because the component needs to remain in the DOM to fire events.
-     * @returns {string} CSS styles to hide/show the express container.
-     */
-    get expressContainerStyle() {
-        return this.isExpressLoaded && !this.isExpressAvailable ? 'display: none;' : '';
-    }
-
-    /**
-     * @description Determines if the add to cart button should be displayed.
-     * @returns {boolean} True if the add to cart button should be visible.
-     */
-    get shouldShowAddToCartButton() {
-        return this.isExpressLoaded;
-    }
-
-    /**
-     * @description Gets the variant for the add to cart button based on express payment availability.
-     * @returns {string} Button variant - 'secondary' if express payment is available, 'primary' otherwise.
-     */
-    get addToCartButtonVariant() {
-        return this.isExpressAvailable ? 'secondary' : 'primary';
-    }
-
-    get sku() {
-        // Find the variant that matches all selected variants
-        const matchingVariant = this._productData?.vmat?.find((variant) => {
-            return Object.entries(this.selectedVariants).every(([key, value]) => {
-                return variant?.vars?.[key] === value;
-            });
-        });
-
-        // Return the product ID (pid) for the matching variant, or null if no match
-        return matchingVariant?.pid || null;
-    }
-
-    /**
-     * Update the SKU in the express payment iframe via postMessage
-     * @param {string} sku - The product SKU to update to
-     */
-    updateExpressPaymentSku(sku) {
-        if (!sku) {
-            return;
-        }
-        const expressPaymentComponent = this.querySelector('c-express-payment');
-        if (expressPaymentComponent) {
-            expressPaymentComponent.updateSku(sku);
-        }
     }
 }

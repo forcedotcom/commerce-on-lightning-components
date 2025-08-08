@@ -37,76 +37,20 @@ export default class CartSummary extends LightningElement {
     // Button class constant
     static BUTTON_CLASS = 'button-checkout';
 
-    // Global registry to track the latest component instance
-    static _latestInstance = null;
-    static _instanceCounter = 0;
-
-    // Instance-specific ID
-    _instanceId = null;
-
     // Expose internationalized labels
     i18n = labels;
-
-    connectedCallback() {
-        // Register this instance as the latest
-        this._instanceId = ++CartSummary._instanceCounter;
-        CartSummary._latestInstance = this;
-
-        // Set up listener for basket data requests
-        this._messageListener = (event) => this._handleMessage(event);
-        window.addEventListener('message', this._messageListener);
-    }
-
-    disconnectedCallback() {
-        // Clean up message listener
-        if (this._messageListener) {
-            window.removeEventListener('message', this._messageListener);
-            this._messageListener = null;
-        }
-
-        // If this was the latest instance, clear the registry
-        if (CartSummary._latestInstance === this) {
-            CartSummary._latestInstance = null;
-        }
-    }
 
     /**
      * @description Cart summary data containing button information
      * @type {CartSummaryData}
      */
-    _cartSummary = {};
-
-    /**
-     * Setter for cart summary data that emits global postMessage when data changes
-     * @param {CartSummaryData} value - The new cart summary data
-     */
-    @api
-    set cartSummary(value) {
-        this._cartSummary = value;
-    }
-
-    /**
-     * Getter for cart summary data
-     * @returns {CartSummaryData} The current cart summary data
-     */
-    get cartSummary() {
-        return this._cartSummary;
-    }
+    @api cartSummary = {};
 
     /**
      * @description Conversation entry ID needed for express button generation
      * @type {string} Entry ID
      */
-    _entryId = '';
-
-    @api
-    set entryId(value) {
-        this._entryId = value;
-    }
-
-    get entryId() {
-        return this._entryId;
-    }
+    @api entryId = '';
 
     /**
      * @description Tracks whether the express payment component has finished loading
@@ -119,18 +63,6 @@ export default class CartSummary extends LightningElement {
      * @type {boolean}
      */
     @track isExpressAvailable = false;
-
-    /**
-     * @description Determines if we should wait for express payment availability before showing the checkout button
-     * @returns {boolean} True if express payment URL is available and we should wait
-     */
-    get shouldWaitForExpressPayment() {
-        const shouldWait =
-            !!this.expressPaymentUrl &&
-            this.expressPaymentUrl.trim() !== '' &&
-            this.expressPaymentUrl.trim() !== 'null';
-        return shouldWait;
-    }
 
     /**
      * @description Gets the express payment URL safely handling null cartSummary
@@ -225,13 +157,7 @@ export default class CartSummary extends LightningElement {
      * @returns {boolean} True if the checkout button should be visible.
      */
     get shouldShowButton() {
-        // If we have an express payment URL, wait for the express payment to load
-        if (this.shouldWaitForExpressPayment) {
-            const shouldShow = this.isExpressLoaded;
-            return shouldShow;
-        }
-        // If no express payment URL, show the button immediately
-        return true;
+        return this.isExpressLoaded;
     }
 
     /**
@@ -251,45 +177,5 @@ export default class CartSummary extends LightningElement {
                 ? this.i18n.checkoutButtonAssistiveText
                 : this.i18n.checkoutNotAvailableAssistiveText,
         };
-    }
-
-    /**
-     * Handles incoming postMessage events
-     * @param {MessageEvent} event - The message event
-     */
-    _handleMessage(event) {
-        // Only respond if this is the latest instance
-        if (CartSummary._latestInstance !== this) {
-            return;
-        }
-
-        if (event.data.type === 'basketDataRequested') {
-            this._sendBasketData();
-        }
-    }
-
-    /**
-     * Sends basket data via postMessage to the express payment iframe
-     */
-    _sendBasketData() {
-        if (!this._cartSummary) {
-            return;
-        }
-
-        const basketData = {
-            orderTotal: this._cartSummary?.total || 0,
-            currency: this._cartSummary?.currency || 'USD',
-            basketId: this._cartSummary?.id || '',
-        };
-
-        try {
-            // Try to send basket data to the express payment component
-            const expressPaymentComponent = this.refs.expressPaymentComponent;
-            if (expressPaymentComponent) {
-                expressPaymentComponent.sendBasketData(basketData);
-            }
-        } catch (error) {
-            console.warn(`Failed to send basket data postMessage (Component ${this._instanceId}):`, error);
-        }
     }
 }

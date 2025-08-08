@@ -7,15 +7,7 @@
  */
 import { createElement } from 'lwc';
 import ProductDetails from 'c/productDetails';
-import {
-    mockProduct as productData,
-    mockProductForVariantSelection,
-    mockProductNoVariants,
-    mockProductNullVariants,
-    mockProductEmptyVmat,
-    mockProductNonOrderableSingleOption,
-    mockProductMixedVariants,
-} from './mockData';
+import { mockProduct as productData } from './mockData';
 
 jest.mock(
     'experience/styling',
@@ -74,24 +66,15 @@ describe('c-product-details positive cases', () => {
     });
 
     it('renders all product images in the carousel', async () => {
-        // The component filters images based on selected variants
-        // With the selected color 'JJ169XX', it should show the filtered images
+        // The getter flattens all images from imgGroups
+        const expectedImageCount = mockProduct.imgGroups[0].imgs.length;
         const images = element.querySelectorAll('.image-carousel-image');
-        expect(images.length).toBeGreaterThan(0);
-        // The exact count depends on the filtering logic, but we should have at least one image
+        expect(images.length).toBe(expectedImageCount);
     });
 
     it('fires addtocart event with product name when Add to Cart is clicked', async () => {
         const handler = jest.fn();
         element.addEventListener('addtocart', handler);
-
-        // Simulate express payment loaded event so the button renders
-        const expressPayment = element.querySelector('c-express-payment');
-        const expressLoadedEvent = new CustomEvent('expressloaded', {
-            detail: { available: false },
-        });
-        expressPayment.dispatchEvent(expressLoadedEvent);
-        await Promise.resolve();
 
         const button = element.querySelector('.button-checkout');
         expect(button).not.toBeNull();
@@ -109,375 +92,6 @@ describe('c-product-details positive cases', () => {
                     displayName: 'Black',
                 },
             ],
-        });
-    });
-});
-
-describe('c-product-details express payment loading states', () => {
-    let element;
-
-    beforeEach(async () => {
-        element = createElement('c-product-details', {
-            is: ProductDetails,
-        });
-        element.product = mockProduct;
-        element.entryId = 'test-entry-456';
-        document.body.appendChild(element);
-        await Promise.resolve();
-    });
-
-    afterEach(() => {
-        while (document.body.firstChild) {
-            document.body.removeChild(document.body.firstChild);
-        }
-        jest.clearAllMocks();
-    });
-
-    describe('Component initialization and DOM structure', () => {
-        it('should set product data and entry ID correctly', () => {
-            expect(element.product).toEqual(mockProduct);
-            expect(element.entryId).toBe('test-entry-456');
-        });
-
-        it('should render c-express-payment with correct entry-id and express-payment-url', () => {
-            const expressPayment = element.querySelector('c-express-payment');
-            expect(expressPayment).not.toBeNull();
-            expect(expressPayment.entryId).toBe('test-entry-456');
-            expect(expressPayment.expressPaymentUrl).toBe('https://www.phased-launch-testing.com/express');
-        });
-
-        it('should have correct main container structure', () => {
-            const mainContainer = element.querySelector('.slds-grid.slds-grid_vertical');
-            expect(mainContainer).not.toBeNull();
-        });
-
-        it('should contain all required child components', () => {
-            expect(element.querySelector('c-express-payment')).not.toBeNull();
-            expect(element.querySelector('lightning-spinner')).not.toBeNull();
-        });
-
-        it('should have loading container structure', () => {
-            const loadingContainer = element.querySelector('.loading-container');
-            expect(loadingContainer).not.toBeNull();
-
-            const expressContainer = element.querySelector('.express-container');
-            expect(expressContainer).not.toBeNull();
-        });
-    });
-
-    describe('Express payment loading states', () => {
-        it('should show spinner when express payment is not loaded', () => {
-            const spinner = element.querySelector('lightning-spinner');
-            expect(spinner).not.toBeNull();
-            expect(spinner.alternativeText).toBe('c.Product_loadingSpinnerAltText');
-            expect(spinner.size).toBe('x-small');
-        });
-
-        it('should hide add to cart button when express payment is not loaded', () => {
-            const button = element.querySelector('.button-checkout');
-            expect(button).toBeNull();
-        });
-
-        it('should verify express payment event handler is wired', () => {
-            const expressPayment = element.querySelector('c-express-payment');
-            expect(expressPayment).not.toBeNull();
-            expect(expressPayment.entryId).toBe('test-entry-456');
-        });
-
-        it('should update UI when express payment is available', async () => {
-            const expressPayment = element.querySelector('c-express-payment');
-            const event = new CustomEvent('expressloaded', {
-                detail: { available: true },
-            });
-            expressPayment.dispatchEvent(event);
-
-            // Wait for component to update
-            await Promise.resolve();
-
-            // Verify UI updates
-            const loadingContainer = element.querySelector('.loading-container');
-            expect(loadingContainer.classList.contains('loaded')).toBe(true);
-
-            const expressContainer = element.querySelector('.express-container');
-            expect(expressContainer.style.display).not.toBe('none');
-
-            // Wait for button to be rendered
-            await Promise.resolve();
-            const button = element.querySelector('.button-checkout');
-            expect(button).not.toBeNull();
-            expect(button.variant).toBe('secondary');
-        });
-
-        it('should update UI when express payment is not available', async () => {
-            const expressPayment = element.querySelector('c-express-payment');
-            const event = new CustomEvent('expressloaded', {
-                detail: { available: false },
-            });
-            expressPayment.dispatchEvent(event);
-
-            // Wait for component to update
-            await Promise.resolve();
-
-            // Verify UI updates
-            const loadingContainer = element.querySelector('.loading-container');
-            expect(loadingContainer.classList.contains('loaded')).toBe(true);
-
-            const expressContainer = element.querySelector('.express-container');
-            expect(expressContainer.style.display).toBe('none');
-
-            // Wait for button to be rendered
-            await Promise.resolve();
-            const button = element.querySelector('.button-checkout');
-            expect(button).not.toBeNull();
-            expect(button.variant).toBe('primary');
-        });
-
-        it('should handle express payment with undefined availability', async () => {
-            const expressPayment = element.querySelector('c-express-payment');
-            const event = new CustomEvent('expressloaded', {
-                detail: undefined,
-            });
-            expressPayment.dispatchEvent(event);
-
-            // Wait for component to update
-            await Promise.resolve();
-
-            // Verify UI updates
-            const loadingContainer = element.querySelector('.loading-container');
-            expect(loadingContainer.classList.contains('loaded')).toBe(true);
-
-            const expressContainer = element.querySelector('.express-container');
-            expect(expressContainer.style.display).toBe('none');
-
-            // Wait for button to be rendered
-            await Promise.resolve();
-            const button = element.querySelector('.button-checkout');
-            expect(button).not.toBeNull();
-            expect(button.variant).toBe('primary');
-        });
-    });
-
-    describe('Add to cart button functionality', () => {
-        beforeEach(async () => {
-            // Trigger express payment loaded event to render the button
-            const expressPayment = element.querySelector('c-express-payment');
-            const event = new CustomEvent('expressloaded', {
-                detail: { available: false },
-            });
-            expressPayment.dispatchEvent(event);
-            await Promise.resolve();
-        });
-
-        it('should have correct button configuration properties', async () => {
-            // Wait for button to be rendered
-            await Promise.resolve();
-            const button = element.querySelector('.button-checkout');
-            expect(button).not.toBeNull();
-
-            // Check button properties
-            expect(button.variant).toBe('primary');
-            expect(button.width).toBe('stretch');
-        });
-
-        it('should handle add to cart button click and fire event', async () => {
-            const addToCartHandler = jest.fn();
-            element.addEventListener('addtocart', addToCartHandler);
-
-            // Wait for button to be rendered
-            await Promise.resolve();
-            const button = element.querySelector('.button-checkout');
-            expect(button).not.toBeNull();
-
-            // Click the button
-            button.click();
-
-            // Verify event was fired
-            expect(addToCartHandler).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    detail: expect.objectContaining({
-                        productName: mockProduct.name,
-                        quantity: expect.any(Number),
-                        variantDetails: expect.any(Array),
-                    }),
-                })
-            );
-        });
-
-        it('should be enabled when all required variants are selected', async () => {
-            await Promise.resolve();
-            const button = element.querySelector('.button-checkout');
-            expect(button).not.toBeNull();
-            // The mock product has color selected but size is not selected, so button should be disabled
-            expect(button.disabled).toBe(true);
-        });
-    });
-
-    describe('Add to cart button accessibility and properties', () => {
-        beforeEach(async () => {
-            // Trigger express payment loaded event to render the button
-            const expressPayment = element.querySelector('c-express-payment');
-            const event = new CustomEvent('expressloaded', {
-                detail: { available: false },
-            });
-            expressPayment.dispatchEvent(event);
-            await Promise.resolve();
-        });
-
-        it('should have correct button text', async () => {
-            await Promise.resolve();
-            const button = element.querySelector('.button-checkout');
-            expect(button).not.toBeNull();
-            // The button text comes from the label import, which appears as the key in tests
-            expect(button.textContent.trim()).toContain('c.Product_addToCartAssistiveText');
-        });
-
-        it('should update button variant based on express payment availability', async () => {
-            // Test with express payment available
-            const newElement = createElement('c-product-details', {
-                is: ProductDetails,
-            });
-            newElement.product = mockProduct;
-            document.body.appendChild(newElement);
-
-            const expressPayment = newElement.querySelector('c-express-payment');
-            const event = new CustomEvent('expressloaded', {
-                detail: { available: true },
-            });
-            expressPayment.dispatchEvent(event);
-            await Promise.resolve();
-
-            const button = newElement.querySelector('.button-checkout');
-            expect(button).not.toBeNull();
-            expect(button.variant).toBe('secondary');
-
-            document.body.removeChild(newElement);
-        });
-    });
-
-    describe('Express payment error handling', () => {
-        beforeEach(async () => {
-            // Trigger express payment loaded event to render the button
-            const expressPayment = element.querySelector('c-express-payment');
-            const event = new CustomEvent('expressloaded', {
-                detail: { available: false },
-            });
-            expressPayment.dispatchEvent(event);
-            await Promise.resolve();
-        });
-
-        it('should handle null product gracefully', async () => {
-            const newElement = createElement('c-product-details', {
-                is: ProductDetails,
-            });
-            newElement.product = null;
-            document.body.appendChild(newElement);
-
-            // Should not throw an error
-            expect(newElement.product).toBeNull();
-
-            document.body.removeChild(newElement);
-        });
-
-        it('should handle missing variant data gracefully', async () => {
-            const productWithoutVariants = {
-                ...mockProduct,
-                vattr: undefined,
-            };
-            const newElement = createElement('c-product-details', {
-                is: ProductDetails,
-            });
-            newElement.product = productWithoutVariants;
-            document.body.appendChild(newElement);
-
-            // Trigger express payment loaded event
-            const expressPayment = newElement.querySelector('c-express-payment');
-            const event = new CustomEvent('expressloaded', {
-                detail: { available: false },
-            });
-            expressPayment.dispatchEvent(event);
-            await Promise.resolve();
-
-            const button = newElement.querySelector('.button-checkout');
-            expect(button).not.toBeNull();
-            expect(button.disabled).toBe(false); // Should be enabled when no variants are required
-
-            document.body.removeChild(newElement);
-        });
-    });
-
-    describe('Component property validation', () => {
-        it('should have default values for component properties', () => {
-            expect(element.product).toEqual(mockProduct);
-            expect(element.entryId).toBe('test-entry-456');
-        });
-
-        it('should handle empty product gracefully', () => {
-            const newElement = createElement('c-product-details', {
-                is: ProductDetails,
-            });
-            newElement.product = {};
-            document.body.appendChild(newElement);
-
-            // Should not throw an error
-            expect(newElement.product).toEqual({});
-
-            // Express payment should still render
-            const expressPayment = newElement.querySelector('c-express-payment');
-            expect(expressPayment).not.toBeNull();
-
-            document.body.removeChild(newElement);
-        });
-    });
-
-    describe('Integration test coverage', () => {
-        it('should render all components together correctly', () => {
-            // Verify the complete component renders without errors
-            expect(element).not.toBeNull();
-
-            // Verify key child components are present
-            const childComponents = ['c-express-payment', 'lightning-spinner'];
-
-            childComponents.forEach((selector) => {
-                expect(element.querySelector(selector)).not.toBeNull();
-            });
-        });
-
-        it('should handle component re-rendering', async () => {
-            // Change a property to trigger re-render
-            const newProduct = { ...mockProduct, name: 'Updated Product Name' };
-            element.product = newProduct;
-
-            // Verify the property was set
-            expect(element.product.name).toBe('Updated Product Name');
-        });
-
-        it('should maintain state through express payment loading cycles', async () => {
-            // Initial state - spinner should be visible, button should not be visible
-            expect(element.querySelector('lightning-spinner')).not.toBeNull();
-            expect(element.querySelector('.button-checkout')).toBeNull();
-
-            // First load event
-            const expressPayment = element.querySelector('c-express-payment');
-            let event = new CustomEvent('expressloaded', {
-                detail: { available: true },
-            });
-            expressPayment.dispatchEvent(event);
-            await Promise.resolve();
-
-            // After loading, button should be visible with secondary variant
-            expect(element.querySelector('.button-checkout')).not.toBeNull();
-            expect(element.querySelector('.button-checkout').variant).toBe('secondary');
-
-            // Second load event with different availability
-            event = new CustomEvent('expressloaded', {
-                detail: { available: false },
-            });
-            expressPayment.dispatchEvent(event);
-            await Promise.resolve();
-
-            // Button should still be visible but with primary variant
-            expect(element.querySelector('.button-checkout')).not.toBeNull();
-            expect(element.querySelector('.button-checkout').variant).toBe('primary');
         });
     });
 });
@@ -1060,8 +674,8 @@ describe('c-product-details edge cases', () => {
         element = createElement('c-product-details', {
             is: ProductDetails,
         });
-        // Don't append to DOM in beforeEach - we'll do it in individual tests
         document.body.appendChild(element);
+        await Promise.resolve();
     });
 
     afterEach(() => {
@@ -1087,78 +701,19 @@ describe('c-product-details edge cases', () => {
         element.product = productWithInvalidOptions;
         await Promise.resolve();
         // Should filter out options without val property
-        const variantButtons = element.querySelectorAll('[data-variant-name]');
+        const variantButtons = element.querySelectorAll('.variant-button');
         expect(variantButtons.length).toBe(2); // Should only render valid options
     });
-
-    it('should trigger SKU change detection when variant selection changes', async () => {
-        // Setup a product with multiple variants that have different PIDs
-        const productWithDifferentSkus = {
-            ...mockProduct,
-            vattr: [
-                {
-                    id: 'color',
-                    lbl: 'Color',
-                    selected: 'JJ169XX',
-                    opts: [
-                        { val: 'JJ169XX', name: 'Black' },
-                        { val: 'JJI15XX', name: 'Blue' },
-                    ],
-                },
-            ],
-            vmat: [
-                {
-                    pid: 'SKU-BLACK-123',
-                    vars: { color: 'JJ169XX' },
-                    ord: true,
-                    pr: { cur: 110.99, orig: 110.99 },
-                },
-                {
-                    pid: 'SKU-BLUE-456',
-                    vars: { color: 'JJI15XX' },
-                    ord: true,
-                    pr: { cur: 120.99, orig: 120.99 },
-                },
-            ],
-        };
-
-        element.product = productWithDifferentSkus;
-        await Promise.resolve();
-
-        // Mock the express payment component's updateSku method
-        const expressPaymentComponent = element.querySelector('c-express-payment');
-        const updateSkuSpy = jest.fn();
-        expressPaymentComponent.updateSku = updateSkuSpy;
-
-        // Simulate clicking the blue color variant button to trigger SKU change
-        const blueColorButton = element.querySelector(
-            '.variant-button[data-variant-name="color"][data-value="JJI15XX"]'
-        );
-        expect(blueColorButton).not.toBeNull();
-        blueColorButton.click();
-        await Promise.resolve();
-
-        // Verify that the variant selection changed and would trigger line 77's SKU change logic
-        // We can't directly test the private setter, but we can verify the UI updated correctly
-        expect(blueColorButton.getAttribute('aria-pressed')).toBe('true');
-    });
-
-    it('should handle variant buttons when no variant matrix exists', async () => {
+    it('should handle variant buttons when no variant matrix exists', () => {
         const productWithoutVmat = {
             ...mockProduct,
             vmat: null,
         };
         element.product = productWithoutVmat;
-        await Promise.resolve();
 
         // Should handle gracefully when vmat is null/undefined
-        // The component still renders variant buttons but they should be disabled
-        const variantButtons = element.querySelectorAll('[data-variant-name]');
-        expect(variantButtons.length).toBeGreaterThan(0);
-
-        // Check that variant buttons are rendered but may be disabled due to no variant matrix
-        // Note: Not all buttons may be disabled if they have other orderable conditions
-        expect(variantButtons.length).toBeGreaterThan(0);
+        const variantButtons = element.querySelectorAll('.variant-button');
+        expect(variantButtons.length).toBe(0);
     });
 
     it('should handle handleAddToCart with missing variant definitions', async () => {
@@ -1174,21 +729,13 @@ describe('c-product-details edge cases', () => {
             ],
         };
         element.product = productWithMissingVariants;
-        await Promise.resolve();
-
         const handler = jest.fn();
         element.addEventListener('addtocart', handler);
-
-        // The variant-options container exists but should have no valid variant buttons
         const variantOptions = element.querySelector('.variant-options');
-        expect(variantOptions).not.toBeNull();
-
-        // Check that no variant buttons are rendered due to invalid options
-        const variantButtons = element.querySelectorAll('[data-variant-name]');
-        expect(variantButtons.length).toBe(0);
+        expect(variantOptions).toBeNull();
     });
 
-    it('should return default images when no color is selected', async () => {
+    it('should return default images when no color is selecteds', async () => {
         const productWithImages = {
             ...mockProduct,
             imgGroups: [
@@ -1250,245 +797,11 @@ describe('c-product-details edge cases', () => {
 
         // Should consider variant orderable when dfOrd is true and no ord property
         // Look for either button elements with variant-button class or c-common-button components
-        const variantButtons = element.querySelectorAll('[data-variant-name]');
+        const variantButtons = element.querySelectorAll('button.variant-button, c-common-button');
         expect(variantButtons.length).toBeGreaterThan(0);
 
         // Check that buttons are not disabled (orderable)
-        const disabledButtons = element.querySelectorAll('[data-variant-name][disabled]');
+        const disabledButtons = element.querySelectorAll('button.variant-button[disabled], c-common-button[disabled]');
         expect(disabledButtons.length).toBe(0);
-    });
-});
-
-describe('c-product-details initialSelectedVariants', () => {
-    let element;
-
-    beforeEach(async () => {
-        element = createElement('c-product-details', {
-            is: ProductDetails,
-        });
-        document.body.appendChild(element);
-        await Promise.resolve();
-    });
-
-    afterEach(() => {
-        document.body.removeChild(element);
-    });
-
-    it('should initialize with selected variant when variant has selected property', async () => {
-        const productWithSelectedVariant = {
-            ...mockProduct,
-            vattr: [
-                {
-                    id: 'color',
-                    lbl: 'Color',
-                    selected: 'JJ169XX',
-                    opts: [
-                        { val: 'JJ169XX', name: 'Black' },
-                        { val: 'JJI15XX', name: 'Blue' },
-                    ],
-                },
-            ],
-        };
-
-        // Set product before adding to DOM to ensure connectedCallback runs with the product
-        element.product = productWithSelectedVariant;
-        document.body.appendChild(element);
-        await Promise.resolve();
-
-        // Check that the variant button for the selected variant is marked as selected
-        const selectedButton = element.querySelector(
-            '.selected[data-variant-name="color"][data-value="JJ169XX"][aria-pressed="true"]'
-        );
-        expect(selectedButton).not.toBeNull();
-    });
-
-    it('should initialize with single option when variant has only one option and is orderable', async () => {
-        // Using mockProductForVariantSelection which has one color option
-        element.product = mockProductForVariantSelection;
-        document.body.appendChild(element);
-        await Promise.resolve();
-
-        // Check that the single option is automatically selected
-        const selectedButton = element.querySelector(
-            '.selected[data-variant-name="color"][data-value="JJI15XX"][aria-pressed="true"]'
-        );
-        expect(selectedButton).not.toBeNull();
-    });
-
-    it('should not initialize with single option when variant has only one option but is not orderable', async () => {
-        element.product = mockProductNonOrderableSingleOption;
-        document.body.appendChild(element);
-        await Promise.resolve();
-
-        // Check that no variant button is selected
-        const selectedButtons = element.querySelectorAll('.selected');
-        expect(selectedButtons.length).toBe(0);
-    });
-
-    it('should not initialize with single option when variant matrix is empty', async () => {
-        element.product = mockProductEmptyVmat;
-        document.body.appendChild(element);
-        await Promise.resolve();
-
-        // Check that no variant button is selected
-        const selectedButtons = element.querySelectorAll('.selected');
-        expect(selectedButtons.length).toBe(0);
-    });
-
-    it('should handle multiple variants with mixed conditions but auto select the variant which is only one in length and orderable', async () => {
-        element.product = mockProductMixedVariants;
-        document.body.appendChild(element);
-        await Promise.resolve();
-
-        // Check that both variants are selected
-        const selectedButtons = element.querySelectorAll('.selected');
-        expect(selectedButtons.length).toBe(2);
-
-        // Check specific selections
-        const colorButton = element.querySelector(
-            '.selected[data-variant-name="color"][data-value="JJ169XX"][aria-pressed="true"]'
-        );
-        const sizeButton = element.querySelector(
-            '.selected[data-variant-name="size"][data-value="M"][aria-pressed="true"]'
-        );
-        expect(colorButton).not.toBeNull();
-        expect(sizeButton).not.toBeNull();
-    });
-
-    it('should handle variant with null options', async () => {
-        const productWithNullOptions = {
-            ...mockProduct,
-            vattr: [
-                {
-                    id: 'color',
-                    lbl: 'Color',
-                    opts: null,
-                },
-            ],
-        };
-        element.product = productWithNullOptions;
-        document.body.appendChild(element);
-        await Promise.resolve();
-
-        // Check that no variant button is rendered
-        const variantButtons = element.querySelectorAll('[data-variant-name]');
-        expect(variantButtons.length).toBe(0);
-    });
-
-    it('should handle multiple variants with different orderable states', async () => {
-        const productWithMixedOrderableStates = {
-            ...mockProduct,
-            vattr: [
-                {
-                    id: 'color',
-                    lbl: 'Color',
-                    selected: 'JJ169XX',
-                    opts: [
-                        { val: 'JJ169XX', name: 'Black' },
-                        { val: 'JJI15XX', name: 'Blue' },
-                    ],
-                },
-                {
-                    id: 'size',
-                    lbl: 'Size',
-                    opts: [
-                        { val: 'M', name: 'Medium' }, // Single option, orderable
-                    ],
-                },
-                {
-                    id: 'style',
-                    lbl: 'Style',
-                    opts: [
-                        { val: 'CASUAL', name: 'Casual' }, // Single option, not orderable
-                    ],
-                },
-            ],
-            vmat: [
-                {
-                    vars: { color: 'JJ169XX', size: 'M', style: 'CASUAL' },
-                    ord: false, // Not orderable
-                    pr: { cur: 110.99, orig: 110.99 },
-                },
-                {
-                    vars: { color: 'JJ169XX', size: 'M', style: 'FORMAL' },
-                    ord: true,
-                    pr: { cur: 120.99, orig: 120.99 },
-                },
-            ],
-        };
-        element.product = productWithMixedOrderableStates;
-        document.body.appendChild(element);
-        await Promise.resolve();
-
-        // Check that color and size are selected, but style is not
-        const selectedButtons = element.querySelectorAll('[aria-pressed="true"]');
-        expect(selectedButtons.length).toBe(2);
-
-        const colorButton = element.querySelector(
-            '.selected[data-variant-name="color"][data-value="JJ169XX"][aria-pressed="true"]'
-        );
-        const sizeButton = element.querySelector(
-            '.selected[data-variant-name="size"][data-value="M"][aria-pressed="true"]'
-        );
-        const styleButton = element.querySelector(
-            '.selected[data-variant-name="style"][data-value="CASUAL"][aria-pressed="true"]'
-        );
-
-        expect(colorButton).not.toBeNull();
-        expect(sizeButton).not.toBeNull();
-        expect(styleButton).toBeNull(); // Should not be selected because it's not orderable
-    });
-
-    it('should verify that selectedVariants is initialized correctly in connectedCallback', async () => {
-        element.product = mockProductForVariantSelection;
-        document.body.appendChild(element);
-        await Promise.resolve();
-
-        // Verify that the variant is selected in the UI
-        const selectedButton = element.querySelector(
-            '.selected[data-variant-name="color"][data-value="JJI15XX"][aria-pressed="true"]'
-        );
-        expect(selectedButton).not.toBeNull();
-    });
-
-    it('should handle product with no variants', async () => {
-        element.product = mockProductNoVariants;
-        document.body.appendChild(element);
-        await Promise.resolve();
-
-        // Check that no variant buttons are rendered
-        const variantButtons = element.querySelectorAll('[data-variant-name]');
-        expect(variantButtons.length).toBe(0);
-    });
-
-    it('should handle product with null variants', async () => {
-        element.product = mockProductNullVariants;
-        document.body.appendChild(element);
-        await Promise.resolve();
-
-        // Check that no variant buttons are rendered
-        const variantButtons = element.querySelectorAll('[data-variant-name]');
-        expect(variantButtons.length).toBe(0);
-    });
-
-    it('should not call updateSku when sku is null via handleExpressLoaded', async () => {
-        // Setup express payment component with spy
-        const expressPaymentComponent = element.querySelector('c-express-payment');
-        const updateSkuSpy = jest.fn();
-        expressPaymentComponent.updateSku = updateSkuSpy;
-
-        // Mock the sku getter to return null (simulating no valid variant selected)
-        jest.spyOn(element, 'sku', 'get').mockReturnValue(null);
-
-        // Simulate express loaded event with available = true
-        const event = new CustomEvent('expressloaded', {
-            detail: { available: true },
-        });
-
-        expressPaymentComponent.dispatchEvent(event);
-        await Promise.resolve();
-
-        // Verify updateSku was not called due to null sku check
-        expect(updateSkuSpy).not.toHaveBeenCalled();
     });
 });

@@ -16,7 +16,6 @@ import quantitySectionAssistiveText from '@salesforce/label/c.Product_quantitySe
 import quantityControlsAssistiveText from '@salesforce/label/c.Product_quantityControlsAssistiveText';
 import decreaseQuantityAssistiveText from '@salesforce/label/c.Product_decreaseQuantityAssistiveText';
 import increaseQuantityAssistiveText from '@salesforce/label/c.Product_increaseQuantityAssistiveText';
-import loadingSpinnerAltText from '@salesforce/label/c.Product_loadingSpinnerAltText';
 
 export {
     addToCartAssistiveText,
@@ -30,5 +29,4 @@ export {
     quantityControlsAssistiveText,
     decreaseQuantityAssistiveText,
     increaseQuantityAssistiveText,
-    loadingSpinnerAltText,
 };

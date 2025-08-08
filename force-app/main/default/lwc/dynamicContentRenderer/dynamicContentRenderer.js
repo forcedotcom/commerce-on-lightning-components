@@ -7,11 +7,9 @@
  */
 import { api, LightningElement } from 'lwc';
 import {
-    paymentCompletedLabel,
-    paymentFailedLabel,
-    paymentCanceledLabel,
-    fallbackPaymentSucceededLabel,
-    fallbackPaymentFailedLabel,
+    applePayFailedLabel,
+    applePayCanceledLabel,
+    applePayCompletedLabel,
     categoryRecommendationTextMessageLabel,
     productSelectionTextMessageLabel,
     addToCartMessageLabel,
@@ -29,7 +27,6 @@ import {
     CONTENT_TYPES,
     CONTENT_TYPE_COMPONENT_MAP,
     DEFAULT_RICH_TEXT_CONFIG,
-    PAYMENT_METHOD_MAP,
 } from './constants';
 
 /**
@@ -286,25 +283,17 @@ export default class DynamicContentRenderer extends LightningElement {
      */
     @api
     handlePayment(event) {
-        if (event.detail && typeof event.detail === 'object' && event.detail.orderId) {
-            // Success case - event.detail is an object with orderId and paymentMethod
-            const paymentMethod = event.detail.paymentMethod || '';
+        if (event.detail && typeof event.detail === 'string') {
+            // Success case - event.detail is the orderId string
             this.configuration.util.sendTextMessage(
-                `{"orderCompleted": {"className":"orderCompleted","orderNumber": "${event.detail.orderId}","paymentMethod": "${paymentMethod}"}}`
+                `{"orderCompleted": {"className":"orderCompleted","orderNumber": "${event.detail}"}}`
             );
-        } else if (
-            event.detail &&
-            typeof event.detail === 'object' &&
-            (event.detail.status === 'cancel' || event.detail.status === 'failure')
-        ) {
+        } else if (event.detail && typeof event.detail === 'object' && event.detail.status === 'cancel') {
             // Cancel case
-            const paymentMethod = event.detail.paymentMethod || '';
-            const displayName = this._getPaymentMethodDisplayName(paymentMethod);
-            const label = event.detail.status === 'cancel' ? paymentCanceledLabel : paymentFailedLabel;
-            this.configuration.util.sendTextMessage(label.replace('{0}', displayName));
+            this.configuration.util.sendTextMessage(applePayCanceledLabel);
         } else {
-            // Fallback case for null, undefined, or other failure scenarios
-            this.configuration.util.sendTextMessage(fallbackPaymentFailedLabel);
+            // Failure case (null, undefined, or status: 'failure')
+            this.configuration.util.sendTextMessage(applePayFailedLabel);
         }
     }
 
@@ -332,34 +321,13 @@ export default class DynamicContentRenderer extends LightningElement {
     }
 
     /**
-     * Maps payment method codes to user-friendly display names.
-     * @param {string} paymentMethod - The payment method code from the event (e.g., 'applepay', 'googlepay')
-     * @returns {string} The user-friendly display name
-     * @private
-     */
-    _getPaymentMethodDisplayName(paymentMethod) {
-        if (!paymentMethod || typeof paymentMethod !== 'string') {
-            return '';
-        }
-        const normalizedMethod = paymentMethod.toLowerCase();
-        return PAYMENT_METHOD_MAP[normalizedMethod] || paymentMethod;
-    }
-
-    /**
      * Returns the localized text for a successfully completed order.
-     * This text is dynamically generated based on the payment method from the parsed message content.
-     * Falls back to the generic payment succeeded label if no payment method is found.
+     * This text is sourced from the imported `applePayCompletedLabel` constant.
      * @returns {string} The formatted order completion text.
      */
     @api
     get orderCompletedText() {
-        // Check if we have parsed message content with payment method
-        const method = this._parsedMessageContent?.orderCompleted?.paymentMethod;
-        if (method) {
-            return paymentCompletedLabel.replace('{0}', this._getPaymentMethodDisplayName(method));
-        }
-        // Fallback to the generic payment succeeded label
-        return fallbackPaymentSucceededLabel;
+        return applePayCompletedLabel;
     }
 
     /**

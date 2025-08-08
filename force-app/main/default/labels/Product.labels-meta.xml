@@ -105,11 +105,4 @@
         <protected>false</protected>
         <shortDescription>Product_increaseQuantityAssistiveText</shortDescription>
     </labels>
-    <labels>
-        <fullName>Product_loadingSpinnerAltText</fullName>
-        <value>Loading express payment options...</value>
-        <language>en_US</language>
-        <protected>false</protected>
-        <shortDescription>Product_loadingSpinnerAltText</shortDescription>
-    </labels>
 </CustomLabels>

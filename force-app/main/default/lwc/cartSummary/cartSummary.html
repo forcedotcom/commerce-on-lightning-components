@@ -8,21 +8,18 @@
             is-cart-summary></c-summary-details>
 
         <div class={loadingContainerClass}>
-            <template if:true={shouldWaitForExpressPayment}>
-                <template if:false={isExpressLoaded}>
-                    <div class="spinner-overlay">
-                        <lightning-spinner
-                            alternative-text={i18n.loadingSpinnerAltText}
-                            size="x-small"></lightning-spinner>
-                    </div>
-                </template>
+            <template if:false={isExpressLoaded}>
+                <div class="spinner-overlay">
+                    <lightning-spinner
+                        alternative-text={i18n.loadingSpinnerAltText}
+                        size="x-small"></lightning-spinner>
+                </div>
             </template>
 
             <div
                 class={expressContainerClass}
                 style={expressContainerStyle}>
                 <c-express-payment
-                    lwc:ref="expressPaymentComponent"
                     entry-id={entryId}
                     express-payment-url={expressPaymentUrl}
                     onexpressloaded={handleExpressLoaded}></c-express-payment>

@@ -54,9 +54,3 @@ export const DEFAULT_RICH_TEXT_CONFIG = Object.freeze({
     dataProcessor: null, // Rich text content doesn't need data processing
     eventHandlers: [],
 });
-
-export const PAYMENT_METHOD_MAP = {
-    applepay: 'Apple Pay',
-    googlepay: 'Google Pay',
-    // Add more mappings as we add support for more payment methods
-};

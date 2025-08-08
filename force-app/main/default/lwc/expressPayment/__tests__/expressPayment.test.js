@@ -58,9 +58,8 @@ describe('c-express-payment', () => {
 
             await Promise.resolve();
             const iframe = element.shadowRoot.querySelector('iframe');
-            const computedStyles = getComputedStyle(iframe);
-            expect(computedStyles.width).toBe('100%');
-            expect(computedStyles.height).toBe('40px');
+            expect(iframe.style.width).toBe('100%');
+            expect(iframe.style.height).toBe('40px');
             expect(iframe.getAttribute('allow')).toBe('payment *');
         });
     });
@@ -129,10 +128,7 @@ describe('c-express-payment', () => {
             const mockEvent = {
                 data: {
                     type: 'express.payment.success',
-                    payload: {
-                        orderId: 'test-order-123',
-                        PAYMENT_METHOD: 'applepay',
-                    },
+                    payload: { orderId: 'test-order-123' },
                 },
             };
 
@@ -142,10 +138,7 @@ describe('c-express-payment', () => {
                 expect.objectContaining({
                     type: 'payment',
                     bubbles: true,
-                    detail: {
-                        orderId: 'test-order-123',
-                        paymentMethod: 'applepay',
-                    },
+                    detail: 'test-order-123',
                 })
             );
         });
@@ -157,9 +150,6 @@ describe('c-express-payment', () => {
             const mockEvent = {
                 data: {
                     type: 'express.payment.failure',
-                    payload: {
-                        PAYMENT_METHOD: 'applepay',
-                    },
                 },
             };
 
@@ -169,10 +159,7 @@ describe('c-express-payment', () => {
                 expect.objectContaining({
                     type: 'payment',
                     bubbles: true,
-                    detail: {
-                        status: 'failure',
-                        paymentMethod: 'applepay',
-                    },
+                    detail: { status: 'failure' },
                 })
             );
         });
@@ -184,9 +171,6 @@ describe('c-express-payment', () => {
             const mockEvent = {
                 data: {
                     type: 'express.payment.cancel',
-                    payload: {
-                        PAYMENT_METHOD: 'applepay',
-                    },
                 },
             };
 
@@ -196,10 +180,7 @@ describe('c-express-payment', () => {
                 expect.objectContaining({
                     type: 'payment',
                     bubbles: true,
-                    detail: {
-                        status: 'cancel',
-                        paymentMethod: 'applepay',
-                    },
+                    detail: { status: 'cancel' },
                 })
             );
         });
@@ -365,357 +346,6 @@ describe('c-express-payment', () => {
             await Promise.resolve();
             const iframe = element.shadowRoot.querySelector('iframe');
             expect(iframe.src).toBe('https://example.com/express/?id=test-entry-123');
-        });
-    });
-
-    describe('PDP property functionality', () => {
-        it('should include pdp parameter in URL when pdp is true', async () => {
-            element.expressPaymentUrl = 'https://example.com/express';
-            element.entryId = 'test-entry-123';
-            element.pdp = true;
-
-            await Promise.resolve();
-            const iframe = element.shadowRoot.querySelector('iframe');
-            expect(iframe.src).toBe('https://example.com/express?id=test-entry-123&pdp=true');
-        });
-
-        it('should not include pdp parameter in URL when pdp is false', async () => {
-            element.expressPaymentUrl = 'https://example.com/express';
-            element.entryId = 'test-entry-123';
-            element.pdp = false;
-
-            await Promise.resolve();
-            const iframe = element.shadowRoot.querySelector('iframe');
-            expect(iframe.src).toBe('https://example.com/express?id=test-entry-123');
-        });
-
-        it('should not include pdp parameter in URL when pdp is undefined', async () => {
-            element.expressPaymentUrl = 'https://example.com/express';
-            element.entryId = 'test-entry-123';
-            element.pdp = undefined;
-
-            await Promise.resolve();
-            const iframe = element.shadowRoot.querySelector('iframe');
-            expect(iframe.src).toBe('https://example.com/express?id=test-entry-123');
-        });
-
-        it('should handle pdp with URL that already has query parameters', async () => {
-            element.expressPaymentUrl = 'https://example.com/express?existing=param';
-            element.entryId = 'test-entry-123';
-            element.pdp = true;
-
-            await Promise.resolve();
-            const iframe = element.shadowRoot.querySelector('iframe');
-            // The implementation adds parameters sequentially, so we get two ? characters
-            expect(iframe.src).toBe('https://example.com/express?existing=param?id=test-entry-123&pdp=true');
-        });
-    });
-
-    describe('Disabled property functionality', () => {
-        it('should render container div with correct CSS class when disabled', async () => {
-            element.disabled = true;
-            await Promise.resolve();
-
-            const container = element.shadowRoot.querySelector('.express-container');
-            expect(container).not.toBeNull();
-            expect(container.classList.contains('disabled')).toBe(true);
-        });
-
-        it('should render container div without disabled class when not disabled', async () => {
-            element.disabled = false;
-            await Promise.resolve();
-
-            const container = element.shadowRoot.querySelector('.express-container');
-            expect(container).not.toBeNull();
-            expect(container.classList.contains('disabled')).toBe(false);
-        });
-
-        it('should handle disabled state with undefined value', async () => {
-            element.disabled = undefined;
-            await Promise.resolve();
-
-            const container = element.shadowRoot.querySelector('.express-container');
-            expect(container).not.toBeNull();
-            expect(container.classList.contains('disabled')).toBe(false);
-        });
-    });
-
-    describe('updateSku API method functionality', () => {
-        beforeEach(() => {
-            // Mock document.querySelector for the iframe
-            const mockIframe = {
-                contentWindow: {
-                    postMessage: jest.fn(),
-                },
-            };
-
-            // Mock shadowRoot.querySelector to return our mock iframe
-            jest.spyOn(element.shadowRoot, 'querySelector').mockImplementation((selector) => {
-                if (selector === 'iframe') {
-                    return mockIframe;
-                }
-                return null;
-            });
-        });
-
-        afterEach(() => {
-            jest.restoreAllMocks();
-        });
-
-        it('should send UPDATE_SKU message when SKU is provided', () => {
-            const testSku = 'TEST-SKU-123';
-            const mockIframe = element.shadowRoot.querySelector('iframe');
-
-            element.updateSku(testSku);
-
-            expect(mockIframe.contentWindow.postMessage).toHaveBeenCalledWith(
-                {
-                    type: 'UPDATE_SKU',
-                    sku: testSku,
-                },
-                '*'
-            );
-        });
-
-        it('should send CLEAR_SKU message when SKU is null', () => {
-            const mockIframe = element.shadowRoot.querySelector('iframe');
-
-            element.updateSku(null);
-
-            expect(mockIframe.contentWindow.postMessage).toHaveBeenCalledWith(
-                {
-                    type: 'CLEAR_SKU',
-                },
-                '*'
-            );
-        });
-
-        it('should send CLEAR_SKU message when SKU is undefined', () => {
-            const mockIframe = element.shadowRoot.querySelector('iframe');
-
-            element.updateSku(undefined);
-
-            expect(mockIframe.contentWindow.postMessage).toHaveBeenCalledWith(
-                {
-                    type: 'CLEAR_SKU',
-                },
-                '*'
-            );
-        });
-
-        it('should send CLEAR_SKU message when SKU is empty string', () => {
-            const mockIframe = element.shadowRoot.querySelector('iframe');
-
-            element.updateSku('');
-
-            expect(mockIframe.contentWindow.postMessage).toHaveBeenCalledWith(
-                {
-                    type: 'CLEAR_SKU',
-                },
-                '*'
-            );
-        });
-
-        it('should handle case when iframe is not found', () => {
-            // Override mock to return null
-            element.shadowRoot.querySelector.mockReturnValue(null);
-
-            // Should not throw an error
-            expect(() => {
-                element.updateSku('TEST-SKU-123');
-            }).not.toThrow();
-        });
-
-        it('should handle case when iframe contentWindow is null', () => {
-            const mockIframe = { contentWindow: null };
-            element.shadowRoot.querySelector.mockReturnValue(mockIframe);
-
-            // Should not throw an error
-            expect(() => {
-                element.updateSku('TEST-SKU-123');
-            }).not.toThrow();
-        });
-
-        it('should handle case when iframe contentWindow is undefined', () => {
-            const mockIframe = { contentWindow: undefined };
-            element.shadowRoot.querySelector.mockReturnValue(mockIframe);
-
-            // Should not throw an error
-            expect(() => {
-                element.updateSku('TEST-SKU-123');
-            }).not.toThrow();
-        });
-    });
-
-    describe('Combined property interactions', () => {
-        it('should work correctly when both pdp and disabled are set', async () => {
-            element.expressPaymentUrl = 'https://example.com/express';
-            element.entryId = 'test-entry-123';
-            element.pdp = true;
-            element.disabled = true;
-
-            await Promise.resolve();
-
-            // Check URL includes PDP parameter
-            const iframe = element.shadowRoot.querySelector('iframe');
-            expect(iframe.src).toBe('https://example.com/express?id=test-entry-123&pdp=true');
-
-            // Check container has disabled class
-            const container = element.shadowRoot.querySelector('.express-container');
-            expect(container.classList.contains('disabled')).toBe(true);
-        });
-
-        it('should handle all properties being falsy', async () => {
-            element.expressPaymentUrl = '';
-            element.entryId = '';
-            element.pdp = false;
-            element.disabled = false;
-
-            await Promise.resolve();
-
-            // Should render with empty src
-            const iframe = element.shadowRoot.querySelector('iframe');
-            expect(iframe.src).toBe('http://localhost/');
-
-            // Should have base container class
-            const container = element.shadowRoot.querySelector('.express-container');
-            expect(container.classList.contains('disabled')).toBe(false);
-        });
-    });
-
-    describe('sendBasketData API method', () => {
-        afterEach(() => {
-            jest.restoreAllMocks();
-        });
-
-        it('should handle valid basket data without throwing errors', () => {
-            const basketData = {
-                orderTotal: 100.5,
-                currency: 'USD',
-                id: 'basket-123',
-            };
-
-            // Should not throw an error
-            expect(() => {
-                element.sendBasketData(basketData);
-            }).not.toThrow();
-        });
-
-        it('should handle missing basket data gracefully', () => {
-            const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
-
-            element.sendBasketData(null);
-
-            expect(consoleWarnSpy).toHaveBeenCalledWith('Cannot send basket data - missing required data');
-
-            consoleWarnSpy.mockRestore();
-        });
-
-        it('should handle undefined basket data gracefully', () => {
-            const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
-
-            element.sendBasketData(undefined);
-
-            expect(consoleWarnSpy).toHaveBeenCalledWith('Cannot send basket data - missing required data');
-
-            consoleWarnSpy.mockRestore();
-        });
-
-        it('should handle iframe not available gracefully', () => {
-            // Mock template.querySelector to return null (no iframe)
-            element.template = {
-                querySelector: jest.fn().mockReturnValue(null),
-            };
-
-            const basketData = {
-                orderTotal: 100.5,
-                currency: 'USD',
-                id: 'basket-123',
-            };
-
-            // Should not throw an error
-            expect(() => {
-                element.sendBasketData(basketData);
-            }).not.toThrow();
-        });
-
-        it('should handle iframe without contentWindow gracefully', () => {
-            // Mock iframe without contentWindow
-            const mockIframe = {};
-            element.template = {
-                querySelector: jest.fn().mockImplementation((selector) => {
-                    if (selector === 'iframe') {
-                        return mockIframe;
-                    }
-                    return null;
-                }),
-            };
-
-            const basketData = {
-                orderTotal: 100.5,
-                currency: 'USD',
-                id: 'basket-123',
-            };
-
-            // Should not throw an error
-            expect(() => {
-                element.sendBasketData(basketData);
-            }).not.toThrow();
-        });
-
-        it('should handle different currency codes without throwing errors', () => {
-            const basketData = {
-                orderTotal: 150.75,
-                currency: 'EUR',
-                id: 'basket-456',
-            };
-
-            // Should not throw an error
-            expect(() => {
-                element.sendBasketData(basketData);
-            }).not.toThrow();
-        });
-
-        it('should handle zero values without throwing errors', () => {
-            const basketData = {
-                orderTotal: 0,
-                currency: 'USD',
-                id: 'basket-789',
-            };
-
-            // Should not throw an error
-            expect(() => {
-                element.sendBasketData(basketData);
-            }).not.toThrow();
-        });
-
-        it('should handle empty string values without throwing errors', () => {
-            const basketData = {
-                orderTotal: 50.25,
-                currency: 'USD',
-                id: '',
-            };
-
-            // Should not throw an error
-            expect(() => {
-                element.sendBasketData(basketData);
-            }).not.toThrow();
-        });
-
-        it('should handle template not being available', () => {
-            // Mock template to be null
-            element.template = null;
-
-            const basketData = {
-                orderTotal: 100.5,
-                currency: 'USD',
-                id: 'basket-123',
-            };
-
-            // Should not throw an error
-            expect(() => {
-                element.sendBasketData(basketData);
-            }).not.toThrow();
         });
     });
 });
