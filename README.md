@@ -81,7 +81,7 @@ This repository contains several files that are relevant if you want to integrat
 
 ### Code Linting
 
-[ESLint](https://eslint.org/) is a popular JavaScript linting tool used to identify stylistic errors and erroneous constructs. To use ESLint with Visual Studio Code, install [this extension](https://marketplace.visualstudio.com/items?itemName=salesforce.salesforcedx-vscode-lwc) from the Visual Studio Code Marketplace. The [.eslintrc.cjs](force-app/main/default/lwc/.eslintrc.cjs) file is provided as part of this repository to control the behavior of the linting process in the context of Lightning Web Components development.
+[ESLint](https://eslint.org/) is a popular JavaScript linting tool used to identify stylistic errors and erroneous constructs. To use ESLint with Visual Studio Code, install [this extension](https://marketplace.visualstudio.com/items?itemName=salesforce.salesforcedx-vscode-lwc) from the Visual Studio Code Marketplace. The [.eslintrc.cjs](.eslintrc.cjs) file is provided as part of this repository to control the behavior of the linting process in the context of Lightning Web Components development.
 
 ### Pre-Commit Hook
 
