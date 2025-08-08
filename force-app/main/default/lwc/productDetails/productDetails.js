@@ -270,6 +270,31 @@ export default class ProductDetails extends LightningElement {
     }
 
     /**
+     * Resolves the correct product ID based on whether the product is a simple product
+     * or a variant product.
+     *
+     * - For **simple products** (no variant attributes), returns the base product ID.
+     * - For **variant products**, finds the matching variant in the variant matrix (`vmat`)
+     *   based on currently selected variant values and returns its `pid`.
+     * - If no match is found or the variant is not orderable, falls back to the first match
+     *   or the base product ID.
+     * @returns {string|null} The resolved product ID (variant `pid` or base product `id`), or `null` if unavailable.
+     */
+    _getResolvedProductId() {
+        const hasVariants = Array.isArray(this._productData?.vattr) && this._productData.vattr.length > 0;
+
+        if (!hasVariants) {
+            // Simple product → use base id
+            return this._productData?.id || null;
+        }
+
+        // Variant product → find the matching row in vmat
+        const matches = this.getFilteredVariants();
+        const chosen = matches.find((m) => m?.ord !== false) || matches[0];
+
+        return chosen?.pid || this._productData?.id || null;
+    }
+    /**
      * Fires 'addtocart' event with the product name as detail.
      */
     handleAddToCart() {
@@ -289,7 +314,8 @@ export default class ProductDetails extends LightningElement {
         const detail = {
             quantity: this.quantity,
             productName: this._productData.name,
-            variantDetails: variantDetails,
+            productId: this._getResolvedProductId(),
+            variantDetails,
         };
 
         this.dispatchEvent(

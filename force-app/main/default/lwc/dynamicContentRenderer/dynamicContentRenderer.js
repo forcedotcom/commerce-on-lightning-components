@@ -185,7 +185,7 @@ export default class DynamicContentRenderer extends LightningElement {
         if (!detail) {
             return;
         }
-        const { quantity, productName, variantDetails } = detail;
+        const { quantity, productName, productId, variantDetails } = detail;
 
         // Validate required properties
         if (quantity && productName) {
@@ -201,13 +201,15 @@ export default class DynamicContentRenderer extends LightningElement {
             if (!variantText) {
                 const message = addToCartMessageWithNoVariationsLabel
                     .replace('{0}', productName)
-                    .replace('{1}', quantity);
+                    .replace('{1}', quantity)
+                    .replace('{2}', productId);
                 this.configuration.util.sendTextMessage(message);
             } else {
                 const message = addToCartMessageLabel
                     .replace('{0}', productName)
                     .replace('{1}', variantText)
-                    .replace('{2}', quantity);
+                    .replace('{2}', quantity)
+                    .replace('{3}', productId);
                 this.configuration.util.sendTextMessage(message);
             }
         }

@@ -101,6 +101,7 @@ describe('c-product-details positive cases', () => {
         expect(handler.mock.calls[0][0].detail).toEqual({
             productName: 'Mini Print Jacket',
             quantity: 0.5,
+            productId: expect.any(String), // productId will be resolved from the mock data
             variantDetails: [
                 {
                     id: 'color',

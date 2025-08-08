@@ -16,14 +16,14 @@
     </labels>
     <labels>
         <fullName>TextMessage_addProductToCart</fullName>
-        <value>Add {0} with {1} in a quantity of {2} to cart</value>
+        <value>Add {0} with {1} in a quantity of {2} to cart ({3})</value>
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>TextMessage_addProductToCart</shortDescription>
     </labels>
     <labels>
         <fullName>TextMessage_addProductToCartWithNoVariations</fullName>
-        <value>Add {0} in a quantity of {1} to cart</value>
+        <value>Add {0} in a quantity of {1} to cart ({2})</value>
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>TextMessage_addProductToCartWithNoVariations</shortDescription>
