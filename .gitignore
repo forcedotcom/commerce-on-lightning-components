@@ -1,0 +1,31 @@
+# Salesforce cache
+.sf/
+.sfdx/
+.localdevserver/
+deploy-options.json
+
+# LWC VSCode autocomplete
+jsconfig.json
+
+# Logs
+logs
+*.log
+
+.classpath
+.project
+.settings
+.holder
+.DS_Store
+target
+.idea
+*.iml
+core-dev-package
+node_modules
+.jshintrc
+.nyc_output
+coverage
+build
+.vscode
+jest-report
+.pnp.*
+yarn.lock

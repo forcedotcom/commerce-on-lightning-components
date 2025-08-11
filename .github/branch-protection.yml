@@ -1,0 +1,67 @@
+# Branch Protection Configuration
+# This file serves as documentation for required branch protection settings
+# Apply these settings in GitHub repository settings under Branches > Add rule
+
+branch_protection_rules:
+    main:
+        required_status_checks:
+            strict: true
+            contexts:
+                - 'Validate Code'
+                - 'Code Quality'
+                - 'Security Checks'
+                - 'Commit Message Check'
+
+        enforce_admins: true
+
+        required_pull_request_reviews:
+            required_approving_review_count: 2
+            dismiss_stale_reviews: true
+            require_code_owner_reviews: true
+            require_last_push_approval: true
+
+        restrictions:
+            users: []
+            teams: []
+
+        allow_force_pushes: false
+        allow_deletions: false
+
+        required_conversation_resolution: true
+        require_linear_history: true
+        require_signed_commits: false
+
+    develop:
+        required_status_checks:
+            strict: true
+            contexts:
+                - 'Validate Code'
+                - 'Code Quality'
+                - 'Security Checks'
+
+        enforce_admins: false
+
+        required_pull_request_reviews:
+            required_approving_review_count: 1
+            dismiss_stale_reviews: true
+            require_code_owner_reviews: false
+            require_last_push_approval: false
+
+        restrictions:
+            users: []
+            teams: []
+
+        allow_force_pushes: false
+        allow_deletions: false
+
+        required_conversation_resolution: true
+        require_linear_history: false
+        require_signed_commits: false
+# Quality Gates Summary:
+# 1. Code Coverage: Minimum 90% (enforced by Jest config)
+# 2. Linting: No ESLint errors (enforced by CI)
+# 3. Formatting: Prettier compliance (enforced by CI)
+# 4. Tests: All tests must pass (enforced by CI)
+# 5. Warnings: No console.warn/error (enforced by CI)
+# 6. Security: npm audit passes (enforced by CI)
+# 7. Commit Messages: Conventional commits (enforced by CI)

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+    <labels>
+        <fullName>TextMessage_categoryRecommendations</fullName>
+        <value>{0} for category {1} ({2})</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>TextMessage_categoryRecommendations</shortDescription>
+    </labels>
+    <labels>
+        <fullName>TextMessage_productSelection</fullName>
+        <value>Show me details about {0} ({1})</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>TextMessage_productSelection</shortDescription>
+    </labels>
+    <labels>
+        <fullName>TextMessage_addProductToCart</fullName>
+        <value>Add {0} with {1} in a quantity of {2} to cart</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>TextMessage_addProductToCart</shortDescription>
+    </labels>
+    <labels>
+        <fullName>TextMessage_addProductToCartWithNoVariations</fullName>
+        <value>Add {0} in a quantity of {1} to cart</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>TextMessage_addProductToCartWithNoVariations</shortDescription>
+    </labels>
+    <labels>
+        <fullName>TextMessage_variantSelection</fullName>
+        <value>Select {0} option with {1} value</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>TextMessage_variantSelection</shortDescription>
+    </labels>
+    <labels>
+        <fullName>TextMessage_invalidResponseMessage</fullName>
+        <value>Unable to process the request. Please try again.</value>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>TextMessage_invalidResponseMessage</shortDescription>
+    </labels>
+</CustomLabels>

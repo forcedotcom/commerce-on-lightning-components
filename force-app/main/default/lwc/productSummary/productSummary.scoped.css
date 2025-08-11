@@ -1,0 +1,192 @@
+/*
+ * productSummaryComponent.css
+ *
+ * This CSS file styles the ProductSummary LWC. It employs a layered
+ * approach to styling, prioritizing consumer customization via public `--ref-c-`
+ * styling hooks, then leveraging Salesforce DXP theme tokens,
+ * and finally falling back to default values if neither are defined.
+ *
+ * The precedence for styling is:
+ * 1. Direct override of a `--ref-c-` hook by a consumer.
+ * 2. The value of the DXP token, if defined in the Experience Site's theme.
+ * 3. The hardcoded fallback value provided within the `var()` function.
+ */
+
+:host {
+    display: block;
+    box-sizing: border-box;
+
+    /* Font family - GT America Trial */
+    --ref-c-product-summary-font-family: 'GT America Trial', var(--dxp-g-font-family-body, sans-serif);
+
+    /* Container styling */
+    --ref-c-product-summary-background: #ffffff;
+    --ref-c-product-summary-padding: 0;
+    --ref-c-product-summary-border-radius: 5px;
+    --ref-c-product-summary-border: var(--dxp-g-border-width-thin, 1px) solid var(--dxp-g-neutral, #eaeaea);
+
+    /* Image styling */
+    --ref-c-product-summary-image-max-size: 100px;
+    --ref-c-product-summary-image-border-radius: var(--dxp-g-spacing-xxsmall, 0.25rem);
+
+    /* Item Name - GT America Trial, Weight: Medium, Size: 14, Line height: 20 */
+    --ref-c-product-summary-name-color: #1c1c1c;
+    --ref-c-product-summary-name-margin-bottom: var(--dxp-g-spacing-xxxsmall, 0.125rem);
+    --ref-c-product-summary-name-font-size: 14px;
+    --ref-c-product-summary-name-font-weight: 500;
+    --ref-c-product-summary-name-line-height: 20px;
+    --ref-c-product-summary-name-letter-spacing: -1%;
+
+    /* Item Variants & Quantity - GT America Trial, Weight: Regular, Size: 12, Line height: 17 */
+    --ref-c-product-summary-meta-color: #444444;
+    --ref-c-product-summary-variants-margin-bottom: var(--dxp-g-spacing-xxxsmall, 0.125rem);
+    --ref-c-product-summary-facet-font-size: 12px;
+    --ref-c-product-summary-facet-line-height: 17px;
+    --ref-c-product-summary-facet-letter-spacing: -1%;
+    --ref-c-product-summary-facet-value-color: #1c1c1c;
+    --ref-c-product-summary-facet-value-margin-left: var(--dxp-g-spacing-xxsmall, 0.25rem);
+    --ref-c-product-summary-facet-value-font-weight: 400;
+
+    --ref-c-product-summary-quantity-font-size: 12px;
+    --ref-c-product-summary-quantity-line-height: 17px;
+    --ref-c-product-summary-quantity-letter-spacing: -1%;
+    --ref-c-product-summary-quantity-value-color: #1c1c1c;
+    --ref-c-product-summary-quantity-value-margin-left: var(--dxp-g-spacing-xxsmall, 0.25rem);
+    --ref-c-product-summary-quantity-value-font-weight: 400;
+
+    /* Item Price - GT America Trial, Weight: Regular, Size: 12, Line height: 17 */
+    --ref-c-product-summary-price-padding-top: var(--dxp-g-spacing-xxxsmall, 0.125rem);
+    --ref-c-product-summary-price-color: #1c1c1c;
+    --ref-c-product-summary-price-font-size: 12px;
+    --ref-c-product-summary-price-font-weight: 400;
+    --ref-c-product-summary-price-line-height: 17px;
+    --ref-c-product-summary-price-letter-spacing: -1%;
+
+    --ref-c-product-summary-price-container-gap: var(--dxp-g-spacing-xsmall, 0.5rem);
+
+    --ref-c-product-summary-original-price-font-size: 12px;
+    --ref-c-product-summary-original-price-color: #747474;
+    --ref-c-product-summary-original-price-font-weight: 400;
+    --ref-c-product-summary-original-price-line-height: 17px;
+    --ref-c-product-summary-original-price-letter-spacing: -1%;
+
+    --ref-c-product-summary-current-price-font-size: 12px;
+    --ref-c-product-summary-current-price-color: #1c1c1c;
+    --ref-c-product-summary-current-price-font-weight: 400;
+    --ref-c-product-summary-current-price-line-height: 17px;
+    --ref-c-product-summary-current-price-letter-spacing: -1%;
+}
+
+.product-summary {
+    background-color: var(--ref-c-product-summary-background);
+    padding: var(--ref-c-product-summary-padding);
+    margin-bottom: var(--ref-c-product-summary-margin-bottom);
+    border-radius: var(--ref-c-product-summary-border-radius);
+    border: var(--ref-c-product-summary-border);
+    font-family: var(--ref-c-product-summary-font-family);
+}
+
+.product-summary:last-child {
+    padding-bottom: 0;
+}
+
+img {
+    max-width: var(--ref-c-product-summary-image-max-size);
+    max-height: var(--ref-c-product-summary-image-max-size);
+    width: auto;
+    height: auto;
+    object-fit: contain; /* preserve entire image */
+    border-top-left-radius: var(--ref-c-product-summary-image-border-radius);
+    border-bottom-left-radius: var(--ref-c-product-summary-image-border-radius);
+}
+
+.item-details {
+    min-width: 0;
+    overflow: hidden;
+    min-height: 100px; /* Ensure minimum height for proper distribution */
+}
+
+.item-name {
+    color: var(--ref-c-product-summary-name-color);
+    margin-bottom: var(--ref-c-product-summary-name-margin-bottom);
+    font-size: var(--ref-c-product-summary-name-font-size);
+    font-weight: var(--ref-c-product-summary-name-font-weight);
+    line-height: var(--ref-c-product-summary-name-line-height);
+    letter-spacing: var(--ref-c-product-summary-name-letter-spacing);
+    margin-top: 0;
+}
+
+/* Container for facets that grows to fill available space */
+.facets-container {
+    /* Custom flex properties for even spacing will be handled by SLDS classes */
+}
+
+.item-variants {
+    color: var(--ref-c-product-summary-meta-color);
+    margin-bottom: var(--ref-c-product-summary-variants-margin-bottom);
+    list-style: none;
+    padding-left: 0;
+    margin-left: 0;
+    /* Custom flex properties for even spacing */
+    justify-content: space-evenly;
+    height: 100%;
+}
+
+.facet-item {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: var(--ref-c-product-summary-facet-font-size);
+    font-weight: var(--dxp-g-font-weight-regular, 400);
+    line-height: var(--ref-c-product-summary-facet-line-height);
+    letter-spacing: var(--ref-c-product-summary-facet-letter-spacing);
+    margin: var(--dxp-g-spacing-xxxsmall, 0.125rem) 0;
+}
+
+.facet-value {
+    font-weight: var(--ref-c-product-summary-facet-value-font-weight);
+    color: var(--ref-c-product-summary-facet-value-color);
+    margin-left: var(--ref-c-product-summary-facet-value-margin-left);
+}
+
+.item-quantity {
+    color: var(--ref-c-product-summary-meta-color);
+    white-space: nowrap;
+    font-size: var(--ref-c-product-summary-quantity-font-size);
+    font-weight: var(--dxp-g-font-weight-regular, 400);
+    line-height: var(--ref-c-product-summary-quantity-line-height);
+    letter-spacing: var(--ref-c-product-summary-quantity-letter-spacing);
+}
+
+.item-quantity-value {
+    font-weight: var(--ref-c-product-summary-quantity-value-font-weight);
+    color: var(--ref-c-product-summary-quantity-value-color);
+    margin-left: var(--ref-c-product-summary-quantity-value-margin-left);
+}
+
+.item-price {
+    white-space: nowrap;
+    color: var(--ref-c-product-summary-price-color);
+    font-size: var(--ref-c-product-summary-price-font-size);
+    font-weight: var(--ref-c-product-summary-price-font-weight);
+    line-height: var(--ref-c-product-summary-price-line-height);
+    letter-spacing: var(--ref-c-product-summary-price-letter-spacing);
+}
+
+.original-price {
+    font-size: var(--ref-c-product-summary-original-price-font-size);
+    color: var(--ref-c-product-summary-original-price-color);
+    text-decoration: line-through;
+    font-weight: var(--ref-c-product-summary-original-price-font-weight);
+    line-height: var(--ref-c-product-summary-original-price-line-height);
+    letter-spacing: var(--ref-c-product-summary-original-price-letter-spacing);
+}
+
+.current-price {
+    font-size: var(--ref-c-product-summary-current-price-font-size);
+    color: var(--ref-c-product-summary-current-price-color);
+    font-weight: var(--ref-c-product-summary-current-price-font-weight);
+    line-height: var(--ref-c-product-summary-current-price-line-height);
+    letter-spacing: var(--ref-c-product-summary-current-price-letter-spacing);
+}

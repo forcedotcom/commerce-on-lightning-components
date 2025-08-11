@@ -1,0 +1,217 @@
+/*
+ * productDetails.css
+ *
+ * This CSS file styles the ProductDetails LWC. It employs a layered
+ * approach to styling, prioritizing consumer customization via public `--ref-c-`
+ * styling hooks, then leveraging Salesforce DXP (Lightning Web Runtime)
+ * theme hooks, and finally falling back to default values if neither are defined.
+ */
+
+:host {
+    --ref-c-product-title-font-size: var(--dxp-s-body-font-size, 1rem);
+    --ref-c-product-title-font-weight: var(--dxp-g-font-weight-medium, 600);
+    --ref-c-product-title-line-height: var(--dxp-s-body-line-height, 1.5rem);
+    --ref-c-product-description-font-size: 0.875rem;
+    --ref-c-product-description-line-height: var(--dxp-s-text-heading-medium-line-height, 1.25rem);
+}
+
+ul:not(.browser-default) li {
+    list-style-type: disc;
+}
+
+.product-title {
+    font-weight: var(--ref-c-product-title-font-weight);
+    font-size: var(--ref-c-product-title-font-size);
+    line-height: var(--ref-c-product-title-line-height);
+}
+
+.product-description,
+.product-feature {
+    font-size: var(--ref-c-product-description-font-size);
+    line-height: var(--ref-c-product-description-line-height);
+}
+
+.button-checkout {
+    --ref-c-common-button-primary-color: var(--dxp-g-success-contrast-2);
+    --ref-c-common-button-primary-color-active: var(--dxp-g-success-contrast-2);
+    --ref-c-common-button-primary-color-hover: var(--dxp-g-success-contrast-2);
+    --ref-c-common-button-primary-color-background: var(--dxp-g-neutral-contrast-2);
+    --ref-c-common-button-primary-color-background-hover: var(--dxp-g-neutral-contrast-2);
+    --ref-c-common-button-primary-color-border: var(--dxp-g-neutral-1);
+    --ref-c-common-button-primary-color-border-hover: var(--dxp-g-neutral-contrast-2);
+    --ref-c-common-button-primary-color-background-active: var(--dxp-g-neutral-contrast-2);
+    --ref-c-common-button-primary-color-border-active: var(--dxp-g-neutral-1);
+    --ref-c-common-link-primary-color: var(--dxp-g-success-contrast-2);
+    --ref-c-common-link-primary-color-hover: var(--dxp-g-success-contrast-2);
+    --ref-c-common-link-primary-color-focus: var(--dxp-g-success-contrast-2);
+    --ref-c-common-link-primary-color-active: var(--dxp-g-success-contrast-2);
+    --ref-c-common-button-secondary-color: var(--dxp-g-neutral-contrast-2);
+    --ref-c-common-button-secondary-color-active: var(--dxp-g-neutral-contrast-2);
+    --ref-c-common-button-secondary-color-hover: var(--dxp-g-neutral-contrast-2);
+    --ref-c-common-button-secondary-color-background: var(--dxp-g-success-contrast-2);
+    --ref-c-common-button-secondary-color-background-hover: var(--dxp-g-success-contrast-2);
+    --ref-c-common-button-secondary-color-border: var(--dxp-g-neutral-1);
+    --ref-c-common-button-secondary-color-border-hover: var(--dxp-g-neutral-contrast-2);
+    --ref-c-common-button-secondary-color-background-active: var(--dxp-g-success-contrast-2);
+    --ref-c-common-button-secondary-color-border-active: var(--dxp-g-neutral-1);
+}
+
+.quantity-increment-button,
+.quantity-decrement-button {
+    --ref-c-common-button-color: var(--dxp-g-success-contrast);
+    --ref-c-common-button-secondary-color: var(--dxp-g-neutral-contrast-2);
+    --ref-c-common-button-secondary-color-active: var(--dxp-g-neutral-contrast-2);
+    --ref-c-common-button-secondary-color-hover: var(--dxp-g-neutral-contrast-2);
+    --ref-c-common-button-secondary-color-background: var(--dxp-g-success-contrast-2);
+    --ref-c-common-button-secondary-color-background-hover: var(--dxp-g-success-contrast-2);
+    --ref-c-common-button-secondary-color-border: var(--dxp-g-neutral-1);
+    --ref-c-common-button-secondary-color-border-hover: var(--dxp-g-neutral-contrast-2);
+    --ref-c-common-button-secondary-color-background-active: var(--dxp-g-success-contrast-2);
+    --ref-c-common-button-secondary-color-border-active: var(--dxp-g-neutral-1);
+    display: inline-block;
+}
+
+.quantity-title {
+    font-size: small;
+    display: inline-block;
+}
+
+.quantity-value {
+    font-size: small;
+    font-weight: bold;
+    display: inline-block;
+}
+
+/* VARIANTS */
+.variants-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--dxp-g-spacing-xsmall, 0.5rem);
+}
+
+.variant-options {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.variant-button {
+    --ref-c-common-button-color: var(--dxp-g-root-contrast, #000);
+    --ref-c-common-button-color-hover: var(--dxp-g-root-contrast, #000);
+    --ref-c-common-button-color-focus: var(--dxp-g-root-contrast, #000);
+    --ref-c-common-button-color-active: var(--dxp-g-root-contrast, #000);
+    background: var(--dxp-g-root, #fff);
+    border: 0.08rem solid var(--dxp-g-neutral-1, #e2e2e2);
+    border-radius: var(--dxp-s-button-radius-border, 1rem);
+    width: auto;
+    height: 2rem;
+    cursor: pointer;
+    transition: var(--dxp-c-button-neutral-transition, all 0.2s ease);
+    padding: var(--dxp-g-spacing-small, 0.5rem) var(--dxp-g-spacing-medium, 1rem);
+    margin: var(--dxp-g-spacing-xxsmall, 0.25rem);
+    margin-left: 0rem;
+}
+
+.variant-button:hover {
+    border-color: var(--dxp-g-neutral-3, #666);
+}
+
+.variant-button.selected {
+    --ref-c-common-button-color: var(--dxp-g-root, #fff);
+    --ref-c-common-button-color-hover: var(--dxp-g-root, #fff);
+    --ref-c-common-button-color-focus: var(--dxp-g-root, #fff);
+    --ref-c-common-button-color-active: var(--dxp-g-root, #fff);
+    background: var(--dxp-g-root-contrast, #000);
+    border-color: var(--dxp-g-brand-3, #333333);
+}
+
+.variant-button.color-button {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 0.063rem solid var(--dxp-g-neutral, #eaeaea);
+    -o-background-size: cover;
+    -moz-background-size: cover;
+    -webkit-background-size: cover;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    margin: 0 8px 8px 0;
+    display: inline-block;
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+    padding: 0;
+}
+
+.variant-button.color-button.selected {
+    border: none;
+    box-shadow: 0 0 0 2px #fff, 0 0 0 3px #111;
+}
+
+.variant-button.color-button:hover:not(.selected):not(:disabled) {
+    border: none;
+    box-shadow: 0 0 0 2px #fff, 0 0 0 3px var(--dxp-g-neutral-3, #666);
+}
+
+.variant-message {
+    font-size: small;
+}
+
+.disabled {
+    pointer-events: none;
+    text-decoration: line-through;
+    color: var(--ref-c-common-button-color-disabled, var(--dxp-g-neutral-1));
+}
+.color-button {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid var(--dxp-g-neutral-1, #e2e2e2);
+    padding: 1px;
+}
+
+.variant-button.color-button:disabled {
+    cursor: not-allowed;
+    position: relative;
+}
+
+.variant-button.color-button:disabled::before {
+    position: absolute;
+    content: '';
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #808080;
+    border-radius: 50%;
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.variant-button.color-button:disabled::after {
+    position: absolute;
+    content: '';
+    left: 0;
+    top: 50%;
+    right: 0;
+    border-top: 1px solid;
+    border-color: var(--dxp-g-neutral, #eaeaea);
+
+    -webkit-transform: rotate(-45deg);
+    -moz-transform: rotate(-45deg);
+    -ms-transform: rotate(-45deg);
+    -o-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+}
+
+.variant-selected-value {
+    font-weight: bold;
+}
+
+c-common-button {
+    height: 40px;
+}
+
+.apple-pay-button {
+    font-size: medium;
+}

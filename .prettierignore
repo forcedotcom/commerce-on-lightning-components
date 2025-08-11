@@ -1,0 +1,9 @@
+.sf
+.sfdx
+.vscode
+jsconfig.json
+coverage/
+CHANGELOG.md
+
+# Exclude project config (edited by CI workflow)
+sfdx-project.json

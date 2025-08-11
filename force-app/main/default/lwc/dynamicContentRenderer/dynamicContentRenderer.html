@@ -1,0 +1,44 @@
+<template lwc:render-mode="light">
+    <div
+        class={generateMessageBubbleClassname}
+        role="region"
+        aria-label={ariaLabelConversationContent}
+        aria-live="polite">
+        <template lwc:if={isProductRecommendations}>
+            <c-product-search-recommendations
+                product-data={dynamicComponentData.productData}
+                products-description={dynamicComponentData.productsDescription}
+                category-data={dynamicComponentData.categoryData}
+                categories-description={dynamicComponentData.categoriesDescription}
+                onaddtocart={handleAddToCart}
+                onselectcategory={handleSelectCategory}
+                onshowproduct={handleShowProduct}></c-product-search-recommendations>
+        </template>
+        <template lwc:elseif={isProductDetails}>
+            <c-product-details
+                product={dynamicComponentData.product}
+                onaddtocart={handleAddToCart}></c-product-details>
+        </template>
+        <template lwc:elseif={isCartSummary}>
+            <c-cart-summary
+                cart-summary={dynamicComponentData.cartSummary}
+                entry-id={entryId}
+                onpayment={handlePayment}></c-cart-summary>
+        </template>
+        <template lwc:elseif={isOrderConfirmation}>
+            <c-summary-details details={dynamicComponentData.orderDetails}></c-summary-details>
+        </template>
+        <template lwc:elseif={isOrderCompleted}>
+            <div class={richTextClasses}>
+                <lightning-formatted-rich-text value={orderCompletedText}></lightning-formatted-rich-text>
+            </div>
+        </template>
+        <template lwc:else>
+            <div class={richTextClasses}>
+                <lightning-formatted-rich-text
+                    value={textContent}
+                    aria-label={ariaLabelRichTextContent}></lightning-formatted-rich-text>
+            </div>
+        </template>
+    </div>
+</template>

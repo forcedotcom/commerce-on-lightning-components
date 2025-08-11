@@ -1,0 +1,167 @@
+<template lwc:render-mode="light">
+    <div
+        class="summary slds-p-horizontal_medium"
+        role="region"
+        aria-label={summaryAriaLabel}>
+        <div class={headerClasses}>
+            <div class="header-content slds-col">
+                <template if:true={isCartSummary}>
+                    <div class="confirmation-title cart-summary-title slds-p-top_small slds-p-bottom_small">
+                        <h2>
+                            <lightning-formatted-rich-text value={confirmationTitle}></lightning-formatted-rich-text>
+                        </h2>
+                    </div>
+                </template>
+                <template if:false={isCartSummary}>
+                    <h2 class="confirmation-title slds-p-top_small slds-p-bottom_x-small">{confirmationTitle}</h2>
+                </template>
+
+                <button
+                    class={clickableRowClasses}
+                    onclick={handleToggleExpanded}
+                    aria-label={toggleButtonAriaLabel}
+                    aria-expanded={isExpanded}
+                    aria-controls="summary-content">
+                    <template if:true={isCartSummary}>
+                        <lightning-formatted-rich-text
+                            class="delivery-message slds-col slds-text-align_left"
+                            value={cartSummaryBodyMessage}></lightning-formatted-rich-text>
+                    </template>
+                    <template if:false={isCartSummary}>
+                        <p class="delivery-message slds-col slds-m-around_none slds-text-align_left">
+                            {summaryMessage}
+                        </p>
+                    </template>
+
+                    <div
+                        class="caret-container slds-col slds-no-flex slds-p-horizontal_small"
+                        aria-hidden="true">
+                        <lightning-icon
+                            icon-name={caretIconName}
+                            size="x-small"
+                            class="caret-icon"></lightning-icon>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <div
+            id="summary-content"
+            class={expandableContentClasses}
+            aria-live="polite">
+            <template if:true={isExpanded}>
+                <template if:false={isCartSummary}>
+                    <template if:true={orderNumber}>
+                        <div class="slds-p-bottom_medium">
+                            <span class="order-id-label">{i18n.orderIdLabel}</span>
+                            <span class="order-id-number slds-p-left_x-small">#{orderNumber}</span>
+                        </div>
+                    </template>
+                </template>
+
+                <div
+                    class="items slds-p-bottom_x-small"
+                    role="list"
+                    aria-label={itemsAriaLabel}>
+                    <template
+                        for:each={items}
+                        for:item="item">
+                        <div
+                            role="listitem"
+                            key={item.name}
+                            class="slds-p-bottom_x-small">
+                            <c-product-summary item={item}></c-product-summary>
+                        </div>
+                    </template>
+                </div>
+
+                <div
+                    class={totalsClasses}
+                    role="region"
+                    aria-label={totalsAriaLabel}>
+                    <div class="summary-row slds-grid slds-grid_align-spread slds-p-bottom_xxx-small">
+                        <span
+                            class="summary-label slds-col"
+                            id="subtotal-label">
+                            {i18n.subtotalLabel}
+                        </span>
+                        <span
+                            class="summary-value slds-col slds-no-flex slds-text-align_right"
+                            aria-labelledby="subtotal-label">
+                            {subtotal}
+                        </span>
+                    </div>
+
+                    <template if:true={hasPromotions}>
+                        <div class="summary-row slds-grid slds-grid_align-spread slds-p-bottom_xxx-small">
+                            <span
+                                class="summary-label slds-col"
+                                id="promotions-label">
+                                {i18n.promotionsLabel}
+                            </span>
+                            <span
+                                class="summary-value slds-col slds-no-flex slds-text-align_right"
+                                aria-labelledby="promotions-label">
+                                {promotions}
+                            </span>
+                        </div>
+                    </template>
+
+                    <div class="summary-row slds-grid slds-grid_align-spread slds-p-bottom_xxx-small">
+                        <span
+                            class="summary-label slds-col"
+                            id="shipping-label">
+                            {i18n.shippingLabel}
+                        </span>
+                        <span
+                            class="summary-value slds-col slds-no-flex slds-text-align_right"
+                            aria-labelledby="shipping-label">
+                            {shipping}
+                        </span>
+                    </div>
+
+                    <template if:true={hasShippingDiscount}>
+                        <div class="summary-row slds-grid slds-grid_align-spread slds-p-bottom_xxx-small">
+                            <span
+                                class="summary-label slds-col"
+                                id="shipping-discount-label">
+                                {i18n.shippingDiscountLabel}
+                            </span>
+                            <span
+                                class="summary-value slds-col slds-no-flex slds-text-align_right"
+                                aria-labelledby="shipping-discount-label">
+                                {shippingDiscount}
+                            </span>
+                        </div>
+                    </template>
+
+                    <div class="summary-row slds-grid slds-grid_align-spread slds-p-bottom_x-small">
+                        <span
+                            class="summary-label slds-col"
+                            id="taxes-label">
+                            {i18n.taxesLabel}
+                        </span>
+                        <span
+                            class="summary-value slds-col slds-no-flex slds-text-align_right"
+                            aria-labelledby="taxes-label">
+                            {taxes}
+                        </span>
+                    </div>
+
+                    <div class="summary-row total slds-grid slds-grid_align-spread">
+                        <span
+                            class="slds-col"
+                            id="total-label">
+                            {i18n.totalLabel}
+                        </span>
+                        <span
+                            class="slds-col slds-no-flex slds-text-align_right"
+                            aria-labelledby="total-label">
+                            {total}
+                        </span>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+</template>

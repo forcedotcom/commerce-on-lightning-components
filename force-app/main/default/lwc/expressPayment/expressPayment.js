@@ -1,0 +1,172 @@
+/*
+ * Copyright (c) 2025, salesforce.com, inc.
+ * All rights reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ * For full license text, see the LICENSE file in the repo
+ * root or https://opensource.org/licenses/apache-2-0/
+ */
+import { api, LightningElement } from 'lwc';
+
+// Global listener management to ensure only one active listener at a time
+let globalMessageListener = null;
+let activeComponent = null;
+
+export default class ExpressPayment extends LightningElement {
+    windowMessageListener = null;
+    loadTimeout = null;
+    static LOAD_TIMEOUT_MS = 5000; // 5 seconds
+
+    /**
+     * Conversation entry data.
+     * @type {string}
+     */
+    @api entryId;
+
+    /**
+     * Express payment URL domain.
+     * @type {string}
+     */
+    @api expressPaymentUrl;
+
+    /**
+     * Returns the URL for the express iframe
+     * @returns {string} URL for iframe
+     */
+    get expressUrl() {
+        if (!this.expressPaymentUrl || !this.entryId) {
+            return '';
+        }
+        return `${this.expressPaymentUrl}?id=${this.entryId}`;
+    }
+
+    connectedCallback() {
+        // Check if express payment URL is empty or invalid
+        if (
+            !this.expressPaymentUrl ||
+            this.expressPaymentUrl.trim() === '' ||
+            this.expressPaymentUrl.trim() === 'null'
+        ) {
+            this.dispatchEvent(
+                new CustomEvent('expressloaded', {
+                    detail: { available: false, reason: 'no_url' },
+                })
+            );
+            return; // Don't set up listeners or timeout if no valid express URL
+        }
+
+        // Remove any existing global listener before setting up a new one
+        this._removeGlobalListener();
+
+        // Set up the global listener and track this component as active
+        this.windowMessageListener = (evt) => this._handleWindowMessage(evt);
+        globalMessageListener = this.windowMessageListener;
+        activeComponent = this;
+        window.addEventListener('message', globalMessageListener);
+
+        // Start timeout when component connects
+        this.startLoadTimeout();
+    }
+
+    disconnectedCallback() {
+        this._removeGlobalListener();
+        this.clearLoadTimeout();
+    }
+
+    /**
+     * Remove the global message listener if this component is the active one
+     * @private
+     */
+    _removeGlobalListener() {
+        if (activeComponent === this && globalMessageListener) {
+            window.removeEventListener('message', globalMessageListener);
+            globalMessageListener = null;
+            activeComponent = null;
+        }
+        this.windowMessageListener = null;
+    }
+
+    startLoadTimeout() {
+        // eslint-disable-next-line @lwc/lwc/no-async-operation
+        this.loadTimeout = setTimeout(() => {
+            // Remove the message listener to prevent further events
+            this._removeGlobalListener();
+
+            // Dispatch event to indicate timeout
+            this.dispatchEvent(
+                new CustomEvent('expressloaded', {
+                    detail: { available: false, timeout: true },
+                })
+            );
+        }, ExpressPayment.LOAD_TIMEOUT_MS);
+    }
+
+    clearLoadTimeout() {
+        if (this.loadTimeout) {
+            clearTimeout(this.loadTimeout);
+            this.loadTimeout = null;
+        }
+    }
+
+    _handleWindowMessage(event) {
+        // Only process events if this component is still the active one
+        if (activeComponent !== this) {
+            return;
+        }
+
+        // Clear timeout since we received a message
+        this.clearLoadTimeout();
+
+        if (event.data.type === 'express.payment.available') {
+            this.dispatchEvent(
+                new CustomEvent('expressloaded', {
+                    detail: { available: true },
+                })
+            );
+        }
+
+        if (event.data.type === 'express.payment.unavailable') {
+            this.dispatchEvent(
+                new CustomEvent('expressloaded', {
+                    detail: { available: false },
+                })
+            );
+        }
+
+        // For payment events, process once and remove listener
+        if (
+            event.data.type === 'express.payment.success' ||
+            event.data.type === 'express.payment.failure' ||
+            event.data.type === 'express.payment.cancel'
+        ) {
+            // Remove the message listener so no further payment events are handled
+            this._removeGlobalListener();
+        }
+
+        if (event.data.type === 'express.payment.success') {
+            this.dispatchEvent(
+                new CustomEvent('payment', {
+                    bubbles: true,
+                    detail: event.data.payload.orderId,
+                })
+            );
+        }
+
+        if (event.data.type === 'express.payment.failure') {
+            this.dispatchEvent(
+                new CustomEvent('payment', {
+                    bubbles: true,
+                    detail: { status: 'failure' },
+                })
+            );
+        }
+
+        if (event.data.type === 'express.payment.cancel') {
+            this.dispatchEvent(
+                new CustomEvent('payment', {
+                    bubbles: true,
+                    detail: { status: 'cancel' },
+                })
+            );
+        }
+    }
+}

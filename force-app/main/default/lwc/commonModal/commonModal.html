@@ -1,0 +1,62 @@
+<template>
+    <lightning-modal-header label={label}></lightning-modal-header>
+    <template lwc:if={hasMessageText}>
+        <lightning-modal-body>{message}</lightning-modal-body>
+        <lightning-modal-footer>
+            <div class="slds-grid slds-wrap">
+                <div
+                    class="slds-col slds-size_1-of-1 slds-large-size_1-of-2 slds-p-around_x-small"
+                    if:true={hasSecondaryAction}>
+                    <c-common-button
+                        variant="secondary"
+                        width="stretch"
+                        assistive-text={secondaryActionLabel}
+                        onclick={handleSecondaryAction}>
+                        {secondaryActionLabel}
+                    </c-common-button>
+                </div>
+
+                <div
+                    if:true={hasPrimaryAction}
+                    class="slds-col slds-size_1-of-1 slds-large-size_1-of-2 slds-p-around_x-small">
+                    <c-common-button
+                        variant="primary"
+                        width="stretch"
+                        assistive-text={primaryActionLabel}
+                        onclick={handlePrimaryAction}>
+                        {primaryActionLabel}
+                    </c-common-button>
+                </div>
+            </div>
+        </lightning-modal-footer>
+    </template>
+    <template lwc:else>
+        <lightning-modal-body>
+            <div class="slds-grid slds-wrap">
+                <div
+                    class="slds-col slds-size_1-of-1 slds-large-size_1-of-2 slds-p-around_x-small"
+                    if:true={hasSecondaryAction}>
+                    <c-common-button
+                        variant="secondary"
+                        width="stretch"
+                        assistive-text={secondaryActionLabel}
+                        onclick={handleSecondaryAction}>
+                        {secondaryActionLabel}
+                    </c-common-button>
+                </div>
+
+                <div
+                    if:true={hasPrimaryAction}
+                    class="slds-col slds-size_1-of-1 slds-large-size_1-of-2 slds-p-around_x-small">
+                    <c-common-button
+                        variant="primary"
+                        width="stretch"
+                        assistive-text={primaryActionLabel}
+                        onclick={handlePrimaryAction}>
+                        {primaryActionLabel}
+                    </c-common-button>
+                </div>
+            </div>
+        </lightning-modal-body>
+    </template>
+</template>

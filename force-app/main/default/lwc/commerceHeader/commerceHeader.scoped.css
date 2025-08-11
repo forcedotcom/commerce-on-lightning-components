@@ -1,0 +1,178 @@
+/* 
+ * Root element styling
+ * - Uses flexbox for horizontal layout
+ * - Sticky positioning for persistent header
+ * - White background with consistent padding
+ */
+:host {
+    /* Flex layout: menu, center content, and minimize button */
+    display: flex;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+
+    /* Sticky header pinned to top */
+    position: sticky;
+    top: 0;
+    z-index: 10;
+
+    /* background-color: #ffffff → var(--dxp-g-root, #ffffff) */
+    background-color: var(--dxp-g-root, #ffffff);
+    /* padding: 0 14px → 0 var(--dxp-s-button-padding, 14px) */
+    padding: 0 var(--dxp-s-button-padding, 14px);
+    /* min-height: 50px (no matching dxp token) */
+    min-height: 50px;
+
+    /* border: 1px solid #d8dde6 → 1px solid var(--dxp-s-form-element-color-border, #d9d7d5) */
+    border-bottom: 1px solid var(--dxp-s-form-element-color-border, #d9d7d5);
+    /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) (no matching dxp token) */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 
+ * Dropdown trigger container
+ * - Relative positioning for absolute dropdown positioning
+ * - Maintains proper stacking context
+ */
+.slds-dropdown-trigger {
+    position: relative;
+}
+
+/* 
+ * Center section
+ * - Flex container for logo and text
+ * - Grows to fill available space
+ * - Centers content both horizontally and vertically
+ */
+.headerCenter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+}
+
+/* 
+ * Brand logo
+ * - Fixed dimensions for consistency
+ * - Right margin for spacing from text
+ */
+.brand-logo {
+    /* margin-right: 8px (no matching dxp token) */
+    margin-right: 8px;
+    /* width: 24px → var(--dxp-s-component-wrapper-spacer-size, 24px) */
+    width: var(--dxp-s-component-wrapper-spacer-size, 24px);
+    /* height: 24px → var(--dxp-s-component-wrapper-spacer-size, 24px) */
+    height: var(--dxp-s-component-wrapper-spacer-size, 24px);
+}
+
+/* 
+ * Header text
+ * - Single line with ellipsis overflow
+ * - Standard font size and weight
+ * - Black color for maximum contrast
+ */
+.headerTitle {
+    margin: 0;
+    /* font-size: 1rem → var(--dxp-s-body-font-size, 1rem) */
+    font-size: var(--dxp-s-body-font-size, 1rem);
+    /* font-weight: 400 → var(--dxp-s-body-font-weight, 400) */
+    font-weight: var(--dxp-s-body-font-weight, 400);
+    /* color: #000000 → var(--dxp-g-neutral-contrast, #000000) */
+    color: var(--dxp-g-neutral-contrast, #000000);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 
+ * Header buttons (menu and minimize)
+ * - Square dimensions for touch targets
+ * - Centered content
+ * - No background or border for clean look
+ */
+.headerButton {
+    background: none;
+    border: none;
+    padding: 0;
+    /* width: 32px (no matching dxp token) */
+    width: 32px;
+    /* height: 32px (no matching dxp token) */
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+/* 
+ * Dropdown menu
+ * - Absolute positioning below trigger
+ * - SLDS styling for consistency
+ * - Shadow for depth perception
+ * - Minimum width for content
+ */
+.optionsMenu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    /* margin-top: 0.25rem (no matching dxp token) */
+    margin-top: 0.25rem;
+    /* background-color: #ffffff → var(--dxp-g-root, #ffffff) */
+    background-color: var(--dxp-g-root, #ffffff);
+    /* border: 1px solid #d8dde6 → 1px solid var(--dxp-s-form-element-color-border, #d9d7d5) */
+    border: 1px solid var(--dxp-s-form-element-color-border, #d9d7d5);
+    /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) (no matching dxp token) */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    /* min-width: 8rem (no matching dxp token) */
+    min-width: 8rem;
+}
+
+/* 
+ * Nubbin arrow
+ * - Positioned relative to dropdown
+ * - Left-aligned with trigger
+ */
+.slds-nubbin_top-left:before,
+.slds-nubbin_top-left:after {
+    /* left: 1.5rem (no matching dxp token) */
+    left: 1.5rem;
+}
+
+/* 
+ * Dropdown items
+ * - Full width for better touch targets
+ * - Left-aligned text for readability
+ * - No background/border for clean look
+ * - Consistent padding for spacing
+ */
+.slds-dropdown__item-action {
+    /* padding: 0.75rem 1rem → var(--dxp-s-button-small-padding, 0.75rem) var(--dxp-s-button-padding, 14px) */
+    padding: var(--dxp-s-button-small-padding, 0.75rem) var(--dxp-s-button-padding, 14px);
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    /* color: #000000 → var(--dxp-g-neutral-contrast, #000000) */
+    color: var(--dxp-g-neutral-contrast, #000000);
+}
+
+/* 
+ * Dropdown item states
+ * - Light background on hover/focus
+ * - Maintains text color
+ */
+.slds-dropdown__item-action:hover,
+.slds-dropdown__item-action:focus {
+    /* background-color: #f4f6f9 (no matching dxp token) */
+    background-color: #f4f6f9;
+}
+
+/* 
+ * Error text color
+ * - Used for destructive actions (End Chat)
+ * - High contrast red for visibility
+ */
+.slds-text-color_error {
+    /* color: #c23934 → var(--dxp-g-destructive, #c23934) */
+    color: var(--dxp-g-destructive, #c23934);
+}
