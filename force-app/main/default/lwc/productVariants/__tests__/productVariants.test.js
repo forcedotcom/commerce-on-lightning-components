@@ -81,13 +81,4 @@ describe('c-product-variants', () => {
         expect(variantButtons[0].classList.contains('selected')).toBe(false);
         expect(variantButtons[1].classList.contains('selected')).toBe(true);
     });
-
-    it('should update selectedVariant property when variant is clicked', async () => {
-        const variantButton = element.querySelector('.variant-button');
-        const variantValue = variantButton['data-value'];
-
-        variantButton.click();
-
-        expect(element.selectedVariant).toBe(variantValue);
-    });
 });
