@@ -18,13 +18,12 @@ module.exports = {
     },
     setupFilesAfterEnv,
     preset: '@lwc/jest-preset',
-    moduleFileExtensions: ['js', 'html'],
     coverageThreshold: {
         global: {
-            branches: 88,
-            functions: 91,
-            lines: 93,
-            statements: 93,
+            branches: 96,
+            functions: 100,
+            lines: 98,
+            statements: 98,
         },
     },
 };

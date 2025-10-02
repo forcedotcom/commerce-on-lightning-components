@@ -3,26 +3,69 @@
     <template lwc:if={isImageCarousel}>
         <template lwc:if={filteredProductImageLinks.length}>
             <div class="slds-carousel-container image-carousel-container">
+                <!-- Left navigation arrow -->
+                <button
+                    lwc:if={displayCarouselArrows}
+                    class="carousel-nav-button carousel-nav-left"
+                    onclick={handlePreviousImage}
+                    aria-label={i18n.previousImage}
+                    disabled={isFirstImage}>
+                    <lightning-icon
+                        icon-name="utility:chevronleft"
+                        size="x-small"
+                        class="caret-icon"></lightning-icon>
+                </button>
+
                 <!-- Horizontal scrollable container for product images -->
                 <div class="slds-scrollable_x carousel-scroll-container">
                     <template
                         for:each={filteredProductImageLinks}
                         for:item="imageLink"
                         for:index="index">
-                        <!-- Individual image panel with lazy loading -->
                         <div
-                            key={imageLink.url}
+                            key={imageLink.uniqueKey}
                             class="slds-carousel__panel"
                             data-index={index}>
                             <img
                                 src={imageLink.url}
                                 alt={imageLink.url}
                                 title={imageLink.url}
-                                class="image-carousel-image"
-                                loading="lazy" />
+                                class="image-carousel-image" />
                         </div>
                     </template>
                 </div>
+
+                <!-- Right navigation arrow -->
+                <button
+                    lwc:if={displayCarouselArrows}
+                    class="carousel-nav-button carousel-nav-right"
+                    onclick={handleNextImage}
+                    aria-label={i18n.nextImage}
+                    disabled={isLastImage}>
+                    <lightning-icon
+                        icon-name="utility:chevronright"
+                        size="x-small"
+                        class="caret-icon"></lightning-icon>
+                </button>
+            </div>
+            <!-- Image indicator dots -->
+            <div
+                class="image-indicator-dots"
+                lwc:if={displayDots}>
+                <template
+                    for:each={dots}
+                    for:item="dot"
+                    for:index="index">
+                    <button
+                        key={dot.id}
+                        class="indicator-dot"
+                        data-index={index}
+                        onclick={handleDotClick}
+                        data-active={dot.isActive}
+                        aria-label={getImageAriaLabel}>
+                        <span class="dot"></span>
+                    </button>
+                </template>
             </div>
         </template>
     </template>
@@ -31,6 +74,19 @@
     <template lwc:elseif={isProductCardsCarousel}>
         <template lwc:if={hasProductData}>
             <div class="product-cards-carousel-container">
+                <!-- Left navigation arrow -->
+                <button
+                    lwc:if={displayCarouselArrows}
+                    class="carousel-nav-button carousel-nav-left"
+                    onclick={handlePreviousImage}
+                    aria-label={i18n.previousProduct}
+                    disabled={isFirstImage}>
+                    <lightning-icon
+                        icon-name="utility:chevronleft"
+                        size="x-small"
+                        class="caret-icon"></lightning-icon>
+                </button>
+
                 <!-- Horizontal scrollable container for product cards -->
                 <div class="carousel-scroll-container">
                     <template
@@ -69,28 +125,68 @@
                                         </p>
                                     </div>
                                 </template>
-                                <!-- Product pricing with optional original price -->
-                                <div
-                                    class="product-price"
-                                    aria-label="Product Price">
-                                    <lightning-formatted-number
-                                        value={product.price}
-                                        format-style="currency"
-                                        currency-code={product.currencyCode}></lightning-formatted-number>
-                                    <!-- Display original price if different from current price -->
-                                    <template lwc:if={product.originalPrice}>
-                                        <span class="original-price">
-                                            <lightning-formatted-number
-                                                value={product.originalPrice}
-                                                format-style="currency"
-                                                currency-code={product.currencyCode}></lightning-formatted-number>
-                                        </span>
+
+                                <!-- Product pricing and out of stock containert -->
+                                <div class="slds-grid">
+                                    <!-- Product pricing with optional original price -->
+                                    <div
+                                        class="product-price slds-col"
+                                        aria-label={i18n.productPrice}>
+                                        <lightning-formatted-number
+                                            value={product.price}
+                                            format-style="currency"
+                                            currency-code={product.currencyCode}></lightning-formatted-number>
+                                        <!-- Display original price if different from current price -->
+                                        <template lwc:if={product.originalPrice}>
+                                            <span class="original-price">
+                                                <lightning-formatted-number
+                                                    value={product.originalPrice}
+                                                    format-style="currency"
+                                                    currency-code={product.currencyCode}></lightning-formatted-number>
+                                            </span>
+                                        </template>
+                                    </div>
+                                    <!-- Display out of stock if the product is out of stock on the right side -->
+                                    <template lwc:if={product.outOfStock}>
+                                        <span class="out-of-stock slds-col">{i18n.outOfStock}</span>
                                     </template>
                                 </div>
                             </div>
                         </button>
                     </template>
                 </div>
+
+                <!-- Right navigation arrow -->
+                <button
+                    lwc:if={displayCarouselArrows}
+                    class="carousel-nav-button carousel-nav-right"
+                    onclick={handleNextImage}
+                    aria-label={i18n.nextProduct}
+                    disabled={isLastImage}>
+                    <lightning-icon
+                        icon-name="utility:chevronright"
+                        size="x-small"
+                        class="caret-icon"></lightning-icon>
+                </button>
+            </div>
+            <!-- Product indicator dots -->
+            <div
+                class="image-indicator-dots"
+                lwc:if={displayDots}>
+                <template
+                    for:each={dots}
+                    for:item="dot"
+                    for:index="index">
+                    <button
+                        key={dot.id}
+                        class="indicator-dot"
+                        data-index={index}
+                        onclick={handleDotClick}
+                        data-active={dot.isActive}
+                        aria-label={getImageAriaLabel}>
+                        <span class="dot"></span>
+                    </button>
+                </template>
             </div>
         </template>
     </template>

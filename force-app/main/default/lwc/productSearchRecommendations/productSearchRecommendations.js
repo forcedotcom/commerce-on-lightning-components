@@ -6,7 +6,6 @@
  * root or https://opensource.org/licenses/apache-2.0/
  */
 import { LightningElement, api } from 'lwc';
-import { addToCartAssistiveText } from './labels';
 
 /**
  * ProductSearchRecommendations displays a horizontally scrolling carousel of product recommendations
@@ -18,31 +17,49 @@ export default class productSearchRecommendations extends LightningElement {
     static renderMode = 'light';
 
     /**
-     * Assistive text for add-to-cart actions (from custom labels).
-     * @type {string}
+     * Configuration object containing language and other settings
+     * @type {object}
      */
-    i18n = { addToCartAssistiveText };
+    @api configuration = {};
 
     /**
      * Array of product data objects to display in the carousel.
      * @type {Array}
      */
-    @api productData = [];
+    _productData = [];
+
+    @api
+    get productData() {
+        return this._productData;
+    }
+
+    set productData(value) {
+        this._productData = value || [];
+    }
     /**
      * Description text shown above the product carousel.
      * @type {string}
      */
     @api productsDescription = '';
+
     /**
      * Array of category data objects for suggestion buttons.
      * @type {Array}
      */
     @api categoryData = [];
+
     /**
      * Description text shown above the category buttons.
      * @type {string}
      */
     @api categoriesDescription = '';
+
+    /**
+     * Controls whether category recommendations should be displayed.
+     * Defaults to false (categories hidden by default).
+     * @type {boolean}
+     */
+    @api showCategoryRecommendations = false;
 
     /**
      * Determines if there are product recommendations to display.
@@ -54,10 +71,11 @@ export default class productSearchRecommendations extends LightningElement {
 
     /**
      * Determines if there are category recommendations to display.
-     * @returns {boolean} True if there are category recommendations.
+     * Checks both the presence of category data AND the showCategoryRecommendations flag.
+     * @returns {boolean} True if there are category recommendations and they should be shown.
      */
     get hasCategoryRecommendations() {
-        return Array.isArray(this.categoryData) && this.categoryData.length > 0;
+        return this.showCategoryRecommendations && Array.isArray(this.categoryData) && this.categoryData.length > 0;
     }
 
     /**
@@ -66,6 +84,25 @@ export default class productSearchRecommendations extends LightningElement {
      */
     get hasRecommendations() {
         return this.hasProductRecommendations || this.hasCategoryRecommendations;
+    }
+
+    /**
+     * Returns product data with transformed image URLs (large -> medium).
+     * Note: This getter is only called when hasProductRecommendations is true,
+     * which already validates that productData is a non-empty array.
+     * @returns {Array} Array of product objects with transformed imageUrl properties
+     */
+    get transformedProductData() {
+        return this._productData.map((product) => {
+            // Create a new product object with transformed imageUrl
+            const transformedProduct = { ...product, outOfStock: !product?.inStock };
+
+            if (product.imageUrl && typeof product.imageUrl === 'string' && product.imageUrl.includes('/large/')) {
+                transformedProduct.imageUrl = product.imageUrl.replace('/large/', '/medium/');
+            }
+
+            return transformedProduct;
+        });
     }
 
     /**

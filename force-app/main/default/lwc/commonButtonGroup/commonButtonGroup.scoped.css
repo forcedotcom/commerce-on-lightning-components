@@ -1,0 +1,100 @@
+/*
+ * commonButtonGroup.scoped.css
+ *
+ * This CSS file styles the CommonButtonGroup LWC. It employs a layered
+ * approach to styling, prioritizing consumer customization via public `--ref-c-`
+ * styling hooks, then leveraging Salesforce DXP theme tokens,
+ * and finally falling back to default values if neither are defined.
+ */
+
+:host {
+    display: block;
+    box-sizing: border-box;
+
+    --ref-c-button-group-background-color: #f7f9fa;
+    --ref-c-button-group-border-color: #d9dfe7;
+    --ref-c-button-group-font-size: 0.875rem;
+    --ref-c-button-group-line-height: 1.875rem;
+    --ref-c-button-group-hover-shadow: 0 3px 12px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08);
+    --ref-c-button-group-active-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    --ref-c-button-group-focus-outline: 2px solid var(--dxp-g-brand, #0176d3);
+    --ref-c-button-group-focus-outline-offset: 2px;
+}
+
+.button-group-layout {
+    line-height: var(--ref-c-button-group-line-height);
+}
+
+.button-group {
+    font-size: var(--ref-c-button-group-font-size);
+    border-radius: 999px; /* Pill shape */
+    background-color: var(--ref-c-button-group-background-color);
+    border: 1px solid var(--ref-c-button-group-border-color);
+    padding: 0.375em 1.25em;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 20.563em; /* Prevent buttons from becoming too wide */
+    min-width: 0;
+    display: inline-block;
+    transition: all 0.2s ease-in-out;
+    position: relative;
+}
+
+.button-group:hover,
+.button-group:focus {
+    border-color: #9e9e9e;
+    background: var(--dxp-g-root, #fff);
+    outline: none;
+}
+
+/* Enhanced focus state for accessibility */
+.button-group:focus-visible {
+    outline: var(--ref-c-button-group-focus-outline);
+    outline-offset: var(--ref-c-button-group-focus-outline-offset);
+}
+
+/* Reduced shadow on active state for tactile feedback */
+.button-group:active {
+    border-color: #9e9e9e;
+}
+
+/* Disabled state styling */
+.button-group:disabled,
+.button-group[aria-disabled='true'] {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+    .button-group {
+        padding: 0.5em 1em;
+        max-width: 18em;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .button-group {
+        border-width: 2px;
+    }
+
+    .button-group:focus-visible {
+        outline-width: 3px;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .button-group {
+        transition: none;
+    }
+
+    .button-group:hover,
+    .button-group:focus {
+        transform: none;
+    }
+}

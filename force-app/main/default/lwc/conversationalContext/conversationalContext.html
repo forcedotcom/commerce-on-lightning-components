@@ -1,0 +1,10 @@
+<template lwc:render-mode="light">
+    <div class="slds-grid slds-grid_vertical">
+        <div class="slds-col slds-p-bottom_small slds-p-horizontal_medium">
+            <p class="contextual-actions-description">{contextualDescription}</p>
+            <c-common-button-group
+                items={contextualData}
+                onselectbutton={handleContextualButtonClick}></c-common-button-group>
+        </div>
+    </div>
+</template>

@@ -16,53 +16,46 @@
     display: block;
     box-sizing: border-box;
 
-    /* Font family - GT America Trial */
-    --ref-c-product-summary-font-family: 'GT America Trial', var(--dxp-g-font-family-body, sans-serif);
-
     /* Container styling */
-    --ref-c-product-summary-background: #ffffff;
+    --ref-c-product-summary-background: transparent;
     --ref-c-product-summary-padding: 0;
-    --ref-c-product-summary-border-radius: 5px;
-    --ref-c-product-summary-border: var(--dxp-g-border-width-thin, 1px) solid var(--dxp-g-neutral, #eaeaea);
 
     /* Image styling */
-    --ref-c-product-summary-image-max-size: 100px;
+    --ref-c-product-summary-image-size: 80px;
     --ref-c-product-summary-image-border-radius: var(--dxp-g-spacing-xxsmall, 0.25rem);
 
-    /* Item Name - GT America Trial, Weight: Medium, Size: 14, Line height: 20 */
+    /* Item Name */
     --ref-c-product-summary-name-color: #1c1c1c;
-    --ref-c-product-summary-name-margin-bottom: var(--dxp-g-spacing-xxxsmall, 0.125rem);
     --ref-c-product-summary-name-font-size: 14px;
     --ref-c-product-summary-name-font-weight: 500;
     --ref-c-product-summary-name-line-height: 20px;
     --ref-c-product-summary-name-letter-spacing: -1%;
 
-    /* Item Variants & Quantity - GT America Trial, Weight: Regular, Size: 12, Line height: 17 */
+    /* Item Variants & Quantity */
     --ref-c-product-summary-meta-color: #444444;
-    --ref-c-product-summary-variants-margin-bottom: var(--dxp-g-spacing-xxxsmall, 0.125rem);
     --ref-c-product-summary-facet-font-size: 12px;
     --ref-c-product-summary-facet-line-height: 17px;
     --ref-c-product-summary-facet-letter-spacing: -1%;
     --ref-c-product-summary-facet-value-color: #1c1c1c;
     --ref-c-product-summary-facet-value-margin-left: var(--dxp-g-spacing-xxsmall, 0.25rem);
-    --ref-c-product-summary-facet-value-font-weight: 400;
+    --ref-c-product-summary-facet-value-font-weight: 500;
 
     --ref-c-product-summary-quantity-font-size: 12px;
     --ref-c-product-summary-quantity-line-height: 17px;
     --ref-c-product-summary-quantity-letter-spacing: -1%;
     --ref-c-product-summary-quantity-value-color: #1c1c1c;
     --ref-c-product-summary-quantity-value-margin-left: var(--dxp-g-spacing-xxsmall, 0.25rem);
-    --ref-c-product-summary-quantity-value-font-weight: 400;
+    --ref-c-product-summary-quantity-value-font-weight: 500;
 
-    /* Item Price - GT America Trial, Weight: Regular, Size: 12, Line height: 17 */
-    --ref-c-product-summary-price-padding-top: var(--dxp-g-spacing-xxxsmall, 0.125rem);
+    /* Item Price */
     --ref-c-product-summary-price-color: #1c1c1c;
     --ref-c-product-summary-price-font-size: 12px;
     --ref-c-product-summary-price-font-weight: 400;
     --ref-c-product-summary-price-line-height: 17px;
     --ref-c-product-summary-price-letter-spacing: -1%;
 
-    --ref-c-product-summary-price-container-gap: var(--dxp-g-spacing-xsmall, 0.5rem);
+    /* Price container styling */
+    --ref-c-product-summary-price-container-gap: var(--dxp-g-spacing-xxxsmall, 0.125rem);
 
     --ref-c-product-summary-original-price-font-size: 12px;
     --ref-c-product-summary-original-price-color: #747474;
@@ -70,9 +63,9 @@
     --ref-c-product-summary-original-price-line-height: 17px;
     --ref-c-product-summary-original-price-letter-spacing: -1%;
 
-    --ref-c-product-summary-current-price-font-size: 12px;
+    --ref-c-product-summary-current-price-font-size: 14px;
     --ref-c-product-summary-current-price-color: #1c1c1c;
-    --ref-c-product-summary-current-price-font-weight: 400;
+    --ref-c-product-summary-current-price-font-weight: 500;
     --ref-c-product-summary-current-price-line-height: 17px;
     --ref-c-product-summary-current-price-letter-spacing: -1%;
 }
@@ -80,56 +73,51 @@
 .product-summary {
     background-color: var(--ref-c-product-summary-background);
     padding: var(--ref-c-product-summary-padding);
-    margin-bottom: var(--ref-c-product-summary-margin-bottom);
-    border-radius: var(--ref-c-product-summary-border-radius);
-    border: var(--ref-c-product-summary-border);
-    font-family: var(--ref-c-product-summary-font-family);
-}
-
-.product-summary:last-child {
-    padding-bottom: 0;
 }
 
 img {
-    max-width: var(--ref-c-product-summary-image-max-size);
-    max-height: var(--ref-c-product-summary-image-max-size);
-    width: auto;
-    height: auto;
-    object-fit: contain; /* preserve entire image */
-    border-top-left-radius: var(--ref-c-product-summary-image-border-radius);
-    border-bottom-left-radius: var(--ref-c-product-summary-image-border-radius);
+    width: var(--ref-c-product-summary-image-size);
+    height: var(--ref-c-product-summary-image-size);
+    object-fit: contain;
+    border-radius: var(--ref-c-product-summary-image-border-radius);
+}
+
+.item-content {
+    padding-left: 12px;
+    gap: 12px;
+    width: 0;
+    max-width: calc(100% - var(--ref-c-product-summary-image-size));
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
 }
 
 .item-details {
     min-width: 0;
     overflow: hidden;
-    min-height: 100px; /* Ensure minimum height for proper distribution */
+    display: flex;
+    flex-direction: column;
+}
+
+.item-price-column {
+    text-align: right;
+    flex-shrink: 0;
 }
 
 .item-name {
     color: var(--ref-c-product-summary-name-color);
-    margin-bottom: var(--ref-c-product-summary-name-margin-bottom);
     font-size: var(--ref-c-product-summary-name-font-size);
     font-weight: var(--ref-c-product-summary-name-font-weight);
     line-height: var(--ref-c-product-summary-name-line-height);
     letter-spacing: var(--ref-c-product-summary-name-letter-spacing);
-    margin-top: 0;
-}
-
-/* Container for facets that grows to fill available space */
-.facets-container {
-    /* Custom flex properties for even spacing will be handled by SLDS classes */
+    margin: 0;
 }
 
 .item-variants {
     color: var(--ref-c-product-summary-meta-color);
-    margin-bottom: var(--ref-c-product-summary-variants-margin-bottom);
     list-style: none;
-    padding-left: 0;
-    margin-left: 0;
-    /* Custom flex properties for even spacing */
-    justify-content: space-evenly;
-    height: 100%;
+    padding: 0;
+    margin: 0;
 }
 
 .facet-item {
@@ -141,7 +129,7 @@ img {
     font-weight: var(--dxp-g-font-weight-regular, 400);
     line-height: var(--ref-c-product-summary-facet-line-height);
     letter-spacing: var(--ref-c-product-summary-facet-letter-spacing);
-    margin: var(--dxp-g-spacing-xxxsmall, 0.125rem) 0;
+    margin: 0;
 }
 
 .facet-value {
@@ -172,6 +160,13 @@ img {
     font-weight: var(--ref-c-product-summary-price-font-weight);
     line-height: var(--ref-c-product-summary-price-line-height);
     letter-spacing: var(--ref-c-product-summary-price-letter-spacing);
+}
+
+.price-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: var(--ref-c-product-summary-price-container-gap);
 }
 
 .original-price {

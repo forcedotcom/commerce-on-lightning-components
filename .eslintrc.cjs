@@ -40,7 +40,7 @@ module.exports = {
             },
         },
         {
-            files: ['*.config.js', '.eslintrc.cjs'],
+            files: ['*.test.js'],
             env: {
                 node: true,
             },

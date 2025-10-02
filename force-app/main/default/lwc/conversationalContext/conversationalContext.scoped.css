@@ -1,0 +1,18 @@
+/*
+ * conversationalContext.scoped.css
+ *
+ * This CSS file styles the ConversationalContext LWC. It employs a layered
+ * approach to styling, prioritizing consumer customization via public `--ref-c-`
+ * styling hooks, then leveraging Salesforce DXP theme tokens,
+ * and finally falling back to default values if neither are defined.
+ */
+
+:host {
+    display: block;
+    box-sizing: border-box;
+    --ref-c-conversational-context-description-font-size: 0.875rem;
+}
+
+.contextual-actions-description {
+    font-size: var(--ref-c-conversational-context-description-font-size);
+}

@@ -19,8 +19,6 @@
     --ref-c-summary-details-text-color: #1c1c1c;
     --ref-c-summary-details-border-radius: var(--dxp-g-spacing-small, 0.75rem);
     --ref-c-summary-details-font-size: 14px;
-    --ref-c-summary-details-font-family: 'GT America Trial', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-        Oxygen, Ubuntu, Cantarell, sans-serif;
     --ref-c-summary-details-letter-spacing: -0.01em;
 
     /* Header & clickable row */
@@ -51,13 +49,17 @@
 
     /* Caret */
     --ref-c-summary-details-caret-min-width: 24px;
+
+    /* Footer */
+    --ref-c-summary-details-footer-font-size: 14px;
+    --ref-c-summary-details-footer-color: #444444;
+    --ref-c-summary-details-footer-line-height: 20px;
 }
 
 .summary {
     color: var(--ref-c-summary-details-text-color);
     border-radius: var(--ref-c-summary-details-border-radius);
     font-size: var(--ref-c-summary-details-font-size);
-    font-family: var(--ref-c-summary-details-font-family);
     letter-spacing: var(--ref-c-summary-details-letter-spacing);
     box-sizing: border-box;
 }
@@ -78,10 +80,6 @@
     outline: none;
 }
 
-.header-content {
-    min-width: 0;
-}
-
 .caret-container {
     min-width: var(--ref-c-summary-details-caret-min-width);
 }
@@ -96,7 +94,6 @@
     color: var(--ref-c-summary-details-title-color);
     font-weight: var(--ref-c-summary-details-title-font-weight);
     line-height: var(--ref-c-summary-details-title-line-height);
-    font-family: var(--ref-c-summary-details-font-family);
     letter-spacing: var(--ref-c-summary-details-letter-spacing);
 }
 
@@ -105,7 +102,6 @@
     color: var(--ref-c-summary-details-message-color);
     font-weight: var(--ref-c-summary-details-cart-title-font-weight);
     line-height: var(--ref-c-summary-details-message-line-height);
-    font-family: var(--ref-c-summary-details-font-family);
     letter-spacing: var(--ref-c-summary-details-letter-spacing);
     border-bottom: 1px solid #d9dfe7;
 }
@@ -115,7 +111,6 @@
     color: var(--ref-c-summary-details-message-color);
     font-weight: 400;
     line-height: var(--ref-c-summary-details-message-line-height);
-    font-family: var(--ref-c-summary-details-font-family);
     letter-spacing: var(--ref-c-summary-details-letter-spacing);
 }
 
@@ -139,7 +134,6 @@
     font-size: var(--ref-c-summary-details-label-font-size);
     font-weight: 400;
     line-height: 20px;
-    font-family: var(--ref-c-summary-details-font-family);
     letter-spacing: var(--ref-c-summary-details-letter-spacing);
 }
 
@@ -149,7 +143,6 @@
     white-space: nowrap;
     font-size: var(--ref-c-summary-details-value-font-size);
     line-height: 20px;
-    font-family: var(--ref-c-summary-details-font-family);
     letter-spacing: var(--ref-c-summary-details-letter-spacing);
 }
 
@@ -158,7 +151,6 @@
     color: var(--ref-c-summary-details-total-color);
     font-weight: var(--ref-c-summary-details-total-font-weight);
     line-height: var(--ref-c-summary-details-total-line-height);
-    font-family: var(--ref-c-summary-details-font-family);
     letter-spacing: var(--ref-c-summary-details-letter-spacing);
 }
 
@@ -167,7 +159,6 @@
     font-weight: 400;
     line-height: var(--ref-c-summary-details-message-line-height);
     color: var(--ref-c-summary-details-message-color);
-    font-family: var(--ref-c-summary-details-font-family);
     letter-spacing: var(--ref-c-summary-details-letter-spacing);
 }
 
@@ -176,6 +167,26 @@
     font-size: var(--ref-c-summary-details-message-font-size);
     line-height: var(--ref-c-summary-details-message-line-height);
     color: var(--ref-c-summary-details-message-color);
+    letter-spacing: var(--ref-c-summary-details-letter-spacing);
+}
+
+/* Product spacing and borders */
+.item {
+    border-bottom: 1px solid #d9dfe7;
+}
+
+/* Footer styling */
+.summary-footer {
+    border-top: 1px solid #d9dfe7;
+    text-align: left;
+}
+
+.footer-message {
+    font-size: var(--ref-c-summary-details-footer-font-size);
+    color: var(--ref-c-summary-details-footer-color);
+    font-weight: 400;
+    line-height: var(--ref-c-summary-details-footer-line-height);
     font-family: var(--ref-c-summary-details-font-family);
     letter-spacing: var(--ref-c-summary-details-letter-spacing);
+    margin: 0;
 }

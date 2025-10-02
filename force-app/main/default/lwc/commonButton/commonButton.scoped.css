@@ -7,6 +7,7 @@
     border-radius: var(--ref-c-common-button-radius-border, var(--dxp-s-button-radius-border));
     color: var(--ref-c-common-button-color, var(--dxp-s-button-color, var(--dxp-g-default)));
     display: var(--ref-c-common-button-display, inline-flex);
+    text-align: var(--ref-c-common-button-text-align, center);
 }
 .slds-button:hover:enabled {
     color: var(--ref-c-common-button-color-hover, var(--dxp-s-button-color-hover, var(--dxp-g-brand-1)));

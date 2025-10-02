@@ -4,12 +4,26 @@
         role="region"
         aria-label={ariaLabelConversationContent}
         aria-live="polite">
-        <template lwc:if={isProductRecommendations}>
+        <template lwc:if={isWelcomeMessage}>
+            <div class={richTextClasses}>
+                <lightning-formatted-rich-text
+                    value={textContent}
+                    aria-label={ariaLabelRichTextContent}></lightning-formatted-rich-text>
+            </div>
+            <template lwc:if={hasContextualData}>
+                <c-conversational-context
+                    contextual-data={dynamicComponentData.contextualData}
+                    contextual-description={dynamicComponentData.contextualDescription}
+                    onselectcontext={handleSelectContext}></c-conversational-context>
+            </template>
+        </template>
+        <template lwc:elseif={isProductRecommendations}>
             <c-product-search-recommendations
                 product-data={dynamicComponentData.productData}
                 products-description={dynamicComponentData.productsDescription}
                 category-data={dynamicComponentData.categoryData}
                 categories-description={dynamicComponentData.categoriesDescription}
+                configuration={configuration}
                 onaddtocart={handleAddToCart}
                 onselectcategory={handleSelectCategory}
                 onshowproduct={handleShowProduct}></c-product-search-recommendations>
@@ -17,16 +31,22 @@
         <template lwc:elseif={isProductDetails}>
             <c-product-details
                 product={dynamicComponentData.product}
-                onaddtocart={handleAddToCart}></c-product-details>
+                entry-id={entryId}
+                configuration={configuration}
+                onaddtocart={handleAddToCart}
+                onpayment={handlePayment}></c-product-details>
         </template>
         <template lwc:elseif={isCartSummary}>
             <c-cart-summary
                 cart-summary={dynamicComponentData.cartSummary}
                 entry-id={entryId}
+                configuration={configuration}
                 onpayment={handlePayment}></c-cart-summary>
         </template>
         <template lwc:elseif={isOrderConfirmation}>
-            <c-summary-details details={dynamicComponentData.orderDetails}></c-summary-details>
+            <c-summary-details
+                details={dynamicComponentData.orderDetails}
+                configuration={configuration}></c-summary-details>
         </template>
         <template lwc:elseif={isOrderCompleted}>
             <div class={richTextClasses}>

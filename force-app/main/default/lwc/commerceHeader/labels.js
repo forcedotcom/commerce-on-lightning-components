@@ -3,34 +3,180 @@
  * All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
  * For full license text, see the LICENSE file in the repo
- * root or https://opensource.org/licenses/apache-2-0/
+ * root or https://opensource.org/licenses/apache-2.0/
  */
 
 /*
- * @description Group all Custom Labels for commerceHeader in one place
+ * @description Label data with multi-locale support for commerceHeader
  */
 
-import MENU from '@salesforce/label/c.CommerceHeader_Menu';
-import REQUEST_TRANSCRIPT from '@salesforce/label/c.CommerceHeader_RequestTranscript';
-import END_CHAT from '@salesforce/label/c.CommerceHeader_EndChat';
-import MINIMIZE from '@salesforce/label/c.CommerceHeader_Minimize';
-import MINIMIZE_ASSISTIVE from '@salesforce/label/c.CommerceHeader_MinimizeAssistiveText';
-import LOGO_ALT from '@salesforce/label/c.CommerceHeader_LogoAltText';
-import CLOSE_ASSISTIVE from '@salesforce/label/c.CommerceHeader_closeButtonAssistiveText';
+// Label data with multi-locale support
+export const LABEL_DATA = {
+    menu: {
+        en_US: 'Menu',
+        en_GB: 'Menu',
+        en: 'Menu',
+        de: 'Menü',
+        es: 'Menú',
+        fr: 'Menu',
+        it: 'Menu',
+        ja: 'メニュー',
+        ko: '메뉴',
+        nl: 'Menu',
+        no: 'Meny',
+        pl: 'Menu',
+        pt_BR: 'Menu',
+        sv: 'Meny',
+        da: 'Menu',
+        fi: 'Valikko',
+        zh_CN: '菜单',
+        zh_TW: '選單',
+    },
 
-export const Labels = {
-    /** Tooltip & alt text for the menu button */
-    menu: MENU,
-    /** Dropdown item */
-    requestTranscript: REQUEST_TRANSCRIPT,
-    /** Dropdown item */
-    endChat: END_CHAT,
-    /** Tooltip for minimize */
-    minimize: MINIMIZE,
-    /** Assistive text for minimize icon */
-    minimizeAssistive: MINIMIZE_ASSISTIVE,
-    /** Alt text for the logo image */
-    logoAlt: LOGO_ALT,
-    /** Assistive text for close button */
-    closeAssistive: CLOSE_ASSISTIVE,
+    requestTranscript: {
+        en_US: 'Request Transcript',
+        en_GB: 'Request Transcript',
+        en: 'Request Transcript',
+        de: 'Chatprotokoll anfordern',
+        es: 'Solicitar transcripción',
+        fr: 'Demander une transcription',
+        it: 'Richiedi trascrizione',
+        ja: 'チャット記録をリクエスト',
+        ko: '채팅 기록 요청',
+        nl: 'Chattranscript aanvragen',
+        no: 'Be om transkripsjon',
+        pl: 'Poproś o transkrypcję',
+        pt_BR: 'Solicitar transcrição',
+        sv: 'Begär transkription',
+        da: 'Anmod om transskription',
+        fi: 'Pyydä transkriptio',
+        zh_CN: '请求聊天记录',
+        zh_TW: '請求聊天記錄',
+    },
+
+    endChat: {
+        en_US: 'End Chat',
+        en_GB: 'End Chat',
+        en: 'End Chat',
+        de: 'Chat beenden',
+        es: 'Finalizar chat',
+        fr: 'Terminer la discussion',
+        it: 'Termina chat',
+        ja: 'チャットを終了',
+        ko: '채팅 종료',
+        nl: 'Chat beëindigen',
+        no: 'Avslutt chat',
+        pl: 'Zakończ czat',
+        pt_BR: 'Encerrar chat',
+        sv: 'Avsluta chatt',
+        da: 'Afslut chat',
+        fi: 'Lopeta keskustelu',
+        zh_CN: '结束聊天',
+        zh_TW: '結束聊天',
+    },
+
+    minimize: {
+        en_US: 'Minimize',
+        en_GB: 'Minimise',
+        en: 'Minimize',
+        de: 'Minimieren',
+        es: 'Minimizar',
+        fr: 'Réduire',
+        it: 'Riduci',
+        ja: '最小化',
+        ko: '최소화',
+        nl: 'Minimaliseren',
+        no: 'Minimer',
+        pl: 'Zminimalizuj',
+        pt_BR: 'Minimizar',
+        sv: 'Minimera',
+        da: 'Minimer',
+        fi: 'Pienennä',
+        zh_CN: '最小化',
+        zh_TW: '最小化',
+    },
+
+    minimizeAssistive: {
+        en_US: 'Minimize chat',
+        en_GB: 'Minimise chat',
+        en: 'Minimize chat',
+        de: 'Chat minimieren',
+        es: 'Minimizar chat',
+        fr: 'Réduire la discussion',
+        it: 'Riduci la chat',
+        ja: 'チャットを最小化',
+        ko: '채팅 최소화',
+        nl: 'Chat minimaliseren',
+        no: 'Minimer chat',
+        pl: 'Zminimalizuj czat',
+        pt_BR: 'Minimizar chat',
+        sv: 'Minimera chatt',
+        da: 'Minimer chat',
+        fi: 'Pienennä keskustelu',
+        zh_CN: '最小化聊天',
+        zh_TW: '最小化聊天',
+    },
+
+    logoAlt: {
+        en_US: 'Logo',
+        en_GB: 'Logo',
+        en: 'Logo',
+        de: 'Logo',
+        es: 'Logotipo',
+        fr: 'Logo',
+        it: 'Logo',
+        ja: 'ロゴ',
+        ko: '로고',
+        nl: 'Logo',
+        no: 'Logo',
+        pl: 'Logo',
+        pt_BR: 'Logotipo',
+        sv: 'Logotyp',
+        da: 'Logo',
+        fi: 'Logo',
+        zh_CN: '徽标',
+        zh_TW: '標誌',
+    },
+
+    closeButtonAssistiveText: {
+        en_US: 'Close dialog',
+        en_GB: 'Close dialog',
+        en: 'Close dialog',
+        de: 'Dialog schließen',
+        es: 'Cerrar diálogo',
+        fr: 'Fermer la fenêtre',
+        it: 'Chiudi finestra',
+        ja: 'ダイアログを閉じる',
+        ko: '대화상자 닫기',
+        nl: 'Dialoogvenster sluiten',
+        no: 'Lukk dialog',
+        pl: 'Zamknij okno dialogowe',
+        pt_BR: 'Fechar diálogo',
+        sv: 'Stäng dialogrutan',
+        da: 'Luk dialog',
+        fi: 'Sulje valintaikkuna',
+        zh_CN: '关闭对话框',
+        zh_TW: '關閉對話方塊',
+    },
+
+    defaultHeaderText: {
+        en_US: 'Chatting with Agent',
+        en_GB: 'Chatting with Agent',
+        en: 'Chatting with Agent',
+        de: 'Chat mit dem Agenten',
+        es: 'Chateando con el agente',
+        fr: "Discussion avec l'agent",
+        it: "In chat con l'agente",
+        ja: '担当者とチャット中',
+        ko: '상담원과 채팅 중',
+        nl: 'Chatten met een agent',
+        no: 'Chatter med agent',
+        pl: 'Czat z agentem',
+        pt_BR: 'Conversando com o agente',
+        sv: 'Chattar med en agent',
+        da: 'Chatter med en agent',
+        fi: 'Keskustelet agentin kanssa',
+        zh_CN: '正在与客服聊天',
+        zh_TW: '正在與客服聊天',
+    },
 };

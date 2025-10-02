@@ -18,6 +18,7 @@
 
     /* Cart Summary container variables */
     --ref-c-cart-summary-border-radius: var(--dxp-g-spacing-small, 0.75rem);
+    --ref-c-cart-summary-loading-container-height: 52px;
 
     /* Spinner Overlay variables */
     --ref-c-cart-summary-spinner-height: 40px;
@@ -44,10 +45,6 @@
     --ref-c-common-button-primary-color-border-hover: var(--dxp-g-neutral-contrast-2);
     --ref-c-common-button-primary-color-background-active: var(--dxp-g-neutral-contrast-2);
     --ref-c-common-button-primary-color-border-active: var(--dxp-g-neutral-1);
-    --ref-c-common-link-primary-color: var(--dxp-g-success-contrast-2);
-    --ref-c-common-link-primary-color-hover: var(--dxp-g-success-contrast-2);
-    --ref-c-common-link-primary-color-focus: var(--dxp-g-success-contrast-2);
-    --ref-c-common-link-primary-color-active: var(--dxp-g-success-contrast-2);
     --ref-c-common-button-secondary-color: var(--dxp-g-neutral-contrast-2);
     --ref-c-common-button-secondary-color-active: var(--dxp-g-neutral-contrast-2);
     --ref-c-common-button-secondary-color-hover: var(--dxp-g-neutral-contrast-2);
@@ -59,7 +56,6 @@
     --ref-c-common-button-secondary-color-border-active: var(--dxp-g-neutral-1);
 
     /* Button font variables */
-    --ref-c-common-button-font-family: 'GT America Trial', sans-serif;
     --ref-c-common-button-font-weight: 500; /* Medium */
     --ref-c-common-button-font-size: 14px;
     --ref-c-common-button-line-height: 20px;
@@ -74,7 +70,7 @@
 
 .loading-container {
     position: relative;
-    min-height: var(--ref-c-cart-summary-spinner-height);
+    min-height: var(--ref-c-cart-summary-loading-container-height);
 }
 
 .spinner-overlay {
@@ -113,7 +109,6 @@ c-common-button {
 }
 
 c-common-button .slds-button {
-    font-family: var(--ref-c-common-button-font-family);
     font-weight: var(--ref-c-common-button-font-weight);
     font-size: var(--ref-c-common-button-font-size);
     line-height: var(--ref-c-common-button-line-height);

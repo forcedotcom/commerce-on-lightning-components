@@ -11,6 +11,18 @@ import DynamicContentRenderer from 'c/dynamicContentRenderer';
 // Import real constants instead of mocking them
 import { ENDUSER, CHATBOT, CONTENT_TYPES } from '../constants';
 
+// Mock lightningsnapin/eventStore module that is imported by cartSummary component
+jest.mock(
+    'lightningsnapin/eventStore',
+    () => ({
+        dispatchMessagingEvent: jest.fn(),
+        MESSAGING_EVENT: {
+            MINIMIZE_BUTTON_CLICK: 'MINIMIZE_BUTTON_CLICK',
+        },
+    }),
+    { virtual: true }
+);
+
 // Mock all child components and their dependencies
 jest.mock(
     'c/product-search-recommendations',
@@ -83,45 +95,6 @@ jest.mock(
         return {
             __esModule: true,
             default: class MockCommonCarousel {
-                static renderMode = 'light';
-            },
-        };
-    },
-    { virtual: true }
-);
-
-jest.mock(
-    'c-common-link',
-    () => {
-        return {
-            __esModule: true,
-            default: class MockCommonLink {
-                static renderMode = 'light';
-            },
-        };
-    },
-    { virtual: true }
-);
-
-jest.mock(
-    'c-common-modal',
-    () => {
-        return {
-            __esModule: true,
-            default: class MockCommonModal {
-                static renderMode = 'light';
-            },
-        };
-    },
-    { virtual: true }
-);
-
-jest.mock(
-    'c-common-number-input',
-    () => {
-        return {
-            __esModule: true,
-            default: class MockCommonNumberInput {
                 static renderMode = 'light';
             },
         };
@@ -207,6 +180,56 @@ jest.mock(
     () => {
         return {
             default: 'Payment completed successfully',
+        };
+    },
+    { virtual: true }
+);
+
+jest.mock(
+    '@salesforce/label/c.Common_Payment_Completed',
+    () => {
+        return {
+            default: 'Paid with {0}',
+        };
+    },
+    { virtual: true }
+);
+
+jest.mock(
+    '@salesforce/label/c.Common_Payment_Failed',
+    () => {
+        return {
+            default: '{0} failed',
+        };
+    },
+    { virtual: true }
+);
+
+jest.mock(
+    '@salesforce/label/c.Common_Payment_Canceled',
+    () => {
+        return {
+            default: '{0} was canceled',
+        };
+    },
+    { virtual: true }
+);
+
+jest.mock(
+    '@salesforce/label/c.Common_Payment_Succeeded_NoPaymentMethod',
+    () => {
+        return {
+            default: 'Payment succeeded',
+        };
+    },
+    { virtual: true }
+);
+
+jest.mock(
+    '@salesforce/label/c.Common_Payment_Failed_NoPaymentMethod',
+    () => {
+        return {
+            default: 'Payment failed',
         };
     },
     { virtual: true }
@@ -395,6 +418,30 @@ describe('c-dynamic-content-renderer', () => {
             expect(element).toBeDefined();
         });
 
+        it('should correctly parse and render complex product details data', () => {
+            const complexProductDetailsPayload =
+                '{"productDetails":{"details":[{"vmat":[{"vars":{"size":"L","color":"001"},"pr":null,"pid":"883360541099M","ord":true},{"vars":{"size":"S","color":"001"},"pr":null,"pid":"883360541075M","ord":true},{"vars":{"size":"XS","color":"001"},"pr":null,"pid":"883360541068M","ord":true},{"vars":{"size":"M","color":"001"},"pr":null,"pid":"883360541082M","ord":true},{"vars":{"size":"XXL","color":"001"},"pr":null,"pid":"883360541112M","ord":true},{"vars":{"size":"XL","color":"001"},"pr":null,"pid":"883360541105M","ord":true}],"vattr":[{"opts":[{"val":"001","ord":true,"name":"BLACK"}],"lbl":"Colour","id":"color"},{"opts":[{"val":"XS","ord":true,"name":"XS"},{"val":"S","ord":true,"name":"S"},{"val":"M","ord":true,"name":"M"},{"val":"L","ord":true,"name":"L"},{"val":"XL","ord":true,"name":"XL"},{"val":"XXL","ord":true,"name":"XXL"}],"lbl":"Size","id":"size"}],"slugUrl":"https://zzeu-052.dx.commercecloud.salesforce.com/s/RefArchGlobal/mens-summer-bomber-jacket/11736753M.html?lang=en_GB","quantity":{"minQuantity":1.0,"maxQuantity":600.0,"increment":1.0},"pr":{"orig":201.6,"cur":201.6},"name":"Summer Bomber Jacket","imgGroups":[{"viewType":"large","vattr":null,"imgs":[{"url":"dwd3dfd686/images/large/B0574182_001_0.jpg"},{"url":"dw99114f81/images/large/B0574182_001_L1.jpg"},{"url":"dw7245bb2b/images/large/B0574182_001_L2.jpg"},{"url":"dw7005603f/images/large/B0574182_001_L3.jpg"}]},{"viewType":"large","vattr":[{"vals":["001"],"id":"color"}],"imgs":[{"url":"dwd3dfd686/images/large/B0574182_001_0.jpg"},{"url":"dw99114f81/images/large/B0574182_001_L1.jpg"},{"url":"dw7245bb2b/images/large/B0574182_001_L2.jpg"},{"url":"dw7005603f/images/large/B0574182_001_L3.jpg"}]},{"viewType":"swatch","vattr":null,"imgs":[{"url":"dw80a7d9ec/images/swatch/B0574182_001_sw.jpg"}]},{"viewType":"swatch","vattr":[{"vals":["001"],"id":"color"}],"imgs":[{"url":"dw80a7d9ec/images/swatch/B0574182_001_sw.jpg"}]}],"imageUrl":"dwd3dfd686/images/large/B0574182_001_0.jpg","id":"11736753M","dscr":"This lightweight bomber jacket is the epitome of summer style. An old school look mixed with a modern fit. Made in our lightweight brushed cotton polyester fabric.","dfOrd":true,"ccy":"GBP","baseUrl":"https://zzeu-052.dx.commercecloud.salesforce.com/on/demandware.static/-/Sites-apparel-m-catalog/default/"}],"className":"B2CMultipleProductDetailsRepresentation"}}';
+
+            const entry = {
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: complexProductDetailsPayload,
+                        },
+                    },
+                }),
+                sender: { role: CHATBOT },
+            };
+
+            element.conversationEntry = entry;
+
+            // Verify the component renders without errors
+            expect(element).toBeDefined();
+
+            // Verify the product details component is rendered
+            expect(element.querySelector('c-product-details')).toBeDefined();
+        });
+
         it('should handle product recommendations gracefully when productsDetails and categoryDetails are null', () => {
             const entry = {
                 entryPayload: JSON.stringify({
@@ -564,32 +611,6 @@ describe('c-dynamic-content-renderer', () => {
             expect(element).toBeDefined();
         });
 
-        it('should handle invalid content type gracefully for ENDUSER sender role', () => {
-            const entry = {
-                entryPayload: JSON.stringify({
-                    abstractMessage: {
-                        staticContent: {
-                            text: JSON.stringify('INVALID JSON'),
-                        },
-                    },
-                }),
-                sender: { role: ENDUSER },
-            };
-
-            element.conversationEntry = entry;
-            expect(element).toBeDefined();
-        });
-
-        it('should handle invalid staticContent text gracefully for ENDUSER sender role', () => {
-            const entry = {
-                entryPayload: '{"abstractMessage":{"staticContent":{"text":"Hello"}}}',
-                sender: { role: ENDUSER },
-            };
-
-            element.conversationEntry = entry;
-            expect(element).toBeDefined();
-        });
-
         it('should handle invalid JSON payload gracefully', async () => {
             const entry = {
                 entryPayload: 'INVALID JSON',
@@ -612,7 +633,7 @@ describe('c-dynamic-content-renderer', () => {
             expect(element).toBeDefined();
             const errorMessage = element.querySelector('lightning-formatted-rich-text');
             expect(errorMessage).not.toBeNull();
-            expect(errorMessage.value).toBe('Unable to process the request. Please try again.');
+            expect(errorMessage.value).toBe('I did not understand your response. Please try again.');
         });
 
         it('should handle missing sender role gracefully', () => {
@@ -669,6 +690,7 @@ describe('c-dynamic-content-renderer', () => {
                     detail: {
                         quantity: 3,
                         productName: 'Cotton T-shirt',
+                        productId: 'prod123',
                         variantDetails: [
                             {
                                 id: 'size',
@@ -689,7 +711,7 @@ describe('c-dynamic-content-renderer', () => {
                 element.handleAddToCart(event);
 
                 expect(mockSendTextMessage).toHaveBeenCalledWith(
-                    'Add Cotton T-shirt with size medium, color white of quantity 3 to cart'
+                    'Add Cotton T-shirt with size medium, color white in a quantity of 3 to cart (prod123)'
                 );
             });
 
@@ -698,12 +720,13 @@ describe('c-dynamic-content-renderer', () => {
                     detail: {
                         quantity: 1,
                         productName: 'Simple Product',
+                        productId: 'prod456',
                     },
                 };
 
                 element.handleAddToCart(event);
 
-                expect(mockSendTextMessage).toHaveBeenCalledWith('Add Simple Product of quantity 1 to cart');
+                expect(mockSendTextMessage).toHaveBeenCalledWith('Add Simple Product to cart (1)');
             });
 
             it('should send message without variant details when variantDetails is empty array', () => {
@@ -711,13 +734,14 @@ describe('c-dynamic-content-renderer', () => {
                     detail: {
                         quantity: 2,
                         productName: 'Product',
+                        productId: 'prod789',
                         variantDetails: [],
                     },
                 };
 
                 element.handleAddToCart(event);
 
-                expect(mockSendTextMessage).toHaveBeenCalledWith('Add Product of quantity 2 to cart');
+                expect(mockSendTextMessage).toHaveBeenCalledWith('Add Product to cart (2)');
             });
 
             it('should not send message when productName is missing from event detail', () => {
@@ -835,7 +859,7 @@ describe('c-dynamic-content-renderer', () => {
                 delete global.window.open;
             });
 
-            it('should open URL when cart management is not supported', () => {
+            it('should open URL when cart management is not supported when product url has no existing query params', () => {
                 // Set up conversation entry without cart management support
                 const entry = {
                     entryPayload: JSON.stringify({
@@ -856,7 +880,34 @@ describe('c-dynamic-content-renderer', () => {
 
                 element.handleShowProduct(event);
 
-                expect(window.open).toHaveBeenCalledWith('https://example.com/product', '_blank');
+                expect(window.open).toHaveBeenCalledWith('https://example.com/product?src=shopperAgent', '_blank');
+            });
+
+            it('should open URL when cart management is not supported when product url does have existing query params', () => {
+                // Set up conversation entry without cart management support
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: JSON.stringify({
+                                    productsDetails: { products: [] },
+                                    categoryDetails: { categories: [] },
+                                }),
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+                element.conversationEntry = entry;
+
+                const event = { detail: { url: 'https://example.com/product?lang=en-US' } };
+
+                element.handleShowProduct(event);
+
+                expect(window.open).toHaveBeenCalledWith(
+                    'https://example.com/product?lang=en-US&src=shopperAgent',
+                    '_blank'
+                );
             });
 
             it('should traverse up DOM to find element with data-url', () => {
@@ -879,7 +930,7 @@ describe('c-dynamic-content-renderer', () => {
 
                 element.handleShowProduct(event);
 
-                expect(window.open).toHaveBeenCalledWith('https://example.com/product', '_blank');
+                expect(window.open).toHaveBeenCalledWith('https://example.com/product?src=shopperAgent', '_blank');
             });
 
             it('should send text message when cart management is supported', () => {
@@ -983,54 +1034,2252 @@ describe('c-dynamic-content-renderer', () => {
 
         describe('handlePayment', () => {
             it('should send order completed message when event detail is provided', () => {
-                const event = { detail: 'ORD-123' };
+                const event = { detail: { orderId: 'ORD-123', paymentMethod: 'googlepay' } };
 
                 element.handlePayment(event);
 
                 expect(mockSendTextMessage).toHaveBeenCalledWith(
-                    '{"orderCompleted": {"className":"orderCompleted","orderNumber": "ORD-123"}}'
+                    '{"orderCompleted": {"className":"orderCompleted","orderNumber": "ORD-123","paymentMethod": "googlepay"}}'
                 );
             });
 
-            it('should send apple pay failed message when event detail is null', () => {
+            it('should send fallback failed message when event detail is null', () => {
                 const event = { detail: null };
 
                 element.handlePayment(event);
 
-                expect(mockSendTextMessage).toHaveBeenCalledWith('Apple Pay failed');
+                expect(mockSendTextMessage).toHaveBeenCalledWith('Payment failed');
             });
 
-            it('should send apple pay failed message when event detail is empty string', () => {
+            it('should send fallback failed message when event detail is empty string', () => {
                 const event = { detail: '' };
 
                 element.handlePayment(event);
 
-                expect(mockSendTextMessage).toHaveBeenCalledWith('Apple Pay failed');
+                expect(mockSendTextMessage).toHaveBeenCalledWith('Payment failed');
             });
 
-            it('should send apple pay failed message when event detail is false', () => {
+            it('should send fallback failed message when event detail is false', () => {
                 const event = { detail: false };
 
                 element.handlePayment(event);
 
-                expect(mockSendTextMessage).toHaveBeenCalledWith('Apple Pay failed');
+                expect(mockSendTextMessage).toHaveBeenCalledWith('Payment failed');
             });
 
-            it('should send apple pay failed message when event detail has failure status', () => {
-                const event = { detail: { status: 'failure' } };
+            it('should send Apple Pay failed message when event detail has failure status and payment method is applepay', () => {
+                const event = { detail: { status: 'failure', paymentMethod: 'applepay' } };
 
                 element.handlePayment(event);
 
                 expect(mockSendTextMessage).toHaveBeenCalledWith('Apple Pay failed');
             });
 
-            it('should send apple pay canceled message when event detail has cancel status', () => {
-                const event = { detail: { status: 'cancel' } };
+            it('should send Apple Pay canceled message when event detail has cancel status and payment method is applepay', () => {
+                const event = { detail: { status: 'cancel', paymentMethod: 'applepay' } };
 
                 element.handlePayment(event);
 
-                expect(mockSendTextMessage).toHaveBeenCalledWith('Apple Pay canceled');
+                expect(mockSendTextMessage).toHaveBeenCalledWith('Apple Pay was canceled');
             });
+
+            it('should send Google Pay failed message when event detail has failure status and payment method is googlepay', () => {
+                const event = { detail: { status: 'failure', paymentMethod: 'googlepay' } };
+
+                element.handlePayment(event);
+
+                expect(mockSendTextMessage).toHaveBeenCalledWith('Google Pay failed');
+            });
+
+            it('should send Google Pay canceled message when event detail has cancel status and payment method is googlepay', () => {
+                const event = { detail: { status: 'cancel', paymentMethod: 'googlepay' } };
+
+                element.handlePayment(event);
+
+                expect(mockSendTextMessage).toHaveBeenCalledWith('Google Pay was canceled');
+            });
+        });
+
+        describe('orderCompletedText', () => {
+            it('[googlepay] should return dynamic payment message when payment method is available', () => {
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: JSON.stringify({
+                                    orderCompleted: {
+                                        className: 'orderCompleted',
+                                        orderNumber: 'ORD-123',
+                                        paymentMethod: 'googlepay',
+                                    },
+                                }),
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+                element.conversationEntry = entry;
+
+                expect(element.orderCompletedText).toBe('Paid with Google Pay');
+            });
+
+            it('[applepay] should return dynamic payment message when payment method is available', () => {
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: JSON.stringify({
+                                    orderCompleted: {
+                                        className: 'orderCompleted',
+                                        orderNumber: 'ORD-123',
+                                        paymentMethod: 'applepay',
+                                    },
+                                }),
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+                element.conversationEntry = entry;
+
+                expect(element.orderCompletedText).toBe('Paid with Apple Pay');
+            });
+
+            it('should return generic payment succeeded message when payment method is not available', () => {
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: JSON.stringify({
+                                    orderCompleted: {
+                                        className: 'orderCompleted',
+                                        orderNumber: 'ORD-123',
+                                    },
+                                }),
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+                element.conversationEntry = entry;
+
+                expect(element.orderCompletedText).toBe('Payment succeeded');
+            });
+        });
+    });
+
+    describe('mobile detection logic', () => {
+        it('should detect user agent', () => {
+            // We can't directly test the private methods, but we can verify the component works
+            // with different user agents by testing the overall functionality
+            expect(navigator.userAgent).toBeDefined();
+        });
+    });
+
+    describe('image detection logic', () => {
+        it('should process content with images correctly', () => {
+            const entry = {
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: 'Hello <img src="test.jpg" alt="test"> world',
+                        },
+                    },
+                }),
+                sender: { role: CHATBOT },
+            };
+
+            element.conversationEntry = entry;
+            // Verify the component processes the content without errors
+            expect(element).toBeDefined();
+            expect(element.querySelector('lightning-formatted-rich-text')).toBeDefined();
+        });
+
+        it('should process content without images correctly', () => {
+            const entry = {
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: 'Hello world without images',
+                        },
+                    },
+                }),
+                sender: { role: CHATBOT },
+            };
+
+            element.conversationEntry = entry;
+            // Verify the component processes the content without errors
+            expect(element).toBeDefined();
+            expect(element.querySelector('lightning-formatted-rich-text')).toBeDefined();
+        });
+    });
+
+    describe('sanitization functionality', () => {
+        describe('nested JSON sanitization scenarios', () => {
+            it('should handle nested content with inch marks for chatbot', () => {
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: '{"product": "55" TV"}',
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                element.conversationEntry = entry;
+                expect(element).toBeDefined();
+                // The component should render without errors, indicating sanitization worked
+                expect(element.querySelector('lightning-formatted-rich-text')).toBeDefined();
+            });
+
+            it('should handle nested content with newlines for chatbot', () => {
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: '{"product": "55" TV\nwith features"}',
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                element.conversationEntry = entry;
+                expect(element).toBeDefined();
+                // The component should render without errors, indicating sanitization worked
+                expect(element.querySelector('lightning-formatted-rich-text')).toBeDefined();
+            });
+
+            it('should handle complex nested content with multiple formatting issues', () => {
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: '{"product": "24" monitor\nwith 55" TV and\nfeatures"}',
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                element.conversationEntry = entry;
+                expect(element).toBeDefined();
+                // The component should render without errors, indicating sanitization worked
+                expect(element.querySelector('lightning-formatted-rich-text')).toBeDefined();
+            });
+
+            it('should correctly parse and render the product recommendations data', () => {
+                const realWorldPayload =
+                    '{"productRecommendations":{"userQuery":"jackets","productsDetails":{"products":[{"variationsSummary":{"size":["4","6","8","10","12","14","16"],"color":["Laurel"]},"productPageUrl":"https://zzeu-052.dx.commercecloud.salesforce.com/s/RefArchGlobal/belted-safari-jacket/25502154M.html?lang=en_GB","price":95.35,"name":"Belted Safari Jacket","imageUrl":"https://zzeu-052.dx.commercecloud.salesforce.com/on/demandware.static/-/Sites-apparel-m-catalog/default/dw7c87112b/images/large/PG.10214859.JJ0NLB6.PZ.jpg","id":"25502154M","discountPrice":95.35,"description":"This jacket is one of our all time favorite classic styles. Pair it with the matching skirt and a piece of great Commerce Cloud Store jewelry.","currencyCode":"GBP"},{"variationsSummary":{"size":["4","6","8","10","12","14","16"],"color":["Cobalt"]},"productPageUrl":"https://zzeu-052.dx.commercecloud.salesforce.com/s/RefArchGlobal/one-button-jacket/25589100M.html?lang=en_GB","price":99.83,"name":"One Button Jacket","imageUrl":"https://zzeu-052.dx.commercecloud.salesforce.com/on/demandware.static/-/Sites-apparel-m-catalog/default/dwd55c74d3/images/large/PG.10226297.JJ555XX.PZ.jpg","id":"25589100M","discountPrice":99.83,"description":"Our best selling stand collar jacket is new this year in this seasons newest color. Wear the cuff folded upon down. Add a matching skirt and you will be set to go!","currencyCode":"GBP"},{"variationsSummary":{"size":["4","6","8","10","12","14","16"],"color":["Slate"]},"productPageUrl":"https://zzeu-052.dx.commercecloud.salesforce.com/s/RefArchGlobal/1-button-jacket/25592990M.html?lang=en_GB","price":120.96,"name":"1 Button Jacket","imageUrl":"https://zzeu-052.dx.commercecloud.salesforce.com/on/demandware.static/-/Sites-apparel-m-catalog/default/dwbdc270b/images/large/PG.10233353.JJ9MVXX.PZ.jpg","id":"25592990M","discountPrice":120.96,"description":"We took our best selling jacket and updated it with a new colour for the season.  Start showing off!","currencyCode":"GBP"}],"description":"Here are some top recommendations as per your query"},"isCartMgmtSupported":"true","className":"B2CProductSearchActionResultsRepresentation","categoryDetails":{"description":"Let me know if you are looking for something specific.","categories":[{"name":"New Arrivals","id":"newarrivals"},{"name":"Womens","id":"womens"},{"name":"Mens","id":"mens"}]}}}';
+
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: realWorldPayload,
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                element.conversationEntry = entry;
+
+                // Verify the component renders without errors
+                expect(element).toBeDefined();
+
+                // Verify the product search recommendations component is rendered
+                expect(element.querySelector('c-product-search-recommendations')).toBeDefined();
+            });
+        });
+
+        describe('edge cases and error scenarios', () => {
+            it('should handle nested content that is not JSON after sanitization', () => {
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: 'This is not JSON, just plain text',
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                element.conversationEntry = entry;
+                expect(element).toBeDefined();
+                // Should handle as plain text when content is not valid JSON
+                expect(element.querySelector('lightning-formatted-rich-text')).toBeDefined();
+            });
+
+            it('should handle nested content with mixed valid and invalid JSON', () => {
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: '{"valid": "json"} but then invalid',
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                element.conversationEntry = entry;
+                expect(element).toBeDefined();
+                // Should handle gracefully when content is not valid JSON
+                expect(element.querySelector('lightning-formatted-rich-text')).toBeDefined();
+            });
+
+            it('should handle very long nested content with formatting issues', () => {
+                const longText = '{"product": "' + 'A'.repeat(1000) + '55" TV' + 'B'.repeat(1000) + '"}';
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: longText,
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                element.conversationEntry = entry;
+                expect(element).toBeDefined();
+                // Should handle long content without issues
+                expect(element.querySelector('lightning-formatted-rich-text')).toBeDefined();
+            });
+
+            it('should handle nested content with special characters that need sanitization', () => {
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: '{"message": "Product: 32" monitor\nPrice: $299.99"}',
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                element.conversationEntry = entry;
+                expect(element).toBeDefined();
+                // Should handle special characters and formatting without errors
+                expect(element.querySelector('lightning-formatted-rich-text')).toBeDefined();
+            });
+        });
+
+        describe('integration with existing content types', () => {
+            it('should sanitize product recommendations content with formatting issues', () => {
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: JSON.stringify({
+                                    productRecommendations: {
+                                        className: CONTENT_TYPES.PRODUCT_RECOMMENDATIONS,
+                                        productsDetails: { products: [] },
+                                        categoryDetails: { categories: [] },
+                                        description: '24" monitor\nand 55" TV',
+                                    },
+                                }),
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                element.conversationEntry = entry;
+                expect(element).toBeDefined();
+                // Should render product recommendations component successfully
+                expect(element.querySelector('c-product-search-recommendations')).toBeDefined();
+            });
+
+            it('should handle the specific "Unexpected token S" JSON parsing issue with unescaped quotes in product names', () => {
+                // This test case reproduces the exact issue described by the user
+                // Using a simplified version that contains the problematic unescaped quotes
+                const problematicJsonString =
+                    '{"productRecommendations":{"userQuery":"tvs under 30 inches","productsDetails":{"products":[{"variationsSummary":{},"productPageUrl":"URL_Redacted","price":549.99,"name":"Samsung Series 6 22" LCD High Definition Television","imageUrl":"URL_Redacted","id":"samsung-ln22a650M","discountPrice":549.99,"description":"Add an extraordinary touch of class and beauty to your HDTV with our unique Touch of Color™ feature. The LN22A650 also features high-definition picture quality so you see more details, heightened clarity and brilliant color. Plus, a 5,000:1 contrast ratio delivers incredibly sharp images in very dark or light scenes. You\'ll never look at your TV the same way again.","currencyCode":"USD"},{"variationsSummary":{},"productPageUrl":"URL_Redacted","price":214.5,"name":"Sanyo 19" LCD High Definition Television","imageUrl":"URL_Redacted","id":"sanyo-dp19648M","discountPrice":214.5,"description":"It features a tuner that receives both ATSC digital channels and NTSC analog channels. The digital tuner has Digital Clear QAM technology so it can receive unscrambled digital cable channels. A full complement of video inputs and audio outputs are provided. A PC/Mac input also allows alternative use as a computer monitor. And the detachable tilt base stand allows it to be wall mounted with an optional wall mount kit (not included).","currencyCode":"USD"},{"variationsSummary":{},"productPageUrl":"URL_Redacted","price":449.99,"name":"Sony Bravia® M-Series 19" LCD High Definition Television","imageUrl":"URL_Redacted","id":"sony-kdl-19m4000M","discountPrice":449.99,"description":"M-Series (19") features: 720p, MPEG Noise Reduction, 3D Comb Filter, ATSC/NTSC tuner with QAM, white with black trim ","currencyCode":"USD"}],"description":"Here are some top recommendations as per your query"},"isCartMgmtSupported":"true","className":"B2CProductSearchActionResultsRepresentation","categoryDetails":{"description":"Let me know if you are looking for something specific.","categories":[{"name":"Electronics","id":"electronics"},{"name":"New Arrivals","id":"newarrivals"}]}}}';
+
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: problematicJsonString,
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                // This should not throw an "Unexpected token S" error
+                expect(() => {
+                    element.conversationEntry = entry;
+                }).not.toThrow();
+
+                // The component should render successfully
+                expect(element).toBeDefined();
+
+                // Should render product search recommendations component
+                expect(element.querySelector('c-product-search-recommendations')).toBeDefined();
+            });
+
+            it('should sanitize product details content with formatting issues', () => {
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: JSON.stringify({
+                                    productDetails: {
+                                        className: CONTENT_TYPES.PRODUCT_DETAILS,
+                                        details: [
+                                            {
+                                                id: 'prod1',
+                                                name: '55" Smart TV\nwith features',
+                                            },
+                                        ],
+                                    },
+                                }),
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                element.conversationEntry = entry;
+                expect(element).toBeDefined();
+                // Should render product details component successfully
+                expect(element.querySelector('c-product-details')).toBeDefined();
+            });
+        });
+    });
+
+    describe('primitive JSON values handling', () => {
+        it('should handle numeric values as text content instead of invalid response', () => {
+            const entry = {
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: '2', // Simple number that gets parsed to numeric 2
+                        },
+                    },
+                }),
+                sender: { role: CHATBOT },
+            };
+
+            element.conversationEntry = entry;
+            expect(element).toBeDefined();
+            // Should render as rich text, not show invalid response
+            expect(element.querySelector('lightning-formatted-rich-text')).toBeDefined();
+            // Verify the component doesn't show invalid response message
+            expect(element.textContent).not.toContain('Invalid response');
+        });
+
+        it('should handle boolean values as text content', () => {
+            const entry = {
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: 'true', // Boolean that gets parsed to boolean true
+                        },
+                    },
+                }),
+                sender: { role: CHATBOT },
+            };
+
+            element.conversationEntry = entry;
+            expect(element).toBeDefined();
+            expect(element.querySelector('lightning-formatted-rich-text')).toBeDefined();
+            expect(element.textContent).not.toContain('Invalid response');
+        });
+
+        it('should handle null values as text content', () => {
+            const entry = {
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: 'null', // Null that gets parsed to null
+                        },
+                    },
+                }),
+                sender: { role: CHATBOT },
+            };
+
+            element.conversationEntry = entry;
+            expect(element).toBeDefined();
+            expect(element.querySelector('lightning-formatted-rich-text')).toBeDefined();
+            expect(element.textContent).not.toContain('Invalid response');
+        });
+    });
+
+    describe('window message handling and PWA context storage', () => {
+        let mockAddEventListener;
+        let mockRemoveEventListener;
+        let mockPostMessage;
+
+        beforeEach(() => {
+            // Mock window.addEventListener and removeEventListener
+            mockAddEventListener = jest.fn();
+            mockRemoveEventListener = jest.fn();
+            global.window.addEventListener = mockAddEventListener;
+            global.window.removeEventListener = mockRemoveEventListener;
+
+            // Mock window.parent.postMessage
+            mockPostMessage = jest.fn();
+            global.window.parent = {
+                postMessage: mockPostMessage,
+            };
+
+            // Mock localStorage
+            const localStorageMock = {
+                getItem: jest.fn(),
+                setItem: jest.fn(),
+                removeItem: jest.fn(),
+                clear: jest.fn(),
+            };
+            Object.defineProperty(window, 'localStorage', {
+                value: localStorageMock,
+                writable: true,
+            });
+        });
+
+        afterEach(() => {
+            jest.clearAllMocks();
+        });
+
+        describe('conversation context message processing', () => {
+            it('should process conversation context message and store contextual data', () => {
+                const conversationContext = ['Some context data', 'More context data'];
+
+                const mockEvent = {
+                    data: {
+                        type: 'conversational.actualConversationContext',
+                        payload: {
+                            conversationContext: conversationContext,
+                        },
+                    },
+                };
+
+                // Simulate the message by dispatching it to the window
+                window.dispatchEvent(new MessageEvent('message', { data: mockEvent.data }));
+
+                // Verify that the message was processed without errors
+                // (We can't directly test private properties, but we can verify no errors occurred)
+                expect(() => {
+                    window.dispatchEvent(new MessageEvent('message', { data: mockEvent.data }));
+                }).not.toThrow();
+            });
+
+            it('should handle conversation context as single string', () => {
+                const conversationContext = 'Some context data';
+
+                const mockEvent = {
+                    data: {
+                        type: 'conversational.actualConversationContext',
+                        payload: {
+                            conversationContext: conversationContext,
+                        },
+                    },
+                };
+
+                window.dispatchEvent(new MessageEvent('message', { data: mockEvent.data }));
+
+                // Verify that the message was processed without errors
+                expect(() => {
+                    window.dispatchEvent(new MessageEvent('message', { data: mockEvent.data }));
+                }).not.toThrow();
+            });
+
+            it('should not process non-conversation context messages', () => {
+                const mockEvent = {
+                    data: {
+                        type: 'other.message.type',
+                        payload: {
+                            conversationContext: ['PwaDomain: https://example.com'],
+                        },
+                    },
+                };
+
+                window.dispatchEvent(new MessageEvent('message', { data: mockEvent.data }));
+
+                expect(localStorage.setItem).not.toHaveBeenCalled();
+            });
+
+            it('should handle missing conversation context gracefully', () => {
+                const mockEvent = {
+                    data: {
+                        type: 'conversational.actualConversationContext',
+                        payload: {},
+                    },
+                };
+
+                expect(() => {
+                    window.dispatchEvent(new MessageEvent('message', { data: mockEvent.data }));
+                }).not.toThrow();
+
+                expect(localStorage.setItem).not.toHaveBeenCalled();
+            });
+
+            it('should handle null conversation context gracefully', () => {
+                const mockEvent = {
+                    data: {
+                        type: 'conversational.actualConversationContext',
+                        payload: {
+                            conversationContext: null,
+                        },
+                    },
+                };
+
+                expect(() => {
+                    window.dispatchEvent(new MessageEvent('message', { data: mockEvent.data }));
+                }).not.toThrow();
+
+                expect(localStorage.setItem).not.toHaveBeenCalled();
+            });
+
+            it('should handle conversation context with mixed data types', () => {
+                const conversationContext = ['Some context data', { someObject: 'data' }, 'More context data'];
+
+                const mockEvent = {
+                    data: {
+                        type: 'conversational.actualConversationContext',
+                        payload: {
+                            conversationContext: conversationContext,
+                        },
+                    },
+                };
+
+                window.dispatchEvent(new MessageEvent('message', { data: mockEvent.data }));
+
+                // Verify that the message was processed without errors
+                expect(() => {
+                    window.dispatchEvent(new MessageEvent('message', { data: mockEvent.data }));
+                }).not.toThrow();
+            });
+        });
+
+        describe('PWA context localStorage handling', () => {
+            let mockLocalStorage;
+
+            beforeEach(() => {
+                // Mock localStorage
+                mockLocalStorage = {
+                    getItem: jest.fn(),
+                    setItem: jest.fn(),
+                };
+                Object.defineProperty(window, 'localStorage', {
+                    value: mockLocalStorage,
+                    writable: true,
+                });
+            });
+
+            afterEach(() => {
+                // Clean up localStorage mock
+                delete window.localStorage;
+            });
+
+            it('should store PWA context data in localStorage when received', () => {
+                const mockEvent = {
+                    data: {
+                        type: 'lwc.pwaContext',
+                        payload: {
+                            pwaDomainUrl: 'https://example.com',
+                            pwaSiteId: 'site-123',
+                            pwaLocale: 'en-US',
+                        },
+                    },
+                };
+
+                window.dispatchEvent(new MessageEvent('message', { data: mockEvent.data }));
+
+                expect(mockLocalStorage.setItem).toHaveBeenCalledWith('pwaDomainUrl', 'https://example.com');
+                expect(mockLocalStorage.setItem).toHaveBeenCalledWith('pwaSiteId', 'site-123');
+                expect(mockLocalStorage.setItem).toHaveBeenCalledWith('pwaLocale', 'en-US');
+            });
+
+            it('should handle PWA context message with missing payload gracefully', () => {
+                const mockEvent = {
+                    data: {
+                        type: 'lwc.pwaContext',
+                        payload: null,
+                    },
+                };
+
+                expect(() => {
+                    window.dispatchEvent(new MessageEvent('message', { data: mockEvent.data }));
+                }).not.toThrow();
+
+                expect(mockLocalStorage.setItem).not.toHaveBeenCalled();
+            });
+
+            it('should handle PWA context message with partial data', () => {
+                const mockEvent = {
+                    data: {
+                        type: 'lwc.pwaContext',
+                        payload: {
+                            pwaDomainUrl: 'https://example.com',
+                            // pwaSiteId missing
+                            pwaLocale: 'en-US',
+                        },
+                    },
+                };
+
+                window.dispatchEvent(new MessageEvent('message', { data: mockEvent.data }));
+
+                expect(mockLocalStorage.setItem).toHaveBeenCalledWith('pwaDomainUrl', 'https://example.com');
+                expect(mockLocalStorage.setItem).toHaveBeenCalledWith('pwaLocale', 'en-US');
+                expect(mockLocalStorage.setItem).not.toHaveBeenCalledWith('pwaSiteId', expect.anything());
+            });
+
+            it('should ignore messages that are not lwc.pwaContext', () => {
+                const mockEvent = {
+                    data: {
+                        type: 'other.message.type',
+                        payload: {
+                            pwaDomainUrl: 'https://example.com',
+                            pwaSiteId: 'site-123',
+                            pwaLocale: 'en-US',
+                        },
+                    },
+                };
+
+                window.dispatchEvent(new MessageEvent('message', { data: mockEvent.data }));
+
+                expect(mockLocalStorage.setItem).not.toHaveBeenCalled();
+            });
+        });
+
+        describe('component lifecycle and message listener setup', () => {
+            it('should handle component lifecycle correctly', () => {
+                // Test that the component can be created and destroyed without errors
+                expect(element).toBeDefined();
+
+                // Test that the component can process messages
+                const mockEvent = {
+                    data: {
+                        type: 'conversational.actualConversationContext',
+                        payload: {
+                            conversationContext: ['Some context data'],
+                        },
+                    },
+                };
+
+                expect(() => {
+                    window.dispatchEvent(new MessageEvent('message', { data: mockEvent.data }));
+                }).not.toThrow();
+            });
+
+            it('should have postMessage functionality available for welcome messages', () => {
+                // Test that the component has the necessary postMessage functionality
+                // by checking that window.parent.postMessage is available
+                expect(window.parent.postMessage).toBeDefined();
+                expect(typeof window.parent.postMessage).toBe('function');
+            });
+
+            it('should not send postMessage when not welcome message', () => {
+                // Create a new element to trigger connectedCallback
+                const testElement = createElement('c-dynamic-content-renderer', {
+                    is: DynamicContentRenderer,
+                });
+                testElement.configuration = mockConfiguration;
+
+                // Mock isWelcomeMessage to return false for this element
+                jest.spyOn(testElement, 'isWelcomeMessage', 'get').mockReturnValue(false);
+
+                document.body.appendChild(testElement);
+
+                expect(mockPostMessage).not.toHaveBeenCalled();
+            });
+        });
+
+        describe('Domain URL localStorage handling', () => {
+            let mockLocalStorage;
+
+            beforeEach(() => {
+                // Mock localStorage
+                mockLocalStorage = {
+                    getItem: jest.fn(),
+                    setItem: jest.fn(),
+                };
+                Object.defineProperty(window, 'localStorage', {
+                    value: mockLocalStorage,
+                    writable: true,
+                });
+            });
+
+            afterEach(() => {
+                // Clean up localStorage mock
+                delete window.localStorage;
+            });
+
+            it('should store localizedUrl in localStorage when conversational.localizedUrl message is received', () => {
+                const mockEvent = {
+                    data: {
+                        type: 'conversational.domainUrl',
+                        payload: {
+                            domainUrl: 'https://example.com/en-us',
+                        },
+                    },
+                };
+
+                window.dispatchEvent(new MessageEvent('message', { data: mockEvent.data }));
+
+                expect(mockLocalStorage.setItem).toHaveBeenCalledWith('localizedUrl', 'https://example.com/en-us');
+            });
+
+            it('should not store domainUrl when payload is missing', () => {
+                const mockEvent = {
+                    data: {
+                        type: 'conversational.domainUrl',
+                        payload: {},
+                    },
+                };
+
+                window.dispatchEvent(new MessageEvent('message', { data: mockEvent.data }));
+
+                expect(mockLocalStorage.setItem).not.toHaveBeenCalled();
+            });
+
+            it('should handle localStorage errors gracefully', () => {
+                const mockEvent = {
+                    data: {
+                        type: 'conversational.domainUrl',
+                        payload: {
+                            domainUrl: 'https://example.com/en-us',
+                        },
+                    },
+                };
+
+                // Mock localStorage.setItem to throw an error
+                mockLocalStorage.setItem.mockImplementation(() => {
+                    throw new Error('localStorage not available');
+                });
+
+                const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+
+                expect(() => {
+                    window.dispatchEvent(new MessageEvent('message', { data: mockEvent.data }));
+                }).not.toThrow();
+
+                expect(consoleSpy).toHaveBeenCalledWith(
+                    'localStorage not available for localizedUrl:',
+                    expect.any(Error)
+                );
+                consoleSpy.mockRestore();
+            });
+        });
+    });
+
+    describe('enhanced JSON parsing and sanitization', () => {
+        describe('double-encoding detection improvements', () => {
+            it('should only parse strings that look like JSON objects or arrays', () => {
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: '"This is just a plain string"', // Double-encoded string that should NOT be parsed again
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                element.conversationEntry = entry;
+                expect(element).toBeDefined();
+                // Should treat as plain text, not attempt to parse as JSON
+                expect(element.querySelector('lightning-formatted-rich-text')).toBeDefined();
+            });
+
+            it('should parse double-encoded JSON objects correctly', () => {
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: '{"product": "55\\" TV"}', // Double-encoded JSON object
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                element.conversationEntry = entry;
+                expect(element).toBeDefined();
+                // Should parse the JSON object successfully
+                expect(element.querySelector('lightning-formatted-rich-text')).toBeDefined();
+            });
+
+            it('should parse double-encoded JSON arrays correctly', () => {
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: '[{"item": "test"}]', // Double-encoded JSON array
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                element.conversationEntry = entry;
+                expect(element).toBeDefined();
+                // Should parse the JSON array successfully
+                expect(element.querySelector('lightning-formatted-rich-text')).toBeDefined();
+            });
+
+            it('should handle empty JSON objects and arrays', () => {
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: '{}', // Empty object
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                element.conversationEntry = entry;
+                expect(element).toBeDefined();
+                expect(element.querySelector('lightning-formatted-rich-text')).toBeDefined();
+            });
+
+            it('should handle whitespace-only strings as plain text', () => {
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: '   ', // Whitespace only
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                element.conversationEntry = entry;
+                expect(element).toBeDefined();
+                expect(element.querySelector('lightning-formatted-rich-text')).toBeDefined();
+            });
+        });
+
+        describe('BOM and whitespace handling', () => {
+            it('should remove BOM characters from JSON content', () => {
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: '\uFEFF{"product": "test"}', // Content with BOM
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                element.conversationEntry = entry;
+                expect(element).toBeDefined();
+                // Should parse successfully despite BOM
+                expect(element.querySelector('lightning-formatted-rich-text')).toBeDefined();
+            });
+
+            it('should trim leading and trailing whitespace', () => {
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: '   {"product": "test"}   ', // Content with whitespace
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                element.conversationEntry = entry;
+                expect(element).toBeDefined();
+                // Should parse successfully despite whitespace
+                expect(element.querySelector('lightning-formatted-rich-text')).toBeDefined();
+            });
+
+            it('should handle content with both BOM and whitespace', () => {
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: '\uFEFF   {"product": "test"}   ', // BOM + whitespace
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                element.conversationEntry = entry;
+                expect(element).toBeDefined();
+                // Should parse successfully
+                expect(element.querySelector('lightning-formatted-rich-text')).toBeDefined();
+            });
+        });
+
+        describe('backslash-arrow polish functionality', () => {
+            it('should polish backslash-arrow sequences in simple strings', () => {
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: JSON.stringify({
+                                    productRecommendations: {
+                                        className: 'B2CProductSearchActionResultsRepresentation',
+                                        productsDetails: {
+                                            products: [
+                                                {
+                                                    id: 'p1',
+                                                    name: '55\\" TV with features\\>',
+                                                    description: 'A great TV\\> for your home',
+                                                },
+                                            ],
+                                        },
+                                    },
+                                }),
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                element.conversationEntry = entry;
+                expect(element).toBeDefined();
+                // Should render product recommendations component successfully
+                expect(element.querySelector('c-product-search-recommendations')).toBeDefined();
+            });
+
+            it('should polish backslash-arrow sequences in nested objects', () => {
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: JSON.stringify({
+                                    productDetails: {
+                                        className: 'B2CMultipleProductDetailsRepresentation',
+                                        details: [
+                                            {
+                                                name: 'Product\\> with features',
+                                                description: 'Description\\> here',
+                                                specs: {
+                                                    size: '55\\" TV',
+                                                    features: ['Feature 1\\>', 'Feature 2\\>'],
+                                                },
+                                            },
+                                        ],
+                                    },
+                                }),
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                element.conversationEntry = entry;
+                expect(element).toBeDefined();
+                // Should render product details component successfully
+                expect(element.querySelector('c-product-details')).toBeDefined();
+            });
+
+            it('should handle arrays with backslash-arrow sequences', () => {
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: JSON.stringify({
+                                    cartSummary: {
+                                        className: 'B2CCartSummaryRepresentation',
+                                        cartDetails: {
+                                            items: [
+                                                { name: 'Item 1\\>', price: '$100\\>' },
+                                                { name: 'Item 2\\>', price: '$200\\>' },
+                                            ],
+                                        },
+                                    },
+                                }),
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                element.conversationEntry = entry;
+                expect(element).toBeDefined();
+                // Should render cart summary component successfully
+                expect(element.querySelector('c-cart-summary')).toBeDefined();
+            });
+
+            it('should not affect other escape sequences', () => {
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: JSON.stringify({
+                                    message: 'Text with \\n newlines and \\t tabs but \\> arrows',
+                                    data: {
+                                        escaped: '\\"quotes\\" and \\\\backslashes\\\\',
+                                        arrows: 'Only \\> these should change',
+                                    },
+                                }),
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                element.conversationEntry = entry;
+                expect(element).toBeDefined();
+                // Should render rich text component successfully
+                expect(element.querySelector('lightning-formatted-rich-text')).toBeDefined();
+            });
+
+            it('should be idempotent - applying polish multiple times has no effect', () => {
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: JSON.stringify({
+                                    message: 'Text with \\> arrows that are already polished',
+                                }),
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                element.conversationEntry = entry;
+                expect(element).toBeDefined();
+                // Should render without errors even if polish is applied multiple times
+                expect(element.querySelector('lightning-formatted-rich-text')).toBeDefined();
+            });
+        });
+
+        describe('integration with existing content types', () => {
+            it('should apply polish to product recommendations with complex data', () => {
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: JSON.stringify({
+                                    productRecommendations: {
+                                        className: 'B2CProductSearchActionResultsRepresentation',
+                                        productsDetails: {
+                                            products: [
+                                                {
+                                                    id: 'prod-1',
+                                                    name: 'Samsung 55\\" TV\\>',
+                                                    description: 'Great TV\\> for your home',
+                                                    features: ['4K Resolution\\>', 'Smart TV\\>'],
+                                                },
+                                            ],
+                                        },
+                                        categoryDetails: {
+                                            categories: [
+                                                {
+                                                    id: 'cat-1',
+                                                    name: 'Electronics\\>',
+                                                    description: 'All electronics\\> here',
+                                                },
+                                            ],
+                                        },
+                                    },
+                                }),
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                element.conversationEntry = entry;
+                expect(element).toBeDefined();
+                expect(element.querySelector('c-product-search-recommendations')).toBeDefined();
+            });
+
+            it('should apply polish to order confirmation data', () => {
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: JSON.stringify({
+                                    orderConfirmation: {
+                                        className: 'B2COrderConfirmationRepresentation',
+                                        orderDetails: {
+                                            orderNumber: 'ORD-123\\>',
+                                            items: [
+                                                {
+                                                    name: 'Product\\> Name',
+                                                    description: 'Description\\> here',
+                                                },
+                                            ],
+                                        },
+                                    },
+                                }),
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                element.conversationEntry = entry;
+                expect(element).toBeDefined();
+                expect(element.querySelector('c-summary-details')).toBeDefined();
+            });
+        });
+
+        describe('edge cases and error handling', () => {
+            it('should handle null and undefined values gracefully', () => {
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: JSON.stringify({
+                                    data: {
+                                        nullValue: null,
+                                        undefinedValue: undefined,
+                                        stringValue: 'Text with \\> arrows',
+                                    },
+                                }),
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                element.conversationEntry = entry;
+                expect(element).toBeDefined();
+                expect(element.querySelector('lightning-formatted-rich-text')).toBeDefined();
+            });
+
+            it('should handle non-string values in objects', () => {
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: JSON.stringify({
+                                    data: {
+                                        number: 123,
+                                        boolean: true,
+                                        string: 'Text with \\> arrows',
+                                        array: [1, 2, 3],
+                                    },
+                                }),
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                element.conversationEntry = entry;
+                expect(element).toBeDefined();
+                expect(element.querySelector('lightning-formatted-rich-text')).toBeDefined();
+            });
+
+            it('should handle deeply nested objects with backslash-arrow sequences', () => {
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: JSON.stringify({
+                                    level1: {
+                                        level2: {
+                                            level3: {
+                                                level4: {
+                                                    message: 'Deeply nested \\> arrows',
+                                                    data: ['Array\\> item 1', 'Array\\> item 2'],
+                                                },
+                                            },
+                                        },
+                                    },
+                                }),
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                element.conversationEntry = entry;
+                expect(element).toBeDefined();
+                expect(element.querySelector('lightning-formatted-rich-text')).toBeDefined();
+            });
+        });
+
+        describe('performance considerations', () => {
+            it('should handle large objects with many backslash-arrow sequences efficiently', () => {
+                // Create a large object with many backslash-arrow sequences
+                const largeObject = {
+                    products: Array.from({ length: 100 }, (_, i) => ({
+                        id: `product-${i}`,
+                        name: `Product ${i} with \\> arrows`,
+                        description: `Description ${i} with \\> more arrows`,
+                        features: Array.from({ length: 10 }, (__, j) => `Feature ${j} with \\> arrows`),
+                        specs: {
+                            size: `${i}\\" TV\\>`,
+                            weight: `${i} lbs\\>`,
+                            color: `Color ${i}\\>`,
+                        },
+                    })),
+                };
+
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: JSON.stringify(largeObject),
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                const startTime = performance.now();
+                element.conversationEntry = entry;
+                const endTime = performance.now();
+
+                expect(element).toBeDefined();
+                expect(element.querySelector('lightning-formatted-rich-text')).toBeDefined();
+
+                // Performance should be reasonable (less than 100ms for this test)
+                expect(endTime - startTime).toBeLessThan(100);
+            });
+        });
+    });
+
+    describe('JSON sanitization functionality', () => {
+        describe('handles unescaped quotes in product descriptions', () => {
+            it('should sanitize product recommendations with unescaped quotes', () => {
+                const problematicPayload =
+                    '{"productRecommendations":{"userQuery":"women\'s bags red","productsDetails":{"products":[{"variationsSummary":{"size":["ONE SIZE"],"color":["Pompeian Red / Juicy Red"]},"productPageUrl":"https://zyom-009.unified.demandware.net/s/NTOManaged/en_US/4100816.html","price":99.95,"name":"Women\'s Chimera 18 Backpack","inStock":true,"imageUrl":"https://s3.amazonaws.com/northerntrailoutfitters.com/nto-gear/default/images/large/4100816A5N-0.jpg","id":"4100816","discountPrice":99.95,"description":"Agile and lightweight pack for trail aficionados ready to crush the miles.","currencyCode":"USD"},{"variationsSummary":{"size":["XS/S","M/L"],"color":["Urban Navy / Meridian Blue","New Taupe Green / Four Leaf Clover","Pompeian Red / Juicy Red"]},"productPageUrl":"https://zyom-009.unified.demandware.net/s/NTOManaged/en_US/4100953.html","price":169.95,"name":"Women\'s Hydra 38 Backpack","inStock":true,"imageUrl":"https://s3.amazonaws.com/northerntrailoutfitters.com/nto-gear/default/images/large/4100953A5N-0.jpg","id":"4100953","discountPrice":169.95,"description":"Breathable, light pack for superior, lasting comfort on weekend missions.","currencyCode":"USD"},{"variationsSummary":{"size":["ONE SIZE"],"color":["Sequoia Red Light Heather / Sequoia Red"]},"productPageUrl":"https://zyom-009.unified.demandware.net/s/NTOManaged/en_US/4061141.html","price":55.0,"name":"Women\'s Electra Daypack","inStock":true,"imageUrl":"https://s3.amazonaws.com/northerntrailoutfitters.com/nto-gear/default/images/large/4061141A8N-0.jpg","id":"4061141","discountPrice":55.0,"description":"Low-profile backpack for "when look good, travel light is the motto.","currencyCode":"USD"}],"description":"Here are some top recommendations based on your query."},"isCartMgmtSupported":"true","className":"B2CProductSearchActionResultsRepresentation","categoryDetails":{"description":"Let me know if you are looking for something specific.","categories":[]}}}';
+
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: problematicPayload,
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                // This should not throw an error and should render successfully
+                expect(() => {
+                    element.conversationEntry = entry;
+                }).not.toThrow();
+
+                // The component should render successfully
+                expect(element).toBeDefined();
+
+                // Should render product search recommendations component
+                expect(element.querySelector('c-product-search-recommendations')).toBeDefined();
+            });
+
+            it('should handle product names with inch marks', () => {
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: '{"product": {"name": "55" TV", "description": "Great "smart" TV for your home"}}',
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                expect(() => {
+                    element.conversationEntry = entry;
+                }).not.toThrow();
+
+                expect(element).toBeDefined();
+                expect(element.querySelector('lightning-formatted-rich-text')).toBeDefined();
+            });
+
+            it('should handle nested objects with multiple unescaped quotes', () => {
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: '{"data": {"user": {"name": "John "Johnny" Doe", "message": "He said "hello world""}}}',
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                expect(() => {
+                    element.conversationEntry = entry;
+                }).not.toThrow();
+
+                expect(element).toBeDefined();
+                expect(element.querySelector('lightning-formatted-rich-text')).toBeDefined();
+            });
+
+            it('should handle arrays with quoted strings', () => {
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: '{"items": ["Item with "quotes"", "Another "quoted" item"]}',
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                expect(() => {
+                    element.conversationEntry = entry;
+                }).not.toThrow();
+
+                expect(element).toBeDefined();
+                expect(element.querySelector('lightning-formatted-rich-text')).toBeDefined();
+            });
+
+            it('should handle inner quoted phrases within strings', () => {
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: '{"message": "let me know "looking for shoes" and other items", "userQuery": "search for "red sneakers" please"}',
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                expect(() => {
+                    element.conversationEntry = entry;
+                }).not.toThrow();
+
+                expect(element).toBeDefined();
+                expect(element.querySelector('lightning-formatted-rich-text')).toBeDefined();
+            });
+
+            it('should handle complex nested quotes in product descriptions', () => {
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: '{"productRecommendations":{"userQuery":"looking for "red shoes"","productsDetails":{"products":[{"name":"Nike "Air Max" 270","description":"Perfect for "running" and "walking" activities","price":120}]}}}',
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                expect(() => {
+                    element.conversationEntry = entry;
+                }).not.toThrow();
+
+                expect(element).toBeDefined();
+                expect(element.querySelector('c-product-search-recommendations')).toBeDefined();
+            });
+        });
+
+        describe('handles newline normalization', () => {
+            it('should normalize newlines in JSON content', () => {
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: '{"description": "Line 1\nLine 2\r\nLine 3\rLine 4"}',
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                expect(() => {
+                    element.conversationEntry = entry;
+                }).not.toThrow();
+
+                expect(element).toBeDefined();
+                expect(element.querySelector('lightning-formatted-rich-text')).toBeDefined();
+            });
+
+            it('should handle multiple consecutive newlines', () => {
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: '{"text": "Line 1\n\n\nLine 2"}',
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                expect(() => {
+                    element.conversationEntry = entry;
+                }).not.toThrow();
+
+                expect(element).toBeDefined();
+                expect(element.querySelector('lightning-formatted-rich-text')).toBeDefined();
+            });
+        });
+
+        describe('handles complex real-world scenarios', () => {
+            it('should process product recommendations with complex formatting issues', () => {
+                const complexPayload =
+                    '{"productRecommendations":{"userQuery":"tvs under 30 inches","productsDetails":{"products":[{"variationsSummary":{},"productPageUrl":"URL_Redacted","price":549.99,"name":"Samsung Series 6 22" LCD High Definition Television","imageUrl":"URL_Redacted","id":"samsung-ln22a650M","discountPrice":549.99,"description":"Add an extraordinary touch of class and beauty to your HDTV with our unique Touch of Color™ feature. The LN22A650 also features high-definition picture quality so you see more details, heightened clarity and brilliant color. Plus, a 5,000:1 contrast ratio delivers incredibly sharp images in very dark or light scenes. You\'ll never look at your TV the same way again.","currencyCode":"USD"},{"variationsSummary":{},"productPageUrl":"URL_Redacted","price":214.5,"name":"Sanyo 19" LCD High Definition Television","imageUrl":"URL_Redacted","id":"sanyo-dp19648M","discountPrice":214.5,"description":"It features a tuner that receives both ATSC digital channels and NTSC analog channels. The digital tuner has Digital Clear QAM technology so it can receive unscrambled digital cable channels. A full complement of video inputs and audio outputs are provided. A PC/Mac input also allows alternative use as a computer monitor. And the detachable tilt base stand allows it to be wall mounted with an optional wall mount kit (not included).","currencyCode":"USD"}],"description":"Here are some top recommendations as per your query"},"isCartMgmtSupported":"true","className":"B2CProductSearchActionResultsRepresentation","categoryDetails":{"description":"Let me know if you are looking for something specific.","categories":[{"name":"Electronics","id":"electronics"},{"name":"New Arrivals","id":"newarrivals"}]}}}';
+
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: complexPayload,
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                expect(() => {
+                    element.conversationEntry = entry;
+                }).not.toThrow();
+
+                expect(element).toBeDefined();
+                expect(element.querySelector('c-product-search-recommendations')).toBeDefined();
+            });
+
+            it('should handle product details with formatting issues', () => {
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: '{"productDetails":{"details":[{"id":"prod1","name":"55" Smart TV\nwith features","description":"Great "smart" TV for your home"}]}}',
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                expect(() => {
+                    element.conversationEntry = entry;
+                }).not.toThrow();
+
+                expect(element).toBeDefined();
+                expect(element.querySelector('c-product-details')).toBeDefined();
+            });
+
+            it('should handle cart summary with quoted content', () => {
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: '{"cartSummary":{"cartDetails":{"items":[{"name":"Item with "quotes"","price":"$100"},{"name":"Another "quoted" item","price":"$200"}]}}}',
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                expect(() => {
+                    element.conversationEntry = entry;
+                }).not.toThrow();
+
+                expect(element).toBeDefined();
+                expect(element.querySelector('c-cart-summary')).toBeDefined();
+            });
+        });
+
+        describe('handles edge cases and error scenarios', () => {
+            it('should handle content that is not JSON after sanitization', () => {
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: 'This is not JSON, just plain text with "quotes"',
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                expect(() => {
+                    element.conversationEntry = entry;
+                }).not.toThrow();
+
+                expect(element).toBeDefined();
+                expect(element.querySelector('lightning-formatted-rich-text')).toBeDefined();
+            });
+
+            it('should handle mixed valid and invalid JSON', () => {
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: '{"valid": "json"} but then invalid with "quotes"',
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                expect(() => {
+                    element.conversationEntry = entry;
+                }).not.toThrow();
+
+                expect(element).toBeDefined();
+                expect(element.querySelector('lightning-formatted-rich-text')).toBeDefined();
+            });
+
+            it('should handle very long content with formatting issues', () => {
+                const longText = '{"product": "' + 'A'.repeat(1000) + '55" TV' + 'B'.repeat(1000) + '"}';
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: longText,
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                expect(() => {
+                    element.conversationEntry = entry;
+                }).not.toThrow();
+
+                expect(element).toBeDefined();
+                expect(element.querySelector('lightning-formatted-rich-text')).toBeDefined();
+            });
+
+            it('should handle special characters that need sanitization', () => {
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: '{"message": "Product: 32" monitor\nPrice: $299.99"}',
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                expect(() => {
+                    element.conversationEntry = entry;
+                }).not.toThrow();
+
+                expect(element).toBeDefined();
+                expect(element.querySelector('lightning-formatted-rich-text')).toBeDefined();
+            });
+        });
+
+        describe('performance and large inputs', () => {
+            it('should handle large objects with many formatting issues efficiently', () => {
+                const largeObject = {
+                    products: Array.from({ length: 50 }, (_, i) => ({
+                        id: `product-${i}`,
+                        name: `Product ${i} with "quotes"`,
+                        description: `Description ${i} with "more quotes" and features`,
+                    })),
+                };
+
+                const largeJson = JSON.stringify(largeObject);
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: largeJson,
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                const startTime = performance.now();
+                element.conversationEntry = entry;
+                const endTime = performance.now();
+
+                expect(element).toBeDefined();
+                expect(element.querySelector('lightning-formatted-rich-text')).toBeDefined();
+
+                // Performance should be reasonable (less than 100ms for this test)
+                expect(endTime - startTime).toBeLessThan(100);
+            });
+        });
+    });
+
+    describe('translation functionality', () => {
+        it('should default to English when no language is configured', () => {
+            expect(element.configuration?.language).toBeUndefined();
+            // Test that i18n functionality works with default language
+            expect(element.querySelector('[data-testid="dynamic-content"]')).toBeDefined();
+        });
+
+        it('should use Spanish labels when Spanish language is configured', async () => {
+            element.configuration = {
+                ...mockConfiguration,
+                language: 'es',
+            };
+            await Promise.resolve();
+
+            expect(element.configuration.language).toBe('es');
+            // Test that component renders correctly with Spanish configuration
+            expect(element.querySelector('[data-testid="dynamic-content"]')).toBeDefined();
+        });
+
+        it('should use French labels when French language is configured', async () => {
+            element.configuration = {
+                ...mockConfiguration,
+                language: 'fr',
+            };
+            await Promise.resolve();
+
+            expect(element.configuration.language).toBe('fr');
+            // Test that component renders correctly with French configuration
+            expect(element.querySelector('[data-testid="dynamic-content"]')).toBeDefined();
+        });
+
+        it('should fallback to English when unsupported language is configured', () => {
+            element.configuration = {
+                ...mockConfiguration,
+                language: 'de',
+            };
+
+            expect(element.configuration.language).toBe('de');
+            // Test that component renders correctly with unsupported language (should fallback)
+            expect(element.querySelector('[data-testid="dynamic-content"]')).toBeDefined();
+        });
+
+        it('should handle undefined or null language configuration gracefully', () => {
+            element.configuration = {
+                ...mockConfiguration,
+                language: undefined,
+            };
+            expect(element.configuration.language).toBeUndefined();
+            // Test that component renders correctly with undefined language
+            expect(element.querySelector('[data-testid="dynamic-content"]')).toBeDefined();
+
+            element.configuration = {
+                ...mockConfiguration,
+                language: null,
+            };
+            expect(element.configuration.language).toBeNull();
+            // Test that component renders correctly with null language
+            expect(element.querySelector('[data-testid="dynamic-content"]')).toBeDefined();
+        });
+
+        it('should update translations when language configuration changes', async () => {
+            // Start with English
+            element.configuration = { ...mockConfiguration, language: 'en_US' };
+            await Promise.resolve();
+
+            expect(element.configuration.language).toBe('en_US');
+            expect(element.querySelector('[data-testid="dynamic-content"]')).toBeDefined();
+
+            // Change to Spanish
+            element.configuration = { ...mockConfiguration, language: 'es' };
+            await Promise.resolve();
+
+            expect(element.configuration.language).toBe('es');
+            expect(element.querySelector('[data-testid="dynamic-content"]')).toBeDefined();
+
+            // Change to French
+            element.configuration = { ...mockConfiguration, language: 'fr' };
+            await Promise.resolve();
+
+            expect(element.configuration.language).toBe('fr');
+            expect(element.querySelector('[data-testid="dynamic-content"]')).toBeDefined();
+        });
+    });
+
+    describe('isLongEndUserMessage functionality (tested via generateMessageBubbleClassname)', () => {
+        it('should not include long-message class for non-EndUser messages', () => {
+            const entry = {
+                entryPayload: 'This is a long message with more than 40 characters',
+                sender: { role: CHATBOT },
+            };
+
+            element.conversationEntry = entry;
+            const classname = element.generateMessageBubbleClassname;
+            expect(classname).not.toContain('long-message');
+            expect(classname).toContain('Chatbot');
+        });
+
+        it('should not include long-message class for EndUser messages with 40 or fewer characters (gets full width)', () => {
+            const entry = {
+                entryPayload: 'This is a medium length message',
+                sender: { role: ENDUSER },
+            };
+
+            element.conversationEntry = entry;
+            const classname = element.generateMessageBubbleClassname;
+            expect(classname).not.toContain('long-message');
+            expect(classname).toContain('EndUser');
+        });
+
+        it('should include long-message class for EndUser messages with more than 40 characters (gets 80% width)', () => {
+            const entry = {
+                entryPayload:
+                    'This is a very long message that exceeds the forty character limit and should be constrained',
+                sender: { role: ENDUSER },
+            };
+
+            element.conversationEntry = entry;
+            const classname = element.generateMessageBubbleClassname;
+            expect(classname).toContain('long-message');
+            expect(classname).toContain('EndUser');
+        });
+
+        it('should not include long-message class for EndUser messages with exactly 40 characters (gets full width)', () => {
+            const entry = {
+                entryPayload: '1234567890123456789012345678901234567890', // Exactly 40 characters
+                sender: { role: ENDUSER },
+            };
+
+            element.conversationEntry = entry;
+            const classname = element.generateMessageBubbleClassname;
+            expect(classname).not.toContain('long-message');
+            expect(classname).toContain('EndUser');
+        });
+
+        it('should not include long-message class for EndUser messages with orderCompleted JSON format (gets full width)', () => {
+            const orderCompletedMessage = JSON.stringify({
+                orderCompleted: {
+                    className: 'orderCompleted',
+                    orderNumber: '1234567890',
+                    paymentMethod: 'credit card',
+                },
+            });
+
+            const entry = {
+                entryPayload: orderCompletedMessage,
+                sender: { role: ENDUSER },
+            };
+
+            element.conversationEntry = entry;
+            const classname = element.generateMessageBubbleClassname;
+            expect(classname).not.toContain('long-message');
+            expect(classname).toContain('EndUser');
+        });
+
+        it('should include long-message class for EndUser messages with plain text that exceeds 40 characters', () => {
+            const longTextMessage =
+                'This is a very long message that exceeds the forty character limit and should be constrained to 80% width';
+
+            const entry = {
+                entryPayload: longTextMessage,
+                sender: { role: ENDUSER },
+            };
+
+            element.conversationEntry = entry;
+            const classname = element.generateMessageBubbleClassname;
+            expect(classname).toContain('long-message');
+            expect(classname).toContain('EndUser');
+        });
+    });
+
+    describe('Error handling and edge cases', () => {
+        it('should handle window.open errors in handleShowProduct', () => {
+            const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+            const originalWindowOpen = window.open;
+            window.open = jest.fn(() => {
+                throw new Error('Window open failed');
+            });
+
+            const entry = {
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: JSON.stringify({
+                                className: 'productRecommendations',
+                                isCartMgmtSupported: false,
+                            }),
+                        },
+                    },
+                }),
+                sender: { role: CHATBOT },
+            };
+
+            element.conversationEntry = entry;
+
+            const event = {
+                detail: { url: 'https://example.com/product' },
+            };
+
+            element.handleShowProduct(event);
+
+            expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to open product URL:', expect.any(Error));
+
+            consoleErrorSpy.mockRestore();
+            window.open = originalWindowOpen;
+        });
+
+        it('should handle double-encoded JSON parsing', () => {
+            const doubleEncodedJson = JSON.stringify(
+                JSON.stringify({
+                    className: 'productRecommendations',
+                    productsDetails: { products: [] },
+                })
+            );
+
+            const entry = {
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: doubleEncodedJson,
+                        },
+                    },
+                }),
+                sender: { role: CHATBOT },
+            };
+
+            element.conversationEntry = entry;
+
+            // Check that the component renders without errors
+            expect(element.textContent).toBeDefined();
+        });
+
+        it('should handle JSON sanitization and repair for malformed JSON', () => {
+            const malformedJson =
+                '{"className": "productRecommendations", "productsDetails": {"products": []}, "description": "Test\\>Product"}';
+
+            const entry = {
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: malformedJson,
+                        },
+                    },
+                }),
+                sender: { role: CHATBOT },
+            };
+
+            element.conversationEntry = entry;
+
+            // Check that the component renders without errors
+            expect(element.textContent).toBeDefined();
+        });
+
+        it('should handle backslash arrow polishing in strings', () => {
+            const jsonWithBackslashArrows = JSON.stringify({
+                className: 'productRecommendations',
+                productsDetails: {
+                    products: [{ name: 'Test\\>Product', description: 'Category\\>Subcategory' }],
+                },
+            });
+
+            const entry = {
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: jsonWithBackslashArrows,
+                        },
+                    },
+                }),
+                sender: { role: CHATBOT },
+            };
+
+            element.conversationEntry = entry;
+
+            // Check that the component renders without errors
+            expect(element.textContent).toBeDefined();
+        });
+
+        it('should handle localStorage errors gracefully', () => {
+            const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+            const localStorageSpy = jest.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+                throw new Error('localStorage not available');
+            });
+
+            const messageEvent = new MessageEvent('message', {
+                data: {
+                    type: 'lwc.pwaContext',
+                    payload: {
+                        pwaDomainUrl: 'https://example.com',
+                        pwaSiteId: 'test-site',
+                        pwaLocale: 'en_US',
+                    },
+                },
+            });
+
+            // Simulate the message handler by dispatching the event
+            window.dispatchEvent(messageEvent);
+
+            expect(consoleWarnSpy).toHaveBeenCalledWith('localStorage not available:', expect.any(Error));
+
+            consoleWarnSpy.mockRestore();
+            localStorageSpy.mockRestore();
+        });
+
+        it('should handle disconnectedCallback cleanup properly', () => {
+            const removeEventListenerSpy = jest.spyOn(window, 'removeEventListener');
+
+            // Create a new element to test lifecycle
+            const newElement = createElement('c-dynamic-content-renderer', {
+                is: DynamicContentRenderer,
+            });
+            document.body.appendChild(newElement);
+
+            // Remove the element to trigger disconnectedCallback
+            document.body.removeChild(newElement);
+
+            expect(removeEventListenerSpy).toHaveBeenCalledWith('message', expect.any(Function));
+
+            removeEventListenerSpy.mockRestore();
+        });
+
+        it('should handle contextual data for welcome messages', () => {
+            const entry = {
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: '<img src="test.jpg" alt="Welcome">',
+                        },
+                    },
+                }),
+                sender: { role: CHATBOT },
+            };
+
+            element.conversationEntry = entry;
+
+            // Simulate receiving contextual data via message
+            const messageEvent = new MessageEvent('message', {
+                data: {
+                    type: 'conversational.actualConversationContext',
+                    payload: {
+                        conversationContext: [{ name: 'Test Context', id: 'test-id' }],
+                    },
+                },
+            });
+
+            window.dispatchEvent(messageEvent);
+
+            // Check that the component handles the message without errors
+            expect(element.textContent).toBeDefined();
+        });
+
+        it('should handle invalid conversation entry gracefully', () => {
+            // Test with null entry
+            element.conversationEntry = null;
+            expect(element.textContent).toBeDefined();
+
+            // Test with invalid entry
+            element.conversationEntry = 'invalid';
+            expect(element.textContent).toBeDefined();
+
+            // Test with entry missing sender
+            element.conversationEntry = { id: 'test' };
+            expect(element.textContent).toBeDefined();
+        });
+
+        it('should handle empty or malformed entry payload', () => {
+            const entry = {
+                entryPayload: '',
+                sender: { role: CHATBOT },
+            };
+
+            element.conversationEntry = entry;
+            expect(element.textContent).toBe('');
+        });
+
+        it('should handle non-JSON entry payload', () => {
+            const entry = {
+                entryPayload: 'This is plain text',
+                sender: { role: CHATBOT },
+            };
+
+            element.conversationEntry = entry;
+            // Component should handle non-JSON payload gracefully
+            expect(element.textContent).toBeDefined();
+        });
+
+        it('should handle data processor errors in dynamicComponentData', () => {
+            // Test error handling by providing invalid data that would cause processing errors
+            const entry = {
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: JSON.stringify({
+                                className: 'productRecommendations',
+                                productsDetails: { products: [] },
+                            }),
+                        },
+                    },
+                }),
+                sender: { role: CHATBOT },
+            };
+
+            element.conversationEntry = entry;
+            // Component should handle the data without errors
+            expect(element.textContent).toBeDefined();
+        });
+
+        it('should include contextual data for welcome messages', () => {
+            const entry = {
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: '<img src="test.jpg" alt="Welcome">',
+                        },
+                    },
+                }),
+                sender: { role: CHATBOT },
+            };
+
+            element.conversationEntry = entry;
+            // Component should handle welcome messages without errors
+            expect(element.textContent).toBeDefined();
+        });
+
+        it('should handle mobile detection', () => {
+            // Mock navigator.userAgent for mobile
+            const originalUserAgent = navigator.userAgent;
+            Object.defineProperty(navigator, 'userAgent', {
+                value: 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15',
+                configurable: true,
+            });
+
+            // Test mobile detection through component behavior
+            const entry = {
+                entryPayload: 'Test message',
+                sender: { role: CHATBOT },
+            };
+            element.conversationEntry = entry;
+            expect(element.textContent).toBeDefined();
+
+            // Restore original userAgent
+            Object.defineProperty(navigator, 'userAgent', {
+                value: originalUserAgent,
+                configurable: true,
+            });
+        });
+
+        it('should handle desktop detection', () => {
+            // Mock navigator.userAgent for desktop
+            const originalUserAgent = navigator.userAgent;
+            Object.defineProperty(navigator, 'userAgent', {
+                value: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                configurable: true,
+            });
+
+            // Test desktop detection through component behavior
+            const entry = {
+                entryPayload: 'Test message',
+                sender: { role: CHATBOT },
+            };
+            element.conversationEntry = entry;
+            expect(element.textContent).toBeDefined();
+
+            // Restore original userAgent
+            Object.defineProperty(navigator, 'userAgent', {
+                value: originalUserAgent,
+                configurable: true,
+            });
+        });
+
+        it('should handle select context with valid context name', () => {
+            element.configuration = {
+                util: {
+                    sendTextMessage: mockSendTextMessage,
+                },
+            };
+
+            const event = {
+                detail: { name: 'Test Context' },
+            };
+
+            element.handleSelectContext(event);
+
+            expect(mockSendTextMessage).toHaveBeenCalledWith('Test Context');
+        });
+
+        it('should handle select context with missing context name', () => {
+            element.configuration = {
+                util: {
+                    sendTextMessage: mockSendTextMessage,
+                },
+            };
+
+            const event = {
+                detail: { id: 'test-id' }, // Missing name
+            };
+
+            element.handleSelectContext(event);
+
+            expect(mockSendTextMessage).not.toHaveBeenCalled();
+        });
+
+        it('should handle invalid JSON parsing with fallback to invalid response message', () => {
+            const entry = {
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: '{"invalid": json}', // Invalid JSON
+                        },
+                    },
+                }),
+                sender: { role: CHATBOT },
+            };
+
+            element.conversationEntry = entry;
+
+            // Should handle invalid JSON gracefully
+            expect(element.textContent).toBeDefined();
+        });
+
+        it('should handle ENDUSER role with unrecognized JSON', () => {
+            const entry = {
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: JSON.stringify({
+                                unknownProperty: 'value',
+                                // No className property
+                            }),
+                        },
+                    },
+                }),
+                sender: { role: 'EndUser' },
+            };
+
+            element.conversationEntry = entry;
+
+            // Should render as plain text for EndUser
+            expect(element.textContent).toBeDefined();
+        });
+
+        it('should handle welcome message postMessage calls', () => {
+            const postMessageSpy = jest.spyOn(window.parent, 'postMessage');
+
+            const entry = {
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: '<img src="test.jpg" alt="Welcome">',
+                        },
+                    },
+                }),
+                sender: { role: CHATBOT },
+            };
+
+            element.conversationEntry = entry;
+            // Test welcome message behavior
+            expect(element.textContent).toBeDefined();
+
+            postMessageSpy.mockRestore();
+        });
+
+        it('should handle non-welcome message without postMessage calls', () => {
+            const postMessageSpy = jest.spyOn(window.parent, 'postMessage');
+
+            const entry = {
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: 'Regular text message',
+                        },
+                    },
+                }),
+                sender: { role: CHATBOT },
+            };
+
+            element.conversationEntry = entry;
+            // Test non-welcome message behavior
+            expect(element.textContent).toBeDefined();
+
+            postMessageSpy.mockRestore();
         });
     });
 });

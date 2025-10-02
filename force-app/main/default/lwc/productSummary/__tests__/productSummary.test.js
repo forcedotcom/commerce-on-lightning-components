@@ -9,17 +9,6 @@
 import { createElement } from 'lwc';
 import ProductSummary from 'c/productSummary';
 
-// Mock the labels
-jest.mock('@salesforce/label/c.Product_quantityLabelText', () => ({ default: 'Qty' }), {
-    virtual: true,
-});
-jest.mock('@salesforce/label/c.Product_originalPriceLabelText', () => ({ default: 'Original price' }), {
-    virtual: true,
-});
-jest.mock('@salesforce/label/c.Product_currentPriceLabelText', () => ({ default: 'Current price' }), {
-    virtual: true,
-});
-
 const mockItemMinimal = {
     imageUrl: 'minimal.png',
     name: 'Minimal Product',
@@ -33,6 +22,8 @@ const mockItemWithDetails = {
     variants: [
         { type: 'Color', value: 'Blue' },
         { type: 'Size', value: 'Large' },
+        { type: 'Material', value: 'Cotton' },
+        { type: 'Style', value: 'Casual' },
     ],
     quantity: 2,
     formattedPrice: '$25.00',
@@ -104,12 +95,11 @@ describe('c-product-summary', () => {
             // Variants
             const variantSpans = element.querySelectorAll('.facet-item');
             expect(variantSpans.length).toBe(mockItemWithDetails.variants.length);
-            expect(variantSpans[0].textContent).toBe(
-                `${mockItemWithDetails.variants[0].type}${mockItemWithDetails.variants[0].value}`
-            );
-            expect(variantSpans[1].textContent).toBe(
-                `${mockItemWithDetails.variants[1].type}${mockItemWithDetails.variants[1].value}`
-            );
+
+            // Test all variants
+            mockItemWithDetails.variants.forEach((variant, index) => {
+                expect(variantSpans[index].textContent).toBe(`${variant.type}${variant.value}`);
+            });
 
             // Quantity
             const quantityDiv = element.querySelector('.item-quantity');
@@ -166,6 +156,13 @@ describe('c-product-summary', () => {
             element.item = { ...mockItemMinimal, variants: 'not-an-array' };
             await Promise.resolve();
 
+            const variantsContainer = element.querySelector('.item-variants');
+            expect(variantsContainer).toBeNull();
+        });
+
+        it('handles null variants', async () => {
+            element.item = { ...mockItemMinimal, variants: null };
+            await Promise.resolve();
             const variantsContainer = element.querySelector('.item-variants');
             expect(variantsContainer).toBeNull();
         });
@@ -228,6 +225,42 @@ describe('c-product-summary', () => {
             expect(variantSpans[0].textContent).toBe('ColorRed');
             expect(variantSpans[1].textContent).toBe('SizeLarge');
         });
+
+        it('prioritizes variant.lbl over variationAttributes labels', async () => {
+            element.item = {
+                ...mockItemWithDetails,
+                variants: [
+                    { type: 'color', value: 'Rouge', lbl: 'Coloris ' },
+                    { type: 'size', value: '30', lbl: 'Taille' },
+                ],
+                variationAttributes: [
+                    { id: 'color', label: 'Color Selection' },
+                    { id: 'size', label: 'Size Selection' },
+                ],
+            };
+            await Promise.resolve();
+
+            const variantSpans = element.querySelectorAll('.facet-item');
+            expect(variantSpans.length).toBe(2);
+            expect(variantSpans[0].textContent).toBe('ColorisRouge');
+            expect(variantSpans[1].textContent).toBe('Taille30');
+        });
+
+        it('handles variant.lbl with proper capitalization', async () => {
+            element.item = {
+                ...mockItemWithDetails,
+                variants: [
+                    { type: 'color', value: 'Marine', lbl: 'coloris ' },
+                    { type: 'size', value: '30', lbl: 'taille' },
+                ],
+            };
+            await Promise.resolve();
+
+            const variantSpans = element.querySelectorAll('.facet-item');
+            expect(variantSpans.length).toBe(2);
+            expect(variantSpans[0].textContent).toBe('ColorisMarine');
+            expect(variantSpans[1].textContent).toBe('Taille30');
+        });
     });
 
     describe('Price Display', () => {
@@ -277,12 +310,10 @@ describe('c-product-summary', () => {
             const originalPrice = element.querySelector('.original-price');
             expect(originalPrice).toBeNull();
 
+            // Current price should exist and display the price
             const currentPrice = element.querySelector('.current-price');
-            expect(currentPrice).toBeNull();
-
-            // Regular price is displayed
-            const itemPrice = element.querySelector('.item-price');
-            expect(itemPrice.textContent).toBe('$15.99');
+            expect(currentPrice).not.toBeNull();
+            expect(currentPrice.textContent).toBe('$15.99');
         });
 
         it('displays only current price when prices are equal', async () => {
@@ -301,9 +332,10 @@ describe('c-product-summary', () => {
             const priceContainer = element.querySelector('.price-container');
             expect(priceContainer).toBeNull();
 
-            // Regular price is displayed
-            const itemPrice = element.querySelector('.item-price');
-            expect(itemPrice.textContent).toBe('$15.99');
+            // Current price should exist and display the price
+            const currentPrice = element.querySelector('.current-price');
+            expect(currentPrice).not.toBeNull();
+            expect(currentPrice.textContent).toBe('$15.99');
         });
 
         it('formats original price with correct currency', async () => {
@@ -422,9 +454,11 @@ describe('c-product-summary', () => {
             const priceContainer = element.querySelector('.price-container');
             expect(priceContainer).toBeNull();
 
-            // For non-discounted items, no aria-label is needed as it's just text
-            const itemPrice = element.querySelector('.item-price');
-            expect(itemPrice.textContent).toBe('$15.99');
+            // For non-discounted items, the aria-label should be on the span element
+            const priceSpan = element.querySelector('span[aria-label]');
+            expect(priceSpan).not.toBeNull();
+            expect(priceSpan.getAttribute('aria-label')).toBe('$15.99');
+            expect(priceSpan.textContent).toBe('$15.99');
         });
 
         it('handles missing formattedPrice in ARIA label', async () => {
@@ -460,6 +494,153 @@ describe('c-product-summary', () => {
             // Test that the component initializes properly
             expect(element).toBeDefined();
             expect(element.tagName).toBe('C-PRODUCT-SUMMARY');
+        });
+
+        it('initializes with default configuration', () => {
+            expect(element.configuration).toEqual({});
+            expect(element.language).toBe('en_US');
+        });
+    });
+
+    describe('Configuration and Language Support', () => {
+        it('should support different language configurations', () => {
+            element.configuration = { language: 'es' };
+            expect(element.configuration.language).toBe('es');
+            expect(element.language).toBe('es');
+
+            element.configuration = { language: 'fr' };
+            expect(element.configuration.language).toBe('fr');
+            expect(element.language).toBe('fr');
+
+            element.configuration = { language: 'en-GB' };
+            expect(element.configuration.language).toBe('en-GB');
+            expect(element.language).toBe('en-GB');
+        });
+
+        it('should provide correct translations for different languages', () => {
+            // Test English (default)
+            expect(element.i18n.quantityLabelText).toBe('Qty');
+            expect(element.i18n.originalPriceLabel).toBe('Original price');
+            expect(element.i18n.currentPriceLabel).toBe('Current price');
+
+            // Test Spanish
+            element.configuration = { language: 'es' };
+            expect(element.i18n.quantityLabelText).toBe('Cant.');
+            expect(element.i18n.originalPriceLabel).toBe('Precio original');
+            expect(element.i18n.currentPriceLabel).toBe('Precio actual');
+
+            // Test French
+            element.configuration = { language: 'fr' };
+            expect(element.i18n.quantityLabelText).toBe('Qté');
+            expect(element.i18n.originalPriceLabel).toBe("Prix d'origine");
+            expect(element.i18n.currentPriceLabel).toBe('Prix actuel');
+
+            // Test German
+            element.configuration = { language: 'de' };
+            expect(element.i18n.quantityLabelText).toBe('Menge');
+            expect(element.i18n.originalPriceLabel).toBe('Ursprünglicher Preis');
+            expect(element.i18n.currentPriceLabel).toBe('Aktueller Preis');
+        });
+
+        it('should fallback to English for unsupported languages', () => {
+            element.configuration = { language: 'unsupported-lang' };
+            expect(element.i18n.quantityLabelText).toBe('Qty');
+            expect(element.i18n.originalPriceLabel).toBe('Original price');
+            expect(element.i18n.currentPriceLabel).toBe('Current price');
+        });
+
+        it('should handle undefined/null language gracefully', () => {
+            element.configuration = { language: undefined };
+            expect(element.configuration.language).toBeUndefined();
+            expect(element.language).toBe('en_US');
+            expect(element.i18n.quantityLabelText).toBe('Qty');
+
+            element.configuration = { language: null };
+            expect(element.configuration.language).toBeNull();
+            expect(element.language).toBe('en_US');
+            expect(element.i18n.quantityLabelText).toBe('Qty');
+
+            element.configuration = { language: '' };
+            expect(element.configuration.language).toBe('');
+            expect(element.language).toBe('en_US');
+            expect(element.i18n.quantityLabelText).toBe('Qty');
+        });
+
+        it('should update translations when language configuration changes', async () => {
+            // Start with English
+            element.configuration = { language: 'en_US' };
+            await Promise.resolve();
+            expect(element.i18n.quantityLabelText).toBe('Qty');
+
+            // Change to Spanish
+            element.configuration = { language: 'es' };
+            await Promise.resolve();
+            expect(element.i18n.quantityLabelText).toBe('Cant.');
+
+            // Change to French
+            element.configuration = { language: 'fr' };
+            await Promise.resolve();
+            expect(element.i18n.quantityLabelText).toBe('Qté');
+        });
+
+        it('should handle invalid locale gracefully in price formatting', async () => {
+            element.item = {
+                ...mockItemWithDetails,
+                originalSubtotal: 25.99,
+                itemSubtotal: 20.99,
+                currencyCode: 'USD',
+            };
+            element.configuration = { language: 'invalid-locale-xyz' };
+            await Promise.resolve();
+
+            // Should render without throwing an error - test through DOM
+            const priceContainer = element.querySelector('.item-price');
+            expect(priceContainer).not.toBeNull();
+
+            // Check that strikethrough price is displayed (fallback formatting should work)
+            const originalPrice = element.querySelector('.original-price');
+            expect(originalPrice).not.toBeNull();
+            expect(originalPrice.textContent).toMatch(/\$25\.99/);
+        });
+
+        it('should handle empty language gracefully in price formatting', async () => {
+            element.item = {
+                ...mockItemWithDetails,
+                originalSubtotal: 15.5,
+                itemSubtotal: 12.0,
+                currencyCode: 'EUR',
+            };
+            element.configuration = { language: '' };
+            await Promise.resolve();
+
+            // Should render without throwing an error - test through DOM
+            const priceContainer = element.querySelector('.item-price');
+            expect(priceContainer).not.toBeNull();
+
+            // Check that strikethrough price is displayed (fallback formatting should work)
+            const originalPrice = element.querySelector('.original-price');
+            expect(originalPrice).not.toBeNull();
+            expect(originalPrice.textContent).toMatch(/€15\.50/);
+        });
+
+        it('should handle null language gracefully in price formatting', async () => {
+            element.item = {
+                ...mockItemWithDetails,
+                originalSubtotal: 100.0,
+                itemSubtotal: 90.0,
+                currencyCode: 'USD',
+            };
+            element.configuration = { language: null };
+            await Promise.resolve();
+
+            // Should render without throwing an error - test through DOM
+            const priceContainer = element.querySelector('.item-price');
+            expect(priceContainer).not.toBeNull();
+
+            // Check that strikethrough price is displayed (fallback formatting should work)
+            const originalPrice = element.querySelector('.original-price');
+            expect(originalPrice).not.toBeNull();
+            expect(originalPrice.textContent).toMatch(/\$100\.00/);
         });
     });
 
@@ -609,38 +790,56 @@ describe('c-product-summary', () => {
             await Promise.resolve();
 
             const variantSpans = element.querySelectorAll('.facet-item');
-            // Only first 2 variants should be displayed (limited to 2 facets max)
-            expect(variantSpans.length).toBe(2);
+            // All variants should be displayed
+            expect(variantSpans.length).toBe(4);
             expect(variantSpans[0].textContent).toBe('Product Colorred');
             expect(variantSpans[1].textContent).toBe('Size Optionxl');
+            expect(variantSpans[2].textContent).toBe('Fabric Typecotton');
+            expect(variantSpans[3].textContent).toBe('Unmapped_typeunmapped_value');
         });
-    });
-    it('should trigger formattedStandardPrice getter when hasStandardPrice is true', async () => {
-        const itemWithStandardPrice = {
-            imageUrl: 'test.jpg',
-            name: 'Test Product',
-            quantity: 1,
-            formattedPrice: '$19.99',
-            originalSubtotal: 29.99, // Valid standard price - different from itemSubtotal
-            itemSubtotal: 19.99, // Different from originalSubtotal, so hasStandardPrice = true
-            currencyCode: 'USD',
-        };
 
-        element.item = itemWithStandardPrice;
-        await Promise.resolve();
+        it('capitalizes first letter of variant labels', async () => {
+            const itemWithLowercaseLabels = {
+                ...mockItemWithDetails,
+                variants: [
+                    { type: 'color', value: 'blue' },
+                    { type: 'size', value: 'medium' },
+                ],
+                variationAttributes: [
+                    { id: 'color', label: 'color selection' }, // lowercase label
+                    { id: 'size', label: 'size option' }, // lowercase label
+                ],
+            };
+            element.item = itemWithLowercaseLabels;
+            await Promise.resolve();
 
-        // When hasStandardPrice is true, the template renders both prices
-        // This triggers the formattedStandardPrice getter, executing the .format() call
-        const priceContainer = element.querySelector('.price-container');
-        expect(priceContainer).not.toBeNull();
+            const variantSpans = element.querySelectorAll('.facet-item');
+            expect(variantSpans.length).toBe(2);
+            // Verify that first letter is capitalized
+            expect(variantSpans[0].textContent).toBe('Color selectionblue');
+            expect(variantSpans[1].textContent).toBe('Size optionmedium');
+        });
 
-        const originalPriceElement = element.querySelector('.original-price');
-        expect(originalPriceElement).not.toBeNull();
+        it('handles falsy variant type and label for capitalization', async () => {
+            // This tests the capitalization ternary when both mapped label and variant type are falsy
+            const itemWithFalsyType = {
+                ...mockItemWithDetails,
+                variants: [
+                    { type: '', value: 'testvalue' }, // empty string type
+                    { type: 'falsytype', value: 'anothervalue' }, // use string instead of null to avoid key errors
+                ],
+                variationAttributes: [
+                    { id: 'falsytype', label: '' }, // empty label for this type
+                ],
+            };
+            element.item = itemWithFalsyType;
+            await Promise.resolve();
 
-        // Verify that the .format() call was executed and returned a formatted price
-        expect(originalPriceElement.textContent).toBe('$29.99');
-
-        const currentPrice = element.querySelector('.current-price');
-        expect(currentPrice.textContent).toBe('$19.99');
+            const variantSpans = element.querySelectorAll('.facet-item');
+            expect(variantSpans.length).toBe(2);
+            // When type is falsy, the label should remain falsy and not be capitalized
+            expect(variantSpans[0].textContent).toBe('testvalue'); // empty type becomes empty label
+            expect(variantSpans[1].textContent).toBe('Falsytypeanothervalue'); // empty label falls back to capitalized type
+        });
     });
 });

@@ -6,7 +6,6 @@
  * root or https://opensource.org/licenses/apache-2-0/
  */
 import { LightningElement, api } from 'lwc';
-import { Labels } from './labels';
 import displayOriginalPriceEvaluator from './productPricingUtils';
 
 export default class CommonProductPricing extends LightningElement {
@@ -110,12 +109,9 @@ export default class CommonProductPricing extends LightningElement {
     /**
      * Assistive text, required because screen-readers do not read out strikethrough styling
      * @type {string}
-     * @private
-     * @readonly
      */
-    get strikethroughAssistiveText() {
-        return Labels.strikethroughAssistiveText;
-    }
+    @api
+    strikethroughAssistiveText;
 
     /**
      * Gets whether Tax Information can be shown. Will only be true
