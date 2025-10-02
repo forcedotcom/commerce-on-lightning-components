@@ -6,10 +6,16 @@
  * root or https://opensource.org/licenses/apache-2-0/
  */
 import { LightningElement, api } from 'lwc';
-import * as labels from './labels';
+import * as Labels from './labelUtils';
 
 export default class SummaryDetails extends LightningElement {
     static renderMode = 'light';
+
+    /**
+     * Configuration object containing language and other settings
+     * @type {object}
+     */
+    @api configuration = {};
 
     /**
      * Order/cart details object passed by the parent component.
@@ -28,7 +34,16 @@ export default class SummaryDetails extends LightningElement {
      * id: String
      * }
      */
-    @api details = {};
+    _details = {};
+
+    @api
+    set details(value) {
+        this._details = value;
+    }
+
+    get details() {
+        return this._details;
+    }
 
     /**
      * Flag indicating if the component is rendering in cart summary mode.
@@ -41,10 +56,46 @@ export default class SummaryDetails extends LightningElement {
     isExpanded = false;
 
     /**
-     * Internationalized labels used throughout the component.
-     * Automatically reflects all exports from `labels.js`.
+     * Getter for the current language/locale
+     * @returns {string} The current language/locale (defaults to 'en_US')
      */
-    i18n = labels;
+    @api
+    get language() {
+        return this.configuration?.language || 'en_US';
+    }
+
+    /**
+     * Getter for internationalized labels
+     * @returns {object} Object containing all translated labels for the current language
+     */
+    @api
+    get i18n() {
+        const language = this.language;
+        return {
+            confirmationTitle: Labels.confirmationTitle(language),
+            subtotalLabel: Labels.subtotalLabel(language),
+            promotionsLabel: Labels.promotionsLabel(language),
+            shippingLabel: Labels.shippingLabel(language),
+            shippingDiscountLabel: Labels.shippingDiscountLabel(language),
+            taxesLabel: Labels.taxesLabel(language),
+            totalLabel: Labels.totalLabel(language),
+            tbdLabel: Labels.tbdLabel(language),
+            freeShippingLabel: Labels.freeShippingLabel(language),
+            defaultDeliveryMessage: Labels.defaultDeliveryMessage(language),
+            footerMessage: Labels.footerMessage(language),
+            orderSummaryAssistiveText: Labels.orderSummaryAssistiveText(language),
+            cartSummaryAssistiveText: Labels.cartSummaryAssistiveText(language),
+            toggleExpandAssistiveText: Labels.toggleExpandAssistiveText(language),
+            toggleCollapseAssistiveText: Labels.toggleCollapseAssistiveText(language),
+            toggleExpandCartAssistiveText: Labels.toggleExpandCartAssistiveText(language),
+            toggleCollapseCartAssistiveText: Labels.toggleCollapseCartAssistiveText(language),
+            orderItemsAssistiveText: Labels.orderItemsAssistiveText(language),
+            cartItemsAssistiveText: Labels.cartItemsAssistiveText(language),
+            orderTotalsAssistiveText: Labels.orderTotalsAssistiveText(language),
+            cartTotalsAssistiveText: Labels.cartTotalsAssistiveText(language),
+            orderIdLabel: Labels.orderIdLabel(language),
+        };
+    }
 
     /**
      * Convenience getter for the currency code to avoid repetition.
@@ -72,10 +123,17 @@ export default class SummaryDetails extends LightningElement {
      * @returns {string} Formatted currency string
      */
     formatPrice(amount, currencyCode) {
-        return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: currencyCode,
-        }).format(amount);
+        try {
+            return new Intl.NumberFormat(this.language, {
+                style: 'currency',
+                currency: currencyCode,
+            }).format(amount);
+        } catch (e) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: currencyCode,
+            }).format(amount);
+        }
     }
 
     /**
@@ -92,10 +150,8 @@ export default class SummaryDetails extends LightningElement {
      * TODO: W-18991018 Remove Math.abs and have consistent discounts from actions
      */
     get promotions() {
-        const promotions = this.details?.promotionsDiscount || 0;
-        return promotions === 0
-            ? this.formatPrice(0, this.currencyCode)
-            : `-${this.formatPrice(Math.abs(promotions), this.currencyCode)}`;
+        const promotions = this.details.promotionsDiscount;
+        return `-${this.formatPrice(Math.abs(promotions), this.currencyCode)}`;
     }
 
     /**
@@ -116,10 +172,8 @@ export default class SummaryDetails extends LightningElement {
      * TODO: W-18991018 Remove Math.abs and have consistent discounts from actions
      */
     get shippingDiscount() {
-        const discount = this.details?.shippingDiscount || 0;
-        return discount === 0
-            ? this.formatPrice(0, this.currencyCode)
-            : `-${this.formatPrice(Math.abs(discount), this.currencyCode)}`;
+        const discount = this.details.shippingDiscount;
+        return `-${this.formatPrice(Math.abs(discount), this.currencyCode)}`;
     }
 
     /**
@@ -179,7 +233,10 @@ export default class SummaryDetails extends LightningElement {
      * @returns {string} Summary of cart sections
      */
     get cartSummaryBodyMessage() {
-        return this.isCartSummary ? this.details?.bodyMessage : null;
+        const bodyMessage = this.details?.bodyMessage;
+        // Replace <strong> tags that come from agent action response with custom font-weight styling of 500
+        const formattedBodyMessage = bodyMessage?.replace(/<strong>/g, '<strong style="font-weight: 500;">');
+        return formattedBodyMessage || bodyMessage;
     }
 
     /**
@@ -264,7 +321,7 @@ export default class SummaryDetails extends LightningElement {
     get clickableRowClasses() {
         const baseClasses = 'clickable-row slds-grid slds-grid_align-spread';
         return this.isCartSummary
-            ? `${baseClasses} slds-p-horizontal_none slds-p-vertical_small`
+            ? `${baseClasses} slds-p-horizontal_none slds-p-top_small slds-p-bottom_medium`
             : `${baseClasses} slds-p-around_none slds-m-bottom_medium`;
     }
 

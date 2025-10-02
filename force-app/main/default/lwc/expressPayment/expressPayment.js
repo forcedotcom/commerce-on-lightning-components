@@ -29,6 +29,67 @@ export default class ExpressPayment extends LightningElement {
     @api expressPaymentUrl;
 
     /**
+     * PDP flag to indicate if this is a product detail page.
+     * @type {boolean}
+     */
+    @api pdp;
+
+    /**
+     * Flag to disable the express payment component.
+     * @type {boolean}
+     */
+    @api disabled = false;
+
+    /**
+     * Dynamic height for the express payment iframe.
+     * @type {number}
+     */
+    _dynamicHeight = 0; // Default height
+
+    /**
+     * Sendds basket data via postMessage to the express payment iframe
+     * @param {object} basketData - The basket data to send
+     * @param {number} basketData.orderTotal - The total order amount
+     * @param {string} basketData.currency - The currency code (e.g., 'USD')
+     * @param {string} basketData.id - The basket/order ID
+     * @param {object} authData - The auth data to send
+     * @param {string} authData.customerId - The customer ID
+     * @param {string} authData.authToken - The auth token for the customer
+     */
+    @api
+    sendCheckoutData(basketData, authData) {
+        if (!basketData && !authData) {
+            console.warn('Cannot send basket or authentication data - missing required data');
+            return;
+        }
+
+        try {
+            // Try to target the express payment iframe directly
+            const iframe = this.template.querySelector('iframe');
+
+            if (iframe && iframe.contentWindow && basketData) {
+                iframe.contentWindow.postMessage(
+                    {
+                        type: 'basketDataAvailable',
+                        data: { basketData, authData },
+                    },
+                    '*'
+                );
+            } else if (iframe && iframe.contentWindow && authData) {
+                iframe.contentWindow.postMessage(
+                    {
+                        type: 'authDataAvailable',
+                        data: { authData },
+                    },
+                    '*'
+                );
+            }
+        } catch (error) {
+            console.warn('Failed to send basket data postMessage:', error);
+        }
+    }
+
+    /**
      * Returns the URL for the express iframe
      * @returns {string} URL for iframe
      */
@@ -36,10 +97,25 @@ export default class ExpressPayment extends LightningElement {
         if (!this.expressPaymentUrl || !this.entryId) {
             return '';
         }
-        return `${this.expressPaymentUrl}?id=${this.entryId}`;
+        let url = `${this.expressPaymentUrl}?id=${this.entryId}`;
+        if (this.pdp) {
+            url += `&pdp=true`;
+        }
+        return url;
+    }
+
+    /**
+     * Returns the CSS classes for the container div
+     * @returns {string} CSS classes for container
+     */
+    get containerClass() {
+        return this.disabled ? 'express-container disabled' : 'express-container';
     }
 
     connectedCallback() {
+        // Set initial iframe height
+        this._updateIframeHeight(this._dynamicHeight);
+
         // Check if express payment URL is empty or invalid
         if (
             !this.expressPaymentUrl ||
@@ -70,6 +146,65 @@ export default class ExpressPayment extends LightningElement {
     disconnectedCallback() {
         this._removeGlobalListener();
         this.clearLoadTimeout();
+    }
+
+    /**
+     * Update the SKU in the iframe via postMessage
+     * @param {string} sku - The product SKU to update to
+     * @public
+     */
+    @api
+    updateSku(sku) {
+        const iframe = this.template.querySelector('iframe');
+        if (iframe && iframe.contentWindow) {
+            if (sku) {
+                iframe.contentWindow.postMessage(
+                    {
+                        type: 'UPDATE_SKU',
+                        sku: sku,
+                    },
+                    '*'
+                );
+            } else {
+                iframe.contentWindow.postMessage(
+                    {
+                        type: 'CLEAR_SKU',
+                    },
+                    '*'
+                );
+            }
+        }
+    }
+
+    /**
+     * Update the quantity in the iframe via postMessage
+     * @param {number} quantity - The quantity to update to
+     * @public
+     */
+    @api
+    updateQuantity(quantity) {
+        const iframe = this.template.querySelector('iframe');
+        if (iframe && iframe.contentWindow && typeof quantity === 'number' && quantity > 0) {
+            iframe.contentWindow.postMessage(
+                {
+                    type: 'UPDATE_QUANTITY',
+                    quantity: quantity,
+                },
+                '*'
+            );
+        }
+    }
+
+    /**
+     * Update the CSS custom property for iframe height
+     * @param {number} height - The new height in pixels
+     * @private
+     */
+    _updateIframeHeight(height) {
+        const container = this.template.querySelector('.express-container');
+        if (container) {
+            container.style.setProperty('--iframe-height', `${height}px`);
+        }
     }
 
     /**
@@ -113,13 +248,31 @@ export default class ExpressPayment extends LightningElement {
             return;
         }
 
-        // Clear timeout since we received a message
-        this.clearLoadTimeout();
+        // Only clear timeout for expected express payment message types
+        const expectedMessageTypes = [
+            'express.payment.available',
+            'express.payment.unavailable',
+            'express.payment.success',
+            'express.payment.failure',
+            'express.payment.cancel',
+        ];
+
+        if (expectedMessageTypes.includes(event.data.type)) {
+            this.clearLoadTimeout();
+        }
 
         if (event.data.type === 'express.payment.available') {
+            const payload = event.data.payload;
+
+            // Set dynamic height if provided in payload
+            if (payload && typeof payload.height === 'number' && payload.height > 0) {
+                this._dynamicHeight = payload.height;
+                this._updateIframeHeight(payload.height);
+            }
+
             this.dispatchEvent(
                 new CustomEvent('expressloaded', {
-                    detail: { available: true },
+                    detail: { available: true, payload },
                 })
             );
         }
@@ -132,21 +285,14 @@ export default class ExpressPayment extends LightningElement {
             );
         }
 
-        // For payment events, process once and remove listener
-        if (
-            event.data.type === 'express.payment.success' ||
-            event.data.type === 'express.payment.failure' ||
-            event.data.type === 'express.payment.cancel'
-        ) {
-            // Remove the message listener so no further payment events are handled
-            this._removeGlobalListener();
-        }
-
         if (event.data.type === 'express.payment.success') {
             this.dispatchEvent(
                 new CustomEvent('payment', {
                     bubbles: true,
-                    detail: event.data.payload.orderId,
+                    detail: {
+                        orderId: event.data.payload.orderId,
+                        paymentMethod: event.data.payload.PAYMENT_METHOD,
+                    },
                 })
             );
         }
@@ -155,16 +301,22 @@ export default class ExpressPayment extends LightningElement {
             this.dispatchEvent(
                 new CustomEvent('payment', {
                     bubbles: true,
-                    detail: { status: 'failure' },
+                    detail: {
+                        status: 'failure',
+                        paymentMethod: event.data.payload.PAYMENT_METHOD,
+                    },
                 })
             );
         }
 
-        if (event.data.type === 'express.payment.cancel') {
+        if (event.data.type === 'express.payment.cancel' && !this.pdp) {
             this.dispatchEvent(
                 new CustomEvent('payment', {
                     bubbles: true,
-                    detail: { status: 'cancel' },
+                    detail: {
+                        status: 'cancel',
+                        paymentMethod: event.data.payload.PAYMENT_METHOD,
+                    },
                 })
             );
         }

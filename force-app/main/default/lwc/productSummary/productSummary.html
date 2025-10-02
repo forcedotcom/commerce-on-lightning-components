@@ -5,36 +5,42 @@
                 src={imageUrl}
                 alt={name} />
         </div>
-        <div
-            class="item-details slds-col slds-grow slds-grid slds-grid_vertical slds-p-horizontal_small slds-p-vertical_x-small">
-            <!-- Top: Item name -->
-            <h3 class="item-name slds-col slds-align-top slds-truncate">{name}</h3>
+        <div class="item-content slds-col slds-grid">
+            <!-- Left column: Main content -->
+            <div class="item-details">
+                <!-- Item name -->
+                <h3 class="item-name slds-truncate">{name}</h3>
 
-            <!-- Middle: Facets (evenly spaced) -->
-            <div class="facets-container slds-col slds-grow slds-grid slds-grid_vertical slds-grid_align-center">
-                <template if:true={hasFacets}>
-                    <ul class="item-variants slds-grid slds-grid_vertical">
-                        <template
-                            for:each={facets}
-                            for:item="facet">
-                            <li
-                                key={facet.type}
-                                class="facet-item">
-                                {facet.label}
-                                <span class="facet-value">{facet.value}</span>
-                            </li>
-                        </template>
-                    </ul>
-                </template>
+                <!-- Middle: Facets -->
+                <div class="facets-container">
+                    <template if:true={hasFacets}>
+                        <ul class="item-variants slds-grid slds-grid_vertical">
+                            <template
+                                for:each={facets}
+                                for:item="facet">
+                                <li
+                                    key={facet.type}
+                                    class="facet-item">
+                                    {facet.label}
+                                    <span class="facet-value">{facet.value}</span>
+                                </li>
+                            </template>
+                        </ul>
+                    </template>
+                </div>
+
+                <!-- Bottom: Quantity -->
+                <div class="bottom-row">
+                    <div class="item-quantity">
+                        {i18n.quantityLabelText}
+                        <span class="item-quantity-value">{quantity}</span>
+                    </div>
+                </div>
             </div>
 
-            <!-- Bottom: Quantity left, Price right -->
-            <div class="bottom-row slds-col slds-grid slds-grid_align-spread slds-shrink-none">
-                <div class="item-quantity slds-col slds-text-align_left">
-                    {i18n.quantityLabelText}
-                    <span class="item-quantity-value">{quantity}</span>
-                </div>
-                <div class="item-price slds-col slds-no-flex slds-text-align_right">
+            <!-- Right column: Price -->
+            <div class="item-price-column">
+                <div class="item-price">
                     <template if:true={hasStandardPrice}>
                         <div
                             class="price-container"
@@ -43,7 +49,13 @@
                             <span class="current-price">{formattedPrice}</span>
                         </div>
                     </template>
-                    <template if:false={hasStandardPrice}>{formattedPrice}</template>
+                    <template if:false={hasStandardPrice}>
+                        <span
+                            aria-label={priceAriaLabel}
+                            class="current-price">
+                            {formattedPrice}
+                        </span>
+                    </template>
                 </div>
             </div>
         </div>

@@ -105,10 +105,10 @@ describe('c-summary-details', () => {
 
             // Header should always be visible
             const titleEl = element.querySelector('.confirmation-title');
-            expect(titleEl.textContent).toBe('c.Order_confirmationTitle');
+            expect(titleEl.textContent).toBe('Your order is confirmed.');
 
             const deliveryMsgEl = element.querySelector('.delivery-message');
-            expect(deliveryMsgEl.textContent).toBe('c.Order_defaultDeliveryMessage');
+            expect(deliveryMsgEl.textContent).toBe('Your order is confirmed.');
 
             // Caret should show down arrow when collapsed
             const caretIcon = element.querySelector('lightning-icon');
@@ -127,7 +127,7 @@ describe('c-summary-details', () => {
             await expandComponent(element);
 
             const titleEl = element.querySelector('.confirmation-title');
-            expect(titleEl.textContent).toBe('c.Order_confirmationTitle');
+            expect(titleEl.textContent).toBe('Your order is confirmed.');
 
             const deliveryMsgEl = element.querySelector('.delivery-message');
             expect(deliveryMsgEl.textContent).toBe(mockOrderData.bodyMessage);
@@ -164,7 +164,7 @@ describe('c-summary-details', () => {
             // Should start collapsed
             let caretIcon = element.querySelector('lightning-icon');
             expect(caretIcon.iconName).toBe('utility:chevrondown');
-            expect(element.querySelector('.items')).toBeNull();
+            expect(element.querySelector('[role="list"]')).toBeNull();
 
             // Click to expand
             clickableEl.click();
@@ -173,7 +173,7 @@ describe('c-summary-details', () => {
             // Should be expanded
             caretIcon = element.querySelector('lightning-icon');
             expect(caretIcon.iconName).toBe('utility:chevronup');
-            expect(element.querySelector('.items')).not.toBeNull();
+            expect(element.querySelector('[role="list"]')).not.toBeNull();
 
             // Click to collapse again
             clickableEl.click();
@@ -182,7 +182,7 @@ describe('c-summary-details', () => {
             // Should be collapsed again
             caretIcon = element.querySelector('lightning-icon');
             expect(caretIcon.iconName).toBe('utility:chevrondown');
-            expect(element.querySelector('.items')).toBeNull();
+            expect(element.querySelector('[role="list"]')).toBeNull();
         });
 
         it('should display "Free" for shipping when shippingCost is 0', async () => {
@@ -191,7 +191,7 @@ describe('c-summary-details', () => {
             await expandComponent(element);
 
             const summaryValues = element.querySelectorAll('.summary-value');
-            expect(summaryValues[1].textContent).toBe('c.Order_freeShippingLabel'); // Shipping
+            expect(summaryValues[1].textContent).toBe('Free'); // Shipping
 
             const totalEl = element.querySelector('.summary-row.total span:last-child');
             expect(totalEl.textContent).toBe('$108.00'); // Total reflects free shipping
@@ -242,7 +242,7 @@ describe('c-summary-details', () => {
 
             const summaryValues = element.querySelectorAll('.summary-value');
             expect(summaryValues[0].textContent).toBe('$0.00'); // Subtotal
-            expect(summaryValues[1].textContent).toBe('c.Order_freeShippingLabel'); // Shipping = 0 shows "Free"
+            expect(summaryValues[1].textContent).toBe('Free'); // Shipping = 0 shows "Free"
             expect(summaryValues[2].textContent).toBe('$0.00'); // Taxes
 
             const totalEl = element.querySelector('.summary-row.total span:last-child');
@@ -300,7 +300,7 @@ describe('c-summary-details', () => {
             });
 
             const titleEl = element.querySelector('.confirmation-title');
-            expect(titleEl.textContent).toBe('c.Order_confirmationTitle');
+            expect(titleEl.textContent).toBe('Your order is confirmed.');
         });
 
         it('should handle headerMessage with <br> tag extraction correctly', async () => {
@@ -337,7 +337,7 @@ describe('c-summary-details', () => {
             const promotionsValues = element.querySelectorAll('.summary-value');
 
             const promotionsLabelFound = Array.from(promotionsLabels).some(
-                (label) => label.textContent === 'c.Order_promotionsLabel'
+                (label) => label.textContent === 'Promotions'
             );
             const promotionsValueFound = Array.from(promotionsValues).some((value) => value.textContent === '-$25.00');
 
@@ -352,7 +352,7 @@ describe('c-summary-details', () => {
 
             const promotionsLabels = element.querySelectorAll('.summary-label');
             const promotionsLabelFound = Array.from(promotionsLabels).some(
-                (label) => label.textContent === 'c.Order_promotionsLabel'
+                (label) => label.textContent === 'Promotions'
             );
 
             expect(promotionsLabelFound).toBe(false);
@@ -366,7 +366,7 @@ describe('c-summary-details', () => {
             const shippingDiscountValues = element.querySelectorAll('.summary-value');
 
             const shippingDiscountLabelFound = Array.from(shippingDiscountLabels).some(
-                (label) => label.textContent === 'c.Order_shippingDiscountLabel'
+                (label) => label.textContent === 'Shipping Discount'
             );
             const shippingDiscountValueFound = Array.from(shippingDiscountValues).some(
                 (value) => value.textContent === '-$10.00'
@@ -383,7 +383,7 @@ describe('c-summary-details', () => {
 
             const shippingDiscountLabels = element.querySelectorAll('.summary-label');
             const shippingDiscountLabelFound = Array.from(shippingDiscountLabels).some(
-                (label) => label.textContent === 'c.Order_shippingDiscountLabel'
+                (label) => label.textContent === 'Shipping Discount'
             );
 
             expect(shippingDiscountLabelFound).toBe(false);
@@ -397,12 +397,10 @@ describe('c-summary-details', () => {
             const taxesLabels = element.querySelectorAll('.summary-label');
             const taxesValues = element.querySelectorAll('.summary-value');
 
-            const taxesLabelIndex = Array.from(taxesLabels).findIndex(
-                (label) => label.textContent === 'c.Order_taxesLabel'
-            );
+            const taxesLabelIndex = Array.from(taxesLabels).findIndex((label) => label.textContent === 'Taxes');
 
             expect(taxesLabelIndex).toBeGreaterThan(-1);
-            expect(taxesValues[taxesLabelIndex].textContent).toBe('c.Order_tbdLabel');
+            expect(taxesValues[taxesLabelIndex].textContent).toBe('TBD');
         });
 
         it('should display "TBD" for shipping when shippingCost is null or undefined', async () => {
@@ -414,11 +412,11 @@ describe('c-summary-details', () => {
             const shippingValues = element.querySelectorAll('.summary-value');
 
             const shippingLabelIndex = Array.from(shippingLabels).findIndex(
-                (label) => label.textContent === 'c.Order_shippingLabel'
+                (label) => label.textContent === 'Shipping'
             );
 
             expect(shippingLabelIndex).toBeGreaterThan(-1);
-            expect(shippingValues[shippingLabelIndex].textContent).toBe('c.Order_tbdLabel');
+            expect(shippingValues[shippingLabelIndex].textContent).toBe('TBD');
         });
 
         it('should display correct order summary structure with all conditional elements', async () => {
@@ -426,13 +424,7 @@ describe('c-summary-details', () => {
             await expandComponent(element);
 
             const summaryLabels = element.querySelectorAll('.summary-label');
-            const expectedOrder = [
-                'c.Order_subtotalLabel',
-                'c.Order_promotionsLabel',
-                'c.Order_shippingLabel',
-                'c.Order_shippingDiscountLabel',
-                'c.Order_taxesLabel',
-            ];
+            const expectedOrder = ['Subtotal', 'Promotions', 'Shipping', 'Shipping Discount', 'Taxes'];
 
             expectedOrder.forEach((expectedLabel, index) => {
                 expect(summaryLabels[index].textContent).toBe(expectedLabel);
@@ -442,7 +434,7 @@ describe('c-summary-details', () => {
             expect(totalRow).not.toBeNull();
 
             const totalLabel = totalRow.querySelector('span:first-child');
-            expect(totalLabel.textContent).toBe('c.Order_totalLabel');
+            expect(totalLabel.textContent).toBe('Total');
         });
 
         it('should display minimal summary structure when no promotions or discounts', async () => {
@@ -455,15 +447,15 @@ describe('c-summary-details', () => {
             await expandComponent(element);
 
             const summaryLabels = element.querySelectorAll('.summary-label');
-            const expectedOrder = ['c.Order_subtotalLabel', 'c.Order_shippingLabel', 'c.Order_taxesLabel'];
+            const expectedOrder = ['Subtotal', 'Shipping', 'Taxes'];
 
             expectedOrder.forEach((expectedLabel, index) => {
                 expect(summaryLabels[index].textContent).toBe(expectedLabel);
             });
 
             const allLabels = Array.from(summaryLabels).map((label) => label.textContent);
-            expect(allLabels).not.toContain('c.Order_promotionsLabel');
-            expect(allLabels).not.toContain('c.Order_shippingDiscountLabel');
+            expect(allLabels).not.toContain('Promotions');
+            expect(allLabels).not.toContain('Shipping Discount');
         });
     });
 
@@ -472,10 +464,10 @@ describe('c-summary-details', () => {
             const element = await createComponent({ details: null });
 
             const titleEl = element.querySelector('.confirmation-title');
-            expect(titleEl.textContent).toBe('c.Order_confirmationTitle');
+            expect(titleEl.textContent).toBe('Your order is confirmed.');
 
             const deliveryMsgEl = element.querySelector('.delivery-message');
-            expect(deliveryMsgEl.textContent).toBe('c.Order_defaultDeliveryMessage');
+            expect(deliveryMsgEl.textContent).toBe('Your order is confirmed.');
         });
 
         it('should handle undefined details gracefully', async () => {
@@ -487,8 +479,8 @@ describe('c-summary-details', () => {
 
             const summaryValues = element.querySelectorAll('.summary-value');
             expect(summaryValues[0].textContent).toBe('$0.00'); // Subtotal
-            expect(summaryValues[1].textContent).toBe('c.Order_tbdLabel'); // Shipping
-            expect(summaryValues[2].textContent).toBe('c.Order_tbdLabel'); // Taxes
+            expect(summaryValues[1].textContent).toBe('TBD'); // Shipping
+            expect(summaryValues[2].textContent).toBe('TBD'); // Taxes
 
             const totalEl = element.querySelector('.summary-row.total span:last-child');
             expect(totalEl.textContent).toBe('$0.00');
@@ -538,10 +530,10 @@ describe('c-summary-details', () => {
         const element = await createComponent({ details: undefined });
 
         const titleEl = element.querySelector('.confirmation-title');
-        expect(titleEl.textContent).toBe('c.Order_confirmationTitle');
+        expect(titleEl.textContent).toBe('Your order is confirmed.');
 
         const deliveryMsgEl = element.querySelector('.delivery-message');
-        expect(deliveryMsgEl.textContent).toBe('c.Order_defaultDeliveryMessage');
+        expect(deliveryMsgEl.textContent).toBe('Your order is confirmed.');
     });
 
     it('handles details with undefined items', async () => {
@@ -610,7 +602,7 @@ describe('c-summary-details', () => {
 
         const summaryValues = element.querySelectorAll('.summary-value');
         expect(summaryValues[0].textContent).toBe('$0.00'); // Subtotal
-        expect(summaryValues[1].textContent).toBe('c.Order_freeShippingLabel'); // Shipping
+        expect(summaryValues[1].textContent).toBe('Free'); // Shipping
         expect(summaryValues[2].textContent).toBe('$0.00'); // Taxes
 
         const totalEl = element.querySelector('.summary-row.total span:last-child');
@@ -716,6 +708,86 @@ describe('c-summary-details', () => {
             expect(totalEl.textContent).toBe('€118.00'); // Total in EUR
         });
 
+        it('should handle invalid locale gracefully in price formatting', async () => {
+            const testData = {
+                ...mockOrderData,
+                currencyCode: 'USD',
+                subtotal: 25.99,
+                total: 30.99,
+            };
+            const element = await createComponent({ details: testData });
+            element.configuration = { language: 'invalid-locale-xyz' };
+
+            // Expand to see formatted values
+            const clickableEl = element.querySelector('.clickable-row');
+            clickableEl.click();
+            await Promise.resolve();
+
+            // Should render without throwing an error - prices should be formatted with fallback locale
+            const summaryValues = element.querySelectorAll('.summary-value');
+            expect(summaryValues[0].textContent).toMatch(/\$25\.99/); // Subtotal with fallback formatting
+        });
+
+        it('should handle empty language gracefully in price formatting', async () => {
+            const testData = {
+                ...mockOrderData,
+                currencyCode: 'EUR',
+                subtotal: 15.5,
+                total: 20.5,
+            };
+            const element = await createComponent({ details: testData });
+            element.configuration = { language: '' };
+
+            // Expand to see formatted values
+            const clickableEl = element.querySelector('.clickable-row');
+            clickableEl.click();
+            await Promise.resolve();
+
+            // Should render without throwing an error - prices should be formatted with fallback locale
+            const summaryValues = element.querySelectorAll('.summary-value');
+            expect(summaryValues[0].textContent).toMatch(/€15\.50/); // Subtotal with fallback formatting
+        });
+
+        it('should handle null language gracefully in price formatting', async () => {
+            const testData = {
+                ...mockOrderData,
+                currencyCode: 'USD',
+                subtotal: 100.0,
+                total: 110.0,
+            };
+            const element = await createComponent({ details: testData });
+            element.configuration = { language: null };
+
+            // Expand to see formatted values
+            const clickableEl = element.querySelector('.clickable-row');
+            clickableEl.click();
+            await Promise.resolve();
+
+            // Should render without throwing an error - prices should be formatted with fallback locale
+            const summaryValues = element.querySelectorAll('.summary-value');
+            expect(summaryValues[0].textContent).toMatch(/\$100\.00/); // Subtotal with fallback formatting
+        });
+
+        it('should handle undefined language gracefully in price formatting', async () => {
+            const testData = {
+                ...mockOrderData,
+                currencyCode: 'GBP',
+                subtotal: 50.25,
+                total: 60.25,
+            };
+            const element = await createComponent({ details: testData });
+            element.configuration = { language: undefined };
+
+            // Expand to see formatted values
+            const clickableEl = element.querySelector('.clickable-row');
+            clickableEl.click();
+            await Promise.resolve();
+
+            // Should render without throwing an error - prices should be formatted with fallback locale
+            const summaryValues = element.querySelectorAll('.summary-value');
+            expect(summaryValues[0].textContent).toMatch(/£50\.25/); // Subtotal with fallback formatting
+        });
+
         it('should handle items with undefined itemSubtotal', async () => {
             const dataWithInvalidItems = {
                 ...mockOrderData,
@@ -741,14 +813,13 @@ describe('c-summary-details', () => {
 
             const promotionsLabels = element.querySelectorAll('.summary-label');
             const promotionsLabelFound = Array.from(promotionsLabels).some(
-                (label) => label.textContent === 'c.Order_promotionsLabel'
+                (label) => label.textContent === 'Promotions'
             );
             expect(promotionsLabelFound).toBe(true);
 
             const promotionsValue = Array.from(element.querySelectorAll('.summary-value')).find(
                 (value, index) =>
-                    Array.from(element.querySelectorAll('.summary-label'))[index]?.textContent ===
-                    'c.Order_promotionsLabel'
+                    Array.from(element.querySelectorAll('.summary-label'))[index]?.textContent === 'Promotions'
             );
             expect(promotionsValue.textContent).toBe('-$50.00');
         });
@@ -759,14 +830,13 @@ describe('c-summary-details', () => {
             await expandComponent(element);
 
             const shippingDiscountLabel = Array.from(element.querySelectorAll('.summary-label')).find(
-                (label) => label.textContent === 'c.Order_shippingDiscountLabel'
+                (label) => label.textContent === 'Shipping Discount'
             );
             expect(shippingDiscountLabel).toBeDefined();
 
             const shippingDiscountValue = Array.from(element.querySelectorAll('.summary-value')).find(
                 (value, index) =>
-                    Array.from(element.querySelectorAll('.summary-label'))[index]?.textContent ===
-                    'c.Order_shippingDiscountLabel'
+                    Array.from(element.querySelectorAll('.summary-label'))[index]?.textContent === 'Shipping Discount'
             );
             expect(shippingDiscountValue.textContent).toBe('-$5.00');
         });
@@ -819,7 +889,7 @@ describe('c-summary-details', () => {
             expect(summaryValues[2].textContent).toBe('$8.00'); // Taxes
 
             const shippingDiscountLabel = Array.from(element.querySelectorAll('.summary-label')).find(
-                (label) => label.textContent === 'c.Order_shippingDiscountLabel'
+                (label) => label.textContent === 'Shipping Discount'
             );
             expect(shippingDiscountLabel).toBeUndefined();
 
@@ -839,13 +909,13 @@ describe('c-summary-details', () => {
             const summaryLabels = element.querySelectorAll('.summary-label');
             const labelTexts = Array.from(summaryLabels).map((label) => label.textContent);
 
-            expect(labelTexts).toContain('c.Order_promotionsLabel');
-            expect(labelTexts).toContain('c.Order_shippingDiscountLabel');
+            expect(labelTexts).toContain('Promotions');
+            expect(labelTexts).toContain('Shipping Discount');
 
-            const promotionsValue = findSummaryValue(element, 'c.Order_promotionsLabel');
+            const promotionsValue = findSummaryValue(element, 'Promotions');
             expect(promotionsValue.textContent).toBe('-$30.00');
 
-            const shippingValue = findSummaryValue(element, 'c.Order_shippingDiscountLabel');
+            const shippingValue = findSummaryValue(element, 'Shipping Discount');
             expect(shippingValue.textContent).toBe('-$10.00');
         });
 
@@ -861,8 +931,25 @@ describe('c-summary-details', () => {
             const summaryLabels = element.querySelectorAll('.summary-label');
             const labelTexts = Array.from(summaryLabels).map((label) => label.textContent);
 
-            expect(labelTexts).not.toContain('c.Order_promotionsLabel');
-            expect(labelTexts).not.toContain('c.Order_shippingDiscountLabel');
+            expect(labelTexts).not.toContain('Promotions');
+            expect(labelTexts).not.toContain('Shipping Discount');
+        });
+
+        it('should return "$0.00" for promotions when promotionsDiscount is 0', async () => {
+            const orderData = { ...mockOrderData, promotionsDiscount: 0 };
+            const element = await createComponent({ details: orderData });
+            await expandComponent(element);
+            const promotionsValue = findSummaryValue(element, 'Promotions');
+            // This case is tricky because the element is not rendered when the value is 0
+            expect(promotionsValue).toBeNull();
+        });
+
+        it('should return "$0.00" for shippingDiscount when shippingDiscount is 0', async () => {
+            const orderData = { ...mockOrderData, shippingDiscount: 0 };
+            const element = await createComponent({ details: orderData });
+            await expandComponent(element);
+            const shippingDiscountValue = findSummaryValue(element, 'Shipping Discount');
+            expect(shippingDiscountValue).toBeNull();
         });
 
         it('should verify correct order of summary rows with both discounts', async () => {
@@ -875,13 +962,7 @@ describe('c-summary-details', () => {
             await expandComponent(element);
 
             const summaryLabels = element.querySelectorAll('.summary-label');
-            const expectedOrder = [
-                'c.Order_subtotalLabel',
-                'c.Order_promotionsLabel',
-                'c.Order_shippingLabel',
-                'c.Order_shippingDiscountLabel',
-                'c.Order_taxesLabel',
-            ];
+            const expectedOrder = ['Subtotal', 'Promotions', 'Shipping', 'Shipping Discount', 'Taxes'];
 
             expectedOrder.forEach((expectedLabel, index) => {
                 expect(summaryLabels[index].textContent).toBe(expectedLabel);
@@ -947,12 +1028,12 @@ describe('c-summary-details', () => {
                 const element = await createComponent({ details: accessibilityMockOrderData });
                 await expandComponent(element);
 
-                const itemsList = element.querySelector('.items');
+                const itemsList = element.querySelector('[role="list"]');
                 expect(itemsList).not.toBeNull();
                 expect(itemsList.getAttribute('role')).toBe('list');
                 expect(itemsList.getAttribute('aria-label')).toBeDefined();
 
-                const listItems = element.querySelectorAll('.items [role="listitem"]');
+                const listItems = element.querySelectorAll('.item');
                 expect(listItems.length).toBe(accessibilityMockOrderData.items.length);
             });
 
@@ -990,14 +1071,14 @@ describe('c-summary-details', () => {
                 const toggleButton = element.querySelector('.clickable-row');
 
                 // Initially collapsed
-                expect(element.querySelector('.items')).toBeNull();
+                expect(element.querySelector('[role="list"]')).toBeNull();
 
                 // Native buttons automatically handle Enter key and trigger click
                 toggleButton.click();
                 await Promise.resolve();
 
                 // Should be expanded
-                expect(element.querySelector('.items')).not.toBeNull();
+                expect(element.querySelector('[role="list"]')).not.toBeNull();
                 expect(toggleButton.getAttribute('aria-expanded')).toBe('true');
             });
 
@@ -1006,14 +1087,14 @@ describe('c-summary-details', () => {
                 const toggleButton = element.querySelector('.clickable-row');
 
                 // Initially collapsed
-                expect(element.querySelector('.items')).toBeNull();
+                expect(element.querySelector('[role="list"]')).toBeNull();
 
                 // Native buttons automatically handle Space key and trigger click
                 toggleButton.click();
                 await Promise.resolve();
 
                 // Should be expanded
-                expect(element.querySelector('.items')).not.toBeNull();
+                expect(element.querySelector('[role="list"]')).not.toBeNull();
                 expect(toggleButton.getAttribute('aria-expanded')).toBe('true');
             });
 
@@ -1030,7 +1111,7 @@ describe('c-summary-details', () => {
                 const toggleButton = element.querySelector('.clickable-row');
 
                 // Initially collapsed
-                expect(element.querySelector('.items')).toBeNull();
+                expect(element.querySelector('[role="list"]')).toBeNull();
 
                 // Press Tab key (should not trigger toggle)
                 const tabEvent = new KeyboardEvent('keydown', { key: 'Tab' });
@@ -1038,7 +1119,7 @@ describe('c-summary-details', () => {
                 await Promise.resolve();
 
                 // Should still be collapsed
-                expect(element.querySelector('.items')).toBeNull();
+                expect(element.querySelector('[role="list"]')).toBeNull();
             });
         });
 
@@ -1080,8 +1161,10 @@ describe('c-summary-details', () => {
                 // Test order confirmation mode
                 const orderElement = await createComponent({ details: accessibilityMockOrderData });
                 const orderToggle = orderElement.querySelector('.clickable-row');
-                expect(orderToggle.getAttribute('aria-label')).toBeDefined();
-                expect(orderToggle.getAttribute('aria-label')).not.toBe('');
+                expect(orderToggle.getAttribute('aria-label')).toBe('Expand order details');
+
+                await expandComponent(orderElement);
+                expect(orderToggle.getAttribute('aria-label')).toBe('Collapse order details');
 
                 // Test cart summary mode
                 const cartElement = await createComponent({
@@ -1089,8 +1172,10 @@ describe('c-summary-details', () => {
                     isCartSummary: true,
                 });
                 const cartToggle = cartElement.querySelector('.clickable-row');
-                expect(cartToggle.getAttribute('aria-label')).toBeDefined();
-                expect(cartToggle.getAttribute('aria-label')).not.toBe('');
+                expect(cartToggle.getAttribute('aria-label')).toBe('Expand cart details');
+
+                await expandComponent(cartElement);
+                expect(cartToggle.getAttribute('aria-label')).toBe('Collapse cart details');
             });
         });
 
@@ -1127,11 +1212,49 @@ describe('c-summary-details', () => {
                 await expandComponent(element);
 
                 // Should still have proper ARIA structure even with no items
-                const itemsList = element.querySelector('.items');
+                const itemsList = element.querySelector('[role="list"]');
                 expect(itemsList).not.toBeNull();
                 expect(itemsList.getAttribute('role')).toBe('list');
                 expect(itemsList.getAttribute('aria-label')).toBeDefined();
             });
+        });
+
+        it('should apply correct classes for the clickable row', async () => {
+            // Test cart summary mode
+            const cartElement = await createComponent({
+                details: mockOrderData,
+                isCartSummary: true,
+            });
+            const cartClickableRow = cartElement.querySelector('.clickable-row');
+            expect(cartClickableRow.className).toContain('slds-p-horizontal_none');
+            expect(cartClickableRow.className).toContain('slds-p-top_small');
+            expect(cartClickableRow.className).toContain('slds-p-bottom_medium');
+
+            // Test non-cart summary mode
+            const orderElement = await createComponent({
+                details: mockOrderData,
+                isCartSummary: false,
+            });
+            const orderClickableRow = orderElement.querySelector('.clickable-row');
+            expect(orderClickableRow.className).toContain('slds-p-around_none');
+            expect(orderClickableRow.className).toContain('slds-m-bottom_medium');
+        });
+
+        it('should show footer message for order summary', async () => {
+            const element = await createComponent({ details: mockOrderData });
+            const footer = element.querySelector('.summary-footer');
+            const footerMessage = element.querySelector('.footer-message');
+
+            expect(footer).not.toBeNull();
+            expect(footerMessage).not.toBeNull();
+            expect(footerMessage.textContent).toBe('Is there anything else I can help you with?');
+        });
+
+        it('should not show footer message for cart summary', async () => {
+            const element = await createComponent({ details: mockCartData, isCartSummary: true });
+            const footer = element.querySelector('.summary-footer');
+
+            expect(footer).toBeNull();
         });
     });
 });

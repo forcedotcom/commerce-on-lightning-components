@@ -5,6 +5,7 @@
       "default": true
     }
   ],
+  "name": "commerce-messaging-lightning-components",
   "namespace": "",
   "sfdcLoginUrl": "https://login.salesforce.com",
   "sourceApiVersion": "60.0"

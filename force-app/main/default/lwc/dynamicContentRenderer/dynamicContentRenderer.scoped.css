@@ -7,6 +7,28 @@
  * theme hooks, and finally falling back to default values if neither are defined.
  */
 
+/* ===== HELVETICA NEUE FONT DEFINITIONS ===== */
+@font-face {
+    font-family: 'Helvetica Neue';
+    src: url('@salesforce/resourceUrl/helveticaneue5/HelveticaNeueRoman.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Helvetica Neue';
+    src: url('@salesforce/resourceUrl/helveticaneue5/HelveticaNeueMedium.otf') format('opentype');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Helvetica Neue';
+    src: url('@salesforce/resourceUrl/helveticaneue5/HelveticaNeueBold.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+}
+
 :host {
     display: block; /* Ensures the component itself takes up its own space */
 
@@ -28,7 +50,7 @@
      */
 
     /* Font styling hooks for child components */
-    --ref-c-dynamic-content-renderer-font-family: 'GT America Trial', sans-serif;
+    --ref-c-dynamic-content-renderer-font-family: 'Helvetica Neue', sans-serif;
 
     /* Agent/Chatbot Message Bubble Styling */
     --ref-c-dynamic-content-renderer-agent-background-color: #f7f9fa;
@@ -62,17 +84,22 @@
     margin-bottom: var(--ref-c-dynamic-content-renderer-bubble-spacing-bottom);
     max-width: 100%; /* Common for chat bubbles to prevent taking full width */
     word-wrap: break-word; /* Prevents long words/URLs from overflowing the bubble */
-    font-family: var(--ref-c-dynamic-content-renderer-font-family) !important;
+    font-family: var(--ref-c-dynamic-content-renderer-font-family);
+}
+
+/* Specific styling for EndUser message bubbles using :host selector */
+:host div[role='region'].EndUser {
+    max-width: 100%;
+}
+
+/* Styling for EndUser messages with more than 40 characters */
+:host div[role='region'].EndUser.long-message {
+    max-width: 80%;
 }
 
 /*
- * Apply font to all child Lightning Web Components
- * These selectors target the custom element tags for child components
+ * Apply font to Lightning standard components that have their own default styles
  */
-:host c-product-search-recommendations,
-:host c-product-details,
-:host c-cart-summary,
-:host c-summary-details,
 :host lightning-formatted-rich-text,
 :host lightning-formatted-text {
     font-family: var(--ref-c-dynamic-content-renderer-font-family) !important;
@@ -88,8 +115,12 @@
     background-color: var(--ref-c-dynamic-content-renderer-agent-background-color);
     border-radius: var(--ref-c-dynamic-content-renderer-agent-border-radius);
     float: left; /* Aligns agent/chatbot messages to the left */
-    font-family: var(--ref-c-dynamic-content-renderer-font-family) !important;
+    font-family: var(--ref-c-dynamic-content-renderer-font-family);
     border: 1px solid var(--ref-c-dynamic-content-renderer-agent-border-color);
+}
+
+.welcome-message {
+    border-top: none;
 }
 
 /*
@@ -101,7 +132,7 @@
     color: var(--ref-c-dynamic-content-renderer-enduser-text-color);
     margin-left: auto; /* Pushes the end-user's bubble to the right */
     border-radius: var(--ref-c-dynamic-content-renderer-enduser-border-radius);
-    font-family: var(--ref-c-dynamic-content-renderer-font-family) !important;
+    font-family: var(--ref-c-dynamic-content-renderer-font-family);
 }
 
 /*

@@ -6,7 +6,8 @@
  * root or https://opensource.org/licenses/apache-2.0/
  */
 import { api, LightningElement, track } from 'lwc';
-import * as labels from './labels';
+import { dispatchMessagingEvent, MESSAGING_EVENT } from 'lightningsnapin/eventStore';
+import * as Labels from './labelUtils';
 
 /**
  * @typedef {object} CartButton
@@ -22,8 +23,9 @@ import * as labels from './labels';
  * @typedef {object} CartSummaryData
  * @property {string} headerMessage - Rich text content for the header
  * @property {string} footerMessage - Rich text content for the footer
- * @property {string} checkoutButtonUrl - URL for the checkout button
+ * @property {string} checkoutButtonUrl - URL for the checkout button (used as fallback when localizedUrl is not available in localStorage)
  * @property {string} expressPaymentUrl - URL for the express payment domain
+ * Note: Primary checkout URL is retrieved from localStorage (localizedUrl), with checkoutButtonUrl as fallback
  */
 
 /**
@@ -37,20 +39,134 @@ export default class CartSummary extends LightningElement {
     // Button class constant
     static BUTTON_CLASS = 'button-checkout';
 
-    // Expose internationalized labels
-    i18n = labels;
+    // Global registry to track the latest component instance
+    static _latestInstance = null;
+    static _instanceCounter = 0;
+
+    // Instance-specific ID
+    _instanceId = null;
+
+    /**
+     * Configuration object containing language and other settings
+     * @type {object}
+     */
+    @api configuration = {};
+
+    /**
+     * Getter for the current language/locale
+     * @returns {string} The current language/locale (defaults to 'en_US')
+     */
+    @api
+    get language() {
+        return this.configuration?.language || 'en_US';
+    }
+
+    /**
+     * Getter for internationalized labels
+     * @returns {object} Object containing all translated labels for the current language
+     */
+    @api
+    get i18n() {
+        const language = this.language;
+        return {
+            cartSummaryRegionLabel: Labels.cartSummaryRegionLabel(language),
+            loadingSpinnerAltText: Labels.loadingSpinnerAltText(language),
+            checkoutButtonLabel: Labels.checkoutButtonLabel(language),
+            checkoutButtonAssistiveText: Labels.checkoutButtonAssistiveText(language),
+            checkoutNotAvailableAssistiveText: Labels.checkoutNotAvailableAssistiveText(language),
+        };
+    }
+
+    /**
+     * Handle all postMessage events
+     * @param {Event} event - The window message event
+     * @returns {void}
+     */
+    _handleWindowMessage(event) {
+        // Handle customer data from PWA (always process)
+        if (event?.data?.type === 'express.actualCustomerData') {
+            localStorage.setItem('expressPaymentCustomerId', event?.data?.payload?.customerId);
+            localStorage.setItem('expressPaymentAuthToken', event?.data?.payload?.authToken);
+            return;
+        }
+
+        // Handle basket data requests (only process if this is the latest instance)
+        if (event?.data?.type === 'basketDataRequested') {
+            // Only respond if this is the latest instance
+            if (CartSummary._latestInstance !== this) {
+                return;
+            }
+            this._sendBasketData();
+        }
+    }
+
+    connectedCallback() {
+        // Register this instance as the latest
+        this._instanceId = ++CartSummary._instanceCounter;
+        CartSummary._latestInstance = this;
+
+        // Set up single message listener for all message types (bind this context)
+        this._boundMessageHandler = this._handleWindowMessage.bind(this);
+        window.addEventListener('message', this._boundMessageHandler);
+        window.parent.postMessage(
+            {
+                type: 'lwc.getCustomerData',
+                timestamp: Date.now(),
+            },
+            '*'
+        );
+    }
+
+    disconnectedCallback() {
+        // Clean up message listener
+        if (this._boundMessageHandler) {
+            window.removeEventListener('message', this._boundMessageHandler);
+            this._boundMessageHandler = null;
+        }
+
+        // If this was the latest instance, clear the registry
+        if (CartSummary._latestInstance === this) {
+            CartSummary._latestInstance = null;
+        }
+    }
 
     /**
      * @description Cart summary data containing button information
      * @type {CartSummaryData}
      */
-    @api cartSummary = {};
+    _cartSummary = {};
+
+    /**
+     * Setter for cart summary data that emits global postMessage when data changes
+     * @param {CartSummaryData} value - The new cart summary data
+     */
+    @api
+    set cartSummary(value) {
+        this._cartSummary = value;
+    }
+
+    /**
+     * Getter for cart summary data
+     * @returns {CartSummaryData} The current cart summary data
+     */
+    get cartSummary() {
+        return this._cartSummary;
+    }
 
     /**
      * @description Conversation entry ID needed for express button generation
      * @type {string} Entry ID
      */
-    @api entryId = '';
+    _entryId = '';
+
+    @api
+    set entryId(value) {
+        this._entryId = value;
+    }
+
+    get entryId() {
+        return this._entryId;
+    }
 
     /**
      * @description Tracks whether the express payment component has finished loading
@@ -65,11 +181,48 @@ export default class CartSummary extends LightningElement {
     @track isExpressAvailable = false;
 
     /**
+     * @description Determines if we should wait for express payment availability before showing the checkout button
+     * @returns {boolean} True if express payment URL is available and we should wait
+     */
+    get shouldWaitForExpressPayment() {
+        const shouldWait =
+            !!this.expressPaymentUrl &&
+            this.expressPaymentUrl.trim() !== '' &&
+            this.expressPaymentUrl.trim() !== 'null';
+        return shouldWait;
+    }
+
+    /**
      * @description Gets the express payment URL safely handling null cartSummary
-     * @returns {string} Express payment URL or empty string
+     * @returns {string} Express payment URL
      */
     get expressPaymentUrl() {
-        return this.cartSummary?.expressPaymentUrl || '';
+        return this.cartSummary?.expressPaymentUrl === 'null'
+            ? this.cartSummary?.expressPaymentUrl
+            : this._constructExpressPaymentUrl();
+    }
+
+    /**
+     * Constructs express payment URL from localStorage PWA context values.
+     * Returns 'null' if any required values are missing from localStorage.
+     * @returns {string} Constructed URL or 'null' if any values are missing
+     * @private
+     */
+    _constructExpressPaymentUrl() {
+        try {
+            const pwaDomainUrl = localStorage.getItem('pwaDomainUrl');
+            const pwaSiteId = localStorage.getItem('pwaSiteId');
+            const pwaLocale = localStorage.getItem('pwaLocale');
+
+            // Return 'null' if any of the required values are missing
+            if (!pwaDomainUrl || !pwaSiteId || !pwaLocale) {
+                return 'null';
+            }
+
+            return `${pwaDomainUrl}/${pwaSiteId}/${pwaLocale}/express`;
+        } catch (error) {
+            return 'null';
+        }
     }
 
     /**
@@ -102,7 +255,7 @@ export default class CartSummary extends LightningElement {
      * @returns {string} CSS classes based on loading state.
      */
     get loadingContainerClass() {
-        const baseClasses = `loading-container slds-p-horizontal_medium slds-p-top_xx-small ${
+        const baseClasses = `loading-container slds-p-horizontal_medium ${
             this.shouldShowFooter ? 'slds-p-bottom_x-small' : 'slds-p-bottom_medium'
         }`;
         return this.isExpressLoaded ? `${baseClasses} loaded` : baseClasses;
@@ -127,8 +280,23 @@ export default class CartSummary extends LightningElement {
     }
 
     /**
+     * @description Gets the checkout URL, using localizedUrl from localStorage as primary and checkoutButtonUrl as fallback.
+     * @returns {string|null} The checkout URL to use, or null if neither is available.
+     */
+    get checkoutUrl() {
+        let domainCheckoutUrl = null;
+        try {
+            const localizedUrl = localStorage.getItem('localizedUrl');
+            domainCheckoutUrl = localizedUrl ? `${localizedUrl}/checkout` : null;
+        } catch (error) {
+            console.warn('localStorage not available:', error);
+        }
+        return domainCheckoutUrl || this.cartSummary?.checkoutButtonUrl || null;
+    }
+
+    /**
      * @description Handles checkout button click events.
-     * Opens the checkout URL in a new blank tab/window.
+     * Opens the checkout URL in a new blank tab/window, using localizedUrl from localStorage as primary and checkoutButtonUrl as fallback.
      * @param {Event} event - The click event.
      */
     handleButtonClick(event) {
@@ -139,13 +307,14 @@ export default class CartSummary extends LightningElement {
             return;
         }
 
-        const checkoutUrl = this.cartSummary?.checkoutButtonUrl;
+        const checkoutUrl = this.checkoutUrl;
 
         if (!checkoutUrl) {
             return;
         }
 
         try {
+            dispatchMessagingEvent(MESSAGING_EVENT.MINIMIZE_BUTTON_CLICK, {});
             window.open(checkoutUrl, '_blank');
         } catch (error) {
             console.error('Failed to open checkout URL:', error);
@@ -157,19 +326,26 @@ export default class CartSummary extends LightningElement {
      * @returns {boolean} True if the checkout button should be visible.
      */
     get shouldShowButton() {
-        return this.isExpressLoaded;
+        // If we have an express payment URL, wait for the express payment to load
+        if (this.shouldWaitForExpressPayment) {
+            const shouldShow = this.isExpressLoaded;
+            return shouldShow;
+        }
+        // If no express payment URL, show the button immediately
+        return true;
     }
 
     /**
      * @description Computed property that returns the checkout button configuration.
+     * Uses localizedUrl from localStorage as primary and checkoutButtonUrl as fallback.
      * @returns {CartButton} Button object with properties for c-common-button.
      */
     get button() {
-        const hasCheckoutUrl = !!this.cartSummary?.checkoutButtonUrl;
+        const hasCheckoutUrl = !!this.checkoutUrl;
 
         return {
             buttonLabel: this.i18n.checkoutButtonLabel,
-            buttonLink: this.cartSummary?.checkoutButtonUrl,
+            buttonLink: this.checkoutUrl,
             class: CartSummary.BUTTON_CLASS,
             variant: this.isExpressAvailable ? 'secondary' : 'primary',
             disabled: !hasCheckoutUrl,
@@ -177,5 +353,36 @@ export default class CartSummary extends LightningElement {
                 ? this.i18n.checkoutButtonAssistiveText
                 : this.i18n.checkoutNotAvailableAssistiveText,
         };
+    }
+
+    /**
+     * Sends basket data via postMessage to the express payment iframe
+     */
+    _sendBasketData() {
+        if (!this._cartSummary) {
+            return;
+        }
+
+        const basketData = {
+            orderTotal: this._cartSummary?.total || 0,
+            currency: this._cartSummary?.currencyCode || 'USD',
+            basketId: this._cartSummary?.id || '',
+            customerId: localStorage.getItem('expressPaymentCustomerId'),
+        };
+
+        const authData = {
+            customerId: localStorage.getItem('expressPaymentCustomerId'),
+            authToken: localStorage.getItem('expressPaymentAuthToken'),
+        };
+
+        try {
+            // Try to send basket data to the express payment component
+            const expressPaymentComponent = this.querySelector('c-express-payment');
+            if (expressPaymentComponent) {
+                expressPaymentComponent.sendCheckoutData(basketData, authData);
+            }
+        } catch (error) {
+            console.warn(`Failed to send basket data postMessage (Component ${this._instanceId}):`, error);
+        }
     }
 }

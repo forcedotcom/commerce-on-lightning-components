@@ -1,0 +1,30 @@
+.express-container {
+    position: relative;
+    transition: opacity 0.3s ease, filter 0.3s ease;
+}
+
+.express-container.disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+    opacity: 0.6;
+    filter: grayscale(50%);
+}
+
+.express-container.disabled::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.35);
+    pointer-events: none;
+    z-index: 1;
+}
+
+iframe {
+    display: block;
+    width: 100%;
+    height: var(--iframe-height, 0px);
+    border: 0;
+}

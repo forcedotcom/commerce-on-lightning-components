@@ -4,7 +4,7 @@
         role="region"
         aria-label={summaryAriaLabel}>
         <div class={headerClasses}>
-            <div class="header-content slds-col">
+            <div class="slds-col slds-no-space">
                 <template if:true={isCartSummary}>
                     <div class="confirmation-title cart-summary-title slds-p-top_small slds-p-bottom_small">
                         <h2>
@@ -60,17 +60,18 @@
                 </template>
 
                 <div
-                    class="items slds-p-bottom_x-small"
+                    class="slds-p-bottom_x-small"
                     role="list"
                     aria-label={itemsAriaLabel}>
                     <template
                         for:each={items}
                         for:item="item">
                         <div
-                            role="listitem"
                             key={item.name}
-                            class="slds-p-bottom_x-small">
-                            <c-product-summary item={item}></c-product-summary>
+                            class="item slds-p-bottom_x-small slds-m-bottom_x-small">
+                            <c-product-summary
+                                item={item}
+                                configuration={configuration}></c-product-summary>
                         </div>
                     </template>
                 </div>
@@ -163,5 +164,12 @@
                 </div>
             </template>
         </div>
+
+        <!-- Footer message section -->
+        <template if:false={isCartSummary}>
+            <div class="summary-footer slds-p-top_small slds-p-bottom_medium">
+                <p class="footer-message">{i18n.footerMessage}</p>
+            </div>
+        </template>
     </div>
 </template>

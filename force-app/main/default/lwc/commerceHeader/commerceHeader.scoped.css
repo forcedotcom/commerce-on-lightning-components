@@ -1,49 +1,85 @@
-/* 
- * Root element styling
- * - Uses flexbox for horizontal layout
- * - Sticky positioning for persistent header
- * - White background with consistent padding
- */
+/* ===== HELVETICA NEUE FONT DEFINITIONS ===== */
+@font-face {
+    font-family: 'Helvetica Neue';
+    src: url('@salesforce/resourceUrl/helveticaneue5/HelveticaNeueRoman.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Helvetica Neue';
+    src: url('@salesforce/resourceUrl/helveticaneue5/HelveticaNeueMedium.otf') format('opentype');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Helvetica Neue';
+    src: url('@salesforce/resourceUrl/helveticaneue5/HelveticaNeueBold.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+/* Root element styling */
 :host {
-    /* Flex layout: menu, center content, and minimize button */
     display: flex;
     align-items: center;
     width: 100%;
     box-sizing: border-box;
-
-    /* Sticky header pinned to top */
     position: sticky;
     top: 0;
     z-index: 10;
+    border-radius: 0.5rem 0.5rem 0 0;
 
-    /* background-color: #ffffff → var(--dxp-g-root, #ffffff) */
-    background-color: var(--dxp-g-root, #ffffff);
-    /* padding: 0 14px → 0 var(--dxp-s-button-padding, 14px) */
-    padding: 0 var(--dxp-s-button-padding, 14px);
-    /* min-height: 50px (no matching dxp token) */
-    min-height: 50px;
+    /* Header container variables */
+    --ref-c-commerce-header-background-color: var(--dxp-g-root, #ffffff);
+    --ref-c-commerce-header-padding-horizontal: 0.5rem;
+    --ref-c-commerce-header-padding-vertical: 0.5rem;
+    --ref-c-commerce-header-min-height: 3.125rem;
+    --ref-c-commerce-header-border-color: var(--dxp-s-form-element-color-border, #d9d7d5);
+    --ref-c-commerce-header-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
-    /* border: 1px solid #d8dde6 → 1px solid var(--dxp-s-form-element-color-border, #d9d7d5) */
-    border-bottom: 1px solid var(--dxp-s-form-element-color-border, #d9d7d5);
-    /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) (no matching dxp token) */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    /* Logo variables */
+    --ref-c-commerce-header-logo-size: 1rem;
+    --ref-c-commerce-header-logo-margin-right: 0.5rem;
+
+    /* Header text variables */
+    --ref-c-commerce-header-text-font-size: var(--dxp-s-body-font-size, 1rem);
+    --ref-c-commerce-header-text-font-weight: 500;
+    --ref-c-commerce-header-text-color: var(--dxp-g-neutral-contrast, #000000);
+    --ref-c-commerce-header-font-family: 'Helvetica Neue', sans-serif;
+
+    /* Header button variables */
+    --ref-c-commerce-header-button-size: 2rem;
+
+    /* Dropdown variables */
+    --ref-c-commerce-header-dropdown-margin-top: 0.25rem;
+    --ref-c-commerce-header-dropdown-min-width: 8rem;
+    --ref-c-commerce-header-dropdown-item-padding: var(--dxp-s-button-small-padding, 0.75rem)
+        var(--dxp-s-button-padding, 0.875rem);
+    --ref-c-commerce-header-dropdown-item-hover-bg: #f4f6f9;
+    --ref-c-commerce-header-dropdown-item-text-color: var(--dxp-g-neutral-contrast, #1c1c1c);
+    --ref-c-commerce-header-dropdown-item-error-color: var(--dxp-g-destructive, #c23934);
+    --ref-c-commerce-header-dropdown-item-line-height: 1.125rem;
+
+    /* Common button variables */
+    --ref-c-common-button-color: #1c1c1c;
+    --ref-c-common-button-color-hover: var(--ref-c-commerce-header-dropdown-item-text-color);
+    --slds-c-button-line-height: var(--ref-c-commerce-header-dropdown-item-line-height);
+
+    padding: var(--ref-c-commerce-header-padding-vertical) var(--ref-c-commerce-header-padding-horizontal);
+    min-height: var(--ref-c-commerce-header-min-height);
+    border-bottom: 1px solid var(--ref-c-commerce-header-border-color);
+    box-shadow: var(--ref-c-commerce-header-box-shadow);
+    background-color: var(--ref-c-commerce-header-background-color);
 }
 
-/* 
- * Dropdown trigger container
- * - Relative positioning for absolute dropdown positioning
- * - Maintains proper stacking context
- */
+/* Dropdown trigger container */
 .slds-dropdown-trigger {
     position: relative;
 }
 
-/* 
- * Center section
- * - Flex container for logo and text
- * - Grows to fill available space
- * - Centers content both horizontally and vertically
- */
+/* Center section */
 .headerCenter {
     display: flex;
     align-items: center;
@@ -51,128 +87,71 @@
     flex-grow: 1;
 }
 
-/* 
- * Brand logo
- * - Fixed dimensions for consistency
- * - Right margin for spacing from text
- */
+/* Brand logo */
 .brand-logo {
-    /* margin-right: 8px (no matching dxp token) */
-    margin-right: 8px;
-    /* width: 24px → var(--dxp-s-component-wrapper-spacer-size, 24px) */
-    width: var(--dxp-s-component-wrapper-spacer-size, 24px);
-    /* height: 24px → var(--dxp-s-component-wrapper-spacer-size, 24px) */
-    height: var(--dxp-s-component-wrapper-spacer-size, 24px);
+    margin-right: var(--ref-c-commerce-header-logo-margin-right);
+    width: var(--ref-c-commerce-header-logo-size);
+    height: var(--ref-c-commerce-header-logo-size);
 }
 
-/* 
- * Header text
- * - Single line with ellipsis overflow
- * - Standard font size and weight
- * - Black color for maximum contrast
- */
+/* Header text */
 .headerTitle {
     margin: 0;
-    /* font-size: 1rem → var(--dxp-s-body-font-size, 1rem) */
-    font-size: var(--dxp-s-body-font-size, 1rem);
-    /* font-weight: 400 → var(--dxp-s-body-font-weight, 400) */
-    font-weight: var(--dxp-s-body-font-weight, 400);
-    /* color: #000000 → var(--dxp-g-neutral-contrast, #000000) */
-    color: var(--dxp-g-neutral-contrast, #000000);
+    font-size: var(--ref-c-commerce-header-text-font-size);
+    font-weight: var(--ref-c-commerce-header-text-font-weight);
+    color: var(--ref-c-commerce-header-text-color);
+    font-family: var(--ref-c-commerce-header-font-family);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-/* 
- * Header buttons (menu and minimize)
- * - Square dimensions for touch targets
- * - Centered content
- * - No background or border for clean look
- */
+/* Header buttons */
 .headerButton {
     background: none;
     border: none;
     padding: 0;
-    /* width: 32px (no matching dxp token) */
-    width: 32px;
-    /* height: 32px (no matching dxp token) */
-    height: 32px;
+    width: var(--ref-c-commerce-header-button-size);
+    height: var(--ref-c-commerce-header-button-size);
     display: inline-flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
 }
 
-/* 
- * Dropdown menu
- * - Absolute positioning below trigger
- * - SLDS styling for consistency
- * - Shadow for depth perception
- * - Minimum width for content
- */
+/* Dropdown menu */
 .optionsMenu {
     position: absolute;
     top: 100%;
     left: 0;
-    /* margin-top: 0.25rem (no matching dxp token) */
-    margin-top: 0.25rem;
-    /* background-color: #ffffff → var(--dxp-g-root, #ffffff) */
-    background-color: var(--dxp-g-root, #ffffff);
-    /* border: 1px solid #d8dde6 → 1px solid var(--dxp-s-form-element-color-border, #d9d7d5) */
-    border: 1px solid var(--dxp-s-form-element-color-border, #d9d7d5);
-    /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) (no matching dxp token) */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    /* min-width: 8rem (no matching dxp token) */
-    min-width: 8rem;
+    margin-top: var(--ref-c-commerce-header-dropdown-margin-top);
+    background-color: var(--ref-c-commerce-header-background-color);
+    border: 1px solid var(--ref-c-commerce-header-border-color);
+    box-shadow: var(--ref-c-commerce-header-box-shadow);
+    min-width: var(--ref-c-commerce-header-dropdown-min-width);
 }
 
-/* 
- * Nubbin arrow
- * - Positioned relative to dropdown
- * - Left-aligned with trigger
- */
-.slds-nubbin_top-left:before,
-.slds-nubbin_top-left:after {
-    /* left: 1.5rem (no matching dxp token) */
-    left: 1.5rem;
+/* Dropdown item states */
+c-common-button.slds-dropdown__item-action:hover,
+c-common-button.slds-dropdown__item-action:focus {
+    background-color: var(--ref-c-commerce-header-dropdown-item-hover-bg);
 }
 
-/* 
- * Dropdown items
- * - Full width for better touch targets
- * - Left-aligned text for readability
- * - No background/border for clean look
- * - Consistent padding for spacing
- */
-.slds-dropdown__item-action {
-    /* padding: 0.75rem 1rem → var(--dxp-s-button-small-padding, 0.75rem) var(--dxp-s-button-padding, 14px) */
-    padding: var(--dxp-s-button-small-padding, 0.75rem) var(--dxp-s-button-padding, 14px);
-    width: 100%;
-    text-align: left;
-    background: none;
-    border: none;
-    /* color: #000000 → var(--dxp-g-neutral-contrast, #000000) */
-    color: var(--dxp-g-neutral-contrast, #000000);
+/* Error text color */
+c-common-button.end-chat-button {
+    --ref-c-common-button-color: var(--ref-c-commerce-header-dropdown-item-error-color);
+    --ref-c-common-button-color-hover: var(--ref-c-commerce-header-dropdown-item-error-color);
 }
 
-/* 
- * Dropdown item states
- * - Light background on hover/focus
- * - Maintains text color
- */
-.slds-dropdown__item-action:hover,
-.slds-dropdown__item-action:focus {
-    /* background-color: #f4f6f9 (no matching dxp token) */
-    background-color: #f4f6f9;
+/* Set text alignment for all dropdown menu buttons */
+.slds-dropdown__item > c-common-button.slds-dropdown__item-action {
+    --ref-c-common-button-text-align: left;
 }
 
-/* 
- * Error text color
- * - Used for destructive actions (End Chat)
- * - High contrast red for visibility
- */
-.slds-text-color_error {
-    /* color: #c23934 → var(--dxp-g-destructive, #c23934) */
-    color: var(--dxp-g-destructive, #c23934);
+.headerButton lightning-icon {
+    --slds-c-icon-color-foreground-default: #1c1c1c;
+}
+
+.headerButton[tabindex='0']:focus-visible {
+    outline: 1px auto var(--ref-c-common-button-color);
 }

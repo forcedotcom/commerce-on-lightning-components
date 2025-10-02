@@ -7,21 +7,18 @@
  */
 import { createElement } from 'lwc';
 import CartSummary from 'c/cartSummary';
+import { dispatchMessagingEvent, MESSAGING_EVENT } from 'lightningsnapin/eventStore';
 
-// Mock the @salesforce/label module
-jest.mock('@salesforce/label/c.Cart_checkoutButtonLabel', () => ({ default: 'Checkout' }), { virtual: true });
-jest.mock('@salesforce/label/c.Cart_loadingSpinnerAltText', () => ({ default: 'Loading express payment options...' }), {
-    virtual: true,
-});
-jest.mock('@salesforce/label/c.Cart_checkoutButtonAssistiveText', () => ({ default: 'Proceed to checkout' }), {
-    virtual: true,
-});
-jest.mock('@salesforce/label/c.Cart_checkoutNotAvailableAssistiveText', () => ({ default: 'Checkout not available' }), {
-    virtual: true,
-});
-jest.mock('@salesforce/label/c.Cart_cartSummaryRegionLabel', () => ({ default: 'Cart Summary Section' }), {
-    virtual: true,
-});
+jest.mock(
+    'lightningsnapin/eventStore',
+    () => ({
+        dispatchMessagingEvent: jest.fn(),
+        MESSAGING_EVENT: {
+            MINIMIZE_BUTTON_CLICK: 'MINIMIZE_BUTTON_CLICK',
+        },
+    }),
+    { virtual: true }
+);
 
 jest.mock(
     'experience/styling',
@@ -49,8 +46,26 @@ const mockCartSummary = {
 
 describe('c-cart-summary', () => {
     let element;
+    let mockLocalStorage;
 
     beforeEach(() => {
+        // Mock localStorage
+        mockLocalStorage = {
+            getItem: jest.fn((key) => {
+                const mockData = {
+                    pwaDomainUrl: 'https://example.com',
+                    pwaSiteId: 'site-123',
+                    pwaLocale: 'en-US',
+                };
+                return mockData[key] || null;
+            }),
+            setItem: jest.fn(),
+        };
+        Object.defineProperty(window, 'localStorage', {
+            value: mockLocalStorage,
+            writable: true,
+        });
+
         element = createElement('c-cart-summary', {
             is: CartSummary,
         });
@@ -82,7 +97,7 @@ describe('c-cart-summary', () => {
             const expressPayment = element.querySelector('c-express-payment');
             expect(expressPayment).not.toBeNull();
             expect(expressPayment.entryId).toBe('test-entry-123');
-            expect(expressPayment.expressPaymentUrl).toBe('https://example.com/express');
+            expect(expressPayment.expressPaymentUrl).toBe('https://example.com/site-123/en-US/express');
         });
 
         it('should render footer with correct content', () => {
@@ -254,6 +269,9 @@ describe('c-cart-summary', () => {
                 value: { dataset: { buttonClass: 'button-checkout' } },
             });
             button.dispatchEvent(clickEvent);
+
+            // Verify messaging event was dispatched
+            expect(dispatchMessagingEvent).toHaveBeenCalledWith(MESSAGING_EVENT.MINIMIZE_BUTTON_CLICK, {});
 
             // Verify window.open was called with correct URL
             expect(mockWindowOpen).toHaveBeenCalledWith('https://example.com/checkout', '_blank');
@@ -498,6 +516,81 @@ describe('c-cart-summary', () => {
         });
     });
 
+    describe('Language and internationalization support', () => {
+        it('should have default language configuration', () => {
+            expect(element.configuration).toEqual({});
+            // Test that component renders correctly with default configuration
+            expect(element.querySelector('[data-testid="cart-summary"]')).toBeDefined();
+        });
+
+        it('should support different language configurations', () => {
+            element.configuration = { language: 'es-ES' };
+            expect(element.configuration.language).toBe('es-ES');
+            expect(element.querySelector('[data-testid="cart-summary"]')).toBeDefined();
+
+            element.configuration = { language: 'fr-FR' };
+            expect(element.configuration.language).toBe('fr-FR');
+            expect(element.querySelector('[data-testid="cart-summary"]')).toBeDefined();
+
+            element.configuration = { language: 'en-GB' };
+            expect(element.configuration.language).toBe('en-GB');
+            expect(element.querySelector('[data-testid="cart-summary"]')).toBeDefined();
+        });
+
+        it('should provide i18n labels for different languages', () => {
+            // Test US English (default)
+            expect(element.i18n.cartSummaryRegionLabel).toBe('Cart Summary Section');
+            expect(element.i18n.loadingSpinnerAltText).toBe('Loading express payment options...');
+            expect(element.i18n.checkoutButtonLabel).toBe('Checkout');
+            expect(element.i18n.checkoutButtonAssistiveText).toBe('Proceed to checkout');
+            expect(element.i18n.checkoutNotAvailableAssistiveText).toBe('Checkout not available');
+
+            // Test Spanish
+            element.configuration = { language: 'es' };
+            expect(element.i18n.cartSummaryRegionLabel).toBe('Sección de resumen del carrito');
+            expect(element.i18n.loadingSpinnerAltText).toBe('Cargando opciones de pago exprés...');
+            expect(element.i18n.checkoutButtonLabel).toBe('Finalizar compra');
+            expect(element.i18n.checkoutButtonAssistiveText).toBe('Ir a finalizar compra');
+            expect(element.i18n.checkoutNotAvailableAssistiveText).toBe('Finalizar compra no disponible');
+
+            // Test French
+            element.configuration = { language: 'fr' };
+            expect(element.i18n.cartSummaryRegionLabel).toBe('Section récapitulatif du panier');
+            expect(element.i18n.loadingSpinnerAltText).toBe('Chargement des options de paiement express...');
+            expect(element.i18n.checkoutButtonLabel).toBe('Payer');
+            expect(element.i18n.checkoutButtonAssistiveText).toBe('Passer au paiement');
+            expect(element.i18n.checkoutNotAvailableAssistiveText).toBe('Paiement indisponible');
+
+            // Test British English
+            element.configuration = { language: 'en-GB' };
+            expect(element.i18n.cartSummaryRegionLabel).toBe('Cart Summary Section');
+            expect(element.i18n.loadingSpinnerAltText).toBe('Loading express payment options...');
+            expect(element.i18n.checkoutButtonLabel).toBe('Checkout');
+            expect(element.i18n.checkoutButtonAssistiveText).toBe('Proceed to checkout');
+            expect(element.i18n.checkoutNotAvailableAssistiveText).toBe('Checkout not available');
+        });
+
+        it('should fallback to English for unsupported languages', () => {
+            element.configuration = { language: 'de-DE' }; // German not supported
+            expect(element.i18n.cartSummaryRegionLabel).toBe('Cart Summary Section');
+            expect(element.i18n.checkoutButtonLabel).toBe('Checkout');
+        });
+
+        it('should handle undefined/null language gracefully', () => {
+            element.configuration = { language: undefined };
+            expect(element.configuration.language).toBeUndefined();
+            expect(element.i18n.cartSummaryRegionLabel).toBe('Cart Summary Section');
+
+            element.configuration = { language: null };
+            expect(element.configuration.language).toBeNull();
+            expect(element.i18n.cartSummaryRegionLabel).toBe('Cart Summary Section');
+
+            element.configuration = { language: '' };
+            expect(element.configuration.language).toBe('');
+            expect(element.i18n.cartSummaryRegionLabel).toBe('Cart Summary Section');
+        });
+    });
+
     describe('Integration test coverage', () => {
         it('should render all components together correctly', () => {
             // Verify the complete component renders without errors
@@ -524,6 +617,556 @@ describe('c-cart-summary', () => {
             // In LWC test environment, property changes don't always trigger DOM updates
             // But we can verify the property was set
             expect(element.cartSummary.footerMessage).toBe(newFooter);
+        });
+    });
+
+    describe('Window message handling and basket data functionality', () => {
+        let mockPostMessage;
+        let mockExpressPaymentComponent;
+        let originalAddEventListener;
+        let originalRemoveEventListener;
+
+        beforeEach(async () => {
+            // Mock localStorage
+            mockLocalStorage = {
+                getItem: jest.fn(),
+                setItem: jest.fn(),
+            };
+            Object.defineProperty(window, 'localStorage', {
+                value: mockLocalStorage,
+                writable: true,
+            });
+
+            // Mock window.postMessage
+            mockPostMessage = jest.fn();
+            Object.defineProperty(window.parent, 'postMessage', {
+                value: mockPostMessage,
+                writable: true,
+            });
+
+            // Store original event listener methods
+            originalAddEventListener = window.addEventListener;
+            originalRemoveEventListener = window.removeEventListener;
+
+            // Mock express payment component
+            mockExpressPaymentComponent = {
+                sendCheckoutData: jest.fn(),
+            };
+
+            // Trigger express payment loaded event to ensure component is ready
+            const expressPayment = element.querySelector('c-express-payment');
+            const event = new CustomEvent('expressloaded', {
+                detail: { available: true },
+            });
+            expressPayment.dispatchEvent(event);
+            await Promise.resolve();
+        });
+
+        afterEach(() => {
+            jest.clearAllMocks();
+            // Restore original event listener methods
+            window.addEventListener = originalAddEventListener;
+            window.removeEventListener = originalRemoveEventListener;
+        });
+
+        describe('Customer data message handling', () => {
+            it('should handle express.actualCustomerData message and store in localStorage', () => {
+                const customerData = {
+                    type: 'express.actualCustomerData',
+                    payload: {
+                        customerId: 'customer-123',
+                        authToken: 'auth-token-456',
+                    },
+                };
+
+                // Create and dispatch the message event to window
+                const messageEvent = new MessageEvent('message', {
+                    data: customerData,
+                });
+
+                // Dispatch the event to trigger the component's message handler
+                window.dispatchEvent(messageEvent);
+
+                // Verify localStorage was called correctly
+                expect(mockLocalStorage.setItem).toHaveBeenCalledWith('expressPaymentCustomerId', 'customer-123');
+                expect(mockLocalStorage.setItem).toHaveBeenCalledWith('expressPaymentAuthToken', 'auth-token-456');
+            });
+
+            it('should handle express.actualCustomerData message with missing payload gracefully', () => {
+                const customerData = {
+                    type: 'express.actualCustomerData',
+                    payload: null,
+                };
+
+                const messageEvent = new MessageEvent('message', {
+                    data: customerData,
+                });
+
+                // Should not throw an error when dispatched
+                expect(() => {
+                    window.dispatchEvent(messageEvent);
+                }).not.toThrow();
+
+                // localStorage should be called with undefined values
+                expect(mockLocalStorage.setItem).toHaveBeenCalledWith('expressPaymentCustomerId', undefined);
+                expect(mockLocalStorage.setItem).toHaveBeenCalledWith('expressPaymentAuthToken', undefined);
+            });
+
+            it('should ignore messages that are not express.actualCustomerData', () => {
+                const otherMessage = {
+                    type: 'other.message.type',
+                    payload: { data: 'test' },
+                };
+
+                const messageEvent = new MessageEvent('message', {
+                    data: otherMessage,
+                });
+
+                window.dispatchEvent(messageEvent);
+
+                // localStorage should not be called
+                expect(mockLocalStorage.setItem).not.toHaveBeenCalled();
+            });
+        });
+
+        describe('Basket data request handling', () => {
+            it('should ignore basketDataRequested if not the latest instance', () => {
+                const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+                // Create a second element to make the first one not the latest
+                const secondElement = createElement('c-cart-summary', {
+                    is: CartSummary,
+                });
+                secondElement.cartSummary = mockCartSummary;
+                document.body.appendChild(secondElement);
+
+                const basketRequestMessage = {
+                    type: 'basketDataRequested',
+                };
+
+                const messageEvent = new MessageEvent('message', {
+                    data: basketRequestMessage,
+                });
+
+                // Dispatch the message - only the latest instance should respond
+                window.dispatchEvent(messageEvent);
+
+                // The first element should not have triggered any warning since it's not the latest
+                expect(consoleWarnSpy).not.toHaveBeenCalled();
+
+                // Clean up
+                document.body.removeChild(secondElement);
+                consoleWarnSpy.mockRestore();
+            });
+
+            it('should handle sendCheckoutData error and log warning', () => {
+                const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+                // Mock localStorage to return customer data
+                mockLocalStorage.getItem.mockImplementation((key) => {
+                    if (key === 'expressPaymentCustomerId') return 'customer-123';
+                    if (key === 'expressPaymentAuthToken') return 'auth-token-456';
+                    return null;
+                });
+
+                // Mock querySelector to return a mock express payment component that throws an error
+                const mockExpressPaymentWithError = {
+                    sendCheckoutData: jest.fn().mockImplementation(() => {
+                        throw new Error('Network error');
+                    }),
+                };
+
+                const originalQuerySelector = element.querySelector.bind(element);
+                element.querySelector = jest.fn().mockImplementation((selector) => {
+                    if (selector === 'c-express-payment') {
+                        return mockExpressPaymentWithError;
+                    }
+                    return originalQuerySelector(selector);
+                });
+
+                const basketRequestMessage = {
+                    type: 'basketDataRequested',
+                };
+
+                const messageEvent = new MessageEvent('message', {
+                    data: basketRequestMessage,
+                });
+
+                // Dispatch the message to trigger basket data sending
+                window.dispatchEvent(messageEvent);
+
+                // Verify the warning was logged with the error
+                expect(consoleWarnSpy).toHaveBeenCalledWith(
+                    expect.stringMatching(/Failed to send basket data postMessage \(Component \d+\):/),
+                    expect.any(Error)
+                );
+
+                // Verify sendCheckoutData was called with correct data
+                expect(mockExpressPaymentWithError.sendCheckoutData).toHaveBeenCalledWith(
+                    {
+                        orderTotal: mockCartSummary.total,
+                        currency: mockCartSummary.currencyCode || 'USD',
+                        basketId: mockCartSummary.id || '',
+                        customerId: 'customer-123',
+                    },
+                    {
+                        customerId: 'customer-123',
+                        authToken: 'auth-token-456',
+                    }
+                );
+
+                // Clean up
+                consoleWarnSpy.mockRestore();
+                element.querySelector = originalQuerySelector;
+            });
+
+            it('should handle basket data with missing total and use fallback value', () => {
+                // Mock localStorage to return customer data
+                mockLocalStorage.getItem.mockImplementation((key) => {
+                    if (key === 'expressPaymentCustomerId') return 'customer-456';
+                    if (key === 'expressPaymentAuthToken') return 'auth-token-789';
+                    return null;
+                });
+
+                // Mock express payment component
+                mockExpressPaymentComponent = {
+                    sendCheckoutData: jest.fn(),
+                };
+
+                const originalQuerySelector = element.querySelector.bind(element);
+                element.querySelector = jest.fn().mockImplementation((selector) => {
+                    if (selector === 'c-express-payment') {
+                        return mockExpressPaymentComponent;
+                    }
+                    return originalQuerySelector(selector);
+                });
+
+                // Set cart summary with missing/falsy total to trigger fallback
+                element.cartSummary = {
+                    ...mockCartSummary,
+                    total: null, // This will trigger the || 0 fallback on line 301
+                    currencyCode: undefined, // This will trigger the || 'USD' fallback
+                    id: '', // This will trigger the || '' fallback
+                };
+
+                const basketRequestMessage = {
+                    type: 'basketDataRequested',
+                };
+
+                const messageEvent = new MessageEvent('message', {
+                    data: basketRequestMessage,
+                });
+
+                // Dispatch the message to trigger basket data sending
+                window.dispatchEvent(messageEvent);
+
+                // Verify sendCheckoutData was called with fallback values
+                expect(mockExpressPaymentComponent.sendCheckoutData).toHaveBeenCalledWith(
+                    {
+                        orderTotal: 0, // Fallback value from line 301
+                        currency: 'USD', // Fallback value
+                        basketId: '', // Fallback value
+                        customerId: 'customer-456',
+                    },
+                    {
+                        customerId: 'customer-456',
+                        authToken: 'auth-token-789',
+                    }
+                );
+
+                // Clean up
+                element.querySelector = originalQuerySelector;
+            });
+
+            it('should handle missing cart summary gracefully', () => {
+                const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+                // Set cart summary to null using the public setter
+                element.cartSummary = null;
+
+                const basketRequestMessage = {
+                    type: 'basketDataRequested',
+                };
+
+                const messageEvent = new MessageEvent('message', {
+                    data: basketRequestMessage,
+                });
+
+                // Should not throw an error when dispatched
+                expect(() => {
+                    window.dispatchEvent(messageEvent);
+                }).not.toThrow();
+
+                // No warning should be logged when cart summary is null (early return)
+                expect(consoleWarnSpy).not.toHaveBeenCalled();
+                consoleWarnSpy.mockRestore();
+            });
+        });
+
+        describe('Component lifecycle and message listeners', () => {
+            it('should set up message listeners on connectedCallback', () => {
+                const addEventListenerSpy = jest.spyOn(window, 'addEventListener');
+
+                // Create a new element to test connectedCallback
+                const newElement = createElement('c-cart-summary', {
+                    is: CartSummary,
+                });
+                newElement.cartSummary = mockCartSummary;
+                document.body.appendChild(newElement);
+
+                // Verify message listeners were added (called twice - once for each handler)
+                expect(addEventListenerSpy).toHaveBeenCalledWith('message', expect.any(Function));
+
+                // Verify postMessage was sent to request customer data
+                expect(mockPostMessage).toHaveBeenCalledWith(
+                    {
+                        type: 'lwc.getCustomerData',
+                        timestamp: expect.any(Number),
+                    },
+                    '*'
+                );
+
+                addEventListenerSpy.mockRestore();
+                document.body.removeChild(newElement);
+            });
+
+            it('should clean up message listeners on disconnectedCallback', () => {
+                const removeEventListenerSpy = jest.spyOn(window, 'removeEventListener');
+
+                // Create and connect element
+                const newElement = createElement('c-cart-summary', {
+                    is: CartSummary,
+                });
+                newElement.cartSummary = mockCartSummary;
+                document.body.appendChild(newElement);
+
+                // Disconnect element
+                document.body.removeChild(newElement);
+
+                // Verify message listener was removed
+                expect(removeEventListenerSpy).toHaveBeenCalledWith('message', expect.any(Function));
+
+                removeEventListenerSpy.mockRestore();
+            });
+        });
+    });
+});
+
+describe('Express payment URL construction', () => {
+    let element;
+    let mockLocalStorage;
+
+    beforeEach(async () => {
+        // Mock localStorage
+        mockLocalStorage = {
+            getItem: jest.fn((key) => {
+                const mockData = {
+                    pwaDomainUrl: 'https://www.phased-launch-testing.com',
+                    pwaSiteId: 'site-123',
+                    pwaLocale: 'en-US',
+                };
+                return mockData[key] || null;
+            }),
+            setItem: jest.fn(),
+        };
+        Object.defineProperty(window, 'localStorage', {
+            value: mockLocalStorage,
+            writable: true,
+        });
+
+        element = createElement('c-cart-summary', {
+            is: CartSummary,
+        });
+        element.cartSummary = mockCartSummary;
+        element.entryId = 'test-entry-456';
+        document.body.appendChild(element);
+        await Promise.resolve();
+    });
+
+    afterEach(() => {
+        while (document.body.firstChild) {
+            document.body.removeChild(document.body.firstChild);
+        }
+        jest.clearAllMocks();
+    });
+
+    it('should construct express payment URL from localStorage values', () => {
+        const expressPayment = element.querySelector('c-express-payment');
+        expect(expressPayment).not.toBeNull();
+        expect(expressPayment.expressPaymentUrl).toBe('https://www.phased-launch-testing.com/site-123/en-US/express');
+    });
+
+    it('should call localStorage.getItem for required keys', () => {
+        // Verify that localStorage.getItem was called with the required keys
+        expect(mockLocalStorage.getItem).toHaveBeenCalledWith('pwaDomainUrl');
+        expect(mockLocalStorage.getItem).toHaveBeenCalledWith('pwaSiteId');
+        expect(mockLocalStorage.getItem).toHaveBeenCalledWith('pwaLocale');
+    });
+
+    it('should return null when localStorage values are missing', async () => {
+        // Clear the mock to return null for all keys
+        mockLocalStorage.getItem.mockReturnValue(null);
+
+        // Recreate the element to trigger the getter again
+        while (document.body.firstChild) {
+            document.body.removeChild(document.body.firstChild);
+        }
+
+        element = createElement('c-cart-summary', {
+            is: CartSummary,
+        });
+        element.cartSummary = mockCartSummary;
+        element.entryId = 'test-entry-456';
+        document.body.appendChild(element);
+        await Promise.resolve();
+
+        const expressPayment = element.querySelector('c-express-payment');
+        expect(expressPayment).not.toBeNull();
+        expect(expressPayment.expressPaymentUrl).toBe('null');
+    });
+
+    it('should handle localStorage errors gracefully', async () => {
+        // Mock localStorage to throw an error
+        mockLocalStorage.getItem.mockImplementation(() => {
+            throw new Error('localStorage error');
+        });
+
+        // Mock console.warn to prevent console output during tests
+        const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+
+        // Recreate the element to trigger the getter again
+        while (document.body.firstChild) {
+            document.body.removeChild(document.body.firstChild);
+        }
+
+        element = createElement('c-cart-summary', {
+            is: CartSummary,
+        });
+        element.cartSummary = mockCartSummary;
+        element.entryId = 'test-entry-456';
+        document.body.appendChild(element);
+        await Promise.resolve();
+
+        const expressPayment = element.querySelector('c-express-payment');
+        expect(expressPayment).not.toBeNull();
+        expect(expressPayment.expressPaymentUrl).toBe('null');
+
+        // Verify that console.warn was called for localStorage errors
+        expect(consoleSpy).toHaveBeenCalledWith('localStorage not available:', expect.any(Error));
+
+        consoleSpy.mockRestore();
+    });
+
+    it('should return cartSummary.expressPaymentUrl when it equals string "null"', async () => {
+        // Test the specific case where cartSummary.expressPaymentUrl === 'null' (line 199)
+        element = createElement('c-cart-summary', {
+            is: CartSummary,
+        });
+        element.cartSummary = { ...mockCartSummary, expressPaymentUrl: 'null' };
+        element.entryId = 'test-entry-456';
+        document.body.appendChild(element);
+        await Promise.resolve();
+
+        const expressPayment = element.querySelector('c-express-payment');
+        expect(expressPayment).not.toBeNull();
+        expect(expressPayment.expressPaymentUrl).toBe('null');
+    });
+
+    describe('localStorage integration for checkout URL', () => {
+        beforeEach(() => {
+            // Mock localStorage
+            mockLocalStorage = {
+                getItem: jest.fn(),
+                setItem: jest.fn(),
+            };
+            Object.defineProperty(window, 'localStorage', {
+                value: mockLocalStorage,
+                writable: true,
+            });
+        });
+
+        afterEach(() => {
+            // Clean up localStorage mock
+            delete window.localStorage;
+        });
+
+        it('should use localizedUrl from localStorage when available', async () => {
+            mockLocalStorage.getItem.mockReturnValue('https://example.com/en-us');
+
+            element = createElement('c-cart-summary', {
+                is: CartSummary,
+            });
+            element.cartSummary = mockCartSummary;
+            document.body.appendChild(element);
+            await Promise.resolve();
+
+            // Trigger express payment loaded event to show the button
+            const expressPayment = element.querySelector('c-express-payment');
+            expressPayment.dispatchEvent(
+                new CustomEvent('expressloaded', {
+                    detail: { available: true },
+                    bubbles: true,
+                })
+            );
+            await Promise.resolve();
+
+            const button = element.querySelector('c-common-button');
+            expect(button).not.toBeNull();
+            expect(button.disabled).toBe(false);
+            expect(mockLocalStorage.getItem).toHaveBeenCalledWith('localizedUrl');
+        });
+
+        it('should fallback to checkoutButtonUrl when localStorage is empty', async () => {
+            mockLocalStorage.getItem.mockReturnValue(null);
+
+            element = createElement('c-cart-summary', {
+                is: CartSummary,
+            });
+            element.cartSummary = mockCartSummary;
+            document.body.appendChild(element);
+            await Promise.resolve();
+
+            const button = element.querySelector('c-common-button');
+            expect(button).not.toBeNull();
+            expect(button.disabled).toBe(false);
+            expect(mockLocalStorage.getItem).toHaveBeenCalledWith('localizedUrl');
+        });
+
+        it('should disable button when no checkout URL is available', async () => {
+            mockLocalStorage.getItem.mockReturnValue(null);
+
+            element = createElement('c-cart-summary', {
+                is: CartSummary,
+            });
+            element.cartSummary = {}; // No checkoutButtonUrl
+            document.body.appendChild(element);
+            await Promise.resolve();
+
+            const button = element.querySelector('c-common-button');
+            expect(button).not.toBeNull();
+            expect(button.disabled).toBe(true);
+        });
+
+        it('should handle localStorage errors gracefully', async () => {
+            mockLocalStorage.getItem.mockImplementation(() => {
+                throw new Error('localStorage not available');
+            });
+
+            const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+
+            element = createElement('c-cart-summary', {
+                is: CartSummary,
+            });
+            element.cartSummary = mockCartSummary;
+            document.body.appendChild(element);
+            await Promise.resolve();
+
+            const button = element.querySelector('c-common-button');
+            expect(button).not.toBeNull();
+            expect(button.disabled).toBe(false);
+            expect(consoleSpy).toHaveBeenCalledWith('localStorage not available:', expect.any(Error));
+
+            consoleSpy.mockRestore();
         });
     });
 });

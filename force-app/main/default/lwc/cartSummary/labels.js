@@ -5,16 +5,115 @@
  * For full license text, see the LICENSE file in the repo
  * root or https://opensource.org/licenses/apache-2.0/
  */
-import cartSummaryRegionLabel from '@salesforce/label/c.Cart_cartSummaryRegionLabel';
-import loadingSpinnerAltText from '@salesforce/label/c.Cart_loadingSpinnerAltText';
-import checkoutButtonLabel from '@salesforce/label/c.Cart_checkoutButtonLabel';
-import checkoutButtonAssistiveText from '@salesforce/label/c.Cart_checkoutButtonAssistiveText';
-import checkoutNotAvailableAssistiveText from '@salesforce/label/c.Cart_checkoutNotAvailableAssistiveText';
 
-export {
-    cartSummaryRegionLabel,
-    loadingSpinnerAltText,
-    checkoutButtonLabel,
-    checkoutButtonAssistiveText,
-    checkoutNotAvailableAssistiveText,
+/*
+ * @description Label data with multi-locale support for cartSummary
+ */
+
+// Label data with multi-locale support
+export const LABEL_DATA = {
+    cartSummaryRegionLabel: {
+        en_US: 'Cart Summary Section',
+        en_GB: 'Cart Summary Section',
+        en: 'Cart Summary Section',
+        de: 'Warenkorb-Zusammenfassung',
+        es: 'Sección de resumen del carrito',
+        fr: 'Section récapitulatif du panier',
+        it: 'Sezione riepilogo carrello',
+        ja: 'カート概要セクション',
+        ko: '장바구니 요약 섹션',
+        nl: 'Samenvatting winkelwagen',
+        no: 'Handlekurvoppsummering',
+        pl: 'Podsumowanie koszyka',
+        pt_BR: 'Seção de resumo do carrinho',
+        sv: 'Varukorgssammanfattning',
+        da: 'Indkøbskurvoversigt',
+        fi: 'Ostoskorin yhteenveto',
+        zh_CN: '购物车摘要部分',
+        zh_TW: '購物車摘要部分',
+    },
+
+    loadingSpinnerAltText: {
+        en_US: 'Loading express payment options...',
+        en_GB: 'Loading express payment options...',
+        en: 'Loading express payment options...',
+        de: 'Express-Zahlungsoptionen werden geladen...',
+        es: 'Cargando opciones de pago exprés...',
+        fr: 'Chargement des options de paiement express...',
+        it: 'Caricamento delle opzioni di pagamento rapido...',
+        ja: 'エクスプレス決済オプションを読み込み中...',
+        ko: '빠른 결제 옵션 불러오는 중...',
+        nl: 'Snelle betaalopties laden...',
+        no: 'Laster ekspressbetalingsalternativer...',
+        pl: 'Ładowanie opcji szybkiej płatności...',
+        pt_BR: 'Carregando opções de pagamento expresso...',
+        sv: 'Läser in expressbetalningsalternativ...',
+        da: 'Indlæser hurtige betalingsmuligheder...',
+        fi: 'Ladataan pikamaksuvaihtoehtoja...',
+        zh_CN: '正在加载快速支付选项...',
+        zh_TW: '正在載入快速付款選項...',
+    },
+
+    checkoutButtonLabel: {
+        en_US: 'Checkout',
+        en_GB: 'Checkout',
+        en: 'Checkout',
+        de: 'Zur Kasse',
+        es: 'Finalizar compra',
+        fr: 'Payer',
+        it: 'Checkout',
+        ja: 'レジに進む',
+        ko: '결제하기',
+        nl: 'Afrekenen',
+        no: 'Til kassen',
+        pl: 'Do kasy',
+        pt_BR: 'Finalizar compra',
+        sv: 'Till kassan',
+        da: 'Til kassen',
+        fi: 'Kassalle',
+        zh_CN: '结账',
+        zh_TW: '結帳',
+    },
+
+    checkoutButtonAssistiveText: {
+        en_US: 'Proceed to checkout',
+        en_GB: 'Proceed to checkout',
+        en: 'Proceed to checkout',
+        de: 'Zur Kasse gehen',
+        es: 'Ir a finalizar compra',
+        fr: 'Passer au paiement',
+        it: 'Procedi al checkout',
+        ja: '購入手続きへ進む',
+        ko: '결제 단계로 이동',
+        nl: 'Verder naar afrekenen',
+        no: 'Fortsett til kassen',
+        pl: 'Przejdź do kasy',
+        pt_BR: 'Prosseguir para o pagamento',
+        sv: 'Fortsätt till kassan',
+        da: 'Fortsæt til kassen',
+        fi: 'Siirry kassalle',
+        zh_CN: '前往结账',
+        zh_TW: '前往結帳',
+    },
+
+    checkoutNotAvailableAssistiveText: {
+        en_US: 'Checkout not available',
+        en_GB: 'Checkout not available',
+        en: 'Checkout not available',
+        de: 'Kasse nicht verfügbar',
+        es: 'Finalizar compra no disponible',
+        fr: 'Paiement indisponible',
+        it: 'Checkout non disponibile',
+        ja: 'チェックアウトは利用できません',
+        ko: '결제를 사용할 수 없습니다',
+        nl: 'Afrekenen niet beschikbaar',
+        no: 'Kassen er ikke tilgjengelig',
+        pl: 'Kasa niedostępna',
+        pt_BR: 'Finalização de compra indisponível',
+        sv: 'Kassan är inte tillgänglig',
+        da: 'Kassen er ikke tilgængelig',
+        fi: 'Kassa ei ole käytettävissä',
+        zh_CN: '结账不可用',
+        zh_TW: '結帳不可用',
+    },
 };

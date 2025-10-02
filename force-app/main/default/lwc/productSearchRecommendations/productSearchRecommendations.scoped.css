@@ -1,31 +1,49 @@
+/*
+ * productSearchRecommendations.scoped.css
+ *
+ * This CSS file styles the ProductSearchRecommendations LWC. It employs a layered
+ * approach to styling, prioritizing consumer customization via public `--ref-c-`
+ * styling hooks, then leveraging Salesforce DXP theme tokens,
+ * and finally falling back to default values if neither are defined.
+ */
+
+:host {
+    display: block;
+    box-sizing: border-box;
+
+    --ref-c-product-search-recommendations-button-background-color: #f7f9fa;
+    --ref-c-product-search-recommendations-button-border-color: #d9dfe7;
+    --ref-c-product-search-recommendations-button-font-size: var(--dxp-s-button-small-font-size, 0.75rem);
+    --ref-c-product-search-recommendations-button-font-size-mobile: 0.7rem;
+    --ref-c-product-search-recommendation-descriptions-font-size: 0.875rem;
+    --ref-c-product-search-recommendation-descriptions-line-height: 1.875rem;
+}
+
 /* ===== PRODUCTS DESCRIPTION STYLING ===== */
 /* Description text for the products section */
 .products-description {
-    font-size: var(--dxp-g-font-size-3, 0.875rem);
+    font-size: var(--ref-c-product-search-recommendation-descriptions-font-size);
 }
 
 /* ===== CATEGORIES DESCRIPTION STYLING ===== */
 /* Description text for the categories section */
 .categories-description {
-    font-size: var(--dxp-g-font-size-3, 0.875rem);
+    font-size: var(--ref-c-product-search-recommendation-descriptions-font-size);
 }
 
-.categoryLayout {
-    line-height: 30px;
+.category-layout {
+    line-height: var(--ref-c-product-search-recommendation-descriptions-line-height);
 }
 
 /* ===== CATEGORY BUTTON STYLING ===== */
 /* Pill-shaped category filter buttons */
 .category-button {
-    font-size: var(--dxp-g-font-size-2, 0.75rem);
+    font-size: var(--ref-c-product-search-recommendations-button-font-size);
     border-radius: 999px; /* Pill shape */
-    color: var(--dxp-g-offline-3, #000);
-    background-color: var(--dxp-g-root, #fff);
-    border: 1px solid var(--dxp-g-neutral-2, #e0e0e0);
+    background-color: var(--ref-c-product-search-recommendations-button-background-color);
+    border: 1px solid var(--ref-c-product-search-recommendations-button-border-color);
     padding: 0.375em 1.25em;
-    transition: box-shadow 0.2s, border-color 0.2s, background 0.2s;
     cursor: pointer;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -38,7 +56,6 @@
 /* Enhanced shadow and border on hover/focus for better UX */
 .category-button:hover,
 .category-button:focus {
-    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08);
     border-color: var(--dxp-g-neutral-3, #d0d0d0);
     background: var(--dxp-g-root, #fff);
     outline: none;
@@ -52,10 +69,10 @@
 
 /* ===== RESPONSIVE DESIGN ===== */
 /* Smaller buttons on mobile devices for better touch targets */
-@media (max-width: 30em) {
+@media (max-width: 30rem) {
     .category-button {
-        font-size: var(--dxp-g-font-size-1, 0.7rem);
-        padding: 0.25em 1em;
-        max-width: 20.563em; /* Smaller max width on mobile */
+        font-size: var(--ref-c-product-search-recommendations-button-font-size-mobile);
+        padding: 0.25rem 1rem;
+        max-width: 20.563rem; /* Smaller max width on mobile */
     }
 }

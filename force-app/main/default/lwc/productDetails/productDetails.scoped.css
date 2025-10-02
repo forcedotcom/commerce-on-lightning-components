@@ -9,10 +9,24 @@
 
 :host {
     --ref-c-product-title-font-size: var(--dxp-s-body-font-size, 1rem);
-    --ref-c-product-title-font-weight: var(--dxp-g-font-weight-medium, 600);
+    --ref-c-product-title-font-weight: 500;
     --ref-c-product-title-line-height: var(--dxp-s-body-line-height, 1.5rem);
     --ref-c-product-description-font-size: 0.875rem;
     --ref-c-product-description-line-height: var(--dxp-s-text-heading-medium-line-height, 1.25rem);
+
+    /* Spinner Overlay variables */
+    --ref-c-product-details-spinner-height: 40px;
+    --ref-c-product-details-spinner-background: #f3f3f3;
+    --ref-c-product-details-spinner-border-radius: 4px;
+    --ref-c-product-details-spinner-margin-horizontal: 0.25rem;
+    --ref-c-product-details-spinner-margin-top: var(--dxp-g-spacing-xxsmall, 0.25rem);
+    --ref-c-product-details-spinner-margin-bottom: var(--dxp-g-spacing-xxsmall, 0.25rem);
+
+    /* Express container border radius */
+    --ref-c-product-details-express-container-border-radius: var(--dxp-g-radius-base, 0.25rem);
+
+    /* Variant selected value font weight */
+    --ref-c-product-details-variant-selected-value-font-weight: 500;
 }
 
 ul:not(.browser-default) li {
@@ -41,10 +55,6 @@ ul:not(.browser-default) li {
     --ref-c-common-button-primary-color-border-hover: var(--dxp-g-neutral-contrast-2);
     --ref-c-common-button-primary-color-background-active: var(--dxp-g-neutral-contrast-2);
     --ref-c-common-button-primary-color-border-active: var(--dxp-g-neutral-1);
-    --ref-c-common-link-primary-color: var(--dxp-g-success-contrast-2);
-    --ref-c-common-link-primary-color-hover: var(--dxp-g-success-contrast-2);
-    --ref-c-common-link-primary-color-focus: var(--dxp-g-success-contrast-2);
-    --ref-c-common-link-primary-color-active: var(--dxp-g-success-contrast-2);
     --ref-c-common-button-secondary-color: var(--dxp-g-neutral-contrast-2);
     --ref-c-common-button-secondary-color-active: var(--dxp-g-neutral-contrast-2);
     --ref-c-common-button-secondary-color-hover: var(--dxp-g-neutral-contrast-2);
@@ -158,10 +168,13 @@ ul:not(.browser-default) li {
 }
 
 .disabled {
-    pointer-events: none;
+    pointer-events: auto; /* Allow clicking on disabled buttons */
     text-decoration: line-through;
     color: var(--ref-c-common-button-color-disabled, var(--dxp-g-neutral-1));
+    opacity: 0.6; /* Visual indication that button is disabled */
+    cursor: pointer; /* Show that button is clickable */
 }
+
 .color-button {
     width: 30px;
     height: 30px;
@@ -170,12 +183,15 @@ ul:not(.browser-default) li {
     padding: 1px;
 }
 
-.variant-button.color-button:disabled {
-    cursor: not-allowed;
+/* Style out-of-stock color buttons */
+.variant-button.color-button[data-out-of-stock='true'] {
+    cursor: pointer;
     position: relative;
+    opacity: 0.6;
+    pointer-events: auto;
 }
 
-.variant-button.color-button:disabled::before {
+.variant-button.color-button[data-out-of-stock='true']::before {
     position: absolute;
     content: '';
     left: 0;
@@ -185,10 +201,10 @@ ul:not(.browser-default) li {
     background-color: #808080;
     border-radius: 50%;
     opacity: 0.5;
-    pointer-events: none;
+    pointer-events: auto; /* Allow clicking through the overlay */
 }
 
-.variant-button.color-button:disabled::after {
+.variant-button.color-button[data-out-of-stock='true']::after {
     position: absolute;
     content: '';
     left: 0;
@@ -196,6 +212,7 @@ ul:not(.browser-default) li {
     right: 0;
     border-top: 1px solid;
     border-color: var(--dxp-g-neutral, #eaeaea);
+    pointer-events: auto; /* Allow clicking through the strikethrough */
 
     -webkit-transform: rotate(-45deg);
     -moz-transform: rotate(-45deg);
@@ -205,13 +222,40 @@ ul:not(.browser-default) li {
 }
 
 .variant-selected-value {
-    font-weight: bold;
+    font-weight: var(--ref-c-product-details-variant-selected-value-font-weight);
+}
+
+/* Loading container and spinner overlay styles */
+.loading-container {
+    position: relative;
+    min-height: var(--ref-c-product-details-spinner-height);
+}
+
+.spinner-overlay {
+    position: absolute;
+    top: 0;
+    left: var(--ref-c-product-details-spinner-margin-horizontal);
+    right: var(--ref-c-product-details-spinner-margin-horizontal);
+    height: var(--ref-c-product-details-spinner-height);
+    background-color: var(--ref-c-product-details-spinner-background);
+    border: 1px solid #d9dfe7;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    border-radius: var(--ref-c-product-details-spinner-border-radius);
+    margin-top: var(--ref-c-product-details-spinner-margin-top);
+    margin-bottom: var(--ref-c-product-details-spinner-margin-bottom);
+}
+
+.express-container {
+    border-radius: var(--ref-c-product-details-express-container-border-radius);
+}
+
+lightning-spinner {
+    background-color: transparent;
 }
 
 c-common-button {
     height: 40px;
-}
-
-.apple-pay-button {
-    font-size: medium;
 }

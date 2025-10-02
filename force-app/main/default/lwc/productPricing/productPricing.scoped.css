@@ -9,7 +9,7 @@
 
 :host {
     --ref-c-product-pricing-negotiated-price-label-font-size: var(--dxp-s-text-heading-medium-font-size, 1.25rem);
-    --ref-c-product-pricing-price-font-weight-medium: var(--dxp-g-font-weight-medium, 500);
+    --ref-c-product-pricing-price-font-weight: 500;
     --ref-c-product-pricing-line-height: var(--dxp-g-line-height-text, 1.5rem);
 }
 
@@ -35,7 +35,7 @@
         --ref-c-product-pricing-negotiated-price-label-font-size,
         var(--com-c-product-details-negotiated-price-label-size)
     );
-    font-weight: var(--ref-c-product-pricing-price-font-weight-medium);
+    font-weight: var(--ref-c-product-pricing-price-font-weight);
 }
 .tax-info-label {
     color: var(--ref-c-common-product-pricing-tax-info-label-color, var(--com-c-product-details-tax-info-label-color));

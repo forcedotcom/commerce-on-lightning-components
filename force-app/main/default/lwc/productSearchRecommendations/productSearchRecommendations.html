@@ -16,7 +16,8 @@
             lwc:if={hasProductRecommendations}
             class="slds-col slds-p-top_xx-small slds-p-left_x-small">
             <c-common-carousel
-                product-data={productData}
+                product-data={transformedProductData}
+                configuration={configuration}
                 display-mode="productSearchRecommendations"
                 onproductselected={handleShowProduct}></c-common-carousel>
         </div>
@@ -28,13 +29,13 @@
             class="slds-col slds-p-vertical_small slds-p-horizontal_medium">
             <p class="categories-description">{categoriesDescription}</p>
             <!-- Grid layout for category buttons -->
-            <div class="slds-grid slds-wrap slds-m-top_small categoryLayout">
+            <div class="slds-grid slds-wrap slds-m-top_small category-layout">
                 <template
                     for:each={categoryData}
                     for:item="category">
                     <!-- Individual category button container -->
                     <div
-                        class="slds-m-right_x-small slds-m-bottom_xx-small"
+                        class="slds-m-right_x-small slds-m-bottom_x-small"
                         key={category.id}>
                         <!-- Clickable category button with hover effects -->
                         <button

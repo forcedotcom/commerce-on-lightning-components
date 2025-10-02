@@ -8,10 +8,9 @@
 import { LightningElement, api } from 'lwc';
 import { dispatchMessagingEvent, assignMessagingEventHandler, MESSAGING_EVENT } from 'lightningsnapin/eventStore';
 import logoUrl from '@salesforce/resourceUrl/agentChatLogo';
-import { Labels } from './labels';
+import * as Labels from './labelUtils';
 
 const SLDS_MENU_SELECTOR = 'slds-dropdown-trigger slds-dropdown-trigger_click';
-const DEFAULT_HEADER_TEXT = 'Chatting with Agent';
 const AUTH_MODE = {
     AUTH: 'Auth',
 };
@@ -24,8 +23,17 @@ const AUTH_MODE = {
  * - Centered logo + header text
  * - A minimize (X) button
  */
-export default class ChatHeader extends LightningElement {
+export default class CommerceHeader extends LightningElement {
     static renderMode = 'light';
+
+    /** CSS classes for the SLDS dropdown container */
+    menuClass = SLDS_MENU_SELECTOR;
+
+    /** Dynamic participant menu options */
+    chatbotOptionsMenu = [];
+
+    /** Text shown in the center of the header */
+    headerText;
 
     /**
      * Messaging deployment configuration
@@ -39,14 +47,32 @@ export default class ChatHeader extends LightningElement {
      */
     @api conversationStatus;
 
-    /** Labels for the component */
-    labels = Labels;
+    /**
+     * Get the current language for translations.
+     * Falls back to English ('en') if no language is configured.
+     * @returns {string} The current language code (e.g., 'en', 'es', 'fr')
+     */
+    get language() {
+        return this.configuration?.language || 'en';
+    }
 
-    /** CSS classes for the SLDS dropdown container */
-    menuClass = SLDS_MENU_SELECTOR;
-
-    /** Dynamic participant menu options */
-    chatbotOptionsMenu = [];
+    /**
+     * Get translated labels based on current language
+     * @returns {object} Object with translated label strings
+     */
+    get i18n() {
+        const language = this.language;
+        return {
+            menu: Labels.menu(language),
+            requestTranscript: Labels.requestTranscript(language),
+            endChat: Labels.endChat(language),
+            minimize: Labels.minimize(language),
+            minimizeAssistive: Labels.minimizeAssistive(language),
+            logoAlt: Labels.logoAlt(language),
+            closeButtonAssistiveText: Labels.closeButtonAssistiveText(language),
+            defaultHeaderText: Labels.defaultHeaderText(language),
+        };
+    }
 
     /**
      * true if dropdown has slds-is-open
@@ -86,9 +112,6 @@ export default class ChatHeader extends LightningElement {
         );
     }
 
-    /** Text shown in the center of the header */
-    headerText = DEFAULT_HEADER_TEXT;
-
     /**
      * URL for the static-resource SVG logo
      * @returns {string} The URL of the logo
@@ -105,6 +128,8 @@ export default class ChatHeader extends LightningElement {
      * @returns {void}
      */
     connectedCallback() {
+        // Initialize header text with default value
+        this.headerText = this.i18n.defaultHeaderText;
         this.assignHandlers();
     }
 
@@ -114,15 +139,16 @@ export default class ChatHeader extends LightningElement {
      * @returns {void}
      */
     assignHandlers() {
-        // TODO: Once chat session is closed and reopened, the header text is not updated.
-        // The UPDATE_HEADER_TEXT event is not fired on conversation re-open.
-        assignMessagingEventHandler(MESSAGING_EVENT.UPDATE_HEADER_TEXT, (data) => {
-            this.headerText = data?.text || DEFAULT_HEADER_TEXT;
-        });
+        // The PARTICIPANT_JOINED event is fired when a new participant joins the chat.
         assignMessagingEventHandler(MESSAGING_EVENT.PARTICIPANT_JOINED, (data) => {
+            this.headerText = data?.label || this.headerText;
             if (Array.isArray(data?.options)) {
                 this.chatbotOptionsMenu = [...this.chatbotOptionsMenu, ...data.options];
             }
+        });
+        // The UPDATE_HEADER_TEXT event is not fired on first load and conversation re-open.
+        assignMessagingEventHandler(MESSAGING_EVENT.UPDATE_HEADER_TEXT, (data) => {
+            this.headerText = data?.text || this.i18n.defaultHeaderText;
         });
         assignMessagingEventHandler(MESSAGING_EVENT.PARTICIPANT_LEFT, () => {
             this.chatbotOptionsMenu = [];
@@ -154,7 +180,7 @@ export default class ChatHeader extends LightningElement {
      * @todo Not sure if chatbotOptionsMenu is needed yet.
      */
     onMenuOptionClick(event) {
-        const id = event?.currentTarget?.value;
+        const id = event?.currentTarget?.dataset?.optionId;
         const selectedOption = this.chatbotOptionsMenu?.find((opt) => opt?.optionIdentifier === id);
         this.menuClass = SLDS_MENU_SELECTOR;
         if (selectedOption) {

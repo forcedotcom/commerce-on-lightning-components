@@ -1,0 +1,23 @@
+<template lwc:render-mode="light">
+    <div
+        class="slds-grid slds-wrap slds-m-top_small button-group-layout"
+        role="group"
+        aria-label="Button group options">
+        <template
+            for:each={validItems}
+            for:item="item">
+            <div
+                class="slds-m-right_x-small slds-m-bottom_x-small"
+                key={item}>
+                <button
+                    name={item}
+                    onclick={handleClick}
+                    class="button-group"
+                    type="button"
+                    aria-label={item}>
+                    {item}
+                </button>
+            </div>
+        </template>
+    </div>
+</template>

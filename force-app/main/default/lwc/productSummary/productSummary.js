@@ -6,7 +6,7 @@
  * root or https://opensource.org/licenses/apache-2.0/
  */
 import { LightningElement, api } from 'lwc';
-import * as labels from './labels';
+import * as Labels from './labelUtils';
 
 export default class ProductSummaryComponent extends LightningElement {
     static renderMode = 'light';
@@ -14,10 +14,35 @@ export default class ProductSummaryComponent extends LightningElement {
     @api item;
 
     /**
-     * Internationalized labels used throughout the component.
-     * Automatically reflects all exports from `labels.js`.
+     * Configuration object that may contain language settings
+     * @type {object}
      */
-    i18n = labels;
+    @api configuration = {};
+
+    /**
+     * Get the current language for translations.
+     * Falls back to English ('en_US') if no language is configured.
+     * @returns {string} The current language code (e.g., 'en_US', 'es', 'fr')
+     */
+    @api
+    get language() {
+        return this.configuration?.language || 'en_US';
+    }
+
+    /**
+     * Internationalized labels used throughout the component.
+     * Returns localized labels based on the current language.
+     * @returns {object} Object containing localized label functions
+     */
+    @api
+    get i18n() {
+        const language = this.language;
+        return {
+            quantityLabelText: Labels.quantityLabelText(language),
+            originalPriceLabel: Labels.originalPriceLabel(language),
+            currentPriceLabel: Labels.currentPriceLabel(language),
+        };
+    }
 
     /**
      * Gets the product image URL
@@ -37,7 +62,7 @@ export default class ProductSummaryComponent extends LightningElement {
 
     /**
      * Gets the product variants (attributes/characteristics) with their labels
-     * @returns {Array} Array of product variants with labels (limited to 2 items)
+     * @returns {Array} Array of product variants with labels
      */
     get facets() {
         const variationAttributesMap = new Map();
@@ -47,18 +72,16 @@ export default class ProductSummaryComponent extends LightningElement {
             });
         }
 
-        return (this.item.variants || [])
-            .map((variant) => {
-                // Added defensive check
-                const label = variationAttributesMap.get(variant.type) || variant.type;
-                // Capitalize first letter of the label
-                const capitalizedLabel = label ? label.charAt(0).toUpperCase() + label.slice(1) : label;
-                return {
-                    ...variant,
-                    label: capitalizedLabel,
-                };
-            })
-            .slice(0, 2);
+        return this.item.variants.map((variant) => {
+            // Use variant.lbl first (from JSON response), then fallback to variationAttributes map, then variant.type
+            const label = (variant.lbl || variationAttributesMap.get(variant.type) || variant.type).trim();
+            // Capitalize first letter of the label if it's not already capitalized
+            const capitalizedLabel = label ? label.charAt(0).toUpperCase() + label.slice(1) : label;
+            return {
+                ...variant,
+                label: capitalizedLabel,
+            };
+        });
     }
 
     /**
@@ -111,10 +134,17 @@ export default class ProductSummaryComponent extends LightningElement {
      */
     get formattedStandardPrice() {
         const currencyCode = this.item?.currencyCode || 'USD';
-        return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: currencyCode,
-        }).format(this.standardPrice);
+        try {
+            return new Intl.NumberFormat(this.language, {
+                style: 'currency',
+                currency: currencyCode,
+            }).format(this.standardPrice);
+        } catch (e) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: currencyCode,
+            }).format(this.standardPrice);
+        }
     }
 
     /**

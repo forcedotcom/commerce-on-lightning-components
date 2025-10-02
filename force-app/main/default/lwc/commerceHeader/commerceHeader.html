@@ -1,30 +1,21 @@
 <template lwc:render-mode="light">
-    <!-- 
-        Left section: Menu and dropdown
-        - Three-dots menu trigger button with accessible icon
-        - Dropdown with dynamic options and role="menu" for accessibility
-        - Includes transcript request and end chat options
-    -->
+    <!-- Menu section with dropdown -->
     <section class={menuClass}>
-        <!-- Menu trigger button with accessible icon and title -->
-        <button
+        <c-common-button
             class="headerButton menuButton"
-            title={labels.menu}
-            aria-label={labels.menu}
+            title={i18n.menu}
+            assistive-text={i18n.menu}
             aria-haspopup="true"
             aria-expanded={isMenuOpen}
             aria-controls="menuOptions"
-            onclick={onMenuButtonClick}>
+            onclick={onMenuButtonClick}
+            tabindex="0">
             <lightning-icon
                 icon-name="utility:threedots_vertical"
-                alternative-text={labels.menu}
-                size="small"></lightning-icon>
-        </button>
-        <!-- 
-            Dropdown menu with accessibility attributes
-            - role="menu" for screen readers
-            - slds-nubbin_top-left for visual indicator
-        -->
+                alternative-text={i18n.menu}
+                size="x-small"></lightning-icon>
+        </c-common-button>
+        <!-- Dropdown menu options -->
         <section
             id="menuOptions"
             class="optionsMenu slds-dropdown slds-dropdown_left slds-nubbin_top-left"
@@ -32,65 +23,52 @@
             hidden={isMenuClosed}
             aria-hidden={isMenuClosed}>
             <ul class="slds-dropdown__list">
-                <!-- Transcript request option (conditionally rendered) -->
+                <!-- Request transcript option -->
                 <li
                     lwc:if={isRequestTranscriptionEnabled}
-                    class="slds-dropdown__item"
-                    role="presentation">
-                    <button
-                        type="button"
-                        class="slds-dropdown__item-action"
-                        role="menuitem"
+                    class="slds-dropdown__item">
+                    <c-common-button
+                        alignment="left"
+                        class="slds-dropdown__item-action slds-p-horizontal_medium slds-p-vertical_x-small"
+                        assistive-text={i18n.requestTranscript}
                         onclick={onRequestTranscriptClick}>
-                        {labels.requestTranscript}
-                    </button>
+                        {i18n.requestTranscript}
+                    </c-common-button>
                 </li>
-                <!-- 
-                    Dynamic menu options from chatbot
-                    - Each option has unique key for rendering
-                    - role="presentation" for list items
-                    - role="menuitem" for buttons
-                -->
+                <!-- Dynamic chatbot menu options -->
                 <template
                     for:each={chatbotOptionsMenu}
                     for:item="option">
                     <li
                         class="slds-dropdown__item"
-                        role="presentation"
                         key={option.optionIdentifier}>
-                        <button
-                            class="slds-dropdown__item-action"
-                            value={option.optionIdentifier}
-                            role="menuitem"
+                        <c-common-button
+                            alignment="left"
+                            class="slds-dropdown__item-action slds-p-horizontal_medium slds-p-vertical_x-small"
+                            data-option-id={option.optionIdentifier}
                             onclick={onMenuOptionClick}>
                             {option.title}
-                        </button>
+                        </c-common-button>
                     </li>
                 </template>
-                <!-- End chat option with error styling -->
-                <li
-                    class="slds-dropdown__item"
-                    role="presentation">
-                    <button
-                        class="slds-dropdown__item-action slds-text-color_error"
-                        role="menuitem"
+                <!-- End chat option -->
+                <li class="slds-dropdown__item">
+                    <c-common-button
+                        alignment="left"
+                        class="slds-dropdown__item-action end-chat-button slds-p-horizontal_medium slds-p-vertical_x-small"
+                        assistive-text={i18n.endChat}
                         onclick={onEndChatClick}>
-                        {labels.endChat}
-                    </button>
+                        {i18n.endChat}
+                    </c-common-button>
                 </li>
             </ul>
         </section>
     </section>
-
-    <!-- 
-        Center section: Brand identity
-        - Logo image with alt text
-        - Dynamic header text with truncation
-    -->
+    <!-- Center header with logo and title -->
     <div class="headerCenter">
         <img
             src={logoSrc}
-            alt={labels.logoAlt}
+            alt={i18n.logoAlt}
             class="brand-logo" />
         <h2
             class="headerTitle"
@@ -99,19 +77,17 @@
             {headerText}
         </h2>
     </div>
-
-    <!-- 
-        Right section: Minimize button
-        - Close icon with accessible alternative text
-        - Title attribute for tooltip
-    -->
-    <button
+    <!-- Minimize/close button -->
+    <c-common-button
         class="headerButton minimizeButton"
-        title={labels.minimize}
-        onclick={onMinimizeButtonClick}>
+        title={i18n.minimize}
+        aria-label={i18n.minimize}
+        onclick={onMinimizeButtonClick}
+        tabindex="0">
         <lightning-icon
             icon-name="utility:close"
-            alternative-text={labels.minimizeAssistive}
-            size="small"></lightning-icon>
-    </button>
+            alternative-text={i18n.minimizeAssistive}
+            size="x-small"
+            class="close-icon"></lightning-icon>
+    </c-common-button>
 </template>

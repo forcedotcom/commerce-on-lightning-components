@@ -1,6 +1,7 @@
 <template>
-    <iframe
-        style="border: 0; width: 100%; height: 40px"
-        src={expressUrl}
-        allow="payment *"></iframe>
+    <div class={containerClass}>
+        <iframe
+            src={expressUrl}
+            allow="payment *"></iframe>
+    </div>
 </template>

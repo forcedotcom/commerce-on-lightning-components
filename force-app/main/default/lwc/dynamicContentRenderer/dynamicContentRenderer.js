@@ -6,27 +6,16 @@
  * root or https://opensource.org/licenses/apache-2-0/
  */
 import { api, LightningElement } from 'lwc';
-import {
-    applePayFailedLabel,
-    applePayCanceledLabel,
-    applePayCompletedLabel,
-    categoryRecommendationTextMessageLabel,
-    productSelectionTextMessageLabel,
-    addToCartMessageLabel,
-    addToCartMessageWithNoVariationsLabel,
-    dynamicContentRegionAriaLabel,
-    richTextMessageContentAriaLabel,
-    invalidResponseMessageLabel,
-} from './labels';
+import * as Labels from './labelUtils';
 
 import {
     MESSAGE_CONTENT_CLASS,
     ENDUSER,
-    CHATBOT,
     PARTICIPANT_TYPES,
     CONTENT_TYPES,
     CONTENT_TYPE_COMPONENT_MAP,
     DEFAULT_RICH_TEXT_CONFIG,
+    PAYMENT_METHOD_MAP,
 } from './constants';
 
 /**
@@ -46,6 +35,7 @@ import {
  * @fires CustomEvent#selectcategory - Dispatched by a child component when a user selects a category. `detail` contains category name and ID.
  * @fires CustomEvent#showproduct - Dispatched by a child component when a user wants to view a product. `detail` contains product name and ID.
  * @fires CustomEvent#payment - Dispatched by a child component upon completion or failure of a payment action. `detail` contains order number on success, or a falsy value on failure.
+ * @fires CustomEvent#selectcontext - Dispatched by a child component when a user selects a context. `detail` contains context name.
  */
 export default class DynamicContentRenderer extends LightningElement {
     /**
@@ -56,45 +46,19 @@ export default class DynamicContentRenderer extends LightningElement {
      */
     static renderMode = 'light';
 
-    // =========================================================
-    // Public API - Properties and Setters/Getters (@api decorated)
-    // =========================================================
+    /**
+     * Static counter to track component instances for proper cleanup.
+     * @type {number}
+     * @private
+     */
+    static _instanceCounter = 0;
 
     /**
-     * Configuration object provided to the component, essential for interacting with the messaging system.
-     * It typically includes a `util` object with a `sendTextMessage` method for dispatching messages.
-     * @type {object}
-     * @property {object} util - Utility functions.
-     * @property {function(string): void} util.sendTextMessage - A function to send a text message back to the conversation.
+     * Reference to the latest component instance for message handling.
+     * @type {DynamicContentRenderer|null}
+     * @private
      */
-    @api configuration;
-
-    /**
-     * Sets the `conversationEntry` object for the component.
-     * This setter triggers the processing of the incoming message payload to identify its content type
-     * and extract relevant data for rendering. Includes validation to ensure a valid object is received.
-     * If an invalid value is provided, the component's internal state is reset.
-     * @param {object} value - The conversation entry object, typically containing `id`, `sender` (with `role`), and `entryPayload`.
-     */
-    @api
-    set conversationEntry(value) {
-        // --- Input Validation: Ensure 'value' is a valid object ---
-        if (!value || typeof value !== 'object') {
-            this.resetState(); // Reset to clear any previous invalid state
-            return;
-        }
-
-        this._conversationEntry = value;
-        this.processEntryPayload();
-    }
-
-    /**
-     * Gets the current `conversationEntry` object.
-     * @returns {object|undefined} The conversation entry object, or `undefined` if not set or invalid.
-     */
-    get conversationEntry() {
-        return this._conversationEntry;
-    }
+    static _latestInstance = null;
 
     // =========================================================
     // Private Internal State
@@ -165,10 +129,381 @@ export default class DynamicContentRenderer extends LightningElement {
      */
     _entryId = '';
 
+    /**
+     * Private property storing contextual data received from PWA via postMessage.
+     * This data is used to populate the conversational context component.
+     * @type {Array<object>|null}
+     * @private
+     */
+    _contextualData = null;
+
+    /**
+     * Private property storing the contextual description text.
+     * This provides instructions to users about how to interact with contextual options.
+     * @type {string}
+     * @private
+     */
+    _contextualDescription = '';
+
+    /**
+     * Private property storing the instance ID for this component instance.
+     * Used for proper cleanup and instance management.
+     * @type {number|null}
+     * @private
+     */
+    _instanceId = null;
+
+    /**
+     * Private property storing the bound message handler for cleanup.
+     * @type {Function|null}
+     * @private
+     */
+    _boundMessageHandler = null;
+
     // =========================================================
-    // Public API - Methods and Getters (@api decorated)
-    // These methods and getters are exposed to other components or the component's own template.
+    // Public API - Properties and Setters/Getters (@api decorated)
     // =========================================================
+
+    /**
+     * Configuration object provided to the component, essential for interacting with the messaging system.
+     * It typically includes a `util` object with a `sendTextMessage` method for dispatching messages.
+     * @type {object}
+     * @property {object} util - Utility functions.
+     * @property {function(string): void} util.sendTextMessage - A function to send a text message back to the conversation.
+     */
+    @api configuration;
+
+    /**
+     * Sets the `conversationEntry` object for the component.
+     * This setter triggers the processing of the incoming message payload to identify its content type
+     * and extract relevant data for rendering. Includes validation to ensure a valid object is received.
+     * If an invalid value is provided, the component's internal state is reset.
+     * @param {object} value - The conversation entry object, typically containing `id`, `sender` (with `role`), and `entryPayload`.
+     */
+    @api
+    set conversationEntry(value) {
+        // --- Input Validation: Ensure 'value' is a valid object ---
+        if (!value || typeof value !== 'object') {
+            this.resetState(); // Reset to clear any previous invalid state
+            return;
+        }
+
+        this._conversationEntry = value;
+        this.processEntryPayload();
+    }
+
+    /**
+     * Get the current language for translations.
+     * Falls back to English ('en') if no language is configured.
+     * @returns {string} The current language code (e.g., 'en', 'es', 'fr')
+     */
+    @api
+    get language() {
+        return this.configuration?.language || 'en_US';
+    }
+
+    /**
+     * Get translated labels based on current language
+     * @returns {object} Object with translated label strings
+     */
+    @api
+    get i18n() {
+        const language = this.language;
+        return {
+            categoryRecommendationTextMessageLabel: Labels.categoryRecommendationTextMessageLabel(language),
+            productSelectionTextMessageLabel: Labels.productSelectionTextMessageLabel(language),
+            addToCartMessageLabel: Labels.addToCartMessageLabel(language),
+            addToCartMessageWithNoVariationsLabel: Labels.addToCartMessageWithNoVariationsLabel(language),
+            invalidResponseMessageLabel: Labels.invalidResponseMessageLabel(language),
+            paymentCompletedLabel: Labels.paymentCompletedLabel(language),
+            paymentFailedLabel: Labels.paymentFailedLabel(language),
+            paymentCanceledLabel: Labels.paymentCanceledLabel(language),
+            fallbackPaymentSucceededLabel: Labels.fallbackPaymentSucceededLabel(language),
+            fallbackPaymentFailedLabel: Labels.fallbackPaymentFailedLabel(language),
+            dynamicContentRegionAriaLabel: Labels.dynamicContentRegionAriaLabel(language),
+            richTextMessageContentAriaLabel: Labels.richTextMessageContentAriaLabel(language),
+            applePayPaymentFailedLabel: Labels.applePayPaymentFailedLabel(language),
+            applePayPaymentCanceledLabel: Labels.applePayPaymentCanceledLabel(language),
+            applePayPaymentCompletedLabel: Labels.applePayPaymentCompletedLabel(language),
+            contextualDescriptionLabel: Labels.contextualDescriptionLabel(language),
+        };
+    }
+
+    /**
+     * Determines if the current EndUser message content is longer than 40 characters.
+     * This is used to conditionally apply different max-width styling for longer messages.
+     * @returns {boolean} True if the message content is more than 40 characters, false otherwise.
+     */
+    get isLongEndUserMessage() {
+        if (this.sender !== 'EndUser') {
+            return false;
+        }
+
+        // Check if this is an orderCompleted structured message - always treat as short
+        if (this.isOrderCompleted) {
+            return false;
+        }
+
+        // For other messages, check the actual text content length
+        const content = this.textContent;
+        return typeof content === 'string' && content.length > 40;
+    }
+
+    /**
+     * Returns the class name for the message bubble based on sender role.
+     * Includes a defensive fallback if sender role is not supported.
+     * @returns {string} A space-separated string of class names for the message bubble.
+     */
+    @api
+    get generateMessageBubbleClassname() {
+        if (this.isSupportedSender()) {
+            const baseClasses = `${MESSAGE_CONTENT_CLASS} ${this.sender}`;
+            const welcomeClass = this.isWelcomeMessage ? 'welcome-message' : '';
+            const longMessageClass = this.isLongEndUserMessage ? 'long-message' : '';
+            return [baseClasses, welcomeClass, longMessageClass].filter(Boolean).join(' ');
+        }
+        return MESSAGE_CONTENT_CLASS; // Default class to ensure styling is applied
+    }
+
+    /**
+     * Returns the localized text for a successfully completed order.
+     * This text is dynamically generated based on the payment method from the parsed message content.
+     * Falls back to the generic payment succeeded label if no payment method is found.
+     * @returns {string} The formatted order completion text.
+     */
+    @api
+    get orderCompletedText() {
+        // Check if we have parsed message content with payment method
+        const method = this._parsedMessageContent?.orderCompleted?.paymentMethod;
+        if (method) {
+            return this.i18n.paymentCompletedLabel.replace('{0}', this._getPaymentMethodDisplayName(method));
+        }
+        // Fallback to the generic payment succeeded label
+        return this.i18n.fallbackPaymentSucceededLabel;
+    }
+
+    // =========================================================
+    // Getters for Derived State / Conditional Rendering (Used in HTML and internally)
+    // =========================================================
+    /**
+     * Gets the ID of the current conversation entry.
+     * This property is publicly accessible and often used in the component's HTML template for keying or identification.
+     * @returns {string} The ID of the conversation entry, or an empty string if not available.
+     */
+    get entryId() {
+        return this._entryId;
+    }
+
+    /**
+     * Gets the determined content type of the current message.
+     * This value dictates which specific rendering logic and data processing methods should be applied.
+     * @returns {string} The content type (e.g., 'productRecommendations', 'cartSummary', or an empty string for rich text).
+     */
+    get contentType() {
+        return this._currentContentType;
+    }
+
+    /**
+     * Gets the current `conversationEntry` object.
+     * @returns {object|undefined} The conversation entry object, or `undefined` if not set or invalid.
+     */
+    get conversationEntry() {
+        return this._conversationEntry;
+    }
+
+    /**
+     * Returns the aria-label text for the main conversation message content region.
+     * @returns {string} The localized label.
+     */
+    get ariaLabelConversationContent() {
+        const role = this._conversationEntry?.sender?.role;
+        const message = this.i18n.dynamicContentRegionAriaLabel.replace('{0}', role).replace('{1}', this.contentType);
+        return message;
+    }
+
+    /**
+     * Returns the aria-label text for generic rich text message content.
+     * @returns {string} The localized label.
+     */
+    get ariaLabelRichTextContent() {
+        const role = this._conversationEntry?.sender?.role;
+        const message = this.i18n.richTextMessageContentAriaLabel.replace('{0}', role);
+        return message;
+    }
+
+    /**
+     * Gets the role of the sender from the current `conversationEntry`.
+     * This getter provides a safe way to access nested sender information.
+     * @returns {string|undefined} The sender's role (e.g., 'EndUser', 'Agent', or 'Chatbot'), or `undefined` if not available.
+     */
+    get sender() {
+        // Defensive check for nested properties
+        return this._conversationEntry?.sender?.role;
+    }
+
+    /**
+     * Indicates whether the current content type is 'productRecommendations'.
+     * Used for conditional rendering in the HTML template.
+     * @returns {boolean} `true` if the content type matches `CONTENT_TYPES.PRODUCT_RECOMMENDATIONS`, `false` otherwise.
+     */
+    get isProductRecommendations() {
+        return this.contentType === CONTENT_TYPES.PRODUCT_RECOMMENDATIONS;
+    }
+
+    /**
+     * Indicates whether the current content type is 'productDetails'.
+     * Used for conditional rendering in the HTML template.
+     * @returns {boolean} `true` if the content type matches `CONTENT_TYPES.PRODUCT_DETAILS`, `false` otherwise.
+     */
+    get isProductDetails() {
+        return this.contentType === CONTENT_TYPES.PRODUCT_DETAILS;
+    }
+
+    /**
+     * Indicates whether the current content type is 'cartSummary'.
+     * Used for conditional rendering in the HTML template.
+     * @returns {boolean} `true` if the content type matches `CONTENT_TYPES.CART_SUMMARY`, `false` otherwise.
+     */
+    get isCartSummary() {
+        return this.contentType === CONTENT_TYPES.CART_SUMMARY;
+    }
+
+    /**
+     * Indicates whether the current content type is 'orderConfirmation'.
+     * Used for conditional rendering in the HTML template.
+     * @returns {boolean} `true` if the content type matches `CONTENT_TYPES.ORDER_CONFIRMATION`, `false` otherwise.
+     */
+    get isOrderConfirmation() {
+        return this.contentType === CONTENT_TYPES.ORDER_CONFIRMATION;
+    }
+
+    /**
+     * Indicates whether the current content type is 'orderCompleted'.
+     * Used for conditional rendering in the HTML template.
+     * @returns {boolean} `true` if the content type matches `CONTENT_TYPES.ORDER_COMPLETED`, `false` otherwise.
+     */
+    get isOrderCompleted() {
+        return this.contentType === CONTENT_TYPES.ORDER_COMPLETED;
+    }
+
+    /**
+     * Comprehensive JSDoc documentation for the richTextClasses getter.
+     * This getter computes CSS classes for rich text content based on whether an image is present.
+     * It adjusts padding to accommodate image content - removes padding when images are present
+     * to prevent excessive spacing, and adds standard padding when no images are detected.
+     * @returns {string} CSS class string - 'slds-p-around_none' if image present, 'slds-p-around_small' otherwise.
+     */
+    get richTextClasses() {
+        return this.hasImage ? 'slds-p-around_none' : 'slds-p-around_small';
+    }
+
+    /**
+     * Determines whether the current message content contains an image element.
+     * Uses regex pattern matching to detect HTML img tags within the parsed message content.
+     * This is used to conditionally apply styling and layout adjustments for image-containing content.
+     * @returns {boolean} True if an img tag is detected in the content, false otherwise.
+     */
+    get hasImage() {
+        if (!this._parsedMessageContent) return false;
+
+        // Detect if the content has an <img> tag
+        const regex = /<img\b[^>]*>/i;
+        return regex.test(this._parsedMessageContent);
+    }
+
+    /**
+     * Returns the content intended for display as rich text by `lightning-formatted-rich-text`.
+     * This can be the original static text string or a raw parsed JSON object if it's an unrecognized
+     * structured type that should still be rendered as text.
+     * @returns {string} The extracted or parsed message content, suitable for rich text rendering.
+     */
+    get textContent() {
+        if (typeof this._parsedMessageContent === 'string') {
+            return this._parsedMessageContent;
+        }
+        if (typeof this._parsedMessageContent === 'object' && this._parsedMessageContent !== null) {
+            return JSON.stringify(this._parsedMessageContent, null, 2);
+        }
+        return '';
+    }
+
+    /**
+     * Computes and returns the dynamic component data for the current content type.
+     * This getter acts as the centralized point for preparing and structuring data
+     * to be passed to child components. It incorporates a caching mechanism to avoid
+     * redundant data processing if the content type or parsed message content has not changed.
+     * Includes contextual data and description only for welcome messages.
+     * @returns {object} The processed data object specific to the `_currentContentType`.
+     * Returns an empty object if no specific data processor is defined or if an error occurs during processing.
+     * Includes `contextualData` and `contextualDescription` properties only for welcome messages.
+     */
+    get dynamicComponentData() {
+        // Cache invalidation logic: if content type, parsed message content, or contextual data (for welcome messages) has changed
+        if (
+            this._cachedDynamicComponentData &&
+            this._cachedDynamicComponentData.contentType === this._currentContentType &&
+            this._cachedDynamicComponentData.parsedMessageContent === this._parsedMessageContent &&
+            (!this.isWelcomeMessage ||
+                (this._cachedDynamicComponentData.contextualData === this._contextualData &&
+                    this._cachedDynamicComponentData.contextualDescription === this._contextualDescription))
+        ) {
+            return this._cachedDynamicComponentData.data;
+        }
+
+        const config = this.getComponentConfig();
+        let data = {};
+
+        // Only call data processor if it's defined and is a function
+        if (config.dataProcessor && typeof this[config.dataProcessor] === 'function') {
+            try {
+                data = this[config.dataProcessor]();
+            } catch (error) {
+                data = {};
+            }
+        }
+
+        // Only include contextual data and description for welcome messages
+        if (this.isWelcomeMessage) {
+            data.contextualData = this._contextualData;
+            data.contextualDescription = this._contextualDescription;
+        }
+
+        // Store the newly calculated data and the state it was based on
+        this._cachedDynamicComponentData = {
+            contentType: this._currentContentType,
+            parsedMessageContent: this._parsedMessageContent,
+            contextualData: this.isWelcomeMessage ? this._contextualData : null,
+            contextualDescription: this.isWelcomeMessage ? this._contextualDescription : null,
+            data: data,
+        };
+
+        return data;
+    }
+
+    /**
+     * Determines if the current message is a welcome message.
+     * A welcome message is identified by the presence of an image in the content.
+     * This getter is used for conditional rendering in the HTML template to display
+     * welcome messages with specific styling and layout.
+     * @returns {boolean} True if the message contains an image (indicating a welcome message), false otherwise.
+     */
+    get isWelcomeMessage() {
+        return this.hasImage;
+    }
+
+    /**
+     * Determines if contextual data is available for rendering the conversational context component.
+     * This getter checks if we have valid contextual data and description to display.
+     * @returns {boolean} True if contextual data is available, false otherwise.
+     */
+    get hasContextualData() {
+        return (
+            this._contextualData &&
+            Array.isArray(this._contextualData) &&
+            this._contextualData.length > 0 &&
+            this._contextualDescription
+        );
+    }
 
     /**
      * Handles the "Add to Cart" action triggered by a child component.
@@ -182,7 +517,7 @@ export default class DynamicContentRenderer extends LightningElement {
         if (!detail) {
             return;
         }
-        const { quantity, productName, variantDetails } = detail;
+        const { quantity, productName, productId, variantDetails } = detail;
 
         // Validate required properties
         if (quantity && productName) {
@@ -196,15 +531,16 @@ export default class DynamicContentRenderer extends LightningElement {
             }
 
             if (!variantText) {
-                const message = addToCartMessageWithNoVariationsLabel
+                const message = this.i18n.addToCartMessageWithNoVariationsLabel
                     .replace('{0}', productName)
                     .replace('{1}', quantity);
                 this.configuration.util.sendTextMessage(message);
             } else {
-                const message = addToCartMessageLabel
+                const message = this.i18n.addToCartMessageLabel
                     .replace('{0}', productName)
                     .replace('{1}', variantText)
-                    .replace('{2}', quantity);
+                    .replace('{2}', quantity)
+                    .replace('{3}', productId);
                 this.configuration.util.sendTextMessage(message);
             }
         }
@@ -226,7 +562,7 @@ export default class DynamicContentRenderer extends LightningElement {
                 this._parsedMessageContent?.userQuery ||
                 this._parsedMessageContent?.productRecommendations?.userQuery ||
                 '';
-            const message = categoryRecommendationTextMessageLabel
+            const message = this.i18n.categoryRecommendationTextMessageLabel
                 .replace('{0}', userQuery)
                 .replace('{1}', category.name)
                 .replace('{2}', category.id);
@@ -253,9 +589,12 @@ export default class DynamicContentRenderer extends LightningElement {
 
         if (!isCartMgmtSupported) {
             // If cart management is not supported, get URL from event detail and open it
-            const productUrl = event?.detail?.url;
+            // add src=shopperAgent to the URL since we need it for the order source tracking
+            const baseUrl = event?.detail?.url;
+            const separator = baseUrl?.includes('?') ? '&' : '?';
+            const productUrl = baseUrl + separator + 'src=shopperAgent';
 
-            if (productUrl) {
+            if (baseUrl && productUrl) {
                 try {
                     window.open(productUrl, '_blank');
                 } catch (error) {
@@ -267,7 +606,7 @@ export default class DynamicContentRenderer extends LightningElement {
             const product = event?.detail;
             // Basic validation for required product properties
             if (product?.name && product?.id) {
-                const message = productSelectionTextMessageLabel
+                const message = this.i18n.productSelectionTextMessageLabel
                     .replace('{0}', product.name)
                     .replace('{1}', product.id);
                 this.configuration.util.sendTextMessage(message);
@@ -283,17 +622,40 @@ export default class DynamicContentRenderer extends LightningElement {
      */
     @api
     handlePayment(event) {
-        if (event.detail && typeof event.detail === 'string') {
-            // Success case - event.detail is the orderId string
+        if (event.detail && typeof event.detail === 'object' && event.detail.orderId) {
+            // Success case - event.detail is an object with orderId and paymentMethod
+            const paymentMethod = event.detail.paymentMethod || '';
             this.configuration.util.sendTextMessage(
-                `{"orderCompleted": {"className":"orderCompleted","orderNumber": "${event.detail}"}}`
+                `{"orderCompleted": {"className":"orderCompleted","orderNumber": "${event.detail.orderId}","paymentMethod": "${paymentMethod}"}}`
             );
-        } else if (event.detail && typeof event.detail === 'object' && event.detail.status === 'cancel') {
+        } else if (
+            event.detail &&
+            typeof event.detail === 'object' &&
+            (event.detail.status === 'cancel' || event.detail.status === 'failure')
+        ) {
             // Cancel case
-            this.configuration.util.sendTextMessage(applePayCanceledLabel);
+            const paymentMethod = event.detail.paymentMethod || '';
+            const displayName = this._getPaymentMethodDisplayName(paymentMethod);
+            const label =
+                event.detail.status === 'cancel' ? this.i18n.paymentCanceledLabel : this.i18n.paymentFailedLabel;
+            this.configuration.util.sendTextMessage(label.replace('{0}', displayName));
         } else {
-            // Failure case (null, undefined, or status: 'failure')
-            this.configuration.util.sendTextMessage(applePayFailedLabel);
+            // Fallback case for null, undefined, or other failure scenarios
+            this.configuration.util.sendTextMessage(this.i18n.fallbackPaymentFailedLabel);
+        }
+    }
+
+    /**
+     * Handles the "Select Context" action, typically from a session context component.
+     * It extracts context name and ID from the event detail and sends a formatted text message.
+     * @param {CustomEvent} event - A custom event with `event.detail` containing `name` (string) and `id` (string) of the selected context.
+     */
+    @api
+    handleSelectContext(event) {
+        const context = event?.detail;
+        // Basic validation for required context properties
+        if (context?.name) {
+            this.configuration.util.sendTextMessage(context.name);
         }
     }
 
@@ -305,49 +667,6 @@ export default class DynamicContentRenderer extends LightningElement {
     @api
     isSupportedSender() {
         return PARTICIPANT_TYPES.includes(this.sender);
-    }
-
-    /**
-     * Returns the class name for the message bubble based on sender role.
-     * Includes a defensive fallback if sender role is not supported.
-     * @returns {string} A space-separated string of class names for the message bubble.
-     */
-    @api
-    get generateMessageBubbleClassname() {
-        if (this.isSupportedSender()) {
-            return `${MESSAGE_CONTENT_CLASS} ${this.sender}`;
-        }
-        return MESSAGE_CONTENT_CLASS; // Default class to ensure styling is applied
-    }
-
-    /**
-     * Returns the localized text for a successfully completed order.
-     * This text is sourced from the imported `applePayCompletedLabel` constant.
-     * @returns {string} The formatted order completion text.
-     */
-    @api
-    get orderCompletedText() {
-        return applePayCompletedLabel;
-    }
-
-    /**
-     * Returns the aria-label text for the main conversation message content region.
-     * @returns {string} The localized label.
-     */
-    get ariaLabelConversationContent() {
-        const role = this._conversationEntry?.sender?.role;
-        const message = dynamicContentRegionAriaLabel.replace('{0}', role).replace('{1}', this.contentType);
-        return message;
-    }
-
-    /**
-     * Returns the aria-label text for generic rich text message content.
-     * @returns {string} The localized label.
-     */
-    get ariaLabelRichTextContent() {
-        const role = this._conversationEntry?.sender?.role;
-        const message = richTextMessageContentAriaLabel.replace('{0}', role);
-        return message;
     }
 
     // =========================================================
@@ -426,44 +745,52 @@ export default class DynamicContentRenderer extends LightningElement {
         const staticTextContent = parsedPayload?.abstractMessage?.staticContent?.text;
 
         // Determine content type based on sender role and attempts to parse nested JSON
-        if (senderRole === CHATBOT && typeof staticTextContent === 'string') {
+        if (typeof staticTextContent === 'string') {
+            // ---- Fast path: parse as-is (and handle double-encoded if needed) ----
             try {
-                const chatbotContent = JSON.parse(staticTextContent);
-                const foundContentType = this._findContentTypeRecursively(chatbotContent);
-
-                if (foundContentType) {
-                    this._currentContentType = foundContentType;
+                let once = JSON.parse(staticTextContent);
+                if (typeof once === 'string' && /^\s*[{[]/.test(once)) {
+                    // double-encoded → second parse
+                    once = JSON.parse(once);
+                }
+                if (once && typeof once === 'object') {
+                    this._applyParsedObjectRoleAware(once, senderRole, staticTextContent);
+                } else if (this._isValidTextString(String(once))) {
+                    this._parsedMessageContent = String(once); // plain text
+                    this._currentContentType = '';
                 } else {
-                    // Fallback to rich text if no recognized content type (via className) is found recursively
+                    this._parsedMessageContent = this.i18n.invalidResponseMessageLabel;
                     this._currentContentType = '';
                 }
-                this._parsedMessageContent = chatbotContent; // Store the successfully parsed object
-            } catch (error) {
-                this._currentContentType = ''; // Ensure it's handled as rich text
-                // Chatbot message's staticContent.text is not valid JSON for structured content
-                if (this._isValidTextString(staticTextContent)) {
-                    this._parsedMessageContent = staticTextContent; // Store as plain string
-                } else {
-                    this._parsedMessageContent = invalidResponseMessageLabel; // Store as plain string
-                }
-            }
-        } else if (senderRole === ENDUSER && typeof staticTextContent === 'string') {
-            try {
-                const userContent = JSON.parse(staticTextContent);
-                const foundContentType = this._findContentTypeRecursively(userContent);
+            } catch (_fastErr) {
+                // ---- Fallback: ONLY because the first parse failed → sanitize + repair, then retry ----
+                try {
+                    let sanitized = this._sanitizeJson(staticTextContent, { newline: 'space' });
+                    sanitized = this._repairInvalidEscapes(sanitized);
 
-                if (foundContentType) {
-                    this._currentContentType = foundContentType;
-                    this._parsedMessageContent = userContent;
-                } else {
-                    // User message is JSON but not a recognized structured type for display, treat as plain text
-                    this._parsedMessageContent = staticTextContent;
+                    let once = JSON.parse(sanitized);
+                    if (typeof once === 'string' && /^\s*[{[]/.test(once)) {
+                        // still double-encoded
+                        once = JSON.parse(once);
+                    }
+                    if (once && typeof once === 'object') {
+                        this._applyParsedObjectRoleAware(once, senderRole, staticTextContent);
+                    } else if (this._isValidTextString(once)) {
+                        this._parsedMessageContent = once; // plain text
+                        this._currentContentType = '';
+                    } else {
+                        this._parsedMessageContent = this.i18n.invalidResponseMessageLabel;
+                        this._currentContentType = '';
+                    }
+                } catch (_fallbackErr) {
+                    // Give up → treat as rich text if it looks like text
+                    if (this._isValidTextString(staticTextContent)) {
+                        this._parsedMessageContent = staticTextContent;
+                    } else {
+                        this._parsedMessageContent = this.i18n.invalidResponseMessageLabel;
+                    }
                     this._currentContentType = '';
                 }
-            } catch (error) {
-                // User message staticContent.text is not valid JSON, treat as plain text
-                this._parsedMessageContent = staticTextContent;
-                this._currentContentType = '';
             }
         } else {
             // Default case for any other sender role or non-string staticContent: treat as plain rich text
@@ -520,6 +847,20 @@ export default class DynamicContentRenderer extends LightningElement {
      */
     getComponentConfig() {
         return CONTENT_TYPE_COMPONENT_MAP[this.contentType] || DEFAULT_RICH_TEXT_CONFIG;
+    }
+
+    /**
+     * Maps payment method codes to user-friendly display names.
+     * @param {string} paymentMethod - The payment method code from the event (e.g., 'applepay', 'googlepay')
+     * @returns {string} The user-friendly display name
+     * @private
+     */
+    _getPaymentMethodDisplayName(paymentMethod) {
+        if (!paymentMethod || typeof paymentMethod !== 'string') {
+            return '';
+        }
+        const normalizedMethod = paymentMethod.toLowerCase();
+        return PAYMENT_METHOD_MAP[normalizedMethod] || paymentMethod;
     }
 
     // =========================================================
@@ -625,148 +966,298 @@ export default class DynamicContentRenderer extends LightningElement {
         return data;
     }
 
-    // =========================================================
-    // Getters for Derived State / Conditional Rendering (Used in HTML and internally)
-    // =========================================================
-
     /**
-     * Gets the ID of the current conversation entry.
-     * This property is publicly accessible and often used in the component's HTML template for keying or identification.
-     * @returns {string} The ID of the conversation entry, or an empty string if not available.
+     * Sanitizes JSON-like text for two issues that commonly break parsing:
+     *  - raw newlines in strings
+     *  - unescaped inch marks immediately after digits (e.g., `55"`)
+     *
+     * This method is used for nested JSON parsing of `staticContent.text` where
+     * the content contains JSON strings that may have formatting issues.
+     * @param {string} raw - Raw JSON-like payload.
+     * @param {{ newline?: 'space' | 'escape' }} [options] - Newline handling; default is `"space"`.
+     * @returns {string} Cleaned string safe to pass to `JSON.parse`.
+     * @private
      */
-    get entryId() {
-        return this._entryId;
-    }
+    _sanitizeJson(raw, { newline = 'space' } = {}) {
+        let s = String(raw)
+            .replace(/^\uFEFF/, '')
+            .trim();
 
-    /**
-     * Gets the determined content type of the current message.
-     * This value dictates which specific rendering logic and data processing methods should be applied.
-     * @returns {string} The content type (e.g., 'productRecommendations', 'cartSummary', or an empty string for rich text).
-     */
-    get contentType() {
-        return this._currentContentType;
-    }
-
-    /**
-     * Gets the role of the sender from the current `conversationEntry`.
-     * This getter provides a safe way to access nested sender information.
-     * @returns {string|undefined} The sender's role (e.g., 'EndUser', 'Agent', or 'Chatbot'), or `undefined` if not available.
-     */
-    get sender() {
-        // Defensive check for nested properties
-        return this._conversationEntry?.sender?.role;
-    }
-
-    /**
-     * Indicates whether the current content type is 'productRecommendations'.
-     * Used for conditional rendering in the HTML template.
-     * @returns {boolean} `true` if the content type matches `CONTENT_TYPES.PRODUCT_RECOMMENDATIONS`, `false` otherwise.
-     */
-    get isProductRecommendations() {
-        return this.contentType === CONTENT_TYPES.PRODUCT_RECOMMENDATIONS;
-    }
-
-    /**
-     * Indicates whether the current content type is 'productDetails'.
-     * Used for conditional rendering in the HTML template.
-     * @returns {boolean} `true` if the content type matches `CONTENT_TYPES.PRODUCT_DETAILS`, `false` otherwise.
-     */
-    get isProductDetails() {
-        return this.contentType === CONTENT_TYPES.PRODUCT_DETAILS;
-    }
-
-    /**
-     * Indicates whether the current content type is 'cartSummary'.
-     * Used for conditional rendering in the HTML template.
-     * @returns {boolean} `true` if the content type matches `CONTENT_TYPES.CART_SUMMARY`, `false` otherwise.
-     */
-    get isCartSummary() {
-        return this.contentType === CONTENT_TYPES.CART_SUMMARY;
-    }
-
-    /**
-     * Indicates whether the current content type is 'orderConfirmation'.
-     * Used for conditional rendering in the HTML template.
-     * @returns {boolean} `true` if the content type matches `CONTENT_TYPES.ORDER_CONFIRMATION`, `false` otherwise.
-     */
-    get isOrderConfirmation() {
-        return this.contentType === CONTENT_TYPES.ORDER_CONFIRMATION;
-    }
-
-    /**
-     * Indicates whether the current content type is 'orderCompleted'.
-     * Used for conditional rendering in the HTML template.
-     * @returns {boolean} `true` if the content type matches `CONTENT_TYPES.ORDER_COMPLETED`, `false` otherwise.
-     */
-    get isOrderCompleted() {
-        return this.contentType === CONTENT_TYPES.ORDER_COMPLETED;
-    }
-
-    get richTextClasses() {
-        return this.hasImage ? 'slds-p-around_none' : 'slds-p-around_small';
-    }
-
-    get hasImage() {
-        if (!this._parsedMessageContent) return false;
-
-        // Detect if the content has an <img> tag
-        const regex = /<img\b[^>]*>/i;
-        return regex.test(this._parsedMessageContent);
-    }
-
-    /**
-     * Returns the content intended for display as rich text by `lightning-formatted-rich-text`.
-     * This can be the original static text string or a raw parsed JSON object if it's an unrecognized
-     * structured type that should still be rendered as text.
-     * @returns {string} The extracted or parsed message content, suitable for rich text rendering.
-     */
-    get textContent() {
-        if (typeof this._parsedMessageContent === 'string') {
-            return this._parsedMessageContent;
-        }
-        if (typeof this._parsedMessageContent === 'object' && this._parsedMessageContent !== null) {
-            return JSON.stringify(this._parsedMessageContent, null, 2);
-        }
-        return '';
-    }
-
-    /**
-     * Computes and returns the dynamic component data for the current content type.
-     * This getter acts as the centralized point for preparing and structuring data
-     * to be passed to child components. It incorporates a caching mechanism to avoid
-     * redundant data processing if the content type or parsed message content has not changed.
-     * @returns {object} The processed data object specific to the `_currentContentType`.
-     * Returns an empty object if no specific data processor is defined or if an error occurs during processing.
-     */
-    get dynamicComponentData() {
-        // Cache invalidation logic: if content type or the raw parsed message content has changed
-        if (
-            this._cachedDynamicComponentData &&
-            this._cachedDynamicComponentData.contentType === this._currentContentType &&
-            this._cachedDynamicComponentData.parsedMessageContent === this._parsedMessageContent
-        ) {
-            return this._cachedDynamicComponentData.data;
+        // Normalize newlines
+        if (newline === 'escape') {
+            s = s.replace(/\r\n/g, '\\n').replace(/\r/g, '\\n').replace(/\n/g, '\\n');
+        } else {
+            s = s.replace(/\r?\n+/g, ' ').replace(/\s{2,}/g, ' ');
         }
 
-        const config = this.getComponentConfig();
-        let data = {};
+        // Tame triple+ quotes from dirty inputs
+        s = s.replace(/"{3,}/g, '""');
 
-        // Only call data processor if it's defined and is a function
-        if (config.dataProcessor && typeof this[config.dataProcessor] === 'function') {
-            try {
-                data = this[config.dataProcessor]();
-            } catch (error) {
-                data = {};
+        const out = [];
+        let inString = false;
+        let prevWasEscape = false;
+
+        const nextNonSpace = (str, i) => {
+            for (let k = i; k < str.length; k++) {
+                const c = str[k];
+                if (c !== ' ' && c !== '\t' && c !== '\r' && c !== '\n') return c;
             }
-        }
-
-        // Store the newly calculated data and the state it was based on
-        this._cachedDynamicComponentData = {
-            contentType: this._currentContentType,
-            parsedMessageContent: this._parsedMessageContent,
-            data: data,
+            return '';
         };
 
-        return data;
+        for (let i = 0; i < s.length; i++) {
+            const c = s[i];
+
+            if (c === '"' && !prevWasEscape) {
+                if (!inString) {
+                    inString = true;
+                    out.push(c);
+                } else {
+                    const nxt = nextNonSpace(s, i + 1);
+                    if (nxt === ',' || nxt === '}' || nxt === ']' || nxt === ':' || nxt === '') {
+                        inString = false;
+                        out.push(c);
+                    } else {
+                        out.push('\\', '"'); // inner content quote
+                    }
+                }
+                prevWasEscape = false;
+                continue;
+            }
+
+            if (inString) prevWasEscape = c === '\\' ? !prevWasEscape : false;
+            else prevWasEscape = false;
+
+            out.push(c);
+        }
+
+        return out.join('');
+    }
+
+    /**
+     * Repairs invalid JSON escapes by doubling backslashes that do not start a valid escape.
+     * Example: "\>" → "\\>" so JSON.parse succeeds while preserving data.
+     * @param {string} str - The string to repair
+     * @returns {string} The repaired string
+     * @private
+     */
+    _repairInvalidEscapes(str) {
+        return String(str).replace(/\\(?!["\\/bfnrtu])/g, '\\\\');
+    }
+
+    /**
+     * Apply parsed object to state with role-aware behavior.
+     * - If a known content type is found → set it.
+     * - If not:
+     *    - ENDUSER → treat as plain text (use the original staticTextContent)
+     *    - CHATBOT/others → keep the object but no specific content type
+     * @param {object} obj - The parsed object
+     * @param {string} senderRole - The sender role (ENDUSER, CHATBOT, etc.)
+     * @param {string} staticTextContent - The original static text content
+     * @private
+     */
+    _applyParsedObjectRoleAware(obj, senderRole, staticTextContent) {
+        const foundContentType = this._findContentTypeRecursively(obj);
+        const shouldPolishObj = this._containsBackslashArrow(obj);
+
+        if (foundContentType) {
+            // Keep structured object; polish only if needed.
+            this._parsedMessageContent = shouldPolishObj ? this._polishBackslashArrowDeep(obj) : obj;
+            this._currentContentType = foundContentType;
+            return;
+        }
+
+        if (senderRole === ENDUSER) {
+            // For unrecognized ENDUSER JSON, you render the original text—polish that text only.
+            this._parsedMessageContent = this._polishBackslashArrowString(staticTextContent);
+            this._currentContentType = '';
+            return;
+        }
+
+        // Chatbot/others with unrecognized className → keep object (no type), polish if needed.
+        this._parsedMessageContent = shouldPolishObj ? this._polishBackslashArrowDeep(obj) : obj;
+        this._currentContentType = '';
+    }
+
+    /**
+     * Replace only the literal backslash–arrow sequence (`\>`) with `>`.
+     * Presentation-only tweak for breadcrumbs like: "Footwear -\> Men -\> Boots".
+     * Leaves all other characters and escapes untouched.
+     * @param {string} str - A single display string to polish.
+     * @returns {string} The polished string (or the original if no `\>` is present).
+     * @private
+     */
+    _polishBackslashArrowString(str) {
+        return typeof str === 'string' && str.includes('\\>') ? str.replace(/\\>/g, '>') : str;
+    }
+
+    /**
+     * Deeply polish only string leaves inside an object/array graph.
+     * Non-strings (numbers, booleans, null, objects) are left as-is; structure is preserved.
+     * This is intentionally narrow: it only fixes `\>` → `>` and nothing else.
+     * @param {unknown} value - Parsed payload (object/array/string/etc.).
+     * @returns {unknown} A new polished structure for objects/arrays/strings, or the input for other types.
+     * @private
+     */
+    _polishBackslashArrowDeep(value) {
+        if (typeof value === 'string') {
+            return this._polishBackslashArrowString(value);
+        }
+        if (Array.isArray(value)) {
+            return value.map((v) => this._polishBackslashArrowDeep(v));
+        }
+        if (value && typeof value === 'object') {
+            const out = {};
+            for (const k in value) {
+                if (Object.prototype.hasOwnProperty.call(value, k)) {
+                    out[k] = this._polishBackslashArrowDeep(value[k]);
+                }
+            }
+            return out;
+        }
+        return value; // numbers, booleans, null, undefined
+    }
+
+    /**
+     * Quick probe to avoid deep-walk work when there is no `\>` anywhere.
+     * @param {unknown} value - The value to check for backslash-arrow sequences
+     * @returns {boolean} True if some string leaf (or string itself) contains `\>`.
+     * @private
+     */
+    _containsBackslashArrow(value) {
+        if (typeof value === 'string') return value.includes('\\>');
+        if (Array.isArray(value)) {
+            for (const v of value) if (this._containsBackslashArrow(v)) return true;
+            return false;
+        }
+        if (value && typeof value === 'object') {
+            // eslint-disable-next-line no-prototype-builtins
+            for (const k in value) if (value.hasOwnProperty(k) && this._containsBackslashArrow(value[k])) return true;
+        }
+        return false;
+    }
+
+    /**
+     * Sets PWA context data in localStorage for use by other components.
+     * @param {object} payload - PWA context data payload
+     * @param {string} payload.pwaDomainUrl - PWA domain URL
+     * @param {string} payload.pwaSiteId - PWA site ID
+     * @param {string} payload.pwaLocale - PWA locale
+     * @private
+     */
+    _setPwaContextInLocalStorage(payload) {
+        try {
+            if (payload?.pwaDomainUrl) {
+                localStorage.setItem('pwaDomainUrl', payload.pwaDomainUrl);
+            }
+            if (payload?.pwaSiteId) {
+                localStorage.setItem('pwaSiteId', payload.pwaSiteId);
+            }
+            if (payload?.pwaLocale) {
+                localStorage.setItem('pwaLocale', payload.pwaLocale);
+            }
+        } catch (error) {
+            console.warn('localStorage not available:', error);
+        }
+    }
+
+    /**
+     * Handle all postMessage events from the parent window (PWA).
+     * This method processes messages from the parent application to receive
+     * contextual data for the conversational context component.
+     * @param {MessageEvent} event - The window message event containing data from the parent window.
+     * @returns {void}
+     * @private
+     */
+    _handleWindowMessage(event) {
+        // Handle customer data from PWA/SFRA (always process)
+        if (event?.data?.type === 'conversational.actualConversationContext') {
+            // Extract conversation context data from the message payload
+            const conversationContext = event?.data?.payload?.conversationContext;
+
+            if (conversationContext) {
+                // Set the contextual data for the conversational context component
+                this._contextualData = Array.isArray(conversationContext) ? conversationContext : [conversationContext];
+
+                // Set a static description for user guidance
+                this._contextualDescription = this.i18n.contextualDescriptionLabel;
+
+                // Invalidate the cached dynamic component data to trigger re-render
+                this._cachedDynamicComponentData = null;
+            }
+        } else if (event?.data?.type === 'lwc.pwaContext') {
+            this._setPwaContextInLocalStorage(event?.data?.payload);
+        } else if (event?.data?.type === 'conversational.domainUrl') {
+            // Handle domain URL from parent component
+            const localizedUrl = event?.data?.payload?.domainUrl;
+            if (localizedUrl) {
+                // Store localized URL in localStorage for use by other components
+                try {
+                    localStorage.setItem('localizedUrl', localizedUrl);
+                } catch (error) {
+                    console.warn('localStorage not available for localizedUrl:', error);
+                }
+            }
+        }
+    }
+
+    /**
+     * Lifecycle hook called when the component is inserted into the DOM.
+     * Sets up message communication with the parent window (PWA) to receive
+     * contextual data for the conversational context component.
+     * Registers this instance as the latest active instance for proper message handling.
+     * @returns {void}
+     */
+    connectedCallback() {
+        // Register this instance as the latest
+        this._instanceId = ++DynamicContentRenderer._instanceCounter;
+        DynamicContentRenderer._latestInstance = this;
+
+        // Set up single message listener for all message types (bind this context)
+        this._boundMessageHandler = this._handleWindowMessage.bind(this);
+        window.addEventListener('message', this._boundMessageHandler);
+
+        // Only send postMessage for welcome messages
+        if (this.isWelcomeMessage) {
+            window.parent.postMessage(
+                {
+                    type: 'lwc.getConversationContext',
+                },
+                '*'
+            );
+
+            window.parent.postMessage(
+                {
+                    type: 'lwc.getPwaContext',
+                },
+                '*'
+            );
+
+            window.parent.postMessage(
+                {
+                    type: 'lwc.getDomainUrl',
+                },
+                '*'
+            );
+        }
+    }
+
+    /**
+     * Lifecycle hook called when the component is removed from the DOM.
+     * Performs cleanup by removing event listeners and clearing instance references
+     * to prevent memory leaks and ensure proper component lifecycle management.
+     * @returns {void}
+     */
+    disconnectedCallback() {
+        // Clean up message listener
+        if (this._boundMessageHandler) {
+            window.removeEventListener('message', this._boundMessageHandler);
+            this._boundMessageHandler = null;
+        }
+
+        // If this was the latest instance, clear the registry
+        if (DynamicContentRenderer._latestInstance === this) {
+            DynamicContentRenderer._latestInstance = null;
+        }
     }
 }
