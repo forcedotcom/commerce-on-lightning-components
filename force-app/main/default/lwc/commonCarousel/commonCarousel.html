@@ -154,6 +154,19 @@
                             </div>
                         </button>
                     </template>
+                    <!-- Show more products button -->
+                    <button
+                        lwc:if={showMoreProducts}
+                        class="product-card show-more-products"
+                        aria-label={i18n.showMoreProducts}
+                        name={i18n.showMoreProducts}
+                        onclick={handleShowMoreProducts}>
+                        <lightning-icon
+                            icon-name="utility:add"
+                            size="large"
+                            class="show-more-icon"></lightning-icon>
+                        <span class="show-more-text">{i18n.showMoreProducts}</span>
+                    </button>
                 </div>
 
                 <!-- Right navigation arrow -->

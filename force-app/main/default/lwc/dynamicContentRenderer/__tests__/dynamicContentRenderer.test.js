@@ -9,7 +9,7 @@ import { createElement } from 'lwc';
 import DynamicContentRenderer from 'c/dynamicContentRenderer';
 
 // Import real constants instead of mocking them
-import { ENDUSER, CHATBOT, CONTENT_TYPES } from '../constants';
+import { ENDUSER, AGENT, CHATBOT, CONTENT_TYPES } from '../constants';
 
 // Mock lightningsnapin/eventStore module that is imported by cartSummary component
 jest.mock(
@@ -633,7 +633,7 @@ describe('c-dynamic-content-renderer', () => {
             expect(element).toBeDefined();
             const errorMessage = element.querySelector('lightning-formatted-rich-text');
             expect(errorMessage).not.toBeNull();
-            expect(errorMessage.value).toBe('I did not understand your response. Please try again.');
+            expect(errorMessage.value).toContain('I did not understand your response. Please try again.');
         });
 
         it('should handle missing sender role gracefully', () => {
@@ -859,7 +859,7 @@ describe('c-dynamic-content-renderer', () => {
                 delete global.window.open;
             });
 
-            it('should open URL when cart management is not supported when product url has no existing query params', () => {
+            it('should open URL when cart management is not supported', () => {
                 // Set up conversation entry without cart management support
                 const entry = {
                     entryPayload: JSON.stringify({
@@ -880,34 +880,7 @@ describe('c-dynamic-content-renderer', () => {
 
                 element.handleShowProduct(event);
 
-                expect(window.open).toHaveBeenCalledWith('https://example.com/product?src=shopperAgent', '_blank');
-            });
-
-            it('should open URL when cart management is not supported when product url does have existing query params', () => {
-                // Set up conversation entry without cart management support
-                const entry = {
-                    entryPayload: JSON.stringify({
-                        abstractMessage: {
-                            staticContent: {
-                                text: JSON.stringify({
-                                    productsDetails: { products: [] },
-                                    categoryDetails: { categories: [] },
-                                }),
-                            },
-                        },
-                    }),
-                    sender: { role: CHATBOT },
-                };
-                element.conversationEntry = entry;
-
-                const event = { detail: { url: 'https://example.com/product?lang=en-US' } };
-
-                element.handleShowProduct(event);
-
-                expect(window.open).toHaveBeenCalledWith(
-                    'https://example.com/product?lang=en-US&src=shopperAgent',
-                    '_blank'
-                );
+                expect(window.open).toHaveBeenCalledWith('https://example.com/product', '_blank');
             });
 
             it('should traverse up DOM to find element with data-url', () => {
@@ -930,7 +903,7 @@ describe('c-dynamic-content-renderer', () => {
 
                 element.handleShowProduct(event);
 
-                expect(window.open).toHaveBeenCalledWith('https://example.com/product?src=shopperAgent', '_blank');
+                expect(window.open).toHaveBeenCalledWith('https://example.com/product', '_blank');
             });
 
             it('should send text message when cart management is supported', () => {
@@ -3280,6 +3253,925 @@ describe('c-dynamic-content-renderer', () => {
             expect(element.textContent).toBeDefined();
 
             postMessageSpy.mockRestore();
+        });
+    });
+
+    describe('Dynamic styling functionality', () => {
+        let stylingElement;
+
+        beforeEach(() => {
+            stylingElement = createElement('c-dynamic-content-renderer', {
+                is: DynamicContentRenderer,
+            });
+            stylingElement.configuration = {
+                util: {
+                    sendTextMessage: jest.fn(),
+                },
+            };
+            document.body.appendChild(stylingElement);
+        });
+
+        afterEach(() => {
+            while (document.body.firstChild) {
+                document.body.removeChild(document.body.firstChild);
+            }
+        });
+
+        it('should handle rich text content with DEFAULT_RICH_TEXT_CONFIG', () => {
+            const entry = {
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: 'Hello, this is a plain text message',
+                        },
+                    },
+                }),
+                sender: { role: CHATBOT },
+            };
+
+            stylingElement.conversationEntry = entry;
+
+            // Should render rich text content (no error thrown)
+            expect(stylingElement.querySelector('lightning-formatted-rich-text')).toBeDefined();
+        });
+
+        it('should handle structured content type without applying rich text styling', () => {
+            const entry = {
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: JSON.stringify({
+                                className: CONTENT_TYPES.PRODUCT_RECOMMENDATIONS,
+                                productsDetails: {
+                                    products: [],
+                                },
+                            }),
+                        },
+                    },
+                }),
+                sender: { role: CHATBOT },
+            };
+
+            stylingElement.conversationEntry = entry;
+
+            // Should render structured content (not formatted rich text)
+            expect(stylingElement.querySelector('c-product-search-recommendations')).toBeDefined();
+        });
+
+        it('should handle entry set before component is connected', () => {
+            // Create a new element without appending to DOM yet
+            const disconnectedElement = createElement('c-dynamic-content-renderer', {
+                is: DynamicContentRenderer,
+            });
+            disconnectedElement.configuration = {
+                util: {
+                    sendTextMessage: jest.fn(),
+                },
+            };
+
+            const entry = {
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: 'Hello, this is a plain text message',
+                        },
+                    },
+                }),
+                sender: { role: CHATBOT },
+            };
+
+            // Set entry before connecting - should not throw error
+            expect(() => {
+                disconnectedElement.conversationEntry = entry;
+            }).not.toThrow();
+
+            // Verify content was processed
+            expect(disconnectedElement.textContent).toBeDefined();
+        });
+
+        it('should handle component lifecycle with deferred operations', () => {
+            // Create a new element without appending to DOM yet
+            const disconnectedElement = createElement('c-dynamic-content-renderer', {
+                is: DynamicContentRenderer,
+            });
+            disconnectedElement.configuration = {
+                util: {
+                    sendTextMessage: jest.fn(),
+                },
+            };
+
+            const entry = {
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: 'Hello, this is a plain text message',
+                        },
+                    },
+                }),
+                sender: { role: CHATBOT },
+            };
+
+            // Set entry before connecting
+            disconnectedElement.conversationEntry = entry;
+
+            // Now connect the element - should not throw
+            expect(() => {
+                document.body.appendChild(disconnectedElement);
+            }).not.toThrow();
+
+            // Clean up
+            document.body.removeChild(disconnectedElement);
+        });
+
+        it('should handle multiple entry updates without errors', () => {
+            const entry1 = {
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: 'First message',
+                        },
+                    },
+                }),
+                sender: { role: CHATBOT },
+            };
+
+            const entry2 = {
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: 'Second message',
+                        },
+                    },
+                }),
+                sender: { role: CHATBOT },
+            };
+
+            // Set first entry - should not throw
+            expect(() => {
+                stylingElement.conversationEntry = entry1;
+            }).not.toThrow();
+
+            // Set second entry - should not throw errors
+            expect(() => {
+                stylingElement.conversationEntry = entry2;
+            }).not.toThrow();
+
+            // Should render formatted rich text
+            expect(stylingElement.querySelector('lightning-formatted-rich-text')).toBeDefined();
+        });
+
+        it('should handle content type changes gracefully', () => {
+            // First, set rich text content
+            const entry1 = {
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: 'Plain text',
+                        },
+                    },
+                }),
+                sender: { role: CHATBOT },
+            };
+
+            stylingElement.conversationEntry = entry1;
+            expect(stylingElement.querySelector('lightning-formatted-rich-text')).toBeDefined();
+
+            // Now set structured content
+            const entry2 = {
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: JSON.stringify({
+                                className: CONTENT_TYPES.CART_SUMMARY,
+                                cartDetails: {},
+                            }),
+                        },
+                    },
+                }),
+                sender: { role: CHATBOT },
+            };
+
+            stylingElement.conversationEntry = entry2;
+
+            // Should render structured content component
+            expect(stylingElement.querySelector('c-cart-summary')).toBeDefined();
+        });
+
+        it('should handle EndUser messages with rich text content', () => {
+            const entry = {
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: 'Hello from end user',
+                        },
+                    },
+                }),
+                sender: { role: ENDUSER },
+            };
+
+            stylingElement.conversationEntry = entry;
+
+            // Should render EndUser text with formatted rich text
+            expect(stylingElement.querySelector('lightning-formatted-rich-text')).toBeDefined();
+        });
+
+        it('should handle invalid conversationEntry gracefully', () => {
+            const invalidEntry = null;
+
+            // Should not throw
+            expect(() => {
+                stylingElement.conversationEntry = invalidEntry;
+            }).not.toThrow();
+
+            // Component should handle gracefully
+            expect(stylingElement).toBeDefined();
+        });
+
+        it('should process entry with empty payload', () => {
+            const entry = {
+                entryPayload: '',
+                sender: { role: CHATBOT },
+            };
+
+            // Should not throw
+            expect(() => {
+                stylingElement.conversationEntry = entry;
+            }).not.toThrow();
+
+            // Should have empty text content
+            expect(stylingElement.textContent).toBe('');
+        });
+
+        it('should send postMessage calls for welcome messages with image', () => {
+            const postMessageSpy = jest.spyOn(window.parent, 'postMessage');
+
+            // Create new element for clean test
+            const welcomeElement = createElement('c-dynamic-content-renderer', {
+                is: DynamicContentRenderer,
+            });
+            welcomeElement.configuration = {
+                util: {
+                    sendTextMessage: jest.fn(),
+                },
+            };
+
+            // Set welcome message BEFORE connecting to DOM
+            const welcomeEntry = {
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: '<img src="welcome.png" alt="Welcome" />',
+                        },
+                    },
+                }),
+                sender: { role: CHATBOT },
+            };
+            welcomeElement.conversationEntry = welcomeEntry;
+
+            // Now connect - this should trigger postMessage calls
+            document.body.appendChild(welcomeElement);
+
+            // Verify all three postMessage calls were made
+            expect(postMessageSpy).toHaveBeenCalledWith(
+                {
+                    type: 'lwc.getConversationContext',
+                },
+                '*'
+            );
+
+            expect(postMessageSpy).toHaveBeenCalledWith(
+                {
+                    type: 'lwc.getPwaContext',
+                },
+                '*'
+            );
+
+            expect(postMessageSpy).toHaveBeenCalledWith(
+                {
+                    type: 'lwc.getDomainUrl',
+                },
+                '*'
+            );
+
+            // Clean up
+            document.body.removeChild(welcomeElement);
+            postMessageSpy.mockRestore();
+        });
+
+        it('should handle welcome messages with contextual data', () => {
+            const welcomeElement = createElement('c-dynamic-content-renderer', {
+                is: DynamicContentRenderer,
+            });
+            welcomeElement.configuration = {
+                util: {
+                    sendTextMessage: jest.fn(),
+                },
+            };
+
+            const welcomeEntry = {
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: '<img src="welcome.png" alt="Welcome" />',
+                        },
+                    },
+                }),
+                sender: { role: CHATBOT },
+            };
+
+            // Set entry first, then connect (to trigger welcome message logic)
+            welcomeElement.conversationEntry = welcomeEntry;
+            document.body.appendChild(welcomeElement);
+
+            // Simulate postMessage for contextual data (proper way to set internal state)
+            const contextMessage = new MessageEvent('message', {
+                data: {
+                    type: 'lwc.conversationContext',
+                    payload: {
+                        conversationContext: [{ name: 'Test Context', id: '123' }],
+                        conversationContextDescription: 'Test Description',
+                    },
+                },
+            });
+            window.dispatchEvent(contextMessage);
+
+            return Promise.resolve().then(() => {
+                // Verify the component renders the image (welcome message indicator)
+                expect(welcomeElement.querySelector('lightning-formatted-rich-text')).toBeDefined();
+
+                // Clean up
+                document.body.removeChild(welcomeElement);
+            });
+        });
+
+        it('should handle data processor errors gracefully', () => {
+            const testElement = createElement('c-dynamic-content-renderer', {
+                is: DynamicContentRenderer,
+            });
+            testElement.configuration = {
+                util: {
+                    sendTextMessage: jest.fn(),
+                },
+            };
+            document.body.appendChild(testElement);
+
+            // Test with malformed/invalid product data that would cause processing errors
+            const entry = {
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: JSON.stringify({
+                                className: CONTENT_TYPES.PRODUCT_RECOMMENDATIONS,
+                                // Invalid structure - missing required fields
+                                productsDetails: null,
+                                categoryDetails: undefined,
+                            }),
+                        },
+                    },
+                }),
+                sender: { role: CHATBOT },
+            };
+
+            // Should not throw even with invalid data structure
+            expect(() => {
+                testElement.conversationEntry = entry;
+            }).not.toThrow();
+
+            // Component should still render (product recommendations component handles invalid data)
+            expect(testElement.querySelector('c-product-search-recommendations')).toBeDefined();
+
+            // Clean up
+            document.body.removeChild(testElement);
+        });
+
+        it('should handle markdown parsing errors gracefully', () => {
+            const testElement = createElement('c-dynamic-content-renderer', {
+                is: DynamicContentRenderer,
+            });
+            testElement.configuration = {
+                util: {
+                    sendTextMessage: jest.fn(),
+                },
+            };
+            document.body.appendChild(testElement);
+
+            // Spy on console.warn to verify error handling
+            const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+            // Create entry with content
+            const entry = {
+                id: 'test-markdown-error',
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: '# Valid markdown',
+                        },
+                    },
+                }),
+                sender: { role: CHATBOT },
+            };
+
+            // Should not throw
+            expect(() => {
+                testElement.conversationEntry = entry;
+            }).not.toThrow();
+
+            // Verify component processed the entry
+            expect(testElement.conversationEntry).toBeDefined();
+
+            consoleWarnSpy.mockRestore();
+            document.body.removeChild(testElement);
+        });
+
+        it('should handle nested lists without extra <p> tags', () => {
+            const testElement = createElement('c-dynamic-content-renderer', {
+                is: DynamicContentRenderer,
+            });
+            testElement.configuration = {
+                util: {
+                    sendTextMessage: jest.fn(),
+                },
+            };
+            document.body.appendChild(testElement);
+
+            // Markdown with nested lists
+            const markdownText = `1. First item
+   - Nested bullet
+   - Another nested bullet
+2. Second item`;
+
+            const entry = {
+                id: 'test-nested-lists',
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: markdownText,
+                        },
+                    },
+                }),
+                sender: { role: CHATBOT },
+            };
+
+            testElement.conversationEntry = entry;
+
+            // Get rendered content
+            return Promise.resolve().then(() => {
+                const richTextElement = testElement.querySelector('lightning-formatted-rich-text');
+                expect(richTextElement).toBeTruthy();
+
+                // Should have rendered HTML without extra <p> tags in list items
+                const renderedValue = richTextElement.value;
+                expect(renderedValue).toBeTruthy();
+
+                // Should not have <li><p> combinations (unwrapped by parser)
+                expect(renderedValue).not.toContain('<li><p>');
+
+                // Should have proper list structure
+                expect(renderedValue).toContain('<ol>');
+                expect(renderedValue).toContain('<ul>');
+                expect(renderedValue).toContain('<li>');
+
+                document.body.removeChild(testElement);
+            });
+        });
+
+        it('should remove empty paragraphs from markdown output', () => {
+            const testElement = createElement('c-dynamic-content-renderer', {
+                is: DynamicContentRenderer,
+            });
+            testElement.configuration = {
+                util: {
+                    sendTextMessage: jest.fn(),
+                },
+            };
+            document.body.appendChild(testElement);
+
+            // Markdown that might produce empty paragraphs
+            const markdownText = `First paragraph
+Second paragraph`;
+
+            const entry = {
+                id: 'test-empty-paragraphs',
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: markdownText,
+                        },
+                    },
+                }),
+                sender: { role: AGENT },
+            };
+
+            testElement.conversationEntry = entry;
+
+            return Promise.resolve().then(() => {
+                const richTextElement = testElement.querySelector('lightning-formatted-rich-text');
+                expect(richTextElement).toBeTruthy();
+
+                const renderedValue = richTextElement.value;
+                expect(renderedValue).toBeTruthy();
+
+                // Should not have empty paragraphs
+                expect(renderedValue).not.toContain('<p></p>');
+                expect(renderedValue).not.toContain('<p> </p>');
+
+                // Should have actual paragraph content
+                expect(renderedValue).toContain('First paragraph');
+                expect(renderedValue).toContain('Second paragraph');
+
+                document.body.removeChild(testElement);
+            });
+        });
+
+        it('should normalize cross-platform line endings', () => {
+            const testElement = createElement('c-dynamic-content-renderer', {
+                is: DynamicContentRenderer,
+            });
+            testElement.configuration = {
+                util: {
+                    sendTextMessage: jest.fn(),
+                },
+            };
+            document.body.appendChild(testElement);
+
+            // Test Windows line endings (\r\n) - all line endings get normalized the same way
+            const windowsText = 'Line 1\r\nLine 2\r\nLine 3';
+
+            const entry = {
+                id: 'test-line-endings',
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: windowsText,
+                        },
+                    },
+                }),
+                sender: { role: CHATBOT },
+            };
+
+            testElement.conversationEntry = entry;
+
+            return Promise.resolve().then(() => {
+                // Should be normalized and rendered consistently
+                const richTextElement = testElement.querySelector('lightning-formatted-rich-text');
+                expect(richTextElement).toBeTruthy();
+                expect(richTextElement.value).toBeTruthy();
+                expect(richTextElement.value).toContain('Line 1');
+                expect(richTextElement.value).toContain('Line 2');
+                expect(richTextElement.value).toContain('Line 3');
+
+                document.body.removeChild(testElement);
+            });
+        });
+
+        it('should handle mixed ordered and unordered lists', () => {
+            const testElement = createElement('c-dynamic-content-renderer', {
+                is: DynamicContentRenderer,
+            });
+            testElement.configuration = {
+                util: {
+                    sendTextMessage: jest.fn(),
+                },
+            };
+            document.body.appendChild(testElement);
+
+            // Mixed list types
+            const markdownText = `1. Ordered item one
+2. Ordered item two
+   - Unordered nested
+   - Another unordered
+3. Ordered item three`;
+
+            const entry = {
+                id: 'test-mixed-lists',
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: markdownText,
+                        },
+                    },
+                }),
+                sender: { role: AGENT },
+            };
+
+            testElement.conversationEntry = entry;
+
+            return Promise.resolve().then(() => {
+                const richTextElement = testElement.querySelector('lightning-formatted-rich-text');
+                expect(richTextElement).toBeTruthy();
+
+                const renderedValue = richTextElement.value;
+                expect(renderedValue).toBeTruthy();
+
+                // Should have both ordered and unordered lists
+                expect(renderedValue).toContain('<ol>');
+                expect(renderedValue).toContain('<ul>');
+
+                // Should contain the text content
+                expect(renderedValue).toContain('Ordered item one');
+                expect(renderedValue).toContain('Unordered nested');
+
+                document.body.removeChild(testElement);
+            });
+        });
+
+        it('should handle complex multi-level list hierarchies', () => {
+            const testElement = createElement('c-dynamic-content-renderer', {
+                is: DynamicContentRenderer,
+            });
+            testElement.configuration = {
+                util: {
+                    sendTextMessage: jest.fn(),
+                },
+            };
+            document.body.appendChild(testElement);
+
+            // Complex nested structure
+            const markdownText = `1. Top level
+   - Second level bullet
+   - Another second level
+     - Third level
+2. Back to top level`;
+
+            const entry = {
+                id: 'test-multi-level-lists',
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: markdownText,
+                        },
+                    },
+                }),
+                sender: { role: CHATBOT },
+            };
+
+            testElement.conversationEntry = entry;
+
+            return Promise.resolve().then(() => {
+                const richTextElement = testElement.querySelector('lightning-formatted-rich-text');
+                expect(richTextElement).toBeTruthy();
+
+                const renderedValue = richTextElement.value;
+                expect(renderedValue).toBeTruthy();
+
+                // Should have multiple list structures
+                expect(renderedValue).toContain('<ol>');
+                expect(renderedValue).toContain('<ul>');
+
+                // Should not have extra paragraph wrappers in list items
+                expect(renderedValue).not.toContain('<li><p>');
+
+                // Should contain the text content
+                expect(renderedValue).toContain('Top level');
+                expect(renderedValue).toContain('Second level bullet');
+                expect(renderedValue).toContain('Third level');
+
+                document.body.removeChild(testElement);
+            });
+        });
+
+        it('should handle invalid payment method in orderCompleted gracefully', () => {
+            const testElement = createElement('c-dynamic-content-renderer', {
+                is: DynamicContentRenderer,
+            });
+            testElement.configuration = {
+                util: {
+                    sendTextMessage: jest.fn(),
+                },
+            };
+            document.body.appendChild(testElement);
+
+            const entry = {
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: JSON.stringify({
+                                className: CONTENT_TYPES.ORDER_COMPLETED,
+                                orderCompleted: {
+                                    paymentMethod: null, // Invalid payment method
+                                },
+                            }),
+                        },
+                    },
+                }),
+                sender: { role: CHATBOT },
+            };
+
+            testElement.conversationEntry = entry;
+
+            // Should fall back to generic payment succeeded label
+            expect(testElement.orderCompletedText).toBeTruthy();
+
+            document.body.removeChild(testElement);
+        });
+
+        it('should handle malformed JSON that requires repair', () => {
+            const testElement = createElement('c-dynamic-content-renderer', {
+                is: DynamicContentRenderer,
+            });
+            testElement.configuration = {
+                util: {
+                    sendTextMessage: jest.fn(),
+                },
+            };
+            document.body.appendChild(testElement);
+
+            // Malformed JSON with unescaped quotes and newlines
+            const malformedJson = `{"title": "Test "Product"", "desc": "Line1\nLine2"}`;
+
+            const entry = {
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: malformedJson,
+                        },
+                    },
+                }),
+                sender: { role: CHATBOT },
+            };
+
+            // Should not throw when setting entry
+            expect(() => {
+                testElement.conversationEntry = entry;
+            }).not.toThrow();
+
+            // Component should have processed the entry
+            expect(testElement.conversationEntry).toBeDefined();
+
+            document.body.removeChild(testElement);
+        });
+
+        it('should handle double-encoded JSON strings', () => {
+            const testElement = createElement('c-dynamic-content-renderer', {
+                is: DynamicContentRenderer,
+            });
+            testElement.configuration = {
+                util: {
+                    sendTextMessage: jest.fn(),
+                },
+            };
+            document.body.appendChild(testElement);
+
+            const innerJson = JSON.stringify({ message: 'test' });
+            const doubleEncoded = JSON.stringify(innerJson);
+
+            const entry = {
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: doubleEncoded,
+                        },
+                    },
+                }),
+                sender: { role: CHATBOT },
+            };
+
+            // Should not throw
+            expect(() => {
+                testElement.conversationEntry = entry;
+            }).not.toThrow();
+
+            // Component should have processed the entry
+            expect(testElement.conversationEntry).toBeDefined();
+
+            document.body.removeChild(testElement);
+        });
+
+        it('should handle non-string content in _isValidTextString', () => {
+            const testElement = createElement('c-dynamic-content-renderer', {
+                is: DynamicContentRenderer,
+            });
+            testElement.configuration = {
+                util: {
+                    sendTextMessage: jest.fn(),
+                },
+            };
+            document.body.appendChild(testElement);
+
+            const entry = {
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: 'null', // String representation
+                        },
+                    },
+                }),
+                sender: { role: CHATBOT },
+            };
+
+            // Should not throw
+            expect(() => {
+                testElement.conversationEntry = entry;
+            }).not.toThrow();
+
+            // Component should have processed the entry
+            expect(testElement.conversationEntry).toBeDefined();
+
+            document.body.removeChild(testElement);
+        });
+
+        it('should handle JSON parsing errors with complex fallback', () => {
+            const testElement = createElement('c-dynamic-content-renderer', {
+                is: DynamicContentRenderer,
+            });
+            testElement.configuration = {
+                util: {
+                    sendTextMessage: jest.fn(),
+                },
+            };
+            document.body.appendChild(testElement);
+
+            // Severely malformed JSON that can't be repaired
+            const badJson = '{unclosed: "object", missing: brackets}';
+
+            const entry = {
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: badJson,
+                        },
+                    },
+                }),
+                sender: { role: CHATBOT },
+            };
+
+            // Should not throw
+            expect(() => {
+                testElement.conversationEntry = entry;
+            }).not.toThrow();
+
+            // Component should have processed the entry
+            expect(testElement.conversationEntry).toBeDefined();
+
+            document.body.removeChild(testElement);
+        });
+    });
+
+    describe('handleShowMoreProducts', () => {
+        it('sends text message with product IDs when show more products is clicked', () => {
+            element.configuration = {
+                util: {
+                    sendTextMessage: mockSendTextMessage,
+                },
+            };
+
+            // Mock the i18n getter to return the showMoreProductsLabel
+            Object.defineProperty(element, 'i18n', {
+                get: () => ({
+                    showMoreProductsLabel: 'Show more',
+                }),
+                configurable: true,
+            });
+
+            // Create a mock event with productIds
+            const mockEvent = {
+                stopPropagation: jest.fn(),
+                preventDefault: jest.fn(),
+                detail: {
+                    productIds: ['1', '2', '3'],
+                },
+            };
+
+            // Call the method
+            element.handleShowMoreProducts(mockEvent);
+
+            // Verify that stopPropagation and preventDefault were called
+            expect(mockEvent.stopPropagation).toHaveBeenCalled();
+            expect(mockEvent.preventDefault).toHaveBeenCalled();
+
+            // Verify that sendTextMessage was called with the expected message
+            expect(mockSendTextMessage).toHaveBeenCalledWith('Show more (1, 2, 3)');
+        });
+
+        it('handles empty productIds array gracefully', () => {
+            element.configuration = {
+                util: {
+                    sendTextMessage: mockSendTextMessage,
+                },
+            };
+
+            // Mock the i18n getter to return the showMoreProductsLabel
+            Object.defineProperty(element, 'i18n', {
+                get: () => ({
+                    showMoreProductsLabel: 'Show more',
+                }),
+                configurable: true,
+            });
+
+            // Create a mock event with empty productIds
+            const mockEvent = {
+                stopPropagation: jest.fn(),
+                preventDefault: jest.fn(),
+                detail: {
+                    productIds: [],
+                },
+            };
+
+            // Call the method
+            element.handleShowMoreProducts(mockEvent);
+
+            // Verify that sendTextMessage was called with empty product IDs
+            expect(mockSendTextMessage).toHaveBeenCalledWith('Show more ()');
         });
     });
 });

@@ -249,6 +249,25 @@
     line-height: 1.25rem;
 }
 
+/* ===== SHOW MORE PRODUCTS ===== */
+.show-more-products {
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+
+.show-more-icon {
+    --sds-c-icon-color-foreground-default: #1c1c1c;
+}
+
+.show-more-text {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #1c1c1c;
+    text-align: center;
+    line-height: 1.25rem;
+}
+
 /* ===== IMAGE INDICATOR DOTS ===== */
 .image-indicator-dots {
     display: flex;

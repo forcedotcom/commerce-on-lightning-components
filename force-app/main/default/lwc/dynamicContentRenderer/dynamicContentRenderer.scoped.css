@@ -148,3 +148,61 @@ lightning-formatted-text {
     line-height: var(--ref-c-dynamic-content-renderer-text-line-height);
     font-family: var(--ref-c-dynamic-content-renderer-font-family) !important;
 }
+
+/*
+ * ===== MARKDOWN CONTENT STYLING (.richTextContent)
+ */
+.richTextContent p {
+    margin: 0 0 0.75rem;
+}
+
+.richTextContent pre {
+    margin: 0;
+    padding: 0;
+    display: block;
+    border-radius: 0.25rem;
+}
+
+.richTextContent code {
+    display: block;
+    white-space: pre;
+    padding: 0.5rem;
+    border-radius: 4px;
+    overflow-x: auto;
+}
+
+.richTextContent p code,
+.richTextContent li code {
+    display: inline;
+    white-space: normal;
+    padding: 0.2em 0.4em;
+    overflow-x: visible;
+    margin: 0 0.1em;
+}
+
+.richTextContent li > p {
+    margin: 0;
+}
+
+.richTextContent li > p + p {
+    margin-top: 0.25rem;
+}
+
+.richTextContent ol,
+.richTextContent ul {
+    margin: 0 0 0.75rem 1.25rem;
+    padding: 0;
+}
+
+.richTextContent li > ol,
+.richTextContent li > ul {
+    margin: 0 0 0 1.25rem;
+}
+
+.richTextContent li + li {
+    margin-top: 0;
+}
+
+.richTextContent strong {
+    font-weight: 600;
+}

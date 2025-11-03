@@ -56,3 +56,4 @@ export const viewImageAriaLabel = (locale, current, total) =>
     getTranslatedLabelWithParams('viewImageAriaLabel', locale, current, total);
 export const viewProductAriaLabel = (locale, current, total) =>
     getTranslatedLabelWithParams('viewProductAriaLabel', locale, current, total);
+export const showMoreProducts = (locale) => getTranslatedLabel('showMoreProducts', locale);

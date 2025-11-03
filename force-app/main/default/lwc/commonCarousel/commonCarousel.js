@@ -105,7 +105,33 @@ export default class CommonCarousel extends LightningElement {
             nextProduct: Labels.nextProduct(language),
             productPrice: Labels.productPrice(language),
             outOfStock: Labels.outOfStock(language),
+            showMoreProducts: Labels.showMoreProducts(language),
         };
+    }
+
+    // private property for showMoreProducts flag
+    _showMoreProducts = false;
+
+    /**
+     * Sets the showMoreProducts property.
+     * @param {boolean} value - The value to set for showMoreProducts.
+     */
+    @api
+    set showMoreProducts(value) {
+        this._showMoreProducts = value || false;
+        // Initialize dots array when showMoreProducts changes
+        if (this._showMoreProducts) {
+            // calling update dots to render the additional dot for the "Show More" card
+            this.updateDots();
+        }
+    }
+
+    /**
+     * Gets the showMoreProducts property. This is a flag to show the "Show More" card.
+     * @returns {boolean} The value of showMoreProducts.
+     */
+    get showMoreProducts() {
+        return this.hasProductData && this._showMoreProducts;
     }
 
     /**
@@ -119,10 +145,17 @@ export default class CommonCarousel extends LightningElement {
                 isActive: index === this.activeImageIndex,
             }));
         } else if (this.isProductCardsCarousel && this.hasProductData) {
-            this.dots = this.productData?.map((product, index) => ({
+            this.dots = this.productData?.map((_, index) => ({
                 id: `product-${index}`,
                 isActive: index === this.activeImageIndex,
             }));
+            // Add an additional dot for the "Show More" card if needed
+            if (this.showMoreProducts) {
+                this.dots.push({
+                    id: `show-more-card`,
+                    isActive: this.activeImageIndex === this.productData.length,
+                });
+            }
         }
     }
 
@@ -207,6 +240,27 @@ export default class CommonCarousel extends LightningElement {
     }
 
     /**
+     * Handles the "Show More Products" action.
+     * It dispatches an event 'showmoreproducts' with the product ids, indicating that the user wants to see more products.
+     * @param {CustomEvent} event - The click event from the show more button.
+     */
+    handleShowMoreProducts(event) {
+        event.stopPropagation();
+        const showMoreProducts = true;
+        const productIds = this.productData.map((product) => product.id);
+        this.dispatchEvent(
+            new CustomEvent('showmoreproducts', {
+                detail: {
+                    showMoreProducts,
+                    productIds,
+                },
+                bubbles: true,
+                composed: true,
+            })
+        );
+    }
+
+    /**
      * Handles click on indicator dots to navigate to specific image
      * @param {Event} event - Click event from indicator dot
      */
@@ -253,6 +307,9 @@ export default class CommonCarousel extends LightningElement {
      */
     get isLastImage() {
         const total = this.isImageCarousel ? this.filteredProductImageLinks.length : this.productData.length;
+        if (this.showMoreProducts) {
+            return this.activeImageIndex === total;
+        }
         return this.activeImageIndex === total - 1;
     }
 
@@ -288,7 +345,7 @@ export default class CommonCarousel extends LightningElement {
      */
     handleNextImage() {
         const total = this.isImageCarousel ? this.filteredProductImageLinks.length : this.productData.length;
-        if (this.activeImageIndex < total - 1) {
+        if (this.activeImageIndex < (this.showMoreProducts ? total : total - 1)) {
             this.activeImageIndex++;
             this.updateDots();
             this.scrollToIndex(this.activeImageIndex);
