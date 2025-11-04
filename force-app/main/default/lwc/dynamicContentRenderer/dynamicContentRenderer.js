@@ -7,7 +7,7 @@
  */
 import { api, LightningElement } from 'lwc';
 import * as Labels from './labelUtils';
-
+import { marked } from './marked.esm.js';
 import {
     MESSAGE_CONTENT_CLASS,
     ENDUSER,
@@ -160,6 +160,13 @@ export default class DynamicContentRenderer extends LightningElement {
      */
     _boundMessageHandler = null;
 
+    /**
+     * Flag to track whether the markdown parser has been initialized.
+     * @type {boolean}
+     * @private
+     */
+    _markdownParserInitialized = false;
+
     // =========================================================
     // Public API - Properties and Setters/Getters (@api decorated)
     // =========================================================
@@ -226,6 +233,7 @@ export default class DynamicContentRenderer extends LightningElement {
             applePayPaymentCanceledLabel: Labels.applePayPaymentCanceledLabel(language),
             applePayPaymentCompletedLabel: Labels.applePayPaymentCompletedLabel(language),
             contextualDescriptionLabel: Labels.contextualDescriptionLabel(language),
+            showMoreProductsLabel: Labels.showMoreProductsLabel(language),
         };
     }
 
@@ -415,11 +423,16 @@ export default class DynamicContentRenderer extends LightningElement {
      * Returns the content intended for display as rich text by `lightning-formatted-rich-text`.
      * This can be the original static text string or a raw parsed JSON object if it's an unrecognized
      * structured type that should still be rendered as text.
+     * Only parses markdown for Agent and Chatbot messages, not for EndUser messages.
      * @returns {string} The extracted or parsed message content, suitable for rich text rendering.
      */
     get textContent() {
         if (typeof this._parsedMessageContent === 'string') {
-            return this._parsedMessageContent;
+            // Only parse markdown for Agent and Chatbot messages, not for EndUser
+            const shouldParseMarkdown = this.sender !== 'EndUser';
+            return shouldParseMarkdown
+                ? this._parseMarkdownToHtml(this._parsedMessageContent)
+                : this._parsedMessageContent;
         }
         if (typeof this._parsedMessageContent === 'object' && this._parsedMessageContent !== null) {
             return JSON.stringify(this._parsedMessageContent, null, 2);
@@ -589,12 +602,9 @@ export default class DynamicContentRenderer extends LightningElement {
 
         if (!isCartMgmtSupported) {
             // If cart management is not supported, get URL from event detail and open it
-            // add src=shopperAgent to the URL since we need it for the order source tracking
-            const baseUrl = event?.detail?.url;
-            const separator = baseUrl?.includes('?') ? '&' : '?';
-            const productUrl = baseUrl + separator + 'src=shopperAgent';
+            const productUrl = event?.detail?.url;
 
-            if (baseUrl && productUrl) {
+            if (productUrl) {
                 try {
                     window.open(productUrl, '_blank');
                 } catch (error) {
@@ -885,12 +895,12 @@ export default class DynamicContentRenderer extends LightningElement {
     processProductRecommendations() {
         const data = {};
         const parsed = this._parsedMessageContent;
-
         // Extract productsDetails, defaulting to empty objects/arrays for safety
         const productsDetails = parsed?.productsDetails || parsed?.productRecommendations?.productsDetails;
         if (productsDetails && Array.isArray(productsDetails.products)) {
             data.productData = productsDetails.products;
             data.productsDescription = productsDetails.description || '';
+            data.showMoreProducts = productsDetails.showMore;
             data.isCartMgmtSupported =
                 parsed?.isCartMgmtSupported || parsed?.productRecommendations?.isCartMgmtSupported || false;
         } else {
@@ -1199,6 +1209,90 @@ export default class DynamicContentRenderer extends LightningElement {
                 }
             }
         }
+    }
+
+    /**
+     * Initializes the markdown parser with custom configuration and renderers.
+     * This method is called once per component instance to configure the marked parser
+     * with GitHub Flavored Markdown support and custom list rendering logic.
+     * @returns {void}
+     */
+    _initializeMarkdownParser() {
+        if (this._markdownParserInitialized) return;
+
+        marked.setOptions({
+            gfm: true, // Enable GitHub Flavored Markdown
+            breaks: true, // Single line breaks create <br> tags
+        });
+
+        marked.use({
+            renderer: {
+                listitem(item) {
+                    const singleParagraph =
+                        !item.loose &&
+                        Array.isArray(item.tokens) &&
+                        item.tokens.length === 1 &&
+                        item.tokens[0].type === 'paragraph';
+
+                    if (singleParagraph) {
+                        const inner = this.parser.parseInline(item.tokens[0].tokens);
+                        return `<li>${inner}</li>`;
+                    }
+                    return `<li>${this.parser.parse(item.tokens, !!item.loose)}</li>`;
+                },
+
+                paragraph(token) {
+                    return `<p>${this.parser.parseInline(token.tokens)}</p>`;
+                },
+            },
+        });
+
+        this._markdownParserInitialized = true;
+    }
+
+    /**
+     * Converts markdown formatted text to HTML using the marked parser.
+     * This method is only called for Agent and Chatbot messages, not for EndUser messages.
+     *
+     * The parser is initialized once per component instance for optimal performance.
+     * Spacing is controlled via CSS using the `.richTextContent` class.
+     * @param {string} text - The markdown text to parse
+     * @returns {string} The parsed HTML string, trimmed of leading/trailing whitespace, or empty string if input is empty or parsing fails
+     * @see _initializeMarkdownParser - Configures the markdown parser
+     */
+    _parseMarkdownToHtml(text) {
+        if (!text) {
+            return '';
+        }
+        try {
+            this._initializeMarkdownParser();
+            let html = marked(text).trim();
+
+            html = html
+                .replace(/(\r\n|\n|\r)/gm, '')
+                .replace(/\s*<\/(p|div|ul|ol|li|h[1-6]|pre)>\s*<([pdivulolih])\s*([^>]*)>/gi, '</$1><$2$3>')
+                .replace(/\s*<\/(ul|ol|p|div|h[1-6]|pre)>/gi, '</$1>');
+
+            return html.trim();
+        } catch (error) {
+            console.warn('Something went wrong parsing markdown.', error);
+            return '';
+        }
+    }
+
+    /**
+     * Handles the "Show More Products" action.
+     * It sends a text message with the product IDs to the conversation system.
+     * @param {CustomEvent} event - The click event from the show more button.
+     */
+    @api
+    handleShowMoreProducts(event) {
+        event.stopPropagation();
+        event.preventDefault();
+        const { productIds } = event.detail;
+        const label = this.i18n.showMoreProductsLabel;
+        const productIdsString = productIds.join(', ');
+        this.configuration.util.sendTextMessage(`${label} (${productIdsString})`);
     }
 
     /**

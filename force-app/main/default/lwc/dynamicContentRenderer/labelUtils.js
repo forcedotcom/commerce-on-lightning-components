@@ -56,3 +56,4 @@ export const contextualDescriptionLabel = (locale) =>
 export const applePayPaymentFailedLabel = (locale) => getTranslatedLabel('Common_ApplePay_paymentFailed', locale);
 export const applePayPaymentCanceledLabel = (locale) => getTranslatedLabel('Common_ApplePay_paymentCanceled', locale);
 export const applePayPaymentCompletedLabel = (locale) => getTranslatedLabel('Common_ApplePay_paymentCompleted', locale);
+export const showMoreProductsLabel = (locale) => getTranslatedLabel('TextMessage_showMoreProducts', locale);

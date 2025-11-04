@@ -18,6 +18,7 @@ module.exports = {
     },
     setupFilesAfterEnv,
     preset: '@lwc/jest-preset',
+    coveragePathIgnorePatterns: ['/node_modules/', '/force-app/main/default/lwc/dynamicContentRenderer/marked.esm.js'],
     coverageThreshold: {
         global: {
             branches: 96,

@@ -118,6 +118,28 @@ export const LABEL_DATA = {
         zh_TW: '我未能理解您的回覆。請再試一次。',
     },
 
+    // Show More Products Labels
+    TextMessage_showMoreProducts: {
+        en_US: 'Show more',
+        en_GB: 'Show more',
+        en: 'Show more',
+        de: 'Mehr anzeigen',
+        es: 'Mostrar más',
+        fr: 'Afficher plus',
+        it: 'Mostra altro',
+        ja: 'もっと表示',
+        ko: '더 보기',
+        nl: 'Meer tonen',
+        no: 'Vis flere',
+        pl: 'Pokaż więcej',
+        pt_BR: 'Mostrar mais',
+        sv: 'Visa fler',
+        da: 'Vis flere',
+        fi: 'Näytä lisää',
+        zh_CN: '显示更多',
+        zh_TW: '顯示更多',
+    },
+
     // Common Payment Labels
     Common_Payment_Completed: {
         en_US: 'Paid with {0}',

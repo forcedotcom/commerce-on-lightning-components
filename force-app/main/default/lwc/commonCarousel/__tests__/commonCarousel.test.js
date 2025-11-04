@@ -518,6 +518,210 @@ describe('c-common-carousel', () => {
             expect(global.__ioObserved.length).toBe(0);
         });
 
+        /**
+         * Test suite for showMoreProducts functionality
+         */
+        describe('Show More Products Functionality', () => {
+            beforeEach(() => {
+                element.productData = mockProductCards;
+            });
+
+            it('does not render show more button when showMoreProducts is false', async () => {
+                element.showMoreProducts = false;
+                await Promise.resolve();
+
+                const showMoreButton = element.querySelector('.show-more-products');
+                expect(showMoreButton).toBeNull();
+            });
+
+            it('renders show more button with correct content and attributes', async () => {
+                element.showMoreProducts = true;
+                await Promise.resolve();
+
+                const showMoreButton = element.querySelector('.show-more-products');
+                expect(showMoreButton).toBeTruthy();
+
+                // Check aria-label
+                expect(showMoreButton.getAttribute('aria-label')).toBeTruthy();
+
+                // Check name attribute
+                expect(showMoreButton.getAttribute('name')).toBeTruthy();
+
+                // Check icon is present (lightning-icon attributes may not be accessible in tests)
+                const icon = showMoreButton.querySelector('lightning-icon');
+                expect(icon).toBeTruthy();
+                // Note: icon-name attribute may not be accessible in Jest tests
+
+                // Check text content
+                const textSpan = showMoreButton.querySelector('.show-more-text');
+                expect(textSpan).toBeTruthy();
+                expect(textSpan.textContent).toBeTruthy();
+            });
+
+            it('dispatches showmoreclicked event when show more button is clicked', async () => {
+                const mockShowMoreProducts = jest.fn();
+                element.addEventListener('showmoreproducts', mockShowMoreProducts);
+
+                element.showMoreProducts = true;
+                await Promise.resolve();
+
+                const showMoreButton = element.querySelector('.show-more-products');
+                expect(showMoreButton).toBeTruthy();
+
+                showMoreButton.click();
+                await Promise.resolve();
+
+                expect(mockShowMoreProducts).toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        detail: expect.objectContaining({
+                            showMoreProducts: true,
+                            productIds: ['1', '2', '3'],
+                        }),
+                    })
+                );
+            });
+
+            it('renders additional dot for show more button when showMoreProducts is true', async () => {
+                element.showMoreProducts = true;
+                await Promise.resolve();
+
+                const dots = element.querySelectorAll('.indicator-dot');
+                const productCards = element.querySelectorAll('.product-card:not(.show-more-products)');
+
+                // Should have one additional dot for the show more button
+                expect(dots.length).toBe(productCards.length + 1);
+            });
+
+            it('does not render additional dot when showMoreProducts is false', async () => {
+                element.showMoreProducts = false;
+                await Promise.resolve();
+
+                const dots = element.querySelectorAll('.indicator-dot');
+                const productCards = element.querySelectorAll('.product-card:not(.show-more-products)');
+
+                // Should have same number of dots as product cards
+                expect(dots.length).toBe(productCards.length);
+            });
+
+            it('handles navigation correctly with show more button present', async () => {
+                element.showMoreProducts = true;
+                await Promise.resolve();
+
+                const rightButton = element.querySelector('.carousel-nav-right');
+                const totalItems = mockProductCards.length;
+
+                // Navigate to the show more button (last item)
+                for (let i = 0; i < totalItems; i++) {
+                    rightButton.click();
+                }
+                await Promise.resolve();
+
+                // Right button should be disabled when on show more button
+                expect(rightButton.disabled).toBe(true);
+
+                // Left button should be enabled
+                const leftButton = element.querySelector('.carousel-nav-left');
+                expect(leftButton.disabled).toBe(false);
+            });
+
+            it('updates dots correctly when showMoreProducts changes from false to true', async () => {
+                // Initially no show more button
+                element.showMoreProducts = false;
+                await Promise.resolve();
+
+                let dots = element.querySelectorAll('.indicator-dot');
+                let initialDotCount = dots.length;
+
+                // Enable show more button
+                element.showMoreProducts = true;
+                await Promise.resolve();
+
+                dots = element.querySelectorAll('.indicator-dot');
+                expect(dots.length).toBe(initialDotCount + 1);
+            });
+
+            it('handles dot click navigation to show more button', async () => {
+                element.showMoreProducts = true;
+                await Promise.resolve();
+
+                const dots = element.querySelectorAll('.indicator-dot');
+                const showMoreDotIndex = dots.length - 1; // Last dot should be for show more
+                const showMoreDot = dots[showMoreDotIndex];
+
+                // Click the show more dot
+                showMoreDot.click();
+                await Promise.resolve();
+
+                // Verify the show more dot is active
+                expect(showMoreDot.getAttribute('data-active')).toBe('true');
+
+                // Verify scrollIntoView was called
+                expect(Element.prototype.scrollIntoView).toHaveBeenCalledWith({
+                    behavior: 'smooth',
+                    block: 'nearest',
+                    inline: 'start',
+                });
+            });
+
+            it('maintains correct active dot state when navigating with show more button', async () => {
+                element.showMoreProducts = true;
+                await Promise.resolve();
+
+                const dots = element.querySelectorAll('.indicator-dot');
+                const rightButton = element.querySelector('.carousel-nav-right');
+
+                // Navigate through all items including show more
+                for (let i = 0; i < dots.length; i++) {
+                    rightButton.click();
+                }
+                await Promise.resolve();
+
+                // Check that the correct dot is active
+                const activeDot = element.querySelector('.indicator-dot[data-active="true"]');
+                expect(activeDot).toBeTruthy();
+            });
+
+            it.each([null, undefined, '', 0, false])(
+                'handles showMoreProducts setter with falsy value %p correctly',
+                async (falsyValue) => {
+                    element.showMoreProducts = falsyValue;
+                    await Promise.resolve();
+                    expect(element.showMoreProducts).toBe(false);
+                }
+            );
+
+            it('handles intersection observer with show more button correctly', async () => {
+                element.showMoreProducts = true;
+                await Promise.resolve();
+
+                const scrollContainer = element.querySelector('.carousel-scroll-container');
+                Object.defineProperty(scrollContainer, 'offsetWidth', { value: 100, configurable: true });
+
+                // Trigger setup
+                element.productData = [...mockProductCards];
+                await Promise.resolve();
+
+                // Should observe all product cards including show more button
+                const allCards = element.querySelectorAll('.product-card');
+                expect(global.__ioObserved.length).toBe(allCards.length);
+
+                // Simulate show more button intersecting
+                const showMoreButton = element.querySelector('.show-more-products');
+                global.__ioCallback([
+                    {
+                        target: showMoreButton,
+                        isIntersecting: true,
+                        intersectionRatio: 0.8,
+                    },
+                ]);
+                await Promise.resolve();
+
+                // Verify dots are updated correctly
+                const activeDot = element.querySelector('.indicator-dot[data-active="true"]');
+                expect(activeDot).toBeTruthy();
+            });
+        });
+
         it('observes image panels and uses image-based counts in IO (image mode branches)', async () => {
             element.displayMode = 'productDetailImageCarousel';
             const mockImages = productData.imgGroups[0].imgs;

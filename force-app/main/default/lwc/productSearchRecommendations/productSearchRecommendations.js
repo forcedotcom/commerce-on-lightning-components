@@ -62,6 +62,14 @@ export default class productSearchRecommendations extends LightningElement {
     @api showCategoryRecommendations = false;
 
     /**
+     * Controls whether show more products should be displayed.
+     * Defaults to false (show more products hidden by default).
+     * @type {boolean}
+     */
+    @api
+    showMoreProducts = false;
+
+    /**
      * Determines if there are product recommendations to display.
      * @returns {boolean} True if there are product recommendations.
      */

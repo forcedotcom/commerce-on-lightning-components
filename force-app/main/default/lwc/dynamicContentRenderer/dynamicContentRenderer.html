@@ -23,10 +23,12 @@
                 products-description={dynamicComponentData.productsDescription}
                 category-data={dynamicComponentData.categoryData}
                 categories-description={dynamicComponentData.categoriesDescription}
+                show-more-products={dynamicComponentData.showMoreProducts}
                 configuration={configuration}
                 onaddtocart={handleAddToCart}
                 onselectcategory={handleSelectCategory}
-                onshowproduct={handleShowProduct}></c-product-search-recommendations>
+                onshowproduct={handleShowProduct}
+                onshowmoreproducts={handleShowMoreProducts}></c-product-search-recommendations>
         </template>
         <template lwc:elseif={isProductDetails}>
             <c-product-details
@@ -56,6 +58,7 @@
         <template lwc:else>
             <div class={richTextClasses}>
                 <lightning-formatted-rich-text
+                    class="richTextContent"
                     value={textContent}
                     aria-label={ariaLabelRichTextContent}></lightning-formatted-rich-text>
             </div>
