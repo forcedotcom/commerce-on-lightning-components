@@ -721,7 +721,7 @@ describe('c-common-carousel', () => {
                 expect(activeDot).toBeTruthy();
             });
         });
-        
+
         it('observes image panels and uses image-based counts in IO (image mode branches)', async () => {
             element.displayMode = 'productDetailImageCarousel';
             const mockImages = productData.imgGroups[0].imgs;

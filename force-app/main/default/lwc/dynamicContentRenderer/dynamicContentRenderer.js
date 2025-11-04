@@ -166,7 +166,7 @@ export default class DynamicContentRenderer extends LightningElement {
      * @private
      */
     _markdownParserInitialized = false;
-    
+
     // =========================================================
     // Public API - Properties and Setters/Getters (@api decorated)
     // =========================================================
@@ -1294,7 +1294,7 @@ export default class DynamicContentRenderer extends LightningElement {
         const productIdsString = productIds.join(', ');
         this.configuration.util.sendTextMessage(`${label} (${productIdsString})`);
     }
-    
+
     /**
      * Lifecycle hook called when the component is inserted into the DOM.
      * Sets up message communication with the parent window (PWA) to receive
