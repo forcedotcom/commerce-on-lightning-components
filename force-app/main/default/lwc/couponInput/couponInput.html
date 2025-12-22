@@ -1,0 +1,21 @@
+<template lwc:render-mode="light">
+    <div class="coupon-input-container">
+        <div class="input-wrapper">
+            <input
+                type="text"
+                class="coupon-input"
+                placeholder={i18n.couponPlaceholder}
+                value={couponCode}
+                aria-label={i18n.couponInputAriaLabel}
+                oninput={handleInputChange}
+                onkeypress={handleKeyPress} />
+            <button
+                class={applyButtonClasses}
+                disabled={isApplyDisabled}
+                aria-label={i18n.applyButtonAriaLabel}
+                onclick={handleApply}>
+                {i18n.applyButtonLabel}
+            </button>
+        </div>
+    </div>
+</template>

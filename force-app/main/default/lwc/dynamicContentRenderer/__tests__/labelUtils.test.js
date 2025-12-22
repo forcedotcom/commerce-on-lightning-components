@@ -11,48 +11,48 @@ import * as Labels from '../labelUtils';
 describe('c-dynamic-content-renderer labelUtils', () => {
     it('should return requested locale when available', () => {
         // Test the first branch: label[language] exists
-        expect(Labels.categoryRecommendationTextMessageLabel('en_US')).toBe('{0} for category {1} ({2})');
-        expect(Labels.categoryRecommendationTextMessageLabel('en_GB')).toBe('{0} for category {1} ({2})');
-        expect(Labels.categoryRecommendationTextMessageLabel('es')).toBe('{0} para la categoría {1} ({2})');
-        expect(Labels.categoryRecommendationTextMessageLabel('fr')).toBe('{0} pour la catégorie {1} ({2})');
+        expect(Labels.productSelectionTextMessageLabel('en_US')).toBe('Show me details about {0} ({1})');
+        expect(Labels.productSelectionTextMessageLabel('en_GB')).toBe('Show me details about {0} ({1})');
+        expect(Labels.productSelectionTextMessageLabel('es')).toBe('Muéstrame detalles sobre {0} ({1})');
+        expect(Labels.productSelectionTextMessageLabel('fr')).toBe('Montre-moi les détails sur {0} ({1})');
     });
 
     it('should fallback to English when requested locale not available', () => {
         // Test the second branch: label[language] doesn't exist, fallback to label.en_US
-        expect(Labels.categoryRecommendationTextMessageLabel('xx')).toBe('{0} for category {1} ({2})'); // Unknown locale not available, fallback to English
-        expect(Labels.categoryRecommendationTextMessageLabel('yy')).toBe('{0} for category {1} ({2})'); // Unknown locale not available, fallback to English
-        expect(Labels.categoryRecommendationTextMessageLabel('zz')).toBe('{0} for category {1} ({2})'); // Unknown locale not available, fallback to English
+        expect(Labels.productSelectionTextMessageLabel('xx')).toBe('Show me details about {0} ({1})'); // Unknown locale not available, fallback to English
+        expect(Labels.productSelectionTextMessageLabel('yy')).toBe('Show me details about {0} ({1})'); // Unknown locale not available, fallback to English
+        expect(Labels.productSelectionTextMessageLabel('zz')).toBe('Show me details about {0} ({1})'); // Unknown locale not available, fallback to English
     });
 
     it('should fallback to labelKey when English not available', () => {
         // Test the third branch: neither label[language] nor label.en_US exist
         // This tests the final fallback to labelKey
-        expect(Labels.categoryRecommendationTextMessageLabel('xyz')).toBe('{0} for category {1} ({2})'); // This will fallback through the chain
+        expect(Labels.productSelectionTextMessageLabel('xyz')).toBe('Show me details about {0} ({1})'); // This will fallback through the chain
     });
 
     it('should handle undefined/null language gracefully', () => {
         // Test default parameter behavior
-        expect(Labels.categoryRecommendationTextMessageLabel()).toBe('{0} for category {1} ({2})'); // undefined language
-        expect(Labels.categoryRecommendationTextMessageLabel(null)).toBe('{0} for category {1} ({2})'); // null language
-        expect(Labels.categoryRecommendationTextMessageLabel('')).toBe('{0} for category {1} ({2})'); // empty string
+        expect(Labels.productSelectionTextMessageLabel()).toBe('Show me details about {0} ({1})'); // undefined language
+        expect(Labels.productSelectionTextMessageLabel(null)).toBe('Show me details about {0} ({1})'); // null language
+        expect(Labels.productSelectionTextMessageLabel('')).toBe('Show me details about {0} ({1})'); // empty string
     });
 
     it('should test all fallback branches comprehensively', () => {
         // Test all three branches of the fallback logic:
         // 1. label[language] exists
-        expect(Labels.categoryRecommendationTextMessageLabel('en_US')).toBe('{0} for category {1} ({2})');
+        expect(Labels.productSelectionTextMessageLabel('en_US')).toBe('Show me details about {0} ({1})');
 
         // 2. label[language] doesn't exist, fallback to label['en_US']
-        expect(Labels.categoryRecommendationTextMessageLabel('xx')).toBe('{0} for category {1} ({2})');
+        expect(Labels.productSelectionTextMessageLabel('xx')).toBe('Show me details about {0} ({1})');
 
         // 3. For the final fallback, we need to test with a non-existent label key
         // Since all our current labels have English translations, we'll test the logic
         // by ensuring the fallback chain works correctly
 
         // Test with various unsupported locales to ensure fallback chain works
-        expect(Labels.categoryRecommendationTextMessageLabel('xyz')).toBe('{0} for category {1} ({2})'); // Should fallback to English
-        expect(Labels.categoryRecommendationTextMessageLabel('abc')).toBe('{0} for category {1} ({2})'); // Should fallback to English
-        expect(Labels.categoryRecommendationTextMessageLabel('123')).toBe('{0} for category {1} ({2})'); // Should fallback to English
+        expect(Labels.productSelectionTextMessageLabel('xyz')).toBe('Show me details about {0} ({1})'); // Should fallback to English
+        expect(Labels.productSelectionTextMessageLabel('abc')).toBe('Show me details about {0} ({1})'); // Should fallback to English
+        expect(Labels.productSelectionTextMessageLabel('123')).toBe('Show me details about {0} ({1})'); // Should fallback to English
 
         // Test all label functions to ensure consistent fallback behavior
         expect(Labels.productSelectionTextMessageLabel('xyz')).toBe('Show me details about {0} ({1})');
@@ -67,25 +67,23 @@ describe('c-dynamic-content-renderer labelUtils', () => {
         const { LABEL_DATA } = require('../labels');
 
         // Create a temporary test label that has no English translation
-        const originalLabel = LABEL_DATA.TextMessage_categoryRecommendations;
+        const originalLabel = LABEL_DATA.TextMessage_productSelection;
         const testLabel = {
-            es: '{0} para la categoría {1} ({2})',
-            fr: '{0} pour la catégorie {1} ({2})',
+            es: 'Muéstrame detalles sobre {0} ({1})',
+            fr: 'Montre-moi les détails sur {0} ({1})',
         }; // No English translation
 
         // Temporarily replace the label
-        LABEL_DATA.TextMessage_categoryRecommendations = testLabel;
+        LABEL_DATA.TextMessage_productSelection = testLabel;
 
         try {
             // Now test the final fallback: no language specified, no English, should return key
             // We need to re-import to get the updated data
             const updatedLabels = require('../labelUtils');
-            expect(updatedLabels.categoryRecommendationTextMessageLabel('de')).toBe(
-                'TextMessage_categoryRecommendations'
-            ); // Should fallback to key
+            expect(updatedLabels.productSelectionTextMessageLabel('de')).toBe('TextMessage_productSelection'); // Should fallback to key
         } finally {
             // Restore the original label
-            LABEL_DATA.TextMessage_categoryRecommendations = originalLabel;
+            LABEL_DATA.TextMessage_productSelection = originalLabel;
         }
     });
 });

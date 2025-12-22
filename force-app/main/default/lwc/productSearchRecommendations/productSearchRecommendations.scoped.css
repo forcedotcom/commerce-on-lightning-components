@@ -11,12 +11,13 @@
     display: block;
     box-sizing: border-box;
 
-    --ref-c-product-search-recommendations-button-background-color: #f7f9fa;
-    --ref-c-product-search-recommendations-button-border-color: #d9dfe7;
-    --ref-c-product-search-recommendations-button-font-size: var(--dxp-s-button-small-font-size, 0.75rem);
-    --ref-c-product-search-recommendations-button-font-size-mobile: 0.7rem;
     --ref-c-product-search-recommendation-descriptions-font-size: 0.875rem;
-    --ref-c-product-search-recommendation-descriptions-line-height: 1.875rem;
+    --ref-c-suggested-actions-button-background-color: #f7f9fa;
+    --ref-c-suggested-actions-button-border-color: #d9dfe7;
+    --ref-c-suggested-actions-button-font-size: var(--dxp-s-button-small-font-size, 0.75rem);
+    --ref-c-suggested-actions-button-font-size-mobile: 0.7rem;
+    --ref-c-suggested-actions-description-font-size: 0.875rem;
+    --ref-c-suggested-actions-description-line-height: 1.875rem;
 }
 
 /* ===== PRODUCTS DESCRIPTION STYLING ===== */
@@ -25,23 +26,23 @@
     font-size: var(--ref-c-product-search-recommendation-descriptions-font-size);
 }
 
-/* ===== CATEGORIES DESCRIPTION STYLING ===== */
-/* Description text for the categories section */
-.categories-description {
-    font-size: var(--ref-c-product-search-recommendation-descriptions-font-size);
+/* ===== SUGGESTED ACTIONS STYLING ===== */
+/* Description text for the suggested actions section */
+.suggested-actions-description {
+    font-size: var(--ref-c-suggested-actions-description-font-size);
 }
 
-.category-layout {
-    line-height: var(--ref-c-product-search-recommendation-descriptions-line-height);
+.suggested-actions-layout {
+    line-height: var(--ref-c-suggested-actions-description-line-height);
 }
 
-/* ===== CATEGORY BUTTON STYLING ===== */
-/* Pill-shaped category filter buttons */
-.category-button {
-    font-size: var(--ref-c-product-search-recommendations-button-font-size);
+/* ===== SUGGESTED ACTIONS BUTTON STYLING ===== */
+/* Pill-shaped suggested actions buttons */
+.suggested-actions-button {
+    font-size: var(--ref-c-suggested-actions-button-font-size);
     border-radius: 999px; /* Pill shape */
-    background-color: var(--ref-c-product-search-recommendations-button-background-color);
-    border: 1px solid var(--ref-c-product-search-recommendations-button-border-color);
+    background-color: var(--ref-c-suggested-actions-button-background-color);
+    border: 1px solid var(--ref-c-suggested-actions-button-border-color);
     padding: 0.375em 1.25em;
     cursor: pointer;
     white-space: nowrap;
@@ -52,17 +53,17 @@
     display: inline-block;
 }
 
-/* ===== CATEGORY BUTTON INTERACTIONS ===== */
+/* ===== SUGGESTED ACTIONS BUTTON INTERACTIONS ===== */
 /* Enhanced shadow and border on hover/focus for better UX */
-.category-button:hover,
-.category-button:focus {
+.suggested-actions-button:hover,
+.suggested-actions-button:focus {
     border-color: var(--dxp-g-neutral-3, #d0d0d0);
     background: var(--dxp-g-root, #fff);
     outline: none;
 }
 
 /* Reduced shadow on active state for tactile feedback */
-.category-button:active {
+.suggested-actions-button:active {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     border-color: var(--dxp-g-neutral-2, #e0e0e0);
 }
@@ -70,8 +71,8 @@
 /* ===== RESPONSIVE DESIGN ===== */
 /* Smaller buttons on mobile devices for better touch targets */
 @media (max-width: 30rem) {
-    .category-button {
-        font-size: var(--ref-c-product-search-recommendations-button-font-size-mobile);
+    .suggested-actions-button {
+        font-size: var(--ref-c-suggested-actions-button-font-size-mobile);
         padding: 0.25rem 1rem;
         max-width: 20.563rem; /* Smaller max width on mobile */
     }

@@ -8,34 +8,18 @@
 
 /*
  * @description Group all Custom Labels for commerceHeader in one place
+ * Uses shared labelService for translation logic
  */
 
+import { getTranslatedLabel } from 'c/labelService';
 import { LABEL_DATA } from './labels';
 
-// Helper function to get translated label using shared utility
-/**
- * Gets a translated label for the given key and locale
- * @param {string} labelKey - The key to look up in the label data
- * @param {string} locale - The locale code (e.g., 'en-US', 'es-ES', 'fr-FR')
- * @returns {string} The translated label or fallback value
- */
-function getTranslatedLabel(labelKey, locale = 'en_US') {
-    const label = LABEL_DATA[labelKey];
-    if (label && label[locale]) {
-        return label[locale];
-    }
-    if (label && label.en_US) {
-        return label.en_US;
-    }
-    return labelKey;
-}
-
 // Export individual label functions
-export const menu = (locale) => getTranslatedLabel('menu', locale);
-export const requestTranscript = (locale) => getTranslatedLabel('requestTranscript', locale);
-export const endChat = (locale) => getTranslatedLabel('endChat', locale);
-export const minimize = (locale) => getTranslatedLabel('minimize', locale);
-export const minimizeAssistive = (locale) => getTranslatedLabel('minimizeAssistive', locale);
-export const logoAlt = (locale) => getTranslatedLabel('logoAlt', locale);
-export const closeButtonAssistiveText = (locale) => getTranslatedLabel('closeButtonAssistiveText', locale);
-export const defaultHeaderText = (locale) => getTranslatedLabel('defaultHeaderText', locale);
+export const menu = (locale) => getTranslatedLabel('menu', LABEL_DATA, locale);
+export const requestTranscript = (locale) => getTranslatedLabel('requestTranscript', LABEL_DATA, locale);
+export const endChat = (locale) => getTranslatedLabel('endChat', LABEL_DATA, locale);
+export const minimize = (locale) => getTranslatedLabel('minimize', LABEL_DATA, locale);
+export const minimizeAssistive = (locale) => getTranslatedLabel('minimizeAssistive', LABEL_DATA, locale);
+export const logoAlt = (locale) => getTranslatedLabel('logoAlt', LABEL_DATA, locale);
+export const closeButtonAssistiveText = (locale) => getTranslatedLabel('closeButtonAssistiveText', LABEL_DATA, locale);
+export const defaultHeaderText = (locale) => getTranslatedLabel('defaultHeaderText', LABEL_DATA, locale);

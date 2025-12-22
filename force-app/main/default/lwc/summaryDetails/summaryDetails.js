@@ -26,6 +26,8 @@ export default class SummaryDetails extends LightningElement {
      * promotionsDiscount: Number,
      * shippingCost: Number,
      * shippingDiscount: Number,
+     * couponsDiscount: Number,
+     * couponsApplied: Array<String>, // Array of coupon codes applied for an item or for the entire order (e.g., ['SAVE20', 'WELCOME10'])
      * taxes: Number,
      * total: Number,
      * currencyCode: String,
@@ -71,6 +73,8 @@ export default class SummaryDetails extends LightningElement {
     @api
     get i18n() {
         const language = this.language;
+        const isMoreThanOneCouponApplied = this.couponsAppliedCount > 1;
+
         return {
             confirmationTitle: Labels.confirmationTitle(language),
             subtotalLabel: Labels.subtotalLabel(language),
@@ -94,6 +98,12 @@ export default class SummaryDetails extends LightningElement {
             orderTotalsAssistiveText: Labels.orderTotalsAssistiveText(language),
             cartTotalsAssistiveText: Labels.cartTotalsAssistiveText(language),
             orderIdLabel: Labels.orderIdLabel(language),
+            couponsDiscountLabel: isMoreThanOneCouponApplied
+                ? Labels.couponsDiscountLabelPlural(language)
+                : Labels.couponsDiscountLabel(language),
+            couponsAppliedLabel: isMoreThanOneCouponApplied
+                ? Labels.couponsAppliedLabelPlural(language)
+                : Labels.couponsAppliedLabel(language),
         };
     }
 
@@ -137,6 +147,21 @@ export default class SummaryDetails extends LightningElement {
     }
 
     /**
+     * Formats a discount amount as a negative currency value.
+     * Handles null, undefined, NaN, and non-numeric values gracefully by treating them as 0.
+     * @param {number} amount - The discount amount (may be positive or negative)
+     * @returns {string} Formatted currency string with negative sign
+     * TODO: W-18991018 Remove Math.abs and have consistent discounts from actions
+     */
+    formatDiscount(amount) {
+        if (amount === null || amount === undefined || Number.isNaN(amount) || typeof amount !== 'number') {
+            return `-${this.formatPrice(0, this.currencyCode)}`;
+        }
+        const absoluteValue = Math.abs(amount);
+        return `-${this.formatPrice(absoluteValue, this.currencyCode)}`;
+    }
+
+    /**
      * Gets the formatted subtotal amount for the totals section.
      * @returns {string} Formatted currency string for the subtotal
      */
@@ -147,11 +172,9 @@ export default class SummaryDetails extends LightningElement {
     /**
      * Gets the formatted promotions amount, displayed as a negative value if applicable.
      * @returns {string} Formatted currency string for promotions
-     * TODO: W-18991018 Remove Math.abs and have consistent discounts from actions
      */
     get promotions() {
-        const promotions = this.details.promotionsDiscount;
-        return `-${this.formatPrice(Math.abs(promotions), this.currencyCode)}`;
+        return this.formatDiscount(this.details.promotionsDiscount);
     }
 
     /**
@@ -169,11 +192,17 @@ export default class SummaryDetails extends LightningElement {
     /**
      * Gets the formatted shipping discount amount, displayed as a negative value if applicable.
      * @returns {string} Formatted currency string for shipping discount
-     * TODO: W-18991018 Remove Math.abs and have consistent discounts from actions
      */
     get shippingDiscount() {
-        const discount = this.details.shippingDiscount;
-        return `-${this.formatPrice(Math.abs(discount), this.currencyCode)}`;
+        return this.formatDiscount(this.details.shippingDiscount);
+    }
+
+    /**
+     * Gets the formatted coupon discount amount, displayed as a negative value if applicable.
+     * @returns {string} Formatted currency string for coupon discount
+     */
+    get couponsDiscount() {
+        return this.formatDiscount(this.details.couponsDiscount);
     }
 
     /**
@@ -202,6 +231,51 @@ export default class SummaryDetails extends LightningElement {
      */
     get hasShippingDiscount() {
         return !!this.details?.shippingDiscount;
+    }
+
+    /**
+     * Indicates if there is a coupon discount to display.
+     * @returns {boolean} True if coupon discount amount is not null or undefined
+     */
+    get hasCouponsDiscount() {
+        const isCouponFeatureShown = this.details?.flags?.isCouponFeatureEnabled ?? false;
+        return isCouponFeatureShown && !!this.details?.couponsDiscount;
+    }
+
+    /**
+     * Gets the count of valid applied coupons.
+     * @returns {number} Count of valid coupons
+     */
+    @api
+    get couponsAppliedCount() {
+        const coupons = this.details?.couponsApplied;
+        if (!Array.isArray(coupons)) return 0;
+
+        return coupons.filter((coupon) => coupon && typeof coupon === 'string' && coupon.trim().length > 0).length;
+    }
+
+    /**
+     * Gets the comma-separated list of applied coupons.
+     * @returns {string} Comma-separated coupon names
+     */
+    @api
+    get couponsApplied() {
+        const coupons = this.details?.couponsApplied;
+        if (!Array.isArray(coupons)) return '';
+
+        return coupons
+            .filter((coupon) => coupon && typeof coupon === 'string' && coupon.trim().length > 0)
+            .map((coupon) => coupon.trim())
+            .join(', ');
+    }
+
+    /**
+     * Indicates if there are any applied coupons to display.
+     * @returns {boolean} True if couponsApplied array has at least one valid (non-empty, non-whitespace) item
+     */
+    get hasCouponsApplied() {
+        const isCouponFeatureShown = this.details?.flags?.isCouponFeatureEnabled ?? false;
+        return isCouponFeatureShown && this.couponsAppliedCount > 0;
     }
 
     /**

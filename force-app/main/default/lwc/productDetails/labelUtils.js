@@ -8,52 +8,43 @@
 
 /*
  * @description Label functions and helper utilities for productDetails
+ * Uses shared labelService for translation logic
  */
 
+import { getTranslatedLabel } from 'c/labelService';
 import { LABEL_DATA } from './labels';
 
-// Helper function to get translated label using shared utility
-/**
- * Gets a translated label for the given key and locale
- * @param {string} labelKey - The key to look up in the label data
- * @param {string} locale - The locale code (e.g., 'en-US', 'es-ES', 'fr-FR')
- * @returns {string} The translated label or fallback value
- */
-function getTranslatedLabel(labelKey, locale = 'en_US') {
-    const label = LABEL_DATA[labelKey];
-    if (label && label[locale]) {
-        return label[locale];
-    }
-    if (label && label.en_US) {
-        return label.en_US;
-    }
-    return labelKey;
-}
-
 // Export individual label functions
-export const addToCartAssistiveText = (locale) => getTranslatedLabel('Product_addToCartAssistiveText', locale);
-export const quantityLabelAssistiveText = (locale) => getTranslatedLabel('Product_quantityLabelAssistiveText', locale);
-export const currentPriceAssistiveText = (locale) => getTranslatedLabel('Product_currentPriceAssistiveText', locale);
-export const originalPriceAssistiveText = (locale) => getTranslatedLabel('Product_originalPriceAssistiveText', locale);
+export const addToCartAssistiveText = (locale) =>
+    getTranslatedLabel('Product_addToCartAssistiveText', LABEL_DATA, locale);
+export const quantityLabelAssistiveText = (locale) =>
+    getTranslatedLabel('Product_quantityLabelAssistiveText', LABEL_DATA, locale);
+export const currentPriceAssistiveText = (locale) =>
+    getTranslatedLabel('Product_currentPriceAssistiveText', LABEL_DATA, locale);
+export const originalPriceAssistiveText = (locale) =>
+    getTranslatedLabel('Product_originalPriceAssistiveText', LABEL_DATA, locale);
 export const pricingSectionAssistiveText = (locale) =>
-    getTranslatedLabel('Product_pricingSectionAssistiveText', locale);
+    getTranslatedLabel('Product_pricingSectionAssistiveText', LABEL_DATA, locale);
 export const featuresSectionAssistiveText = (locale) =>
-    getTranslatedLabel('Product_featuresSectionAssistiveText', locale);
+    getTranslatedLabel('Product_featuresSectionAssistiveText', LABEL_DATA, locale);
 export const variantsSectionAssistiveText = (locale) =>
-    getTranslatedLabel('Product_variantsSectionAssistiveText', locale);
+    getTranslatedLabel('Product_variantsSectionAssistiveText', LABEL_DATA, locale);
 export const quantitySectionAssistiveText = (locale) =>
-    getTranslatedLabel('Product_quantitySectionAssistiveText', locale);
+    getTranslatedLabel('Product_quantitySectionAssistiveText', LABEL_DATA, locale);
 export const quantityControlsAssistiveText = (locale) =>
-    getTranslatedLabel('Product_quantityControlsAssistiveText', locale);
+    getTranslatedLabel('Product_quantityControlsAssistiveText', LABEL_DATA, locale);
 export const decreaseQuantityAssistiveText = (locale) =>
-    getTranslatedLabel('Product_decreaseQuantityAssistiveText', locale);
+    getTranslatedLabel('Product_decreaseQuantityAssistiveText', LABEL_DATA, locale);
 export const increaseQuantityAssistiveText = (locale) =>
-    getTranslatedLabel('Product_increaseQuantityAssistiveText', locale);
-export const loadingSpinnerAltText = (locale) => getTranslatedLabel('Product_loadingSpinnerAltText', locale);
+    getTranslatedLabel('Product_increaseQuantityAssistiveText', LABEL_DATA, locale);
+export const loadingSpinnerAltText = (locale) =>
+    getTranslatedLabel('Product_loadingSpinnerAltText', LABEL_DATA, locale);
 
 // Additional labels that might be useful
-export const quantityLabelText = (locale) => getTranslatedLabel('Product_quantityLabelText', locale);
-export const originalPriceLabelText = (locale) => getTranslatedLabel('Product_originalPriceLabelText', locale);
-export const currentPriceLabelText = (locale) => getTranslatedLabel('Product_currentPriceLabelText', locale);
+export const quantityLabelText = (locale) => getTranslatedLabel('Product_quantityLabelText', LABEL_DATA, locale);
+export const originalPriceLabelText = (locale) =>
+    getTranslatedLabel('Product_originalPriceLabelText', LABEL_DATA, locale);
+export const currentPriceLabelText = (locale) =>
+    getTranslatedLabel('Product_currentPriceLabelText', LABEL_DATA, locale);
 export const strikethroughAssistiveText = (locale) =>
-    getTranslatedLabel('Product_Pricing_strikethroughAssistiveText', locale);
+    getTranslatedLabel('Product_Pricing_strikethroughAssistiveText', LABEL_DATA, locale);

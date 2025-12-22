@@ -13,27 +13,6 @@
 // Label data with multi-locale support
 export const LABEL_DATA = {
     // TextMessage Labels
-    TextMessage_categoryRecommendations: {
-        en_US: '{0} for category {1} ({2})',
-        en_GB: '{0} for category {1} ({2})',
-        en: '{0} for category {1} ({2})',
-        de: '{0} für die Kategorie {1} ({2})',
-        es: '{0} para la categoría {1} ({2})',
-        fr: '{0} pour la catégorie {1} ({2})',
-        it: '{0} per la categoria {1} ({2})',
-        ja: 'カテゴリ{1}向けの{0}（{2}）',
-        ko: '{1} 카테고리용 {0} ({2})',
-        nl: '{0} voor categorie {1} ({2})',
-        no: '{0} for kategori {1} ({2})',
-        pl: '{0} dla kategorii {1} ({2})',
-        pt_BR: '{0} para a categoria {1} ({2})',
-        sv: '{0} för kategori {1} ({2})',
-        da: '{0} for kategori {1} ({2})',
-        fi: '{0} luokalle {1} ({2})',
-        zh_CN: '{0}（类别 {1}，{2}）',
-        zh_TW: '{0}（類別 {1}，{2}）',
-    },
-
     TextMessage_productSelection: {
         en_US: 'Show me details about {0} ({1})',
         en_GB: 'Show me details about {0} ({1})',
@@ -95,6 +74,27 @@ export const LABEL_DATA = {
         fi: 'Lisää {0} ostoskoriin ({1})',
         zh_CN: '将 {0} 加入购物车（{1}）',
         zh_TW: '將 {0} 加入購物車（{1}）',
+    },
+
+    TextMessage_applyCouponCode: {
+        en_US: 'Apply coupon code {0}',
+        en_GB: 'Apply coupon code {0}',
+        en: 'Apply coupon code {0}',
+        de: 'Gutscheincode {0} anwenden',
+        es: 'Aplicar código de cupón {0}',
+        fr: 'Appliquer le code de coupon {0}',
+        it: 'Applica il codice coupon {0}',
+        ja: 'クーポンコード {0} を適用',
+        ko: '쿠폰 코드 {0} 적용',
+        nl: 'Couponcode {0} toepassen',
+        no: 'Bruk kupongkode {0}',
+        pl: 'Zastosuj kod kuponu {0}',
+        pt_BR: 'Aplicar código de cupom {0}',
+        sv: 'Använd kupongkod {0}',
+        da: 'Anvend kuponkode {0}',
+        fi: 'Käytä kuponkikoodia {0}',
+        zh_CN: '应用优惠券代码 {0}',
+        zh_TW: '套用優惠券代碼 {0}',
     },
 
     TextMessage_invalidResponseMessage: {

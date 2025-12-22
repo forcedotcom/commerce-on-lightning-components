@@ -57,6 +57,8 @@ describe('c-summary-details labelUtils', () => {
         expect(Labels.totalLabel('xyz')).toBe('Total');
         expect(Labels.tbdLabel('xyz')).toBe('TBD');
         expect(Labels.freeShippingLabel('xyz')).toBe('Free');
+        expect(Labels.couponsDiscountLabel('unsupported_locale')).toBe('Coupon Discount');
+        expect(Labels.couponsAppliedLabel('unsupported_locale')).toBe('Coupon Applied');
     });
 
     it('should test all exported label functions for consistency', () => {
@@ -82,6 +84,10 @@ describe('c-summary-details labelUtils', () => {
         expect(Labels.orderTotalsAssistiveText('en_US')).toBe('Order Total Breakdown');
         expect(Labels.cartTotalsAssistiveText('en_US')).toBe('Cart Total Breakdown');
         expect(Labels.orderIdLabel('en_US')).toBe('Order ID');
+        expect(Labels.couponsDiscountLabel('en_US')).toBe('Coupon Discount');
+        expect(Labels.couponsAppliedLabel('en_US')).toBe('Coupon Applied');
+        expect(Labels.couponsDiscountLabelPlural('en_US')).toBe('Coupons Discount');
+        expect(Labels.couponsAppliedLabelPlural('en_US')).toBe('Coupons Applied');
     });
 
     it('should test final fallback branch with missing English translation', () => {

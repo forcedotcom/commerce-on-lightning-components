@@ -50,6 +50,10 @@
     /* Caret */
     --ref-c-summary-details-caret-min-width: 24px;
 
+    /* Value wrapping */
+    --ref-c-summary-details-value-max-width: 200px;
+    --ref-c-summary-details-value-max-width-viewport: 40vw;
+
     /* Footer */
     --ref-c-summary-details-footer-font-size: 14px;
     --ref-c-summary-details-footer-color: #444444;
@@ -127,6 +131,10 @@
 
 .summary-row {
     font-size: var(--ref-c-summary-details-row-font-size);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+    align-items: start;
 }
 
 .summary-label {
@@ -135,6 +143,7 @@
     font-weight: 400;
     line-height: 20px;
     letter-spacing: var(--ref-c-summary-details-letter-spacing);
+    grid-column: 1;
 }
 
 .summary-value {
@@ -144,6 +153,14 @@
     font-size: var(--ref-c-summary-details-value-font-size);
     line-height: 20px;
     letter-spacing: var(--ref-c-summary-details-letter-spacing);
+    grid-column: 2;
+    text-align: right;
+}
+
+.summary-value.wrapped-value {
+    white-space: normal;
+    word-break: break-word;
+    max-width: min(var(--ref-c-summary-details-value-max-width), var(--ref-c-summary-details-value-max-width-viewport));
 }
 
 .summary-row.total {
@@ -152,6 +169,18 @@
     font-weight: var(--ref-c-summary-details-total-font-weight);
     line-height: var(--ref-c-summary-details-total-line-height);
     letter-spacing: var(--ref-c-summary-details-letter-spacing);
+}
+
+.total-label,
+.total-value {
+    font-size: var(--ref-c-summary-details-total-font-size);
+    color: var(--ref-c-summary-details-total-color);
+    font-weight: var(--ref-c-summary-details-total-font-weight);
+    line-height: var(--ref-c-summary-details-total-line-height);
+}
+
+.total-value {
+    text-align: right;
 }
 
 .order-id-label {

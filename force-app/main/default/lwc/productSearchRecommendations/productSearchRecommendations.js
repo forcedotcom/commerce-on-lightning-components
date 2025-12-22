@@ -8,10 +8,10 @@
 import { LightningElement, api } from 'lwc';
 
 /**
- * ProductSearchRecommendations displays a horizontally scrolling carousel of product recommendations
- * and a set of category suggestion buttons. Used in conversational commerce flows.
+ * ProductSearchRecommendations displays a horizontally scrolling carousel of product recommendations.
+ * Used in conversational commerce flows for product recommendations.
  *
- * Emits 'selectcategory' and 'showproduct' events for parent handling.
+ * Emits 'showproduct' events for parent handling.
  */
 export default class productSearchRecommendations extends LightningElement {
     static renderMode = 'light';
@@ -43,31 +43,18 @@ export default class productSearchRecommendations extends LightningElement {
     @api productsDescription = '';
 
     /**
-     * Array of category data objects for suggestion buttons.
-     * @type {Array}
-     */
-    @api categoryData = [];
-
-    /**
-     * Description text shown above the category buttons.
-     * @type {string}
-     */
-    @api categoriesDescription = '';
-
-    /**
-     * Controls whether category recommendations should be displayed.
-     * Defaults to false (categories hidden by default).
-     * @type {boolean}
-     */
-    @api showCategoryRecommendations = false;
-
-    /**
      * Controls whether show more products should be displayed.
      * Defaults to false (show more products hidden by default).
      * @type {boolean}
      */
     @api
     showMoreProducts = false;
+
+    /**
+     * Configuration object containing suggested action description and options.
+     * @type {object}
+     */
+    @api suggestedActions = {};
 
     /**
      * Determines if there are product recommendations to display.
@@ -78,20 +65,26 @@ export default class productSearchRecommendations extends LightningElement {
     }
 
     /**
-     * Determines if there are category recommendations to display.
-     * Checks both the presence of category data AND the showCategoryRecommendations flag.
-     * @returns {boolean} True if there are category recommendations and they should be shown.
+     * Determines if there are any recommendations to display (products).
+     * @returns {boolean} True if there are product.
      */
-    get hasCategoryRecommendations() {
-        return this.showCategoryRecommendations && Array.isArray(this.categoryData) && this.categoryData.length > 0;
+    get hasRecommendations() {
+        return this.hasProductRecommendations;
     }
 
     /**
-     * Determines if there are any recommendations to display (products or categories).
-     * @returns {boolean} True if there are product or category recommendations.
+     * Determines if there are suggested actions to display.
+     * @returns {boolean} True if there are suggested actions with description and options.
      */
-    get hasRecommendations() {
-        return this.hasProductRecommendations || this.hasCategoryRecommendations;
+    @api
+    get hasSuggestedActions() {
+        return (
+            this.suggestedActions &&
+            typeof this.suggestedActions === 'object' &&
+            this.suggestedActions.description &&
+            Array.isArray(this.suggestedActions.options) &&
+            this.suggestedActions.options.length > 0
+        );
     }
 
     /**
@@ -111,26 +104,6 @@ export default class productSearchRecommendations extends LightningElement {
 
             return transformedProduct;
         });
-    }
-
-    /**
-     * Handles category button click, emitting 'selectcategory' with name and id.
-     * @param {Event} event - The click event from the category button.
-     */
-    handleSelectCategory(event) {
-        const categoryName = event.target.name;
-        const categoryId = event.target.dataset.id;
-
-        if (categoryName && categoryId) {
-            this.dispatchEvent(
-                new CustomEvent('selectcategory', {
-                    detail: {
-                        name: categoryName,
-                        id: categoryId,
-                    },
-                })
-            );
-        }
     }
 
     /**
@@ -156,6 +129,24 @@ export default class productSearchRecommendations extends LightningElement {
                     detail: eventDetail,
                 })
             );
+        }
+    }
+
+    /**
+     * Handles option button click, emitting 'selectoption' with displayValue and utterance.
+     * @param {Event} event - The click event from the option button.
+     */
+    handleSelectOption(event) {
+        const optionDisplayValue = event.target.name;
+        const utterance = event.target.dataset.utterance;
+
+        if (optionDisplayValue && utterance) {
+            const eventDetail = {
+                displayValue: optionDisplayValue,
+                utterance: utterance,
+            };
+
+            this.dispatchEvent(new CustomEvent('selectoption', { detail: eventDetail }));
         }
     }
 }

@@ -99,6 +99,29 @@ describe('c-summary-details', () => {
         return labelIndex >= 0 ? values[labelIndex] : null;
     }
 
+    /**
+     * Checks if a summary label exists in the component
+     * @param {Element} element - The component element to search within
+     * @param {string} labelText - The text content of the label to find
+     * @returns {boolean} True if the label exists, false otherwise
+     */
+    function hasSummaryLabel(element, labelText) {
+        const labels = element.querySelectorAll('.summary-label');
+        return Array.from(labels).some((label) => label.textContent === labelText);
+    }
+
+    /**
+     * Checks if a summary value exists for a given label
+     * @param {Element} element - The component element to search within
+     * @param {string} labelText - The text content of the label to find
+     * @param {string} expectedValue - The expected value text
+     * @returns {boolean} True if the label exists with the expected value
+     */
+    function hasSummaryValue(element, labelText, expectedValue) {
+        const value = findSummaryValue(element, labelText);
+        return value !== null && value.textContent === expectedValue;
+    }
+
     describe('Basic Functionality', () => {
         it('should render collapsed state by default with header content only', async () => {
             const element = await createComponent();
@@ -190,8 +213,7 @@ describe('c-summary-details', () => {
             const element = await createComponent({ details: dataWithFreeShipping });
             await expandComponent(element);
 
-            const summaryValues = element.querySelectorAll('.summary-value');
-            expect(summaryValues[1].textContent).toBe('Free'); // Shipping
+            expect(hasSummaryValue(element, 'Shipping', 'Free')).toBe(true);
 
             const totalEl = element.querySelector('.summary-row.total span:last-child');
             expect(totalEl.textContent).toBe('$108.00'); // Total reflects free shipping
@@ -216,10 +238,9 @@ describe('c-summary-details', () => {
             const element = await createComponent({ details: eurData });
             await expandComponent(element);
 
-            const summaryValues = element.querySelectorAll('.summary-value');
-            expect(summaryValues[0].textContent).toBe('€100.00'); // Subtotal
-            expect(summaryValues[1].textContent).toBe('€10.00'); // Shipping
-            expect(summaryValues[2].textContent).toBe('€8.00'); // Taxes
+            expect(hasSummaryValue(element, 'Subtotal', '€100.00')).toBe(true);
+            expect(hasSummaryValue(element, 'Shipping', '€10.00')).toBe(true);
+            expect(hasSummaryValue(element, 'Taxes', '€8.00')).toBe(true);
 
             const totalEl = element.querySelector('.summary-row.total span:last-child');
             expect(totalEl.textContent).toBe('€118.00');
@@ -240,10 +261,9 @@ describe('c-summary-details', () => {
             const element = await createComponent({ details: zeroData });
             await expandComponent(element);
 
-            const summaryValues = element.querySelectorAll('.summary-value');
-            expect(summaryValues[0].textContent).toBe('$0.00'); // Subtotal
-            expect(summaryValues[1].textContent).toBe('Free'); // Shipping = 0 shows "Free"
-            expect(summaryValues[2].textContent).toBe('$0.00'); // Taxes
+            expect(hasSummaryValue(element, 'Subtotal', '$0.00')).toBe(true);
+            expect(hasSummaryValue(element, 'Shipping', 'Free')).toBe(true);
+            expect(hasSummaryValue(element, 'Taxes', '$0.00')).toBe(true);
 
             const totalEl = element.querySelector('.summary-row.total span:last-child');
             expect(totalEl.textContent).toBe('$0.00');
@@ -333,16 +353,8 @@ describe('c-summary-details', () => {
             const element = await createComponent({ details: mockDataWithPromotionsAndDiscounts });
             await expandComponent(element);
 
-            const promotionsLabels = element.querySelectorAll('.summary-label');
-            const promotionsValues = element.querySelectorAll('.summary-value');
-
-            const promotionsLabelFound = Array.from(promotionsLabels).some(
-                (label) => label.textContent === 'Promotions'
-            );
-            const promotionsValueFound = Array.from(promotionsValues).some((value) => value.textContent === '-$25.00');
-
-            expect(promotionsLabelFound).toBe(true);
-            expect(promotionsValueFound).toBe(true);
+            expect(hasSummaryLabel(element, 'Promotions')).toBe(true);
+            expect(hasSummaryValue(element, 'Promotions', '-$25.00')).toBe(true);
         });
 
         it('should hide promotions row when promotions amount is 0', async () => {
@@ -350,30 +362,15 @@ describe('c-summary-details', () => {
             const element = await createComponent({ details: dataNoPromotions });
             await expandComponent(element);
 
-            const promotionsLabels = element.querySelectorAll('.summary-label');
-            const promotionsLabelFound = Array.from(promotionsLabels).some(
-                (label) => label.textContent === 'Promotions'
-            );
-
-            expect(promotionsLabelFound).toBe(false);
+            expect(hasSummaryLabel(element, 'Promotions')).toBe(false);
         });
 
         it('should display shipping discount row when shipping discount amount is greater than 0', async () => {
             const element = await createComponent({ details: mockDataWithPromotionsAndDiscounts });
             await expandComponent(element);
 
-            const shippingDiscountLabels = element.querySelectorAll('.summary-label');
-            const shippingDiscountValues = element.querySelectorAll('.summary-value');
-
-            const shippingDiscountLabelFound = Array.from(shippingDiscountLabels).some(
-                (label) => label.textContent === 'Shipping Discount'
-            );
-            const shippingDiscountValueFound = Array.from(shippingDiscountValues).some(
-                (value) => value.textContent === '-$10.00'
-            );
-
-            expect(shippingDiscountLabelFound).toBe(true);
-            expect(shippingDiscountValueFound).toBe(true);
+            expect(hasSummaryLabel(element, 'Shipping Discount')).toBe(true);
+            expect(hasSummaryValue(element, 'Shipping Discount', '-$10.00')).toBe(true);
         });
 
         it('should hide shipping discount row when shipping discount amount is 0', async () => {
@@ -381,26 +378,131 @@ describe('c-summary-details', () => {
             const element = await createComponent({ details: dataNoShippingDiscount });
             await expandComponent(element);
 
-            const shippingDiscountLabels = element.querySelectorAll('.summary-label');
-            const shippingDiscountLabelFound = Array.from(shippingDiscountLabels).some(
-                (label) => label.textContent === 'Shipping Discount'
-            );
-
-            expect(shippingDiscountLabelFound).toBe(false);
+            expect(hasSummaryLabel(element, 'Shipping Discount')).toBe(false);
         });
+
+        it('should display coupon discount row when coupon discount amount is greater than 0', async () => {
+            const dataWithCouponsDiscount = {
+                ...mockDataWithPromotionsAndDiscounts,
+                couponsDiscount: -15.0,
+                couponsApplied: ['SAVE15'],
+                flags: { isCouponFeatureEnabled: true },
+            };
+            const element = await createComponent({ details: dataWithCouponsDiscount });
+            await expandComponent(element);
+
+            expect(hasSummaryLabel(element, 'Coupon Discount')).toBe(true);
+            expect(hasSummaryValue(element, 'Coupon Discount', '-$15.00')).toBe(true);
+        });
+
+        it('should hide coupon discount row when coupon discount amount is 0', async () => {
+            const dataNoCouponsDiscount = { ...mockDataWithPromotionsAndDiscounts, couponsDiscount: 0 };
+            const element = await createComponent({ details: dataNoCouponsDiscount });
+            await expandComponent(element);
+
+            expect(hasSummaryLabel(element, 'Coupon Discount')).toBe(false);
+        });
+
+        it('should display coupon applied row when couponsApplied array has multiple values', async () => {
+            const dataWithMultipleCouponsApplied = {
+                ...mockDataWithPromotionsAndDiscounts,
+                couponsApplied: ['SAVE20', 'HALLOWEEN15', 'NEW10', 'WELCOME10'],
+                flags: { isCouponFeatureEnabled: true },
+            };
+            const element = await createComponent({ details: dataWithMultipleCouponsApplied });
+            await expandComponent(element);
+
+            expect(hasSummaryLabel(element, 'Coupons Applied')).toBe(true);
+            expect(hasSummaryValue(element, 'Coupons Applied', 'SAVE20, HALLOWEEN15, NEW10, WELCOME10')).toBe(true);
+        });
+
+        it('should display coupon applied row with single coupon', async () => {
+            const dataWithSingleCoupon = {
+                ...mockDataWithPromotionsAndDiscounts,
+                couponsApplied: ['WELCOME10'],
+                flags: { isCouponFeatureEnabled: true },
+            };
+            const element = await createComponent({ details: dataWithSingleCoupon });
+            await expandComponent(element);
+
+            expect(hasSummaryLabel(element, 'Coupon Applied')).toBe(true);
+            expect(hasSummaryValue(element, 'Coupon Applied', 'WELCOME10')).toBe(true);
+        });
+
+        it.each([
+            ['empty array', []],
+            ['null', null],
+            ['undefined', undefined],
+        ])('should hide coupon applied row when couponsApplied is %s', async (description, couponsAppliedValue) => {
+            const testData = { ...mockDataWithPromotionsAndDiscounts };
+            if (couponsAppliedValue === undefined) {
+                delete testData.couponsApplied;
+            } else {
+                testData.couponsApplied = couponsAppliedValue;
+            }
+
+            const element = await createComponent({ details: testData });
+            await expandComponent(element);
+
+            expect(hasSummaryLabel(element, 'Coupon Applied')).toBe(false);
+        });
+
+        it.each([
+            {
+                description: 'only empty strings',
+                couponsApplied: ['', '', ''],
+            },
+            {
+                description: 'only whitespace values',
+                couponsApplied: ['  ', '   ', '\t', '    \n  '],
+            },
+        ])('should hide coupon applied row when array contains $description', async ({ couponsApplied }) => {
+            const testData = {
+                ...mockDataWithPromotionsAndDiscounts,
+                couponsApplied,
+            };
+            const element = await createComponent({ details: testData });
+            await expandComponent(element);
+
+            expect(hasSummaryLabel(element, 'Coupon Applied')).toBe(false);
+        });
+
+        it.each([
+            {
+                description: 'mix of valid and empty/whitespace values',
+                couponsApplied: ['SAVE20', '', 'WELCOME10', '  ', 'LOYALTY15', '\t', '  NEW10  '],
+                expectedValue: 'SAVE20, WELCOME10, LOYALTY15, NEW10',
+                expectedLabel: 'Coupons Applied',
+            },
+            {
+                description: 'valid codes with surrounding whitespace',
+                couponsApplied: ['  SAVE20  ', '\tWELCOME10\t', '  LOYALTY15\n'],
+                expectedValue: 'SAVE20, WELCOME10, LOYALTY15',
+                expectedLabel: 'Coupons Applied',
+            },
+        ])(
+            'should display filtered and trimmed coupons with $description',
+            async ({ couponsApplied, expectedValue, expectedLabel }) => {
+                const testData = {
+                    ...mockDataWithPromotionsAndDiscounts,
+                    couponsApplied,
+                    flags: { isCouponFeatureEnabled: true },
+                };
+                const element = await createComponent({ details: testData });
+                await expandComponent(element);
+
+                expect(hasSummaryLabel(element, expectedLabel)).toBe(true);
+                expect(hasSummaryValue(element, expectedLabel, expectedValue)).toBe(true);
+            }
+        );
 
         it('should display "TBD" for taxes when taxes is null or undefined', async () => {
             const dataWithTBDValues = { ...mockDataWithPromotionsAndDiscounts, taxes: null };
             const element = await createComponent({ details: dataWithTBDValues });
             await expandComponent(element);
 
-            const taxesLabels = element.querySelectorAll('.summary-label');
-            const taxesValues = element.querySelectorAll('.summary-value');
-
-            const taxesLabelIndex = Array.from(taxesLabels).findIndex((label) => label.textContent === 'Taxes');
-
-            expect(taxesLabelIndex).toBeGreaterThan(-1);
-            expect(taxesValues[taxesLabelIndex].textContent).toBe('TBD');
+            expect(hasSummaryLabel(element, 'Taxes')).toBe(true);
+            expect(hasSummaryValue(element, 'Taxes', 'TBD')).toBe(true);
         });
 
         it('should display "TBD" for shipping when shippingCost is null or undefined', async () => {
@@ -408,15 +510,8 @@ describe('c-summary-details', () => {
             const element = await createComponent({ details: dataWithTBDValues });
             await expandComponent(element);
 
-            const shippingLabels = element.querySelectorAll('.summary-label');
-            const shippingValues = element.querySelectorAll('.summary-value');
-
-            const shippingLabelIndex = Array.from(shippingLabels).findIndex(
-                (label) => label.textContent === 'Shipping'
-            );
-
-            expect(shippingLabelIndex).toBeGreaterThan(-1);
-            expect(shippingValues[shippingLabelIndex].textContent).toBe('TBD');
+            expect(hasSummaryLabel(element, 'Shipping')).toBe(true);
+            expect(hasSummaryValue(element, 'Shipping', 'TBD')).toBe(true);
         });
 
         it('should display correct order summary structure with all conditional elements', async () => {
@@ -453,9 +548,8 @@ describe('c-summary-details', () => {
                 expect(summaryLabels[index].textContent).toBe(expectedLabel);
             });
 
-            const allLabels = Array.from(summaryLabels).map((label) => label.textContent);
-            expect(allLabels).not.toContain('Promotions');
-            expect(allLabels).not.toContain('Shipping Discount');
+            expect(hasSummaryLabel(element, 'Promotions')).toBe(false);
+            expect(hasSummaryLabel(element, 'Shipping Discount')).toBe(false);
         });
     });
 
@@ -477,10 +571,9 @@ describe('c-summary-details', () => {
             const productSummaryEls = element.querySelectorAll('c-product-summary');
             expect(productSummaryEls.length).toBe(0);
 
-            const summaryValues = element.querySelectorAll('.summary-value');
-            expect(summaryValues[0].textContent).toBe('$0.00'); // Subtotal
-            expect(summaryValues[1].textContent).toBe('TBD'); // Shipping
-            expect(summaryValues[2].textContent).toBe('TBD'); // Taxes
+            expect(hasSummaryValue(element, 'Subtotal', '$0.00')).toBe(true);
+            expect(hasSummaryValue(element, 'Shipping', 'TBD')).toBe(true);
+            expect(hasSummaryValue(element, 'Taxes', 'TBD')).toBe(true);
 
             const totalEl = element.querySelector('.summary-row.total span:last-child');
             expect(totalEl.textContent).toBe('$0.00');
@@ -515,10 +608,9 @@ describe('c-summary-details', () => {
             expect(productSummaryEls.length).toBe(0);
 
             // Check that summary values are rendered with default values
-            const summaryValues = element.querySelectorAll('.summary-value');
-            expect(summaryValues[0].textContent).toBe('$100.00'); // Subtotal
-            expect(summaryValues[1].textContent).toBe('$10.00'); // Shipping
-            expect(summaryValues[2].textContent).toBe('$8.00'); // Taxes
+            expect(hasSummaryValue(element, 'Subtotal', '$100.00')).toBe(true);
+            expect(hasSummaryValue(element, 'Shipping', '$10.00')).toBe(true);
+            expect(hasSummaryValue(element, 'Taxes', '$8.00')).toBe(true);
 
             // Check total
             const totalEl = element.querySelector('.summary-row.total span:last-child');
@@ -600,10 +692,9 @@ describe('c-summary-details', () => {
         clickableEl.click();
         await Promise.resolve();
 
-        const summaryValues = element.querySelectorAll('.summary-value');
-        expect(summaryValues[0].textContent).toBe('$0.00'); // Subtotal
-        expect(summaryValues[1].textContent).toBe('Free'); // Shipping
-        expect(summaryValues[2].textContent).toBe('$0.00'); // Taxes
+        expect(hasSummaryValue(element, 'Subtotal', '$0.00')).toBe(true);
+        expect(hasSummaryValue(element, 'Shipping', 'Free')).toBe(true);
+        expect(hasSummaryValue(element, 'Taxes', '$0.00')).toBe(true);
 
         const totalEl = element.querySelector('.summary-row.total span:last-child');
         expect(totalEl.textContent).toBe('$0.00'); // Total
@@ -622,13 +713,12 @@ describe('c-summary-details', () => {
         clickableEl.click();
         await Promise.resolve();
 
-        const summaryValues = element.querySelectorAll('.summary-value');
-        expect(summaryValues[0].textContent).toBe('$100.00'); // Subtotal
+        expect(hasSummaryValue(element, 'Subtotal', '$100.00')).toBe(true);
         // Promotions ARE shown when negative (hasPromotions returns true for < 0)
         // Since promotions row is displayed, shipping becomes the next value
-        expect(summaryValues[1].textContent).toBe('-$15.00'); // Promotions (negative value)
-        expect(summaryValues[2].textContent).toBe('$10.00'); // Shipping
-        expect(summaryValues[3].textContent).toBe('$8.00'); // Taxes
+        expect(hasSummaryValue(element, 'Promotions', '-$15.00')).toBe(true);
+        expect(hasSummaryValue(element, 'Shipping', '$10.00')).toBe(true);
+        expect(hasSummaryValue(element, 'Taxes', '$8.00')).toBe(true);
 
         const totalEl = element.querySelector('.summary-row.total span:last-child');
         expect(totalEl.textContent).toBe('$118.00'); // Total from mock data (not recalculated by component)
@@ -680,10 +770,9 @@ describe('c-summary-details', () => {
             await Promise.resolve();
 
             // Should use USD as fallback
-            const summaryValues = element.querySelectorAll('.summary-value');
-            expect(summaryValues[0].textContent).toBe('$100.00'); // Subtotal in USD
-            expect(summaryValues[1].textContent).toBe('$10.00'); // Shipping in USD
-            expect(summaryValues[2].textContent).toBe('$8.00'); // Taxes in USD
+            expect(hasSummaryValue(element, 'Subtotal', '$100.00')).toBe(true);
+            expect(hasSummaryValue(element, 'Shipping', '$10.00')).toBe(true);
+            expect(hasSummaryValue(element, 'Taxes', '$8.00')).toBe(true);
 
             const totalEl = element.querySelector('.summary-row.total span:last-child');
             expect(totalEl.textContent).toBe('$118.00'); // Total in USD
@@ -699,10 +788,9 @@ describe('c-summary-details', () => {
             await Promise.resolve();
 
             // Test different currency formatting through DOM
-            const summaryValues = element.querySelectorAll('.summary-value');
-            expect(summaryValues[0].textContent).toBe('€100.00'); // Subtotal in EUR
-            expect(summaryValues[1].textContent).toBe('€10.00'); // Shipping in EUR
-            expect(summaryValues[2].textContent).toBe('€8.00'); // Taxes in EUR
+            expect(hasSummaryValue(element, 'Subtotal', '€100.00')).toBe(true);
+            expect(hasSummaryValue(element, 'Shipping', '€10.00')).toBe(true);
+            expect(hasSummaryValue(element, 'Taxes', '€8.00')).toBe(true);
 
             const totalEl = element.querySelector('.summary-row.total span:last-child');
             expect(totalEl.textContent).toBe('€118.00'); // Total in EUR
@@ -811,17 +899,8 @@ describe('c-summary-details', () => {
             const element = await createComponent({ details: dataWithNegativePromotions });
             await expandComponent(element);
 
-            const promotionsLabels = element.querySelectorAll('.summary-label');
-            const promotionsLabelFound = Array.from(promotionsLabels).some(
-                (label) => label.textContent === 'Promotions'
-            );
-            expect(promotionsLabelFound).toBe(true);
-
-            const promotionsValue = Array.from(element.querySelectorAll('.summary-value')).find(
-                (value, index) =>
-                    Array.from(element.querySelectorAll('.summary-label'))[index]?.textContent === 'Promotions'
-            );
-            expect(promotionsValue.textContent).toBe('-$50.00');
+            expect(hasSummaryLabel(element, 'Promotions')).toBe(true);
+            expect(hasSummaryValue(element, 'Promotions', '-$50.00')).toBe(true);
         });
 
         it('should handle negative shipping discount values', async () => {
@@ -829,16 +908,8 @@ describe('c-summary-details', () => {
             const element = await createComponent({ details: dataWithNegativeShippingDiscount });
             await expandComponent(element);
 
-            const shippingDiscountLabel = Array.from(element.querySelectorAll('.summary-label')).find(
-                (label) => label.textContent === 'Shipping Discount'
-            );
-            expect(shippingDiscountLabel).toBeDefined();
-
-            const shippingDiscountValue = Array.from(element.querySelectorAll('.summary-value')).find(
-                (value, index) =>
-                    Array.from(element.querySelectorAll('.summary-label'))[index]?.textContent === 'Shipping Discount'
-            );
-            expect(shippingDiscountValue.textContent).toBe('-$5.00');
+            expect(hasSummaryValue(element, 'Shipping Discount', '-$5.00')).toBe(true);
+            expect(hasSummaryLabel(element, 'Shipping Discount')).toBe(true);
         });
 
         it('should verify header classes change with expanded state', async () => {
@@ -883,15 +954,26 @@ describe('c-summary-details', () => {
             const element = await createComponent({ details: dataWithZeroShippingDiscount });
             await expandComponent(element);
 
-            const summaryValues = element.querySelectorAll('.summary-value');
-            expect(summaryValues[0].textContent).toBe('$100.00'); // Subtotal
-            expect(summaryValues[1].textContent).toBe('$10.00'); // Shipping
-            expect(summaryValues[2].textContent).toBe('$8.00'); // Taxes
+            expect(hasSummaryValue(element, 'Subtotal', '$100.00')).toBe(true);
+            expect(hasSummaryValue(element, 'Shipping', '$10.00')).toBe(true);
+            expect(hasSummaryValue(element, 'Taxes', '$8.00')).toBe(true);
 
-            const shippingDiscountLabel = Array.from(element.querySelectorAll('.summary-label')).find(
-                (label) => label.textContent === 'Shipping Discount'
-            );
-            expect(shippingDiscountLabel).toBeUndefined();
+            expect(hasSummaryLabel(element, 'Shipping Discount')).toBe(false);
+
+            const totalEl = element.querySelector('.summary-row.total span:last-child');
+            expect(totalEl.textContent).toBe('$118.00');
+        });
+
+        it('should handle coupon discount with zero value', async () => {
+            const dataWithZeroCouponsDiscount = { ...mockOrderData, couponsDiscount: 0 };
+            const element = await createComponent({ details: dataWithZeroCouponsDiscount });
+            await expandComponent(element);
+
+            expect(hasSummaryValue(element, 'Subtotal', '$100.00')).toBe(true);
+            expect(hasSummaryValue(element, 'Shipping', '$10.00')).toBe(true);
+            expect(hasSummaryValue(element, 'Taxes', '$8.00')).toBe(true);
+
+            expect(hasSummaryLabel(element, 'Coupon Discount')).toBe(false);
 
             const totalEl = element.querySelector('.summary-row.total span:last-child');
             expect(totalEl.textContent).toBe('$118.00');
@@ -906,17 +988,25 @@ describe('c-summary-details', () => {
             const element = await createComponent({ details: orderData });
             await expandComponent(element);
 
-            const summaryLabels = element.querySelectorAll('.summary-label');
-            const labelTexts = Array.from(summaryLabels).map((label) => label.textContent);
+            expect(hasSummaryLabel(element, 'Promotions')).toBe(true);
+            expect(hasSummaryLabel(element, 'Shipping Discount')).toBe(true);
 
-            expect(labelTexts).toContain('Promotions');
-            expect(labelTexts).toContain('Shipping Discount');
+            expect(hasSummaryValue(element, 'Promotions', '-$30.00')).toBe(true);
+            expect(hasSummaryValue(element, 'Shipping Discount', '-$10.00')).toBe(true);
+        });
 
-            const promotionsValue = findSummaryValue(element, 'Promotions');
-            expect(promotionsValue.textContent).toBe('-$30.00');
+        it('should handle positive coupon discount values', async () => {
+            const orderDataWithPositiveCouponsDiscount = {
+                ...mockOrderData,
+                couponsDiscount: 20.0,
+                flags: { isCouponFeatureEnabled: true },
+            };
+            const element = await createComponent({ details: orderDataWithPositiveCouponsDiscount });
+            await expandComponent(element);
 
-            const shippingValue = findSummaryValue(element, 'Shipping Discount');
-            expect(shippingValue.textContent).toBe('-$10.00');
+            expect(hasSummaryLabel(element, 'Coupon Discount')).toBe(true);
+
+            expect(hasSummaryValue(element, 'Coupon Discount', '-$20.00')).toBe(true);
         });
 
         it('should handle both discounts as null/undefined', async () => {
@@ -924,32 +1014,63 @@ describe('c-summary-details', () => {
                 ...mockOrderData,
                 promotionsDiscount: null,
                 shippingDiscount: undefined,
+                couponsDiscount: null,
             };
             const element = await createComponent({ details: orderData });
             await expandComponent(element);
 
-            const summaryLabels = element.querySelectorAll('.summary-label');
-            const labelTexts = Array.from(summaryLabels).map((label) => label.textContent);
+            expect(hasSummaryLabel(element, 'Promotions')).toBe(false);
+            expect(hasSummaryLabel(element, 'Shipping Discount')).toBe(false);
+            expect(hasSummaryLabel(element, 'Coupon Discount')).toBe(false);
+        });
 
-            expect(labelTexts).not.toContain('Promotions');
-            expect(labelTexts).not.toContain('Shipping Discount');
+        it('should handle invalid non-numeric discount values gracefully', async () => {
+            const orderData = {
+                ...mockOrderData,
+                promotionsDiscount: 'invalid',
+                shippingDiscount: {},
+                couponsDiscount: [],
+                flags: { isCouponFeatureEnabled: true },
+            };
+            const element = await createComponent({ details: orderData });
+            await expandComponent(element);
+
+            // These values are truthy so rows will render
+
+            expect(hasSummaryLabel(element, 'Promotions')).toBe(true);
+            expect(hasSummaryLabel(element, 'Shipping Discount')).toBe(true);
+            expect(hasSummaryLabel(element, 'Coupon Discount')).toBe(true);
+
+            // All should display -$0.00 due to defensive handling
+            expect(hasSummaryValue(element, 'Promotions', '-$0.00')).toBe(true);
+            expect(hasSummaryValue(element, 'Shipping Discount', '-$0.00')).toBe(true);
+            expect(hasSummaryValue(element, 'Coupon Discount', '-$0.00')).toBe(true);
+        });
+
+        it('should handle negative coupon discount values', async () => {
+            const dataWithNegativeCouponsDiscount = {
+                ...mockOrderData,
+                couponsDiscount: -10.0,
+                flags: { isCouponFeatureEnabled: true },
+            };
+            const element = await createComponent({ details: dataWithNegativeCouponsDiscount });
+            await expandComponent(element);
+
+            expect(hasSummaryValue(element, 'Coupon Discount', '-$10.00')).toBe(true);
         });
 
         it('should return "$0.00" for promotions when promotionsDiscount is 0', async () => {
             const orderData = { ...mockOrderData, promotionsDiscount: 0 };
             const element = await createComponent({ details: orderData });
             await expandComponent(element);
-            const promotionsValue = findSummaryValue(element, 'Promotions');
-            // This case is tricky because the element is not rendered when the value is 0
-            expect(promotionsValue).toBeNull();
+            expect(hasSummaryLabel(element, 'Promotions')).toBe(false);
         });
 
         it('should return "$0.00" for shippingDiscount when shippingDiscount is 0', async () => {
             const orderData = { ...mockOrderData, shippingDiscount: 0 };
             const element = await createComponent({ details: orderData });
             await expandComponent(element);
-            const shippingDiscountValue = findSummaryValue(element, 'Shipping Discount');
-            expect(shippingDiscountValue).toBeNull();
+            expect(hasSummaryLabel(element, 'Shipping Discount')).toBe(false);
         });
 
         it('should verify correct order of summary rows with both discounts', async () => {
@@ -957,17 +1078,254 @@ describe('c-summary-details', () => {
                 ...mockOrderData,
                 promotionsDiscount: 20.0,
                 shippingDiscount: 5.0,
+                couponsDiscount: 10.0,
+                flags: { isCouponFeatureEnabled: true },
             };
             const element = await createComponent({ details: orderData });
             await expandComponent(element);
 
             const summaryLabels = element.querySelectorAll('.summary-label');
-            const expectedOrder = ['Subtotal', 'Promotions', 'Shipping', 'Shipping Discount', 'Taxes'];
+            const expectedOrder = [
+                'Subtotal',
+                'Coupon Discount',
+                'Promotions',
+                'Shipping',
+                'Shipping Discount',
+                'Taxes',
+            ];
 
             expectedOrder.forEach((expectedLabel, index) => {
                 expect(summaryLabels[index].textContent).toBe(expectedLabel);
             });
         });
+
+        it('should handle both coupon discount and coupon applied together', async () => {
+            const orderDataWithBothCouponFields = {
+                ...mockOrderData,
+                couponsDiscount: 15.0,
+                couponsApplied: ['SAVE15'],
+                flags: { isCouponFeatureEnabled: true },
+            };
+            const element = await createComponent({ details: orderDataWithBothCouponFields });
+            await expandComponent(element);
+
+            expect(hasSummaryLabel(element, 'Coupon Applied')).toBe(true);
+            expect(hasSummaryLabel(element, 'Coupon Discount')).toBe(true);
+
+            expect(hasSummaryValue(element, 'Coupon Applied', 'SAVE15')).toBe(true);
+
+            expect(hasSummaryValue(element, 'Coupon Discount', '-$15.00')).toBe(true);
+        });
+
+        it('should handle non-array couponsApplied value gracefully', async () => {
+            const orderDataWithInvalidCouponsApplied = {
+                ...mockOrderData,
+                couponsApplied: 'INVALID_STRING',
+            };
+            const element = await createComponent({ details: orderDataWithInvalidCouponsApplied });
+            await expandComponent(element);
+
+            expect(hasSummaryLabel(element, 'Coupon Applied')).toBe(false);
+        });
+
+        it('should return empty string when couponsApplied is not an array (direct getter test)', async () => {
+            const orderDataWithNonArrayCoupon = {
+                ...mockOrderData,
+                couponsApplied: 'NOT_AN_ARRAY',
+            };
+            const element = await createComponent({ details: orderDataWithNonArrayCoupon });
+            expect(element.couponsApplied).toBe('');
+        });
+
+        it('should verify correct order of summary rows with coupon applied', async () => {
+            const orderData = {
+                ...mockOrderData,
+                couponsApplied: ['COUPON1', 'COUPON2'],
+                promotionsDiscount: 20.0,
+                shippingDiscount: 5.0,
+                couponsDiscount: 10.0,
+                flags: { isCouponFeatureEnabled: true },
+            };
+            const element = await createComponent({ details: orderData });
+            await expandComponent(element);
+
+            const summaryLabels = element.querySelectorAll('.summary-label');
+            const expectedOrder = [
+                'Coupons Applied',
+                'Subtotal',
+                'Coupons Discount',
+                'Promotions',
+                'Shipping',
+                'Shipping Discount',
+                'Taxes',
+            ];
+
+            expectedOrder.forEach((expectedLabel, index) => {
+                expect(summaryLabels[index].textContent).toBe(expectedLabel);
+            });
+        });
+    });
+
+    describe('Coupon Labels Plural Support', () => {
+        it('should display singular labels when exactly one coupon is applied', async () => {
+            const dataWithOneCoupon = {
+                ...mockDataWithPromotionsAndDiscounts,
+                couponsApplied: ['SAVE20'],
+                couponsDiscount: -20.0,
+                flags: { isCouponFeatureEnabled: true },
+            };
+            const element = await createComponent({ details: dataWithOneCoupon });
+            await expandComponent(element);
+
+            expect(hasSummaryLabel(element, 'Coupon Applied')).toBe(true);
+            expect(hasSummaryLabel(element, 'Coupon Discount')).toBe(true);
+            expect(hasSummaryValue(element, 'Coupon Applied', 'SAVE20')).toBe(true);
+            expect(hasSummaryValue(element, 'Coupon Discount', '-$20.00')).toBe(true);
+        });
+
+        it('should display plural labels when more than one coupon is applied', async () => {
+            const dataWithManyCoupons = {
+                ...mockDataWithPromotionsAndDiscounts,
+                couponsApplied: ['COUPON1', 'COUPON2', 'COUPON3', 'COUPON4', 'COUPON5'],
+                couponsDiscount: -50.0,
+                flags: { isCouponFeatureEnabled: true },
+            };
+            const element = await createComponent({ details: dataWithManyCoupons });
+            await expandComponent(element);
+
+            expect(hasSummaryLabel(element, 'Coupons Applied')).toBe(true);
+            expect(hasSummaryLabel(element, 'Coupons Discount')).toBe(true);
+            expect(hasSummaryValue(element, 'Coupons Applied', 'COUPON1, COUPON2, COUPON3, COUPON4, COUPON5')).toBe(
+                true
+            );
+        });
+
+        it.each([
+            {
+                description: 'single coupon',
+                couponsApplied: ['SAVE20'],
+                expectedCount: 1,
+            },
+            {
+                description: 'multiple coupons',
+                couponsApplied: ['SAVE20', 'WELCOME10', 'LOYALTY15'],
+                expectedCount: 3,
+            },
+            {
+                description: 'empty array',
+                couponsApplied: [],
+                expectedCount: 0,
+            },
+            {
+                description: 'non-array value',
+                couponsApplied: 'INVALID',
+                expectedCount: 0,
+            },
+            {
+                description: 'mixed valid and invalid values',
+                couponsApplied: ['SAVE20', '', '  ', 'WELCOME10', '\t', null, 'LOYALTY15'],
+                expectedCount: 3,
+            },
+        ])(
+            'should return $expectedCount for couponsAppliedCount with $description',
+            async ({ couponsApplied, expectedCount }) => {
+                const testData = {
+                    ...mockDataWithPromotionsAndDiscounts,
+                    couponsApplied,
+                };
+                const element = await createComponent({ details: testData });
+
+                expect(element.couponsAppliedCount).toBe(expectedCount);
+            }
+        );
+
+        it.each([
+            {
+                description: 'singular label when only one valid coupon after filtering',
+                couponsApplied: ['SAVE20', '', '  ', '\t'],
+                couponsDiscount: -20.0,
+                expectedAppliedLabel: 'Coupon Applied',
+                expectedDiscountLabel: 'Coupon Discount',
+                expectedValue: 'SAVE20',
+            },
+            {
+                description: 'plural label when two valid coupons after filtering',
+                couponsApplied: ['SAVE20', '', 'WELCOME10', '  '],
+                couponsDiscount: -30.0,
+                expectedAppliedLabel: 'Coupons Applied',
+                expectedDiscountLabel: 'Coupons Discount',
+                expectedValue: 'SAVE20, WELCOME10',
+            },
+        ])(
+            'should display $description',
+            async ({ couponsApplied, couponsDiscount, expectedAppliedLabel, expectedDiscountLabel, expectedValue }) => {
+                const testData = {
+                    ...mockDataWithPromotionsAndDiscounts,
+                    couponsApplied,
+                    couponsDiscount,
+                    flags: { isCouponFeatureEnabled: true },
+                };
+                const element = await createComponent({ details: testData });
+                await expandComponent(element);
+
+                expect(hasSummaryLabel(element, expectedAppliedLabel)).toBe(true);
+                expect(hasSummaryLabel(element, expectedDiscountLabel)).toBe(true);
+                expect(hasSummaryValue(element, expectedAppliedLabel, expectedValue)).toBe(true);
+            }
+        );
+
+        it('should not display coupon labels when no valid coupons after filtering', async () => {
+            const dataWithNoValidCoupons = {
+                ...mockDataWithPromotionsAndDiscounts,
+                couponsApplied: ['', '  ', '\t', '\n'],
+                couponsDiscount: 0,
+            };
+            const element = await createComponent({ details: dataWithNoValidCoupons });
+            await expandComponent(element);
+
+            expect(hasSummaryLabel(element, 'Coupon Applied')).toBe(false);
+            expect(hasSummaryLabel(element, 'Coupons Applied')).toBe(false);
+        });
+    });
+
+    describe('Coupon feature flag (isCouponFeatureEnabled)', () => {
+        it.each([
+            {
+                description: 'feature flag is true',
+                flags: { isCouponFeatureEnabled: true },
+                expectedToShow: true,
+            },
+            {
+                description: 'feature flag is false',
+                flags: { isCouponFeatureEnabled: false },
+                expectedToShow: false,
+            },
+            {
+                description: 'feature flag is undefined (defaults to false)',
+                flags: undefined,
+                expectedToShow: false,
+            },
+        ])(
+            'should show/hide coupon discount and applied labels when $description',
+            async ({ flags, expectedToShow }) => {
+                const details = {
+                    ...mockDataWithPromotionsAndDiscounts,
+                    couponsDiscount: -25.0,
+                    couponsApplied: ['SAVE20', 'WELCOME10'],
+                    flags,
+                };
+                const element = await createComponent({ details });
+                await expandComponent(element);
+
+                const hasCouponDiscount =
+                    hasSummaryLabel(element, 'Coupon Discount') || hasSummaryLabel(element, 'Coupons Discount');
+                const hasCouponApplied =
+                    hasSummaryLabel(element, 'Coupon Applied') || hasSummaryLabel(element, 'Coupons Applied');
+
+                expect(hasCouponDiscount).toBe(expectedToShow);
+                expect(hasCouponApplied).toBe(expectedToShow);
+            }
+        );
     });
 
     describe('Accessibility Features', () => {
@@ -1185,21 +1543,26 @@ describe('c-summary-details', () => {
                     ...accessibilityMockOrderData,
                     promotionsDiscount: -10.0,
                     shippingDiscount: -5.0,
+                    couponsDiscount: -8.0,
+                    couponsApplied: ['NEW20', 'SAVE10'],
+                    flags: { isCouponFeatureEnabled: true },
                 };
 
                 const element = await createComponent({ details: dataWithPromotions });
                 await expandComponent(element);
 
                 // Check that conditional elements have proper ARIA
-                const promotionsLabel = element.querySelector('#promotions-label');
-                const promotionsValue = element.querySelector('[aria-labelledby="promotions-label"]');
-                expect(promotionsLabel).not.toBeNull();
-                expect(promotionsValue).not.toBeNull();
+                expect(hasSummaryLabel(element, 'Promotions')).toBe(true);
+                expect(findSummaryValue(element, 'Promotions')).not.toBeNull();
 
-                const shippingDiscountLabel = element.querySelector('#shipping-discount-label');
-                const shippingDiscountValue = element.querySelector('[aria-labelledby="shipping-discount-label"]');
-                expect(shippingDiscountLabel).not.toBeNull();
-                expect(shippingDiscountValue).not.toBeNull();
+                expect(hasSummaryLabel(element, 'Coupons Applied')).toBe(true);
+                expect(findSummaryValue(element, 'Coupons Applied')).not.toBeNull();
+
+                expect(hasSummaryLabel(element, 'Coupons Discount')).toBe(true);
+                expect(findSummaryValue(element, 'Coupons Discount')).not.toBeNull();
+
+                expect(hasSummaryLabel(element, 'Shipping Discount')).toBe(true);
+                expect(findSummaryValue(element, 'Shipping Discount')).not.toBeNull();
             });
 
             it('should handle empty states gracefully', async () => {

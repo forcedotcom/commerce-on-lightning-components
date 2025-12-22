@@ -1169,4 +1169,248 @@ describe('Express payment URL construction', () => {
             consoleSpy.mockRestore();
         });
     });
+
+    describe('Coupon input functionality', () => {
+        it('should show coupon input when cart has items and feature flag is enabled', () => {
+            const cartWithItems = {
+                ...mockCartSummary,
+                items: [{ name: 'Product A', quantity: 1, itemSubtotal: 50.0 }],
+                flags: { isCouponFeatureEnabled: true },
+            };
+            element.cartSummary = cartWithItems;
+            element.configuration = { couponInput: { enabled: true } };
+
+            return Promise.resolve().then(() => {
+                const couponInput = element.querySelector('c-coupon-input');
+                expect(couponInput).not.toBeNull();
+            });
+        });
+
+        it('should not show coupon input when cart has no items', () => {
+            const cartWithoutItems = {
+                ...mockCartSummary,
+                items: [],
+            };
+            element.cartSummary = cartWithoutItems;
+
+            return Promise.resolve().then(() => {
+                const couponInput = element.querySelector('c-coupon-input');
+                expect(couponInput).toBeNull();
+            });
+        });
+
+        it('should not show coupon input when items property is undefined', () => {
+            const cartWithoutItems = {
+                ...mockCartSummary,
+                items: undefined,
+            };
+            element.cartSummary = cartWithoutItems;
+
+            return Promise.resolve().then(() => {
+                const couponInput = element.querySelector('c-coupon-input');
+                expect(couponInput).toBeNull();
+            });
+        });
+
+        it('should not show coupon input when cart summary is empty', () => {
+            element.cartSummary = {};
+
+            return Promise.resolve().then(() => {
+                const couponInput = element.querySelector('c-coupon-input');
+                expect(couponInput).toBeNull();
+            });
+        });
+
+        it('should handle applycoupon event and dispatch cartapplycoupon event', () => {
+            const cartWithItems = {
+                ...mockCartSummary,
+                items: [{ name: 'Product A', quantity: 1, itemSubtotal: 50.0 }],
+                flags: { isCouponFeatureEnabled: true },
+            };
+            element.cartSummary = cartWithItems;
+            element.configuration = { couponInput: { enabled: true } };
+
+            return Promise.resolve().then(() => {
+                const couponInput = element.querySelector('c-coupon-input');
+                expect(couponInput).not.toBeNull();
+
+                const eventHandler = jest.fn();
+                element.addEventListener('cartapplycoupon', eventHandler);
+
+                // Simulate applycoupon event from coupon input
+                const applyCouponEvent = new CustomEvent('applycoupon', {
+                    detail: { couponCode: 'SAVE10' },
+                    bubbles: true,
+                    composed: true,
+                });
+                couponInput.dispatchEvent(applyCouponEvent);
+
+                expect(eventHandler).toHaveBeenCalledTimes(1);
+                expect(eventHandler.mock.calls[0][0].detail).toEqual({ couponCode: 'SAVE10' });
+            });
+        });
+
+        it('should bubble up cartapplycoupon event with correct coupon code', () => {
+            const cartWithItems = {
+                ...mockCartSummary,
+                items: [{ name: 'Product A', quantity: 1, itemSubtotal: 50.0 }],
+                flags: { isCouponFeatureEnabled: true },
+            };
+            element.cartSummary = cartWithItems;
+            element.configuration = { couponInput: { enabled: true } };
+
+            return Promise.resolve().then(() => {
+                const couponInput = element.querySelector('c-coupon-input');
+                expect(couponInput).not.toBeNull();
+
+                const eventHandler = jest.fn();
+                element.addEventListener('cartapplycoupon', eventHandler);
+
+                // Dispatch applycoupon event from coupon input
+                const applyCouponEvent = new CustomEvent('applycoupon', {
+                    detail: { couponCode: 'DISCOUNT20' },
+                    bubbles: true,
+                    composed: true,
+                });
+                couponInput.dispatchEvent(applyCouponEvent);
+
+                expect(eventHandler).toHaveBeenCalledTimes(1);
+                expect(eventHandler.mock.calls[0][0].detail.couponCode).toBe('DISCOUNT20');
+                expect(eventHandler.mock.calls[0][0].bubbles).toBe(true);
+                expect(eventHandler.mock.calls[0][0].composed).toBe(true);
+            });
+        });
+
+        it('should disable apply button when coupon code is empty', async () => {
+            const cartWithItems = {
+                ...mockCartSummary,
+                items: [{ name: 'Product A', quantity: 1, itemSubtotal: 50.0 }],
+                flags: { isCouponFeatureEnabled: true },
+            };
+            element.cartSummary = cartWithItems;
+            element.configuration = { couponInput: { enabled: true } };
+
+            await Promise.resolve();
+
+            const couponInput = element.querySelector('c-coupon-input');
+            expect(couponInput).not.toBeNull();
+
+            // Set empty coupon code
+            couponInput.couponCode = '';
+
+            await Promise.resolve();
+            const applyButton = couponInput.querySelector('button');
+            expect(applyButton.disabled).toBe(true);
+        });
+
+        it('should disable apply button when coupon code is only whitespace', async () => {
+            const cartWithItems = {
+                ...mockCartSummary,
+                items: [{ name: 'Product A', quantity: 1, itemSubtotal: 50.0 }],
+                flags: { isCouponFeatureEnabled: true },
+            };
+            element.cartSummary = cartWithItems;
+            element.configuration = { couponInput: { enabled: true } };
+
+            await Promise.resolve();
+
+            const couponInput = element.querySelector('c-coupon-input');
+            expect(couponInput).not.toBeNull();
+
+            // Set whitespace-only coupon code
+            couponInput.couponCode = '   ';
+
+            await Promise.resolve();
+            const applyButton = couponInput.querySelector('button');
+            expect(applyButton.disabled).toBe(true);
+        });
+
+        describe('Coupon input feature', () => {
+            it('should show coupon input when cart has items', () => {
+                const cartWithItems = {
+                    ...mockCartSummary,
+                    items: [{ name: 'Product A', quantity: 1, itemSubtotal: 50.0 }],
+                    flags: { isCouponFeatureEnabled: true },
+                };
+                element.cartSummary = cartWithItems;
+
+                return Promise.resolve().then(() => {
+                    const couponInput = element.querySelector('c-coupon-input');
+                    expect(couponInput).not.toBeNull();
+                });
+            });
+
+            it('should not show coupon input when cart is empty', () => {
+                const cartWithoutItems = {
+                    ...mockCartSummary,
+                    items: [],
+                };
+                element.cartSummary = cartWithoutItems;
+
+                return Promise.resolve().then(() => {
+                    const couponInput = element.querySelector('c-coupon-input');
+                    expect(couponInput).toBeNull();
+                });
+            });
+        });
+    });
+
+    describe('Coupon feature flag (isCouponFeatureEnabled)', () => {
+        it('should show coupon input when feature flag is true', async () => {
+            const newElement = createElement('c-cart-summary', {
+                is: CartSummary,
+            });
+            newElement.cartSummary = {
+                ...mockCartSummary,
+                items: [{ name: 'Product A', quantity: 1, itemSubtotal: 50.0 }],
+                flags: { isCouponFeatureEnabled: true },
+            };
+            document.body.appendChild(newElement);
+
+            await Promise.resolve();
+
+            const couponInput = newElement.querySelector('c-coupon-input');
+            expect(couponInput).not.toBeNull();
+
+            document.body.removeChild(newElement);
+        });
+
+        it('should hide coupon input when feature flag is false', async () => {
+            const newElement = createElement('c-cart-summary', {
+                is: CartSummary,
+            });
+            newElement.cartSummary = {
+                ...mockCartSummary,
+                items: [{ name: 'Product A', quantity: 1, itemSubtotal: 50.0 }],
+                flags: { isCouponFeatureEnabled: false },
+            };
+            document.body.appendChild(newElement);
+
+            await Promise.resolve();
+
+            const couponInput = newElement.querySelector('c-coupon-input');
+            expect(couponInput).toBeNull();
+
+            document.body.removeChild(newElement);
+        });
+
+        it('should hide coupon input when feature flag is undefined (defaults to false)', async () => {
+            const newElement = createElement('c-cart-summary', {
+                is: CartSummary,
+            });
+            newElement.cartSummary = {
+                ...mockCartSummary,
+                items: [{ name: 'Product A', quantity: 1, itemSubtotal: 50.0 }],
+                // No flags property
+            };
+            document.body.appendChild(newElement);
+
+            await Promise.resolve();
+
+            const couponInput = newElement.querySelector('c-coupon-input');
+            expect(couponInput).toBeNull();
+
+            document.body.removeChild(newElement);
+        });
+    });
 });

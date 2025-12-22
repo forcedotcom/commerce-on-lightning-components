@@ -1,0 +1,104 @@
+/*
+ * couponInput.css
+ *
+ * This CSS file styles the CouponInput LWC. It employs a layered
+ * approach to styling, prioritizing consumer customization via public `--ref-c-`
+ * styling hooks, then leveraging Salesforce DXP theme tokens,
+ * and finally falling back to default values if neither are defined.
+ */
+
+:host {
+    display: block;
+
+    /* Container */
+    --ref-c-coupon-input-background: #ffffff;
+    --ref-c-coupon-input-border-color: #d9dfe7;
+    --ref-c-coupon-input-border-color-focus: #71717a;
+    --ref-c-coupon-input-border-radius: 4px;
+    --ref-c-coupon-input-padding: 10px 12px;
+    --ref-c-coupon-input-gap: 8px;
+
+    /* Input field */
+    --ref-c-coupon-input-text-color: #1c1c1c;
+    --ref-c-coupon-input-placeholder-color: #707275;
+    --ref-c-coupon-input-font-size: 14px;
+    --ref-c-coupon-input-font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    --ref-c-coupon-input-font-weight: 400;
+    --ref-c-coupon-input-line-height: 20px;
+    --ref-c-coupon-input-letter-spacing: -0.01em;
+
+    /* Apply button */
+    --ref-c-coupon-apply-button-font-weight: 500;
+    --ref-c-coupon-apply-button-color-disabled: #71717a;
+    --ref-c-coupon-apply-button-color-enabled: #000000;
+}
+
+.coupon-input-container {
+    width: 100%;
+}
+
+.input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: var(--ref-c-coupon-input-gap);
+    background-color: var(--ref-c-coupon-input-background);
+    border: 1px solid var(--ref-c-coupon-input-border-color);
+    border-radius: var(--ref-c-coupon-input-border-radius);
+    padding: var(--ref-c-coupon-input-padding);
+    height: 40px;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease;
+}
+
+.input-wrapper:focus-within {
+    border-color: var(--ref-c-coupon-input-border-color-focus);
+}
+
+.coupon-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: var(--ref-c-coupon-input-font-family);
+    font-size: var(--ref-c-coupon-input-font-size);
+    font-weight: var(--ref-c-coupon-input-font-weight);
+    line-height: var(--ref-c-coupon-input-line-height);
+    letter-spacing: var(--ref-c-coupon-input-letter-spacing);
+    color: var(--ref-c-coupon-input-text-color);
+    min-width: 0;
+    padding: 0;
+}
+
+.coupon-input::placeholder {
+    color: var(--ref-c-coupon-input-placeholder-color);
+}
+
+.apply-button {
+    flex-shrink: 0;
+    border: none;
+    background: none;
+    padding: 0;
+    cursor: pointer;
+    font-family: var(--ref-c-coupon-input-font-family);
+    font-size: var(--ref-c-coupon-input-font-size);
+    font-weight: var(--ref-c-coupon-apply-button-font-weight);
+    line-height: var(--ref-c-coupon-input-line-height);
+    letter-spacing: var(--ref-c-coupon-input-letter-spacing);
+    white-space: nowrap;
+    transition: color 0.2s ease;
+}
+
+.apply-button.disabled {
+    color: var(--ref-c-coupon-apply-button-color-disabled);
+    cursor: not-allowed;
+}
+
+.apply-button.enabled {
+    color: var(--ref-c-coupon-apply-button-color-enabled);
+}
+
+.apply-button:focus-visible {
+    outline: 2px solid var(--ref-c-coupon-input-border-color-focus);
+    outline-offset: 2px;
+    border-radius: 2px;
+}
