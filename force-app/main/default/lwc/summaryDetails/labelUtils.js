@@ -5,45 +5,40 @@
  * For full license text, see the LICENSE file in the repo
  * root or https://opensource.org/licenses/apache-2-0/
  */
+
+import { getTranslatedLabel } from 'c/labelService';
 import { LABEL_DATA } from './labels';
 
-/**
- * Gets a translated label for the given key and locale
- * @param {string} labelKey - The key to look up in the label data
- * @param {string} locale - The locale code (e.g., 'en-US', 'es-ES', 'fr-FR')
- * @returns {string} The translated label or fallback value
- */
-function getTranslatedLabel(labelKey, locale = 'en_US') {
-    const label = LABEL_DATA[labelKey];
-    if (label && label[locale]) {
-        return label[locale];
-    }
-    if (label && label.en_US) {
-        return label.en_US;
-    }
-    return labelKey;
-}
-
-export const confirmationTitle = (locale) => getTranslatedLabel('confirmationTitle', locale);
-export const subtotalLabel = (locale) => getTranslatedLabel('subtotalLabel', locale);
-export const promotionsLabel = (locale) => getTranslatedLabel('promotionsLabel', locale);
-export const shippingLabel = (locale) => getTranslatedLabel('shippingLabel', locale);
-export const shippingDiscountLabel = (locale) => getTranslatedLabel('shippingDiscountLabel', locale);
-export const taxesLabel = (locale) => getTranslatedLabel('taxesLabel', locale);
-export const totalLabel = (locale) => getTranslatedLabel('totalLabel', locale);
-export const tbdLabel = (locale) => getTranslatedLabel('tbdLabel', locale);
-export const freeShippingLabel = (locale) => getTranslatedLabel('freeShippingLabel', locale);
-export const defaultDeliveryMessage = (locale) => getTranslatedLabel('defaultDeliveryMessage', locale);
-export const footerMessage = (locale) => getTranslatedLabel('footerMessage', locale);
-export const orderSummaryAssistiveText = (locale) => getTranslatedLabel('orderSummaryAssistiveText', locale);
-export const cartSummaryAssistiveText = (locale) => getTranslatedLabel('cartSummaryAssistiveText', locale);
-export const toggleExpandAssistiveText = (locale) => getTranslatedLabel('toggleExpandAssistiveText', locale);
-export const toggleCollapseAssistiveText = (locale) => getTranslatedLabel('toggleCollapseAssistiveText', locale);
-export const toggleExpandCartAssistiveText = (locale) => getTranslatedLabel('toggleExpandCartAssistiveText', locale);
+export const confirmationTitle = (locale) => getTranslatedLabel('confirmationTitle', LABEL_DATA, locale);
+export const subtotalLabel = (locale) => getTranslatedLabel('subtotalLabel', LABEL_DATA, locale);
+export const promotionsLabel = (locale) => getTranslatedLabel('promotionsLabel', LABEL_DATA, locale);
+export const shippingLabel = (locale) => getTranslatedLabel('shippingLabel', LABEL_DATA, locale);
+export const shippingDiscountLabel = (locale) => getTranslatedLabel('shippingDiscountLabel', LABEL_DATA, locale);
+export const taxesLabel = (locale) => getTranslatedLabel('taxesLabel', LABEL_DATA, locale);
+export const totalLabel = (locale) => getTranslatedLabel('totalLabel', LABEL_DATA, locale);
+export const tbdLabel = (locale) => getTranslatedLabel('tbdLabel', LABEL_DATA, locale);
+export const freeShippingLabel = (locale) => getTranslatedLabel('freeShippingLabel', LABEL_DATA, locale);
+export const defaultDeliveryMessage = (locale) => getTranslatedLabel('defaultDeliveryMessage', LABEL_DATA, locale);
+export const footerMessage = (locale) => getTranslatedLabel('footerMessage', LABEL_DATA, locale);
+export const orderSummaryAssistiveText = (locale) =>
+    getTranslatedLabel('orderSummaryAssistiveText', LABEL_DATA, locale);
+export const cartSummaryAssistiveText = (locale) => getTranslatedLabel('cartSummaryAssistiveText', LABEL_DATA, locale);
+export const toggleExpandAssistiveText = (locale) =>
+    getTranslatedLabel('toggleExpandAssistiveText', LABEL_DATA, locale);
+export const toggleCollapseAssistiveText = (locale) =>
+    getTranslatedLabel('toggleCollapseAssistiveText', LABEL_DATA, locale);
+export const toggleExpandCartAssistiveText = (locale) =>
+    getTranslatedLabel('toggleExpandCartAssistiveText', LABEL_DATA, locale);
 export const toggleCollapseCartAssistiveText = (locale) =>
-    getTranslatedLabel('toggleCollapseCartAssistiveText', locale);
-export const orderItemsAssistiveText = (locale) => getTranslatedLabel('orderItemsAssistiveText', locale);
-export const cartItemsAssistiveText = (locale) => getTranslatedLabel('cartItemsAssistiveText', locale);
-export const orderTotalsAssistiveText = (locale) => getTranslatedLabel('orderTotalsAssistiveText', locale);
-export const cartTotalsAssistiveText = (locale) => getTranslatedLabel('cartTotalsAssistiveText', locale);
-export const orderIdLabel = (locale) => getTranslatedLabel('orderIdLabel', locale);
+    getTranslatedLabel('toggleCollapseCartAssistiveText', LABEL_DATA, locale);
+export const orderItemsAssistiveText = (locale) => getTranslatedLabel('orderItemsAssistiveText', LABEL_DATA, locale);
+export const cartItemsAssistiveText = (locale) => getTranslatedLabel('cartItemsAssistiveText', LABEL_DATA, locale);
+export const orderTotalsAssistiveText = (locale) => getTranslatedLabel('orderTotalsAssistiveText', LABEL_DATA, locale);
+export const cartTotalsAssistiveText = (locale) => getTranslatedLabel('cartTotalsAssistiveText', LABEL_DATA, locale);
+export const orderIdLabel = (locale) => getTranslatedLabel('orderIdLabel', LABEL_DATA, locale);
+export const couponsDiscountLabel = (locale) => getTranslatedLabel('couponsDiscountLabel', LABEL_DATA, locale);
+export const couponsAppliedLabel = (locale) => getTranslatedLabel('couponsAppliedLabel', LABEL_DATA, locale);
+export const couponsDiscountLabelPlural = (locale) =>
+    getTranslatedLabel('couponsDiscountLabelPlural', LABEL_DATA, locale);
+export const couponsAppliedLabelPlural = (locale) =>
+    getTranslatedLabel('couponsAppliedLabelPlural', LABEL_DATA, locale);

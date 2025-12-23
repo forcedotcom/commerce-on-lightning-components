@@ -92,28 +92,6 @@ describe('c-product-search-recommendations', () => {
         expect(carousel.displayMode).toBe('productSearchRecommendations');
     });
 
-    it('displays categories description when showCategoryRecommendations is true', async () => {
-        element.showCategoryRecommendations = true;
-        element.categoriesDescription = 'Test categories description';
-        await Promise.resolve();
-
-        const description = element.querySelector('.categories-description');
-        expect(description).not.toBeNull();
-        expect(description.textContent).toBe('Test categories description');
-    });
-
-    it('displays categories correctly when showCategoryRecommendations is true', async () => {
-        element.showCategoryRecommendations = true;
-        await Promise.resolve();
-
-        const categoryButtons = element.querySelectorAll('.category-button');
-        expect(categoryButtons.length).toBe(mockCategories.length);
-
-        categoryButtons.forEach((button, index) => {
-            expect(button.textContent).toBe(mockCategories[index].name);
-        });
-    });
-
     it('handles product clicks correctly through carousel', async () => {
         const showProductHandler = jest.fn();
         element.addEventListener('showproduct', showProductHandler);
@@ -142,28 +120,6 @@ describe('c-product-search-recommendations', () => {
                     name: mockProducts[0].name,
                     id: mockProducts[0].id,
                     url: mockProducts[0].url,
-                },
-            })
-        );
-    });
-
-    it('handles category selection correctly when categories are shown', async () => {
-        element.showCategoryRecommendations = true;
-        const selectCategoryHandler = jest.fn();
-        element.addEventListener('selectcategory', selectCategoryHandler);
-
-        await Promise.resolve();
-
-        const firstCategoryButton = element.querySelector('.category-button');
-        expect(firstCategoryButton).not.toBeNull();
-
-        firstCategoryButton.click();
-
-        expect(selectCategoryHandler).toHaveBeenCalledWith(
-            expect.objectContaining({
-                detail: {
-                    name: mockCategories[0].name,
-                    id: mockCategories[0].id,
                 },
             })
         );
@@ -198,37 +154,6 @@ describe('c-product-search-recommendations', () => {
         // No category buttons should be rendered
         const categoryButtons = element.querySelectorAll('.category-button');
         expect(categoryButtons.length).toBe(0);
-    });
-
-    it('hides category recommendations by default (showCategoryRecommendations defaults to false)', async () => {
-        // Don't set showCategoryRecommendations - it should default to false
-        await Promise.resolve();
-
-        // No category buttons should be rendered even though categoryData has data
-        const categoryButtons = element.querySelectorAll('.category-button');
-        expect(categoryButtons.length).toBe(0);
-
-        // Verify categoryData still has data (just not displayed)
-        expect(element.categoryData.length).toBe(mockCategories.length);
-    });
-
-    it('shows category recommendations when showCategoryRecommendations is explicitly set to true', async () => {
-        element.showCategoryRecommendations = true;
-        await Promise.resolve();
-
-        // Category buttons should be rendered when flag is true and data exists
-        const categoryButtons = element.querySelectorAll('.category-button');
-        expect(categoryButtons.length).toBe(mockCategories.length);
-    });
-
-    it('hides category recommendations and description when showCategoryRecommendations is false', async () => {
-        element.showCategoryRecommendations = false;
-        element.categoriesDescription = 'Test description';
-        await Promise.resolve();
-
-        // Description should not be rendered when categories are hidden
-        const description = element.querySelector('.categories-description');
-        expect(description).toBeNull();
     });
 
     describe('Image URL Transformation', () => {
@@ -364,6 +289,300 @@ describe('c-product-search-recommendations', () => {
             // Should not render carousel when productData is not an array
             const carousel = element.querySelector('c-common-carousel');
             expect(carousel).toBeNull();
+        });
+    });
+
+    describe('suggestedActions property', () => {
+        it('accepts suggestedActions as an object with description and options', async () => {
+            const actions = {
+                description: 'What type of jacket are you looking for?',
+                options: [
+                    {
+                        displayValue: 'Hiking',
+                        utterance: 'Suggest me more in jackets for hiking.',
+                        type: 'UTTERANCE_SUGGESTIONS',
+                    },
+                ],
+            };
+
+            element.suggestedActions = actions;
+
+            await Promise.resolve();
+
+            expect(element.suggestedActions).toEqual(actions);
+            expect(typeof element.suggestedActions).toBe('object');
+            expect(element.suggestedActions.description).toBe('What type of jacket are you looking for?');
+            expect(Array.isArray(element.suggestedActions.options)).toBe(true);
+            expect(element.suggestedActions.options).toHaveLength(1);
+        });
+
+        it('defaults to empty object when not set', async () => {
+            await Promise.resolve();
+
+            expect(element.suggestedActions).toBeDefined();
+            expect(typeof element.suggestedActions).toBe('object');
+        });
+
+        it('handles empty options array', async () => {
+            const actions = {
+                description: 'What type of jacket?',
+                options: [],
+            };
+
+            element.suggestedActions = actions;
+
+            await Promise.resolve();
+
+            expect(element.suggestedActions).toBeDefined();
+            expect(element.suggestedActions.description).toBe('What type of jacket?');
+            expect(Array.isArray(element.suggestedActions.options)).toBe(true);
+            expect(element.suggestedActions.options).toHaveLength(0);
+        });
+    });
+
+    describe('hasSuggestedActions getter', () => {
+        it('returns true when suggestedActions has description and options', async () => {
+            const actions = {
+                description: 'What type of jacket are you looking for?',
+                options: [
+                    {
+                        displayValue: 'Hiking',
+                        utterance: 'Suggest me more in jackets for hiking.',
+                        type: 'UTTERANCE_SUGGESTION',
+                    },
+                ],
+            };
+
+            element.suggestedActions = actions;
+
+            await Promise.resolve();
+
+            expect(element.hasSuggestedActions).toBe(true);
+        });
+
+        it('returns false when suggestedActions has no description', async () => {
+            const actions = {
+                description: '',
+                options: [
+                    {
+                        displayValue: 'Hiking',
+                        utterance: 'Suggest me more in jackets for hiking.',
+                        type: 'UTTERANCE_SUGGESTION',
+                    },
+                ],
+            };
+
+            element.suggestedActions = actions;
+
+            await Promise.resolve();
+
+            // Check that suggested actions section is not rendered
+            const descriptionElement = element.querySelector('.suggested-actions-description');
+            expect(descriptionElement).toBeNull();
+        });
+
+        it('returns false when suggestedActions has empty options array', async () => {
+            const actions = {
+                description: 'What type of jacket are you looking for?',
+                options: [],
+            };
+
+            element.suggestedActions = actions;
+
+            await Promise.resolve();
+
+            // Check that suggested actions section is not rendered
+            const descriptionElement = element.querySelector('.suggested-actions-description');
+            expect(descriptionElement).toBeNull();
+        });
+
+        it('returns false when suggestedActions is null', async () => {
+            element.suggestedActions = null;
+
+            await Promise.resolve();
+
+            // Check that suggested actions section is not rendered
+            const descriptionElement = element.querySelector('.suggested-actions-description');
+            expect(descriptionElement).toBeNull();
+        });
+
+        it('returns false when suggestedActions is undefined', async () => {
+            element.suggestedActions = undefined;
+
+            await Promise.resolve();
+
+            // Check that suggested actions section is not rendered
+            const descriptionElement = element.querySelector('.suggested-actions-description');
+            expect(descriptionElement).toBeNull();
+        });
+
+        it('returns false when suggestedActions is not an object', async () => {
+            element.suggestedActions = 'not an object';
+
+            await Promise.resolve();
+
+            // Check that suggested actions section is not rendered
+            const descriptionElement = element.querySelector('.suggested-actions-description');
+            expect(descriptionElement).toBeNull();
+        });
+
+        it('returns false when options is not an array', async () => {
+            const actions = {
+                description: 'What type of jacket are you looking for?',
+                options: 'not an array',
+            };
+
+            element.suggestedActions = actions;
+
+            await Promise.resolve();
+
+            // Check that suggested actions section is not rendered
+            const descriptionElement = element.querySelector('.suggested-actions-description');
+            expect(descriptionElement).toBeNull();
+        });
+    });
+
+    describe('handleSelectOption', () => {
+        it('dispatches selectoption event with correct detail', async () => {
+            const selectOptionHandler = jest.fn();
+            element.addEventListener('selectoption', selectOptionHandler);
+
+            const mockOption = {
+                displayValue: 'Hiking',
+                utterance: 'Suggest me more in jackets for hiking.',
+            };
+
+            // Set up suggestedActions
+            element.suggestedActions = {
+                description: 'What type of jacket are you looking for?',
+                options: [mockOption],
+            };
+
+            await Promise.resolve();
+
+            // Find and click the option button
+            const optionButton = element.querySelector('.suggested-actions-button');
+            expect(optionButton).not.toBeNull();
+            optionButton.click();
+
+            await Promise.resolve();
+
+            expect(selectOptionHandler).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    detail: {
+                        displayValue: 'Hiking',
+                        utterance: 'Suggest me more in jackets for hiking.',
+                    },
+                })
+            );
+        });
+
+        it('handles multiple option buttons correctly', async () => {
+            const selectOptionHandler = jest.fn();
+            element.addEventListener('selectoption', selectOptionHandler);
+
+            const mockOptions = [
+                {
+                    displayValue: 'Hiking',
+                    utterance: 'Suggest me more in jackets for hiking.',
+                },
+                {
+                    displayValue: 'Skiing',
+                    utterance: 'Suggest me more in jackets for skiing.',
+                },
+                {
+                    displayValue: 'Running',
+                    utterance: 'Suggest me more in jackets for running.',
+                },
+            ];
+
+            element.suggestedActions = {
+                description: 'What type of jacket are you looking for?',
+                options: mockOptions,
+            };
+
+            await Promise.resolve();
+
+            // Find all option buttons
+            const optionButtons = element.querySelectorAll('.suggested-actions-button');
+            expect(optionButtons).toHaveLength(3);
+
+            // Click the second button
+            optionButtons[1].click();
+
+            await Promise.resolve();
+
+            expect(selectOptionHandler).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    detail: {
+                        displayValue: 'Skiing',
+                        utterance: 'Suggest me more in jackets for skiing.',
+                    },
+                })
+            );
+        });
+    });
+
+    describe('Suggested Actions rendering', () => {
+        it('renders suggested actions section when hasSuggestedActions is true', async () => {
+            const actions = {
+                description: 'What type of jacket are you looking for?',
+                options: [
+                    {
+                        displayValue: 'Hiking',
+                        utterance: 'Suggest me more in jackets for hiking.',
+                    },
+                ],
+            };
+
+            element.suggestedActions = actions;
+
+            await Promise.resolve();
+
+            const descriptionElement = element.querySelector('.suggested-actions-description');
+            expect(descriptionElement).not.toBeNull();
+            expect(descriptionElement.textContent).toBe('What type of jacket are you looking for?');
+
+            const optionButton = element.querySelector('.suggested-actions-button');
+            expect(optionButton).not.toBeNull();
+            expect(optionButton.textContent.trim()).toBe('Hiking');
+        });
+
+        it('does not render suggested actions section when hasSuggestedActions is false', async () => {
+            element.suggestedActions = {
+                description: '',
+                options: [],
+            };
+
+            await Promise.resolve();
+
+            const descriptionElement = element.querySelector('.suggested-actions-description');
+            expect(descriptionElement).toBeNull();
+        });
+
+        it('renders all option buttons', async () => {
+            const actions = {
+                description: 'What type of jacket are you looking for?',
+                options: [
+                    { displayValue: 'Hiking', utterance: 'hiking' },
+                    { displayValue: 'Skiing', utterance: 'skiing' },
+                    { displayValue: 'Running', utterance: 'running' },
+                    { displayValue: 'Climbing', utterance: 'climbing' },
+                    { displayValue: 'Bike Commuting', utterance: 'biking' },
+                ],
+            };
+
+            element.suggestedActions = actions;
+
+            await Promise.resolve();
+
+            const optionButtons = element.querySelectorAll('.suggested-actions-button');
+            expect(optionButtons).toHaveLength(5);
+            expect(optionButtons[0].textContent.trim()).toBe('Hiking');
+            expect(optionButtons[1].textContent.trim()).toBe('Skiing');
+            expect(optionButtons[2].textContent.trim()).toBe('Running');
+            expect(optionButtons[3].textContent.trim()).toBe('Climbing');
+            expect(optionButtons[4].textContent.trim()).toBe('Bike Commuting');
         });
     });
 });

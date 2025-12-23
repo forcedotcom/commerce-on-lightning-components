@@ -8,27 +8,11 @@
 
 /*
  * @description Group all Custom Labels for commonCarousel in one place
+ * Uses shared labelService for translation logic
  */
 
+import { getTranslatedLabel } from 'c/labelService';
 import { LABEL_DATA } from './labels';
-
-// Helper function to get translated label using shared utility
-/**
- * Gets a translated label for the given key and locale
- * @param {string} labelKey - The key to look up in the label data
- * @param {string} locale - The locale code (e.g., 'en-US', 'es-ES', 'fr-FR')
- * @returns {string} The translated label or fallback value
- */
-function getTranslatedLabel(labelKey, locale = 'en_US') {
-    const label = LABEL_DATA[labelKey];
-    if (label && label[locale]) {
-        return label[locale];
-    }
-    if (label && label.en_US) {
-        return label.en_US;
-    }
-    return labelKey;
-}
 
 /**
  * Gets a translated label with parameter substitution
@@ -38,7 +22,7 @@ function getTranslatedLabel(labelKey, locale = 'en_US') {
  * @returns {string} The translated label with parameters substituted
  */
 function getTranslatedLabelWithParams(labelKey, locale = 'en_US', ...params) {
-    let label = getTranslatedLabel(labelKey, locale);
+    let label = getTranslatedLabel(labelKey, LABEL_DATA, locale);
     params.forEach((param, index) => {
         label = label.replace(`{${index}}`, param);
     });
@@ -46,14 +30,14 @@ function getTranslatedLabelWithParams(labelKey, locale = 'en_US', ...params) {
 }
 
 // Export individual label functions
-export const previousImage = (locale) => getTranslatedLabel('previousImage', locale);
-export const nextImage = (locale) => getTranslatedLabel('nextImage', locale);
-export const previousProduct = (locale) => getTranslatedLabel('previousProduct', locale);
-export const nextProduct = (locale) => getTranslatedLabel('nextProduct', locale);
-export const productPrice = (locale) => getTranslatedLabel('productPrice', locale);
-export const outOfStock = (locale) => getTranslatedLabel('outOfStock', locale);
+export const previousImage = (locale) => getTranslatedLabel('previousImage', LABEL_DATA, locale);
+export const nextImage = (locale) => getTranslatedLabel('nextImage', LABEL_DATA, locale);
+export const previousProduct = (locale) => getTranslatedLabel('previousProduct', LABEL_DATA, locale);
+export const nextProduct = (locale) => getTranslatedLabel('nextProduct', LABEL_DATA, locale);
+export const productPrice = (locale) => getTranslatedLabel('productPrice', LABEL_DATA, locale);
+export const outOfStock = (locale) => getTranslatedLabel('outOfStock', LABEL_DATA, locale);
 export const viewImageAriaLabel = (locale, current, total) =>
     getTranslatedLabelWithParams('viewImageAriaLabel', locale, current, total);
 export const viewProductAriaLabel = (locale, current, total) =>
     getTranslatedLabelWithParams('viewProductAriaLabel', locale, current, total);
-export const showMoreProducts = (locale) => getTranslatedLabel('showMoreProducts', locale);
+export const showMoreProducts = (locale) => getTranslatedLabel('showMoreProducts', LABEL_DATA, locale);

@@ -8,6 +8,14 @@
             configuration={configuration}
             is-cart-summary></c-summary-details>
 
+        <template if:true={shouldShowCouponInput}>
+            <div class="coupon-input-wrapper slds-p-horizontal_medium slds-p-vertical_small">
+                <c-coupon-input
+                    configuration={configuration}
+                    onapplycoupon={handleApplyCoupon}></c-coupon-input>
+            </div>
+        </template>
+
         <div class={loadingContainerClass}>
             <template if:true={shouldWaitForExpressPayment}>
                 <template if:false={isExpressLoaded}>

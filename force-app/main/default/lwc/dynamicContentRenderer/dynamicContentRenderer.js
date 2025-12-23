@@ -16,6 +16,8 @@ import {
     CONTENT_TYPE_COMPONENT_MAP,
     DEFAULT_RICH_TEXT_CONFIG,
     PAYMENT_METHOD_MAP,
+    SUGGESTED_ACTIONS_TYPES,
+    SUGGESTED_ACTIONS_OPTIONS_TYPES,
 } from './constants';
 
 /**
@@ -34,8 +36,10 @@ import {
  * @fires CustomEvent#addtocart - Dispatched by a child component when a user clicks 'Add to Cart'. `detail` contains the product name.
  * @fires CustomEvent#selectcategory - Dispatched by a child component when a user selects a category. `detail` contains category name and ID.
  * @fires CustomEvent#showproduct - Dispatched by a child component when a user wants to view a product. `detail` contains product name and ID.
+ * @fires CustomEvent#selectoption - Dispatched by a child component when a user selects an option from suggested actions. `detail` contains option display value and utterance.
  * @fires CustomEvent#payment - Dispatched by a child component upon completion or failure of a payment action. `detail` contains order number on success, or a falsy value on failure.
  * @fires CustomEvent#selectcontext - Dispatched by a child component when a user selects a context. `detail` contains context name.
+ * @fires CustomEvent#cartapplycoupon - Dispatched by a child component when a user applies a coupon code. `detail` contains the coupon code.
  */
 export default class DynamicContentRenderer extends LightningElement {
     /**
@@ -69,12 +73,6 @@ export default class DynamicContentRenderer extends LightningElement {
 
     /** @type {string} */
     productsDescription = '';
-
-    /** @type {Array<object>} */
-    categoryData = [];
-
-    /** @type {string} */
-    categoriesDescription = '';
 
     /** @type {Array<object>} */
     productVariants = [];
@@ -217,10 +215,10 @@ export default class DynamicContentRenderer extends LightningElement {
     get i18n() {
         const language = this.language;
         return {
-            categoryRecommendationTextMessageLabel: Labels.categoryRecommendationTextMessageLabel(language),
             productSelectionTextMessageLabel: Labels.productSelectionTextMessageLabel(language),
             addToCartMessageLabel: Labels.addToCartMessageLabel(language),
             addToCartMessageWithNoVariationsLabel: Labels.addToCartMessageWithNoVariationsLabel(language),
+            applyCouponCodeLabel: Labels.applyCouponCodeLabel(language),
             invalidResponseMessageLabel: Labels.invalidResponseMessageLabel(language),
             paymentCompletedLabel: Labels.paymentCompletedLabel(language),
             paymentFailedLabel: Labels.paymentFailedLabel(language),
@@ -424,15 +422,21 @@ export default class DynamicContentRenderer extends LightningElement {
      * This can be the original static text string or a raw parsed JSON object if it's an unrecognized
      * structured type that should still be rendered as text.
      * Only parses markdown for Agent and Chatbot messages, not for EndUser messages.
+     * For EndUser messages, automatically strips content in parentheses for cleaner display.
      * @returns {string} The extracted or parsed message content, suitable for rich text rendering.
      */
     get textContent() {
         if (typeof this._parsedMessageContent === 'string') {
+            let content = this._parsedMessageContent;
+
+            // For EndUser messages, strip content in parentheses (e.g., product IDs) for cleaner display
+            if (this.sender === 'EndUser') {
+                content = content.replace(/\s*\([^)]*\)\s*$/, '').trim();
+            }
+
             // Only parse markdown for Agent and Chatbot messages, not for EndUser
             const shouldParseMarkdown = this.sender !== 'EndUser';
-            return shouldParseMarkdown
-                ? this._parseMarkdownToHtml(this._parsedMessageContent)
-                : this._parsedMessageContent;
+            return shouldParseMarkdown ? this._parseMarkdownToHtml(content) : content;
         }
         if (typeof this._parsedMessageContent === 'object' && this._parsedMessageContent !== null) {
             return JSON.stringify(this._parsedMessageContent, null, 2);
@@ -560,30 +564,6 @@ export default class DynamicContentRenderer extends LightningElement {
     }
 
     /**
-     * Handles the "Select Category" action, typically from a product recommendations component.
-     * It extracts category name and ID from the event detail and sends a formatted text message
-     * back to the conversation system, including the original user query for context.
-     * @param {CustomEvent} event - A custom event with `event.detail` containing `name` (string) and `id` (string) of the selected category.
-     */
-    @api
-    handleSelectCategory(event) {
-        const category = event?.detail;
-        // Basic validation for required category properties
-        if (category?.name && category?.id) {
-            // Retrieve userQuery from the processed content if available
-            const userQuery =
-                this._parsedMessageContent?.userQuery ||
-                this._parsedMessageContent?.productRecommendations?.userQuery ||
-                '';
-            const message = this.i18n.categoryRecommendationTextMessageLabel
-                .replace('{0}', userQuery)
-                .replace('{1}', category.name)
-                .replace('{2}', category.id);
-            this.configuration.util.sendTextMessage(message);
-        }
-    }
-
-    /**
      * Handles the "Show Product" action.
      * If cart management is not supported, it attempts to find a product URL in the DOM (`data-url`)
      * and opens it in a new window. If cart management *is* supported, it sends a structured text message
@@ -621,6 +601,20 @@ export default class DynamicContentRenderer extends LightningElement {
                     .replace('{1}', product.id);
                 this.configuration.util.sendTextMessage(message);
             }
+        }
+    }
+
+    /**
+     * Handles the "Select Option" action, typically from a product recommendations component.
+     * It extracts option displayValue and utterance from the event detail and sends a formatted text message
+     * back to the conversation system.
+     * @param {CustomEvent} event - A custom event with `event.detail` containing `displayValue` (string) and `utterance` (string) of the selected option.
+     */
+    @api
+    handleSelectOption(event) {
+        const option = event?.detail;
+        if (option?.displayValue && option?.utterance) {
+            this.configuration.util.sendTextMessage(option.utterance);
         }
     }
 
@@ -666,6 +660,22 @@ export default class DynamicContentRenderer extends LightningElement {
         // Basic validation for required context properties
         if (context?.name) {
             this.configuration.util.sendTextMessage(context.name);
+        }
+    }
+
+    /**
+     * Handles the "Apply Coupon" action from the cart summary component.
+     * It extracts the coupon code from the event detail and sends a text message
+     * with the format "Apply coupon code {code}".
+     * @param {CustomEvent} event - A custom event with `event.detail` containing `couponCode` (string).
+     */
+    @api
+    handleApplyCoupon(event) {
+        const couponCode = event?.detail?.couponCode;
+        // Basic validation for required coupon code
+        if (couponCode && couponCode.trim()) {
+            const message = this.i18n.applyCouponCodeLabel.replace('{0}', couponCode.trim());
+            this.configuration.util.sendTextMessage(message);
         }
     }
 
@@ -887,16 +897,15 @@ export default class DynamicContentRenderer extends LightningElement {
      * - `productData`: An array of product objects.
      * - `productsDescription`: A string description for products.
      * - `isCartMgmtSupported`: Boolean indicating if cart management is enabled.
-     * - `categoryData`: An array of category objects.
-     * - `categoriesDescription`: A string description for categories.
      * - `userQuery`: The user's original query related to recommendations.
+     * - `suggestedActions`: An array of action objects containing suggested actions (e.g., suggested questions and answers), defaults to empty array if not available.
      * @private
      */
     processProductRecommendations() {
         const data = {};
         const parsed = this._parsedMessageContent;
-        // Extract productsDetails, defaulting to empty objects/arrays for safety
-        const productsDetails = parsed?.productsDetails || parsed?.productRecommendations?.productsDetails;
+        // Extract productsDetails, checking both nested under productRecommendations and root level for flexibility
+        const productsDetails = parsed?.productRecommendations?.productsDetails || parsed?.productsDetails;
         if (productsDetails && Array.isArray(productsDetails.products)) {
             data.productData = productsDetails.products;
             data.productsDescription = productsDetails.description || '';
@@ -908,18 +917,45 @@ export default class DynamicContentRenderer extends LightningElement {
             data.productsDescription = '';
         }
 
-        // Extract categoryDetails, defaulting to empty objects/arrays for safety
-        const categoryDetails = parsed?.categoryDetails || parsed?.productRecommendations?.categoryDetails;
-        if (categoryDetails && Array.isArray(categoryDetails.categories)) {
-            data.categoryData = categoryDetails.categories;
-            data.categoriesDescription = categoryDetails.description || '';
-        } else {
-            data.categoryData = []; // Ensure it's an array for child component
-            data.categoriesDescription = '';
-        }
+        // userQuery can be under productRecommendations or at root level
+        data.userQuery = parsed?.productRecommendations?.userQuery || parsed?.userQuery || '';
 
-        // userQuery can be at root or under productRecommendations
-        data.userQuery = parsed?.userQuery || parsed?.productRecommendations?.userQuery || '';
+        // Extract and process suggestedActions with proper null safety
+        const suggestedActions = parsed?.productRecommendations?.suggestedActions || parsed?.suggestedActions;
+
+        // Initialize suggestedActions with safe defaults
+        data.suggestedActions = {
+            description: '',
+            options: [],
+            utterance: '',
+        };
+
+        // Only process if suggestedActions exists and has actions array
+        if (suggestedActions && Array.isArray(suggestedActions) && suggestedActions.length > 0) {
+            // Find the first QUESTION_WITH_ANSWERS action (currently only supported type)
+            const questionAction = suggestedActions.find(
+                (action) => action && action.type === SUGGESTED_ACTIONS_TYPES.QUESTION
+            );
+
+            if (questionAction) {
+                // Set description from action's displayValue
+                data.suggestedActions.description = questionAction.displayValue || '';
+                data.suggestedActions.utterance = questionAction.utterance || '';
+
+                // Filter and validate options with proper type checking
+                if (Array.isArray(questionAction.options)) {
+                    data.suggestedActions.options = questionAction.options.filter((option) => {
+                        // Validate that option has required properties and correct type
+                        return (
+                            option &&
+                            option.type === SUGGESTED_ACTIONS_OPTIONS_TYPES.UTTERANCE_SUGGESTION &&
+                            option.displayValue &&
+                            option.utterance
+                        );
+                    });
+                }
+            }
+        }
 
         return data;
     }
@@ -929,6 +965,7 @@ export default class DynamicContentRenderer extends LightningElement {
      * It extracts the primary product object, handling cases where details might be an array or a single object.
      * @returns {object} An object containing the processed product data:
      * - `product`: The product object, or an empty object if not found.
+     * - `suggestedActions`: An array of action objects containing suggested actions (e.g., suggested questions and answers), defaults to empty array if not available.
      * @private
      */
     processProductDetails() {
@@ -942,6 +979,20 @@ export default class DynamicContentRenderer extends LightningElement {
         } else {
             data.product = {};
         }
+
+        // Extract suggestedActions actions array from parsed message content
+        const suggestedActions =
+            this._parsedMessageContent?.suggestedActions ||
+            this._parsedMessageContent?.productDetails?.suggestedActions;
+
+        // Initialize suggestedActions with safe defaults
+        data.suggestedActions = {
+            description: '',
+            options: [],
+            utterance: '',
+        };
+
+        data.suggestedActions = Array.isArray(suggestedActions) ? suggestedActions : [];
         return data;
     }
 
@@ -950,6 +1001,7 @@ export default class DynamicContentRenderer extends LightningElement {
      * It extracts the cart summary object, providing a safe default if the data is missing or malformed.
      * @returns {object} An object containing the processed cart summary data:
      * - `cartSummary`: The cart summary object, or an empty object if not found.
+     * - `suggestedActions`: An array of action objects containing suggested actions (e.g., suggested questions and answers), defaults to empty array if not available.
      * @private
      */
     processCartSummary() {
@@ -958,6 +1010,20 @@ export default class DynamicContentRenderer extends LightningElement {
             this._parsedMessageContent?.cartDetails || this._parsedMessageContent?.cartSummary?.cartDetails;
         // Ensure cartSummary is always an object
         data.cartSummary = typeof cartSummary === 'object' && cartSummary !== null ? cartSummary : {};
+
+        // Extract suggestedActions array from parsed message content
+        const suggestedActions =
+            this._parsedMessageContent?.suggestedActions || this._parsedMessageContent?.cartSummary?.suggestedActions;
+
+        // Initialize suggestedActions with safe defaults
+        data.suggestedActions = {
+            description: '',
+            options: [],
+            utterance: '',
+        };
+
+        data.suggestedActions = Array.isArray(suggestedActions) ? suggestedActions : [];
+
         return data;
     }
 
@@ -966,6 +1032,7 @@ export default class DynamicContentRenderer extends LightningElement {
      * It extracts the order details, ensuring they are always presented as an array.
      * @returns {object} An object containing the processed order confirmation data:
      * - `orderDetails`: An array of order detail objects.
+     * - `suggestedActions`: An array of action objects containing suggested actions (e.g., suggested questions and answers), defaults to empty array if not available.
      * @private
      */
     processOrderConfirmation() {
@@ -973,6 +1040,21 @@ export default class DynamicContentRenderer extends LightningElement {
         const orderDetails = this._parsedMessageContent?.orderConfirmation || this._parsedMessageContent;
         // Ensure orderDetails is always an object
         data.orderDetails = typeof orderDetails === 'object' && orderDetails !== null ? orderDetails : {};
+
+        // Extract suggestedActions array from parsed message content
+        const suggestedActions =
+            this._parsedMessageContent?.suggestedActions ||
+            this._parsedMessageContent?.orderConfirmation?.suggestedActions;
+
+        // Initialize suggestedActions with safe defaults
+        data.suggestedActions = {
+            description: '',
+            options: [],
+            utterance: '',
+        };
+
+        data.suggestedActions = Array.isArray(suggestedActions) ? suggestedActions : [];
+
         return data;
     }
 

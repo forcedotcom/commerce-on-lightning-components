@@ -8,29 +8,13 @@
 
 /*
  * @description Label functions and helper utilities for productSummary
+ * Uses shared labelService for translation logic
  */
 
+import { getTranslatedLabel } from 'c/labelService';
 import { LABEL_DATA } from './labels';
 
-// Helper function to get translated label using shared utility
-/**
- * Gets a translated label for the given key and locale
- * @param {string} labelKey - The key to look up in the label data
- * @param {string} locale - The locale code (e.g., 'en-US', 'es-ES', 'fr-FR')
- * @returns {string} The translated label or fallback value
- */
-function getTranslatedLabel(labelKey, locale = 'en_US') {
-    const label = LABEL_DATA[labelKey];
-    if (label && label[locale]) {
-        return label[locale];
-    }
-    if (label && label.en_US) {
-        return label.en_US;
-    }
-    return labelKey;
-}
-
 // Export individual label functions
-export const quantityLabelText = (locale) => getTranslatedLabel('quantityLabelText', locale);
-export const originalPriceLabel = (locale) => getTranslatedLabel('originalPriceLabel', locale);
-export const currentPriceLabel = (locale) => getTranslatedLabel('currentPriceLabel', locale);
+export const quantityLabelText = (locale) => getTranslatedLabel('quantityLabelText', LABEL_DATA, locale);
+export const originalPriceLabel = (locale) => getTranslatedLabel('originalPriceLabel', LABEL_DATA, locale);
+export const currentPriceLabel = (locale) => getTranslatedLabel('currentPriceLabel', LABEL_DATA, locale);

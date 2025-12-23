@@ -8,31 +8,17 @@
 
 /*
  * @description Label functions and helper utilities for cartSummary
+ * Uses shared labelService for translation logic
  */
 
+import { getTranslatedLabel } from 'c/labelService';
 import { LABEL_DATA } from './labels';
 
-/**
- * Gets a translated label for the given key and locale
- * @param {string} labelKey - The key to look up in the label data
- * @param {string} locale - The locale code (e.g., 'en-US', 'es-ES', 'fr-FR')
- * @returns {string} The translated label or fallback value
- */
-function getTranslatedLabel(labelKey, locale = 'en_US') {
-    const label = LABEL_DATA[labelKey];
-    if (label && label[locale]) {
-        return label[locale];
-    }
-    if (label && label.en_US) {
-        return label.en_US;
-    }
-    return labelKey;
-}
-
 // Export individual label functions
-export const cartSummaryRegionLabel = (locale) => getTranslatedLabel('cartSummaryRegionLabel', locale);
-export const loadingSpinnerAltText = (locale) => getTranslatedLabel('loadingSpinnerAltText', locale);
-export const checkoutButtonLabel = (locale) => getTranslatedLabel('checkoutButtonLabel', locale);
-export const checkoutButtonAssistiveText = (locale) => getTranslatedLabel('checkoutButtonAssistiveText', locale);
+export const cartSummaryRegionLabel = (locale) => getTranslatedLabel('cartSummaryRegionLabel', LABEL_DATA, locale);
+export const loadingSpinnerAltText = (locale) => getTranslatedLabel('loadingSpinnerAltText', LABEL_DATA, locale);
+export const checkoutButtonLabel = (locale) => getTranslatedLabel('checkoutButtonLabel', LABEL_DATA, locale);
+export const checkoutButtonAssistiveText = (locale) =>
+    getTranslatedLabel('checkoutButtonAssistiveText', LABEL_DATA, locale);
 export const checkoutNotAvailableAssistiveText = (locale) =>
-    getTranslatedLabel('checkoutNotAvailableAssistiveText', locale);
+    getTranslatedLabel('checkoutNotAvailableAssistiveText', LABEL_DATA, locale);

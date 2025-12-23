@@ -3381,3 +3381,147 @@ describe('c-product-details originalPrice', () => {
         document.body.removeChild(element);
     });
 });
+
+describe('c-product-details isAnyVariantOrderable functionality', () => {
+    let element;
+
+    beforeEach(async () => {
+        element = createElement('c-product-details', {
+            is: ProductDetails,
+        });
+        document.body.appendChild(element);
+        await Promise.resolve();
+    });
+
+    afterEach(() => {
+        document.body.removeChild(element);
+    });
+
+    const testCases = [
+        {
+            name: 'at least one variant option is orderable',
+            product: {
+                ...mockProduct,
+                quantity: {
+                    minQuantity: 1,
+                    maxQuantity: 10.0,
+                    increment: 0.5,
+                },
+                vattr: [
+                    {
+                        id: 'color',
+                        lbl: 'Color',
+                        opts: [
+                            { val: 'JJ169XX', name: 'Black' },
+                            { val: 'JJI15XX', name: 'Blue' },
+                        ],
+                    },
+                ],
+                vmat: [
+                    {
+                        vars: { color: 'JJ169XX' },
+                        ord: true, // Orderable
+                        pr: { cur: 110.99, orig: 110.99 },
+                    },
+                    {
+                        vars: { color: 'JJI15XX' },
+                        ord: false, // Not orderable
+                        pr: { cur: 120.99, orig: 120.99 },
+                    },
+                ],
+            },
+            expectedIncrementDisabled: false,
+            expectedDecrementDisabled: true,
+        },
+        {
+            name: 'no variant options are orderable',
+            product: {
+                ...mockProduct,
+                vattr: [
+                    {
+                        id: 'color',
+                        lbl: 'Color',
+                        opts: [
+                            { val: 'JJ169XX', name: 'Black' },
+                            { val: 'JJI15XX', name: 'Blue' },
+                        ],
+                    },
+                ],
+                vmat: [
+                    {
+                        vars: { color: 'JJ169XX' },
+                        ord: false, // Not orderable
+                        pr: { cur: 110.99, orig: 110.99 },
+                    },
+                    {
+                        vars: { color: 'JJI15XX' },
+                        ord: false, // Not orderable
+                        pr: { cur: 120.99, orig: 120.99 },
+                    },
+                ],
+            },
+            expectedIncrementDisabled: true,
+            expectedDecrementDisabled: true,
+        },
+        {
+            name: 'product has no variant matrix',
+            product: {
+                ...mockProduct,
+                vattr: [
+                    {
+                        id: 'color',
+                        lbl: 'Color',
+                        opts: [{ val: 'JJ169XX', name: 'Black' }],
+                    },
+                ],
+                vmat: [], // Empty variant matrix
+            },
+            expectedIncrementDisabled: true,
+            expectedDecrementDisabled: true,
+        },
+        {
+            name: 'product has null variant matrix',
+            product: {
+                ...mockProduct,
+                vattr: [
+                    {
+                        id: 'color',
+                        lbl: 'Color',
+                        opts: [{ val: 'JJ169XX', name: 'Black' }],
+                    },
+                ],
+                vmat: null, // Null variant matrix
+            },
+            expectedIncrementDisabled: true,
+            expectedDecrementDisabled: true,
+        },
+        {
+            name: 'product has no variants',
+            product: {
+                ...mockProduct,
+                quantity: {
+                    minQuantity: 1,
+                    maxQuantity: 10.0,
+                    increment: 0.5,
+                },
+                vattr: [], // No variants
+                vmat: [], // No variant matrix
+            },
+            expectedIncrementDisabled: false,
+            expectedDecrementDisabled: true,
+        },
+    ];
+
+    testCases.forEach((testCase) => {
+        it(`should set isAnyVariantOrderable correctly when ${testCase.name}`, async () => {
+            element.product = testCase.product;
+            await Promise.resolve();
+
+            const incrementButton = element.querySelector('.quantity-increment-button');
+            const decrementButton = element.querySelector('.quantity-decrement-button');
+
+            expect(incrementButton.disabled).toBe(testCase.expectedIncrementDisabled);
+            expect(decrementButton.disabled).toBe(testCase.expectedDecrementDisabled);
+        });
+    });
+});

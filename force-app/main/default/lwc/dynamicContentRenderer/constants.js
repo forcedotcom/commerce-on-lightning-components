@@ -29,7 +29,7 @@ export const CONTENT_TYPE_COMPONENT_MAP = Object.freeze({
     [CONTENT_TYPES.PRODUCT_RECOMMENDATIONS]: {
         componentName: 'c-product-search-recommendations',
         dataProcessor: 'processProductRecommendations',
-        eventHandlers: ['onaddtocart', 'onselectcategory', 'onshowproduct'],
+        eventHandlers: ['onaddtocart', 'onselectcategory', 'onshowproduct', 'onselectoption'],
     },
     [CONTENT_TYPES.PRODUCT_DETAILS]: {
         componentName: 'c-product-details',
@@ -55,7 +55,20 @@ export const DEFAULT_RICH_TEXT_CONFIG = Object.freeze({
     eventHandlers: [],
 });
 
+// --- Payment Method Mapping ---
 export const PAYMENT_METHOD_MAP = {
     applepay: 'Apple Pay',
     googlepay: 'Google Pay',
 };
+
+// --- Suggested Actions Constants ---
+// Defines the types of suggested actions that can be presented to users.
+export const SUGGESTED_ACTIONS_TYPES = Object.freeze({
+    QUESTION: 'QUESTION_WITH_ANSWERS',
+});
+
+// --- Suggested Actions Options Types Constants ---
+// Defines the types of options within each action
+export const SUGGESTED_ACTIONS_OPTIONS_TYPES = Object.freeze({
+    UTTERANCE_SUGGESTION: 'UTTERANCE_SUGGESTIONS',
+});

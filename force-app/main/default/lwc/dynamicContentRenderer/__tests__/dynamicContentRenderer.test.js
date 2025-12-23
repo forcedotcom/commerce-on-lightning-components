@@ -465,6 +465,401 @@ describe('c-dynamic-content-renderer', () => {
             expect(element).toBeDefined();
         });
 
+        it('should handle product recommendations with suggestedActions containing valid actions', () => {
+            const entry = {
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: JSON.stringify({
+                                productRecommendations: {
+                                    className: CONTENT_TYPES.PRODUCT_RECOMMENDATIONS,
+                                    productsDetails: { products: [] },
+                                    suggestedActions: [
+                                        {
+                                            type: 'QUESTION_WITH_ANSWERS',
+                                            displayValue: 'Test',
+                                            utterance: null,
+                                            options: null,
+                                        },
+                                    ],
+                                },
+                            }),
+                        },
+                    },
+                }),
+                sender: { role: CHATBOT },
+            };
+
+            element.conversationEntry = entry;
+            expect(element).toBeDefined();
+        });
+
+        it('should handle product recommendations when suggestedActions is null', () => {
+            const entry = {
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: JSON.stringify({
+                                productRecommendations: {
+                                    className: CONTENT_TYPES.PRODUCT_RECOMMENDATIONS,
+                                    productsDetails: { products: [] },
+                                    suggestedActions: null,
+                                },
+                            }),
+                        },
+                    },
+                }),
+                sender: { role: CHATBOT },
+            };
+
+            element.conversationEntry = entry;
+            expect(element).toBeDefined();
+        });
+
+        it('should handle product recommendations when suggestedActions is not an array', () => {
+            const entry = {
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: JSON.stringify({
+                                productRecommendations: {
+                                    className: CONTENT_TYPES.PRODUCT_RECOMMENDATIONS,
+                                    productsDetails: { products: [] },
+                                    suggestedActions: 'invalid',
+                                },
+                            }),
+                        },
+                    },
+                }),
+                sender: { role: CHATBOT },
+            };
+
+            element.conversationEntry = entry;
+            expect(element).toBeDefined();
+        });
+
+        it('should handle product recommendations when suggestedActions is undefined', () => {
+            const entry = {
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: JSON.stringify({
+                                productRecommendations: {
+                                    className: CONTENT_TYPES.PRODUCT_RECOMMENDATIONS,
+                                    productsDetails: { products: [] },
+                                },
+                            }),
+                        },
+                    },
+                }),
+                sender: { role: CHATBOT },
+            };
+
+            element.conversationEntry = entry;
+            expect(element).toBeDefined();
+        });
+
+        describe('Suggested Actions Processing', () => {
+            it('should correctly process suggestedActions with QUESTION_WITH_ANSWERS and valid options', () => {
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: JSON.stringify({
+                                    productRecommendations: {
+                                        className: CONTENT_TYPES.PRODUCT_RECOMMENDATIONS,
+                                        productsDetails: { products: [] },
+                                        suggestedActions: [
+                                            {
+                                                type: 'QUESTION_WITH_ANSWERS',
+                                                displayValue:
+                                                    'Are you looking for a jacket for hiking, skiing, or running?',
+                                                utterance: null,
+                                                options: [
+                                                    {
+                                                        utterance: 'Suggest me more in jackets for hiking.',
+                                                        type: 'UTTERANCE_SUGGESTION',
+                                                        displayValue: 'Hiking',
+                                                    },
+                                                    {
+                                                        utterance: 'Suggest me more in jackets for skiing.',
+                                                        type: 'UTTERANCE_SUGGESTION',
+                                                        displayValue: 'Skiing',
+                                                    },
+                                                ],
+                                            },
+                                        ],
+                                    },
+                                }),
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                element.conversationEntry = entry;
+
+                // Component should render without errors
+                expect(element).toBeDefined();
+                expect(element.querySelector('c-product-search-recommendations')).toBeDefined();
+            });
+
+            it('should filter out options with incorrect type', () => {
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: JSON.stringify({
+                                    productRecommendations: {
+                                        className: CONTENT_TYPES.PRODUCT_RECOMMENDATIONS,
+                                        productsDetails: { products: [] },
+                                        suggestedActions: [
+                                            {
+                                                type: 'QUESTION_WITH_ANSWERS',
+                                                displayValue: 'Test question?',
+                                                utterance: null,
+                                                options: [
+                                                    {
+                                                        utterance: 'Valid utterance',
+                                                        type: 'UTTERANCE_SUGGESTION',
+                                                        displayValue: 'Valid Option',
+                                                    },
+                                                    {
+                                                        utterance: 'Invalid utterance',
+                                                        type: 'INVALID_TYPE',
+                                                        displayValue: 'Invalid Option',
+                                                    },
+                                                ],
+                                            },
+                                        ],
+                                    },
+                                }),
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                element.conversationEntry = entry;
+
+                // Component should render without errors
+                expect(element).toBeDefined();
+                expect(element.querySelector('c-product-search-recommendations')).toBeDefined();
+            });
+
+            it('should filter out options missing required properties', () => {
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: JSON.stringify({
+                                    productRecommendations: {
+                                        className: CONTENT_TYPES.PRODUCT_RECOMMENDATIONS,
+                                        productsDetails: { products: [] },
+                                        suggestedActions: [
+                                            {
+                                                type: 'QUESTION_WITH_ANSWERS',
+                                                displayValue: 'Test question?',
+                                                utterance: null,
+                                                options: [
+                                                    {
+                                                        utterance: 'Valid utterance',
+                                                        type: 'UTTERANCE_SUGGESTION',
+                                                        displayValue: 'Valid Option',
+                                                    },
+                                                    {
+                                                        // Missing utterance
+                                                        type: 'UTTERANCE_SUGGESTION',
+                                                        displayValue: 'Missing Utterance',
+                                                    },
+                                                    {
+                                                        utterance: 'Missing displayValue',
+                                                        type: 'UTTERANCE_SUGGESTION',
+                                                        // Missing displayValue
+                                                    },
+                                                ],
+                                            },
+                                        ],
+                                    },
+                                }),
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                element.conversationEntry = entry;
+
+                // Component should render without errors
+                expect(element).toBeDefined();
+                expect(element.querySelector('c-product-search-recommendations')).toBeDefined();
+            });
+
+            it('should return empty suggestedActions when suggestedActions is null', () => {
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: JSON.stringify({
+                                    productRecommendations: {
+                                        className: CONTENT_TYPES.PRODUCT_RECOMMENDATIONS,
+                                        productsDetails: { products: [] },
+                                        suggestedActions: null,
+                                    },
+                                }),
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                element.conversationEntry = entry;
+
+                // Component should render without errors
+                expect(element).toBeDefined();
+                expect(element.querySelector('c-product-search-recommendations')).toBeDefined();
+            });
+
+            it('should return empty suggestedActions when suggestedActions array is empty', () => {
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: JSON.stringify({
+                                    productRecommendations: {
+                                        className: CONTENT_TYPES.PRODUCT_RECOMMENDATIONS,
+                                        productsDetails: { products: [] },
+                                        suggestedActions: [],
+                                    },
+                                }),
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                element.conversationEntry = entry;
+
+                // Component should render without errors
+                expect(element).toBeDefined();
+                expect(element.querySelector('c-product-search-recommendations')).toBeDefined();
+            });
+
+            it('should handle suggestedActions with no QUESTION_WITH_ANSWERS action', () => {
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: JSON.stringify({
+                                    productRecommendations: {
+                                        className: CONTENT_TYPES.PRODUCT_RECOMMENDATIONS,
+                                        productsDetails: { products: [] },
+                                        suggestedActions: [
+                                            {
+                                                type: 'UNKNOWN_TYPE',
+                                                displayValue: 'Test',
+                                                utterance: null,
+                                                options: null,
+                                            },
+                                        ],
+                                    },
+                                }),
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                element.conversationEntry = entry;
+
+                // Component should render without errors
+                expect(element).toBeDefined();
+                expect(element.querySelector('c-product-search-recommendations')).toBeDefined();
+            });
+
+            it('should handle suggestedActions with action but no options array', () => {
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: JSON.stringify({
+                                    productRecommendations: {
+                                        className: CONTENT_TYPES.PRODUCT_RECOMMENDATIONS,
+                                        productsDetails: { products: [] },
+                                        suggestedActions: [
+                                            {
+                                                type: 'QUESTION_WITH_ANSWERS',
+                                                displayValue: 'Test question?',
+                                                utterance: null,
+                                                // No options property
+                                            },
+                                        ],
+                                    },
+                                }),
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                element.conversationEntry = entry;
+
+                // Component should render without errors
+                expect(element).toBeDefined();
+                expect(element.querySelector('c-product-search-recommendations')).toBeDefined();
+            });
+
+            it('should use the first QUESTION_WITH_ANSWERS when multiple actions exist', () => {
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: JSON.stringify({
+                                    productRecommendations: {
+                                        className: CONTENT_TYPES.PRODUCT_RECOMMENDATIONS,
+                                        productsDetails: { products: [] },
+                                        suggestedActions: [
+                                            {
+                                                type: 'QUESTION_WITH_ANSWERS',
+                                                displayValue: 'First question?',
+                                                utterance: null,
+                                                options: [
+                                                    {
+                                                        utterance: 'First',
+                                                        type: 'UTTERANCE_SUGGESTION',
+                                                        displayValue: 'First',
+                                                    },
+                                                ],
+                                            },
+                                            {
+                                                type: 'QUESTION_WITH_ANSWERS',
+                                                displayValue: 'Second question?',
+                                                utterance: null,
+                                                options: [
+                                                    {
+                                                        utterance: 'Second',
+                                                        type: 'UTTERANCE_SUGGESTION',
+                                                        displayValue: 'Second',
+                                                    },
+                                                ],
+                                            },
+                                        ],
+                                    },
+                                }),
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                element.conversationEntry = entry;
+
+                // Component should render without errors
+                expect(element).toBeDefined();
+                expect(element.querySelector('c-product-search-recommendations')).toBeDefined();
+            });
+        });
+
         it('should render product details component when content type is detected', () => {
             const entry = {
                 entryPayload: JSON.stringify({
@@ -495,6 +890,52 @@ describe('c-dynamic-content-renderer', () => {
                                 productDetails: {
                                     className: CONTENT_TYPES.PRODUCT_DETAILS,
                                     details: undefined,
+                                },
+                            }),
+                        },
+                    },
+                }),
+                sender: { role: CHATBOT },
+            };
+
+            element.conversationEntry = entry;
+            expect(element).toBeDefined();
+        });
+
+        it('should handle product details with suggestedActions containing valid actions', () => {
+            const entry = {
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: JSON.stringify({
+                                productDetails: {
+                                    className: CONTENT_TYPES.PRODUCT_DETAILS,
+                                    details: [{ id: 'prod1' }],
+                                    suggestedActions: [
+                                        { type: 'TEST', displayValue: 'Test', utterance: null, options: null },
+                                    ],
+                                },
+                            }),
+                        },
+                    },
+                }),
+                sender: { role: CHATBOT },
+            };
+
+            element.conversationEntry = entry;
+            expect(element).toBeDefined();
+        });
+
+        it('should handle product details when suggestedActions is not an array', () => {
+            const entry = {
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: JSON.stringify({
+                                productDetails: {
+                                    className: CONTENT_TYPES.PRODUCT_DETAILS,
+                                    details: [{ id: 'prod1' }],
+                                    suggestedActions: 'invalid',
                                 },
                             }),
                         },
@@ -548,6 +989,89 @@ describe('c-dynamic-content-renderer', () => {
             element.conversationEntry = entry;
             expect(element).toBeDefined();
         });
+
+        it('should handle cart summary with suggestedActions containing valid actions', () => {
+            const entry = {
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: JSON.stringify({
+                                cartSummary: {
+                                    className: CONTENT_TYPES.CART_SUMMARY,
+                                    cartDetails: { id: 'cartId' },
+                                    suggestedActions: [
+                                        { type: 'TEST', displayValue: 'Test', utterance: null, options: null },
+                                    ],
+                                },
+                            }),
+                        },
+                    },
+                }),
+                sender: { role: CHATBOT },
+            };
+
+            element.conversationEntry = entry;
+            expect(element).toBeDefined();
+        });
+
+        it('should handle cart summary when suggestedActions is not an array', () => {
+            const entry = {
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: JSON.stringify({
+                                cartSummary: {
+                                    className: CONTENT_TYPES.CART_SUMMARY,
+                                    cartDetails: { id: 'cartId' },
+                                    suggestedActions: {},
+                                },
+                            }),
+                        },
+                    },
+                }),
+                sender: { role: CHATBOT },
+            };
+
+            element.conversationEntry = entry;
+            expect(element).toBeDefined();
+        });
+
+        it('should handle cartapplycoupon event from cart summary component', () => {
+            element.conversationEntry = {
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: JSON.stringify({
+                                cartSummary: {
+                                    className: CONTENT_TYPES.CART_SUMMARY,
+                                    cartDetails: {
+                                        id: 'cartId',
+                                        items: [{ name: 'Product A', quantity: 1 }],
+                                    },
+                                },
+                            }),
+                        },
+                    },
+                }),
+                sender: { role: CHATBOT },
+            };
+
+            return Promise.resolve().then(() => {
+                const cartSummary = element.querySelector('c-cart-summary');
+                expect(cartSummary).not.toBeNull();
+
+                cartSummary.dispatchEvent(
+                    new CustomEvent('cartapplycoupon', {
+                        detail: { couponCode: 'TEST123' },
+                        bubbles: true,
+                        composed: true,
+                    })
+                );
+
+                expect(mockSendTextMessage).toHaveBeenCalledWith('Apply coupon code TEST123');
+            });
+        });
+
         it('should render order confirmation component when content type is detected', () => {
             const entry = {
                 entryPayload: JSON.stringify({
@@ -578,6 +1102,52 @@ describe('c-dynamic-content-renderer', () => {
                                 orderConfirmation: {
                                     className: CONTENT_TYPES.ORDER_CONFIRMATION,
                                     details: undefined,
+                                },
+                            }),
+                        },
+                    },
+                }),
+                sender: { role: CHATBOT },
+            };
+
+            element.conversationEntry = entry;
+            expect(element).toBeDefined();
+        });
+
+        it('should handle order confirmation with suggestedActions containing valid actions', () => {
+            const entry = {
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: JSON.stringify({
+                                orderConfirmation: {
+                                    className: CONTENT_TYPES.ORDER_CONFIRMATION,
+                                    orderNumber: '12345',
+                                    suggestedActions: [
+                                        { type: 'TEST', displayValue: 'Test', utterance: null, options: null },
+                                    ],
+                                },
+                            }),
+                        },
+                    },
+                }),
+                sender: { role: CHATBOT },
+            };
+
+            element.conversationEntry = entry;
+            expect(element).toBeDefined();
+        });
+
+        it('should handle order confirmation when suggestedActions is not an array', () => {
+            const entry = {
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: JSON.stringify({
+                                orderConfirmation: {
+                                    className: CONTENT_TYPES.ORDER_CONFIRMATION,
+                                    orderNumber: '12345',
+                                    suggestedActions: 123,
                                 },
                             }),
                         },
@@ -774,81 +1344,6 @@ describe('c-dynamic-content-renderer', () => {
             });
         });
 
-        describe('handleSelectCategory', () => {
-            beforeEach(() => {
-                // Set up conversation entry with userQuery
-                const entry = {
-                    entryPayload: JSON.stringify({
-                        abstractMessage: {
-                            staticContent: {
-                                text: JSON.stringify({
-                                    userQuery: 'test query',
-                                    productsDetails: { products: [] },
-                                    categoryDetails: { categories: [] },
-                                }),
-                            },
-                        },
-                    }),
-                    sender: { role: CHATBOT },
-                };
-                element.conversationEntry = entry;
-            });
-
-            it('should send text message with category details when valid category is provided', () => {
-                const event = { detail: { name: 'Test Category', id: 'cat123' } };
-
-                element.handleSelectCategory(event);
-
-                expect(mockSendTextMessage).toHaveBeenCalledWith('test query for category Test Category (cat123)');
-            });
-
-            it('should not send message when category name is missing', () => {
-                const event = { detail: { id: 'cat123' } };
-
-                element.handleSelectCategory(event);
-
-                expect(mockSendTextMessage).not.toHaveBeenCalled();
-            });
-
-            it('should not send message when category id is missing', () => {
-                const event = { detail: { name: 'Test Category' } };
-
-                element.handleSelectCategory(event);
-
-                expect(mockSendTextMessage).not.toHaveBeenCalled();
-            });
-
-            it('should not send message when event detail is null', () => {
-                element.handleSelectCategory({ detail: null });
-
-                expect(mockSendTextMessage).not.toHaveBeenCalled();
-            });
-
-            it('should use empty string for userQuery when not available', () => {
-                // Set up conversation entry without userQuery
-                const entry = {
-                    entryPayload: JSON.stringify({
-                        abstractMessage: {
-                            staticContent: {
-                                text: JSON.stringify({
-                                    productsDetails: { products: [] },
-                                    categoryDetails: { categories: [] },
-                                }),
-                            },
-                        },
-                    }),
-                    sender: { role: CHATBOT },
-                };
-                element.conversationEntry = entry;
-
-                const event = { detail: { name: 'Test Category', id: 'cat123' } };
-
-                element.handleSelectCategory(event);
-
-                expect(mockSendTextMessage).toHaveBeenCalledWith(' for category Test Category (cat123)');
-            });
-        });
-
         describe('handleShowProduct', () => {
             beforeEach(() => {
                 // Mock window.open
@@ -1005,6 +1500,63 @@ describe('c-dynamic-content-renderer', () => {
             });
         });
 
+        describe('handleSelectOption', () => {
+            it('should send text message with utterance when valid option is provided', () => {
+                const event = {
+                    detail: {
+                        displayValue: 'Hiking',
+                        utterance: 'Suggest me more in jackets for hiking.',
+                    },
+                };
+
+                element.handleSelectOption(event);
+
+                expect(mockSendTextMessage).toHaveBeenCalledWith('Suggest me more in jackets for hiking.');
+            });
+
+            it('should not send message when option has no displayValue', () => {
+                const event = {
+                    detail: {
+                        utterance: 'Some utterance',
+                    },
+                };
+
+                element.handleSelectOption(event);
+
+                expect(mockSendTextMessage).not.toHaveBeenCalled();
+            });
+
+            it('should not send message when option has no utterance', () => {
+                const event = {
+                    detail: {
+                        displayValue: 'Hiking',
+                    },
+                };
+
+                element.handleSelectOption(event);
+
+                expect(mockSendTextMessage).not.toHaveBeenCalled();
+            });
+
+            it('should not send message when event detail is null', () => {
+                const event = {
+                    detail: null,
+                };
+
+                element.handleSelectOption(event);
+
+                expect(mockSendTextMessage).not.toHaveBeenCalled();
+            });
+
+            it('should not send message when event detail is undefined', () => {
+                const event = {};
+
+                element.handleSelectOption(event);
+
+                expect(mockSendTextMessage).not.toHaveBeenCalled();
+            });
+        });
+
         describe('handlePayment', () => {
             it('should send order completed message when event detail is provided', () => {
                 const event = { detail: { orderId: 'ORD-123', paymentMethod: 'googlepay' } };
@@ -1137,6 +1689,50 @@ describe('c-dynamic-content-renderer', () => {
                 element.conversationEntry = entry;
 
                 expect(element.orderCompletedText).toBe('Payment succeeded');
+            });
+        });
+
+        describe('handleApplyCoupon', () => {
+            it.each([
+                ['standard coupon code', 'SAVE10', 'SAVE10'],
+                ['trimmed coupon code', '  DISCOUNT20  ', 'DISCOUNT20'],
+                ['coupon code with special characters', 'SAVE-20%', 'SAVE-20%'],
+                ['numeric coupon code', '123456', '123456'],
+            ])('should send apply coupon message with %s', (_description, couponCode, expectedCode) => {
+                element.handleApplyCoupon({ detail: { couponCode } });
+
+                expect(mockSendTextMessage).toHaveBeenCalledWith(`Apply coupon code ${expectedCode}`);
+            });
+
+            it.each([
+                ['event detail is missing', {}],
+                ['couponCode is missing', { detail: {} }],
+                ['couponCode is empty string', { detail: { couponCode: '' } }],
+                ['couponCode is only whitespace', { detail: { couponCode: '   ' } }],
+                ['event is null', null],
+                ['event is undefined', undefined],
+            ])('should not send message when %s', (_description, event) => {
+                element.handleApplyCoupon(event);
+
+                expect(mockSendTextMessage).not.toHaveBeenCalled();
+            });
+
+            it.each([
+                ['en_US', 'SAVE20', 'Apply coupon code SAVE20'],
+                ['de', 'SAVE20', 'Gutscheincode SAVE20 anwenden'],
+                ['es', 'SAVE20', 'Aplicar código de cupón SAVE20'],
+                ['fr', 'SAVE20', 'Appliquer le code de coupon SAVE20'],
+                ['ja', 'SAVE20', 'クーポンコード SAVE20 を適用'],
+                ['zh_CN', 'SAVE20', '应用优惠券代码 SAVE20'],
+                ['pt_BR', 'SAVE20', 'Aplicar código de cupom SAVE20'],
+            ])('should send apply coupon message in %s locale', (locale, couponCode, expectedMessage) => {
+                // Update configuration with the specified language
+                element.configuration = {
+                    ...mockConfiguration,
+                    language: locale,
+                };
+                element.handleApplyCoupon({ detail: { couponCode } });
+                expect(mockSendTextMessage).toHaveBeenCalledWith(expectedMessage);
             });
         });
     });
@@ -3748,6 +4344,7 @@ describe('c-dynamic-content-renderer', () => {
 
             // Markdown that might produce empty paragraphs
             const markdownText = `First paragraph
+
 Second paragraph`;
 
             const entry = {

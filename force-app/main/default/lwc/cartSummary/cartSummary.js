@@ -385,4 +385,32 @@ export default class CartSummary extends LightningElement {
             console.warn(`Failed to send basket data postMessage (Component ${this._instanceId}):`, error);
         }
     }
+
+    /**
+     * @description Determines if the coupon input should be displayed
+     * @returns {boolean} True if cart summary has items and feature flag is enabled
+     */
+    get shouldShowCouponInput() {
+        const hasItems = this._cartSummary && this._cartSummary.items && this._cartSummary.items.length > 0;
+        const isCouponFeatureShown = this._cartSummary?.flags?.isCouponFeatureEnabled ?? false;
+        return hasItems && isCouponFeatureShown;
+    }
+
+    /**
+     * @description Handles the applycoupon event from the coupon input component
+     * @param {CustomEvent} event - The applycoupon event containing coupon code
+     */
+    handleApplyCoupon(event) {
+        const { couponCode } = event.detail;
+
+        // Dispatch custom event to parent/container to handle coupon application
+        const applyCouponEvent = new CustomEvent('cartapplycoupon', {
+            detail: {
+                couponCode,
+            },
+            bubbles: true,
+            composed: true,
+        });
+        this.dispatchEvent(applyCouponEvent);
+    }
 }

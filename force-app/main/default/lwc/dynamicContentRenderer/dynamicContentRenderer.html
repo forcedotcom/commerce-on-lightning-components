@@ -21,12 +21,11 @@
             <c-product-search-recommendations
                 product-data={dynamicComponentData.productData}
                 products-description={dynamicComponentData.productsDescription}
-                category-data={dynamicComponentData.categoryData}
-                categories-description={dynamicComponentData.categoriesDescription}
                 show-more-products={dynamicComponentData.showMoreProducts}
                 configuration={configuration}
+                suggested-actions={dynamicComponentData.suggestedActions}
                 onaddtocart={handleAddToCart}
-                onselectcategory={handleSelectCategory}
+                onselectoption={handleSelectOption}
                 onshowproduct={handleShowProduct}
                 onshowmoreproducts={handleShowMoreProducts}></c-product-search-recommendations>
         </template>
@@ -43,7 +42,8 @@
                 cart-summary={dynamicComponentData.cartSummary}
                 entry-id={entryId}
                 configuration={configuration}
-                onpayment={handlePayment}></c-cart-summary>
+                onpayment={handlePayment}
+                oncartapplycoupon={handleApplyCoupon}></c-cart-summary>
         </template>
         <template lwc:elseif={isOrderConfirmation}>
             <c-summary-details
