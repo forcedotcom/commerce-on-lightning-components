@@ -393,6 +393,25 @@ export default class DynamicContentRenderer extends LightningElement {
     }
 
     /**
+     * Indicates whether the current message is conv context questions (className B2CConvContextQuestionRepresentation).
+     * Used for conditional rendering to show generated questions as text.
+     * @returns {boolean} `true` if the content type matches `CONTENT_TYPES.CONV_CONTEXT_QUESTIONS`, `false` otherwise.
+     */
+    get isConvContextData() {
+        return this.contentType === CONTENT_TYPES.CONV_CONTEXT_QUESTIONS;
+    }
+
+    /**
+     * Returns the generated questions text from convContextQuestions payload for display.
+     * Used when the payload has className B2CConvContextQuestionRepresentation.
+     * @returns {string} The generated questions string, or empty string if not present.
+     */
+    get generatedQuestions() {
+        const questions = this._parsedMessageContent?.convContextQuestions?.generatedQuestions;
+        return typeof questions === 'string' ? questions : '';
+    }
+
+    /**
      * Comprehensive JSDoc documentation for the richTextClasses getter.
      * This getter computes CSS classes for rich text content based on whether an image is present.
      * It adjusts padding to accommodate image content - removes padding when images are present
@@ -564,6 +583,35 @@ export default class DynamicContentRenderer extends LightningElement {
     }
 
     /**
+     * Sends a message to the storefront when a search result in PSA is clicked
+     * This is used for analytics tracking of agent-initiated search interactions.
+     * @param {string} agentSessionId - The agent session identifier
+     * @param {string} productId - The search query that was executed
+     */
+    @api
+    sendPsaSearchResultClicked(agentSessionId, productId) {
+        // Older versions of Firefox (before Firefox 148) don't support ancestorOrigins,
+        // so we need to use the wildcard '*' as fallback in such cases
+        var targetOrigin;
+        if (window.location.ancestorOrigins && window.location.ancestorOrigins.length > 0) {
+            targetOrigin = window.location.ancestorOrigins[0];
+        } else {
+            targetOrigin = '*';
+        }
+        if (agentSessionId && productId) {
+            window.parent.postMessage(
+                {
+                    type: 'lwc.agentSearchResultClicked',
+                    timestamp: Date.now(),
+                    agentSessionId: agentSessionId,
+                    productId: productId,
+                },
+                targetOrigin
+            );
+        }
+    }
+
+    /**
      * Handles the "Show Product" action.
      * If cart management is not supported, it attempts to find a product URL in the DOM (`data-url`)
      * and opens it in a new window. If cart management *is* supported, it sends a structured text message
@@ -582,9 +630,19 @@ export default class DynamicContentRenderer extends LightningElement {
 
         if (!isCartMgmtSupported) {
             // If cart management is not supported, get URL from event detail and open it
-            const productUrl = event?.detail?.url;
+            // add src=shopperAgent to the URL since we need it for the order source tracking
+            const baseUrl = event?.detail?.url;
+            const separator = baseUrl?.includes('?') ? '&' : '?';
+            const productUrl = baseUrl + separator + 'src=shopperAgent';
 
-            if (productUrl) {
+            // Get the agent session ID for analytics tracking send it to the storefront
+            const agentSessionId =
+                this._parsedMessageContent?.productRecommendations?.messagingSessionId ||
+                this._parsedMessageContent?.messagingSessionId;
+            const productId = event.detail?.id;
+            this.sendPsaSearchResultClicked(agentSessionId, productId);
+
+            if (baseUrl && productUrl) {
                 try {
                     window.open(productUrl, '_blank');
                 } catch (error) {
@@ -890,6 +948,35 @@ export default class DynamicContentRenderer extends LightningElement {
     // =========================================================
 
     /**
+     * Sends a message to the storefront when PSA is invoked
+     * This is used for analytics tracking of agent-initiated search interactions.
+     * @param {string} agentSessionId - The agent session identifier
+     * @param {string} searchQuery - The search query that was executed
+     */
+    @api
+    sendPsaMsgToStorefront(agentSessionId, searchQuery) {
+        // Older versions of Firefox (before Firefox 148) don't support ancestorOrigins,
+        // so we need to use the wildcard '*' as fallback in such cases
+        var targetOrigin;
+        if (window.location.ancestorOrigins && window.location.ancestorOrigins.length > 0) {
+            targetOrigin = window.location.ancestorOrigins[0];
+        } else {
+            targetOrigin = '*';
+        }
+        if (agentSessionId && searchQuery) {
+            window.parent.postMessage(
+                {
+                    type: 'lwc.agentInvokedSearch',
+                    timestamp: Date.now(),
+                    agentSessionId: agentSessionId,
+                    searchQuery: searchQuery,
+                },
+                targetOrigin
+            );
+        }
+    }
+
+    /**
      * Processes product recommendations data from the `_parsedMessageContent`.
      * This method extracts and structures product and category details, along with cart management
      * support status and user query, ensuring safe defaults for missing properties.
@@ -906,6 +993,12 @@ export default class DynamicContentRenderer extends LightningElement {
         const parsed = this._parsedMessageContent;
         // Extract productsDetails, checking both nested under productRecommendations and root level for flexibility
         const productsDetails = parsed?.productRecommendations?.productsDetails || parsed?.productsDetails;
+
+        // Extract agent session ID from PSA response and send it to the storefront
+        const agentSessionId = parsed?.productRecommendations?.messagingSessionId || parsed?.messagingSessionId;
+        const userSearchQuery = parsed?.productRecommendations?.userQuery || parsed?.userQuery;
+        this.sendPsaMsgToStorefront(agentSessionId, userSearchQuery);
+
         if (productsDetails && Array.isArray(productsDetails.products)) {
             data.productData = productsDetails.products;
             data.productsDescription = productsDetails.description || '';

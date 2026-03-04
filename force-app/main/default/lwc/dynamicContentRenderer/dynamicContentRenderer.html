@@ -55,6 +55,14 @@
                 <lightning-formatted-rich-text value={orderCompletedText}></lightning-formatted-rich-text>
             </div>
         </template>
+        <template lwc:elseif={isConvContextData}>
+            <div class={richTextClasses}>
+                <lightning-formatted-rich-text
+                    class="richTextContent"
+                    value={generatedQuestions}
+                    aria-label={ariaLabelRichTextContent}></lightning-formatted-rich-text>
+            </div>
+        </template>
         <template lwc:else>
             <div class={richTextClasses}>
                 <lightning-formatted-rich-text

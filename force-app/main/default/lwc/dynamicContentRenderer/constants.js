@@ -22,6 +22,7 @@ export const CONTENT_TYPES = Object.freeze({
     CART_SUMMARY: 'B2CCartSummaryRepresentation',
     ORDER_CONFIRMATION: 'B2COrderConfirmationDetails',
     ORDER_COMPLETED: 'orderCompleted',
+    CONV_CONTEXT_QUESTIONS: 'B2CConvContextQuestionRepresentation',
 });
 
 // --- Component Configuration Mapping ---
