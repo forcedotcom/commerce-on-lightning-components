@@ -291,6 +291,7 @@ describe('c-dynamic-content-renderer', () => {
     let element;
     let mockSendTextMessage;
     let mockConfiguration;
+    let mockAgentSessionId;
 
     beforeEach(() => {
         // Reset DOM
@@ -312,6 +313,8 @@ describe('c-dynamic-content-renderer', () => {
         });
         element.configuration = mockConfiguration;
         document.body.appendChild(element);
+
+        mockAgentSessionId = '0MxJzUZ9q6Z0eYx';
     });
 
     afterEach(() => {
@@ -401,6 +404,56 @@ describe('c-dynamic-content-renderer', () => {
                         staticContent: {
                             text: JSON.stringify({
                                 productRecommendations: {
+                                    messagingSessionId: mockAgentSessionId,
+                                    className: CONTENT_TYPES.PRODUCT_RECOMMENDATIONS,
+                                    productsDetails: { products: [] },
+                                    categoryDetails: { categories: [] },
+                                },
+                            }),
+                        },
+                    },
+                }),
+                sender: { role: CHATBOT },
+            };
+
+            element.conversationEntry = entry;
+
+            // Component should render without throwing errors
+            expect(element).toBeDefined();
+        });
+
+        it('should render product recommendations component when content type is detected and no agent session id is present', () => {
+            const entry = {
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: JSON.stringify({
+                                productRecommendations: {
+                                    className: CONTENT_TYPES.PRODUCT_RECOMMENDATIONS,
+                                    productsDetails: { products: [] },
+                                    categoryDetails: { categories: [] },
+                                },
+                            }),
+                        },
+                    },
+                }),
+                sender: { role: CHATBOT },
+            };
+
+            element.conversationEntry = entry;
+
+            // Component should render without throwing errors
+            expect(element).toBeDefined();
+        });
+
+        it('should render product recommendations component when content type is detected and agent session id is null', () => {
+            const entry = {
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: JSON.stringify({
+                                productRecommendations: {
+                                    messagingSessionId: null,
                                     className: CONTENT_TYPES.PRODUCT_RECOMMENDATIONS,
                                     productsDetails: { products: [] },
                                     categoryDetails: { categories: [] },
@@ -450,6 +503,7 @@ describe('c-dynamic-content-renderer', () => {
                             text: JSON.stringify({
                                 productRecommendations: {
                                     className: CONTENT_TYPES.PRODUCT_RECOMMENDATIONS,
+                                    messagingSessionId: mockAgentSessionId,
                                     productsDetails: null,
                                     categoryDetails: null,
                                     userQuery: 'invalid query',
@@ -473,6 +527,7 @@ describe('c-dynamic-content-renderer', () => {
                             text: JSON.stringify({
                                 productRecommendations: {
                                     className: CONTENT_TYPES.PRODUCT_RECOMMENDATIONS,
+                                    messagingSessionId: mockAgentSessionId,
                                     productsDetails: { products: [] },
                                     suggestedActions: [
                                         {
@@ -502,6 +557,7 @@ describe('c-dynamic-content-renderer', () => {
                             text: JSON.stringify({
                                 productRecommendations: {
                                     className: CONTENT_TYPES.PRODUCT_RECOMMENDATIONS,
+                                    messagingSessionId: mockAgentSessionId,
                                     productsDetails: { products: [] },
                                     suggestedActions: null,
                                 },
@@ -524,6 +580,7 @@ describe('c-dynamic-content-renderer', () => {
                             text: JSON.stringify({
                                 productRecommendations: {
                                     className: CONTENT_TYPES.PRODUCT_RECOMMENDATIONS,
+                                    messagingSessionId: mockAgentSessionId,
                                     productsDetails: { products: [] },
                                     suggestedActions: 'invalid',
                                 },
@@ -546,6 +603,7 @@ describe('c-dynamic-content-renderer', () => {
                             text: JSON.stringify({
                                 productRecommendations: {
                                     className: CONTENT_TYPES.PRODUCT_RECOMMENDATIONS,
+                                    messagingSessionId: mockAgentSessionId,
                                     productsDetails: { products: [] },
                                 },
                             }),
@@ -567,6 +625,7 @@ describe('c-dynamic-content-renderer', () => {
                             staticContent: {
                                 text: JSON.stringify({
                                     productRecommendations: {
+                                        messagingSessionId: mockAgentSessionId,
                                         className: CONTENT_TYPES.PRODUCT_RECOMMENDATIONS,
                                         productsDetails: { products: [] },
                                         suggestedActions: [
@@ -611,6 +670,7 @@ describe('c-dynamic-content-renderer', () => {
                             staticContent: {
                                 text: JSON.stringify({
                                     productRecommendations: {
+                                        messagingSessionId: mockAgentSessionId,
                                         className: CONTENT_TYPES.PRODUCT_RECOMMENDATIONS,
                                         productsDetails: { products: [] },
                                         suggestedActions: [
@@ -654,6 +714,7 @@ describe('c-dynamic-content-renderer', () => {
                             staticContent: {
                                 text: JSON.stringify({
                                     productRecommendations: {
+                                        messagingSessionId: mockAgentSessionId,
                                         className: CONTENT_TYPES.PRODUCT_RECOMMENDATIONS,
                                         productsDetails: { products: [] },
                                         suggestedActions: [
@@ -702,6 +763,7 @@ describe('c-dynamic-content-renderer', () => {
                             staticContent: {
                                 text: JSON.stringify({
                                     productRecommendations: {
+                                        messagingSessionId: mockAgentSessionId,
                                         className: CONTENT_TYPES.PRODUCT_RECOMMENDATIONS,
                                         productsDetails: { products: [] },
                                         suggestedActions: null,
@@ -727,6 +789,7 @@ describe('c-dynamic-content-renderer', () => {
                             staticContent: {
                                 text: JSON.stringify({
                                     productRecommendations: {
+                                        messagingSessionId: mockAgentSessionId,
                                         className: CONTENT_TYPES.PRODUCT_RECOMMENDATIONS,
                                         productsDetails: { products: [] },
                                         suggestedActions: [],
@@ -752,6 +815,7 @@ describe('c-dynamic-content-renderer', () => {
                             staticContent: {
                                 text: JSON.stringify({
                                     productRecommendations: {
+                                        messagingSessionId: mockAgentSessionId,
                                         className: CONTENT_TYPES.PRODUCT_RECOMMENDATIONS,
                                         productsDetails: { products: [] },
                                         suggestedActions: [
@@ -784,6 +848,7 @@ describe('c-dynamic-content-renderer', () => {
                             staticContent: {
                                 text: JSON.stringify({
                                     productRecommendations: {
+                                        messagingSessionId: mockAgentSessionId,
                                         className: CONTENT_TYPES.PRODUCT_RECOMMENDATIONS,
                                         productsDetails: { products: [] },
                                         suggestedActions: [
@@ -816,6 +881,7 @@ describe('c-dynamic-content-renderer', () => {
                             staticContent: {
                                 text: JSON.stringify({
                                     productRecommendations: {
+                                        messagingSessionId: mockAgentSessionId,
                                         className: CONTENT_TYPES.PRODUCT_RECOMMENDATIONS,
                                         productsDetails: { products: [] },
                                         suggestedActions: [
@@ -1345,16 +1411,26 @@ describe('c-dynamic-content-renderer', () => {
         });
 
         describe('handleShowProduct', () => {
+            let mockPostMessage;
+
             beforeEach(() => {
                 // Mock window.open
                 global.window.open = jest.fn();
+
+                // Mock window.parent.postMessage for analytics tracking
+                mockPostMessage = jest.fn();
+                Object.defineProperty(window.parent, 'postMessage', {
+                    value: mockPostMessage,
+                    writable: true,
+                });
             });
 
             afterEach(() => {
                 delete global.window.open;
+                jest.clearAllMocks();
             });
 
-            it('should open URL when cart management is not supported', () => {
+            it('should open URL when cart management is not supported when product url has no existing query params', () => {
                 // Set up conversation entry without cart management support
                 const entry = {
                     entryPayload: JSON.stringify({
@@ -1375,7 +1451,34 @@ describe('c-dynamic-content-renderer', () => {
 
                 element.handleShowProduct(event);
 
-                expect(window.open).toHaveBeenCalledWith('https://example.com/product', '_blank');
+                expect(window.open).toHaveBeenCalledWith('https://example.com/product?src=shopperAgent', '_blank');
+            });
+
+            it('should open URL when cart management is not supported when product url does have existing query params', () => {
+                // Set up conversation entry without cart management support
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: JSON.stringify({
+                                    productsDetails: { products: [] },
+                                    categoryDetails: { categories: [] },
+                                }),
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+                element.conversationEntry = entry;
+
+                const event = { detail: { url: 'https://example.com/product?lang=en-US' } };
+
+                element.handleShowProduct(event);
+
+                expect(window.open).toHaveBeenCalledWith(
+                    'https://example.com/product?lang=en-US&src=shopperAgent',
+                    '_blank'
+                );
             });
 
             it('should traverse up DOM to find element with data-url', () => {
@@ -1398,7 +1501,7 @@ describe('c-dynamic-content-renderer', () => {
 
                 element.handleShowProduct(event);
 
-                expect(window.open).toHaveBeenCalledWith('https://example.com/product', '_blank');
+                expect(window.open).toHaveBeenCalledWith('https://example.com/product?src=shopperAgent', '_blank');
             });
 
             it('should send text message when cart management is supported', () => {
@@ -1692,6 +1795,69 @@ describe('c-dynamic-content-renderer', () => {
             });
         });
 
+        describe('conv context questions (generatedQuestions)', () => {
+            const makeEntry = (payload) => ({
+                entryPayload: JSON.stringify({
+                    abstractMessage: {
+                        staticContent: {
+                            text: typeof payload === 'string' ? payload : JSON.stringify(payload),
+                        },
+                    },
+                }),
+                sender: { role: CHATBOT },
+            });
+
+            const convWithQuestions = {
+                convContextKey: 'women-shoes',
+                convContextQuestions: {
+                    className: CONTENT_TYPES.CONV_CONTEXT_QUESTIONS,
+                    generatedQuestions: 'To help me find the perfect pair, what kind of activity?',
+                    convContextKey: 'women-shoes',
+                    categoryFacetNames: 'Color, Activity, Size',
+                },
+            };
+            const convNoQuestions = {
+                convContextKey: 'women-shoes',
+                convContextQuestions: {
+                    className: CONTENT_TYPES.CONV_CONTEXT_QUESTIONS,
+                    convContextKey: 'women-shoes',
+                    categoryFacetNames: 'Color, Size',
+                },
+            };
+            const convNonStringQuestions = {
+                convContextKey: 'women-shoes',
+                convContextQuestions: {
+                    className: CONTENT_TYPES.CONV_CONTEXT_QUESTIONS,
+                    generatedQuestions: 123,
+                    convContextKey: 'women-shoes',
+                },
+            };
+
+            it.each([
+                [
+                    'shows generatedQuestions when payload has className and generatedQuestions',
+                    convWithQuestions,
+                    false,
+                    'To help me find the perfect pair, what kind of activity?',
+                ],
+                ['shows empty when convContextQuestions has no generatedQuestions', convNoQuestions, true, ''],
+                ['shows empty when generatedQuestions is not a string', convNonStringQuestions, true, ''],
+                [
+                    'shows plain text when payload is not conv context',
+                    'Just a regular message',
+                    false,
+                    'Just a regular message',
+                ],
+            ])('%s', async (_desc, payload, expectEmpty, expectedContains) => {
+                element.conversationEntry = makeEntry(payload);
+                await flushPromises();
+                const richText = element.querySelector('lightning-formatted-rich-text');
+                expect(richText).toBeTruthy();
+                expect(richText.value === '').toBe(expectEmpty);
+                expect(richText.value).toContain(expectedContains);
+            });
+        });
+
         describe('handleApplyCoupon', () => {
             it.each([
                 ['standard coupon code', 'SAVE10', 'SAVE10'],
@@ -1947,6 +2113,7 @@ describe('c-dynamic-content-renderer', () => {
                             staticContent: {
                                 text: JSON.stringify({
                                     productRecommendations: {
+                                        messagingSessionId: mockAgentSessionId,
                                         className: CONTENT_TYPES.PRODUCT_RECOMMENDATIONS,
                                         productsDetails: { products: [] },
                                         categoryDetails: { categories: [] },
@@ -4701,6 +4868,222 @@ Second paragraph`;
             expect(testElement.conversationEntry).toBeDefined();
 
             document.body.removeChild(testElement);
+        });
+    });
+
+    describe('sendPsaMsgToStorefront method', () => {
+        let mockPostMessage;
+        const mockAncestorOrigin = 'http://www.test.com';
+
+        beforeEach(() => {
+            // Mock window.parent.postMessage
+            mockPostMessage = jest.fn();
+            Object.defineProperty(window.parent, 'postMessage', {
+                value: mockPostMessage,
+                writable: true,
+            });
+            window.location.ancestorOrigins = [mockAncestorOrigin];
+        });
+
+        afterEach(() => {
+            jest.clearAllMocks();
+        });
+
+        it('should send lwc.agentInvokedSearch postMessage when agentSessionId is provided and ancestorOrigins is set', () => {
+            const agentSessionId = mockAgentSessionId;
+            const searchQuery = 'search for jackets';
+
+            element.sendPsaMsgToStorefront(agentSessionId, searchQuery);
+
+            expect(mockPostMessage).toHaveBeenCalledWith(
+                {
+                    type: 'lwc.agentInvokedSearch',
+                    timestamp: expect.any(Number),
+                    agentSessionId: agentSessionId,
+                    searchQuery: searchQuery,
+                },
+                mockAncestorOrigin
+            );
+        });
+
+        it('should send lwc.agentInvokedSearch postMessage when agentSessionId is provided and ancestorOrigins is null', () => {
+            window.location.ancestorOrigins = null;
+            const agentSessionId = mockAgentSessionId;
+            const searchQuery = 'search for jackets';
+
+            element.sendPsaMsgToStorefront(agentSessionId, searchQuery);
+
+            expect(mockPostMessage).toHaveBeenCalledWith(
+                {
+                    type: 'lwc.agentInvokedSearch',
+                    timestamp: expect.any(Number),
+                    agentSessionId: agentSessionId,
+                    searchQuery: searchQuery,
+                },
+                '*'
+            );
+        });
+
+        it('should send lwc.agentInvokedSearch postMessage when agentSessionId is provided and ancestorOrigins is empty array', () => {
+            window.location.ancestorOrigins = [];
+            const agentSessionId = mockAgentSessionId;
+            const searchQuery = 'search for jackets';
+
+            element.sendPsaMsgToStorefront(agentSessionId, searchQuery);
+
+            expect(mockPostMessage).toHaveBeenCalledWith(
+                {
+                    type: 'lwc.agentInvokedSearch',
+                    timestamp: expect.any(Number),
+                    agentSessionId: agentSessionId,
+                    searchQuery: searchQuery,
+                },
+                '*'
+            );
+        });
+
+        it('should not send postMessage when agentSessionId is null', () => {
+            element.sendPsaMsgToStorefront(null, 'search query');
+
+            expect(mockPostMessage).not.toHaveBeenCalled();
+        });
+
+        it('should not send postMessage when agentSessionId is undefined', () => {
+            element.sendPsaMsgToStorefront(undefined, 'search query');
+
+            expect(mockPostMessage).not.toHaveBeenCalled();
+        });
+
+        it('should not send postMessage when agentSessionId is empty string', () => {
+            element.sendPsaMsgToStorefront('', 'search query');
+
+            expect(mockPostMessage).not.toHaveBeenCalled();
+        });
+
+        it('should send postMessage with correct message structure', () => {
+            const agentSessionId = mockAgentSessionId;
+            const searchQuery = 'running shoes';
+
+            element.sendPsaMsgToStorefront(agentSessionId, searchQuery);
+
+            expect(mockPostMessage).toHaveBeenCalledTimes(1);
+            expect(mockPostMessage).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    type: 'lwc.agentInvokedSearch',
+                    timestamp: expect.any(Number),
+                    agentSessionId: mockAgentSessionId,
+                    searchQuery: 'running shoes',
+                }),
+                mockAncestorOrigin
+            );
+        });
+    });
+
+    describe('sendPsaSearchResultClicked method', () => {
+        let mockPostMessage;
+        const mockAncestorOrigin = 'http://www.test.com';
+
+        beforeEach(() => {
+            // Mock window.parent.postMessage
+            mockPostMessage = jest.fn();
+            Object.defineProperty(window.parent, 'postMessage', {
+                value: mockPostMessage,
+                writable: true,
+            });
+            window.location.ancestorOrigins = [mockAncestorOrigin];
+        });
+
+        afterEach(() => {
+            jest.clearAllMocks();
+        });
+
+        it('should send lwc.agentSearchResultClicked postMessage when agentSessionId is provided and ancestorOrigins is set', () => {
+            const agentSessionId = mockAgentSessionId;
+            const productId = 'product-123';
+
+            element.sendPsaSearchResultClicked(agentSessionId, productId);
+
+            expect(mockPostMessage).toHaveBeenCalledWith(
+                {
+                    type: 'lwc.agentSearchResultClicked',
+                    timestamp: expect.any(Number),
+                    agentSessionId: agentSessionId,
+                    productId: productId,
+                },
+                mockAncestorOrigin
+            );
+        });
+
+        it('should send lwc.agentSearchResultClicked postMessage when agentSessionId is provided and ancestorOrigins is null', () => {
+            window.location.ancestorOrigins = null;
+            const agentSessionId = mockAgentSessionId;
+            const productId = 'product-123';
+
+            element.sendPsaSearchResultClicked(agentSessionId, productId);
+
+            expect(mockPostMessage).toHaveBeenCalledWith(
+                {
+                    type: 'lwc.agentSearchResultClicked',
+                    timestamp: expect.any(Number),
+                    agentSessionId: agentSessionId,
+                    productId: productId,
+                },
+                '*'
+            );
+        });
+
+        it('should send lwc.agentSearchResultClicked postMessage when agentSessionId is provided and ancestorOrigins is empty array', () => {
+            window.location.ancestorOrigins = [];
+            const agentSessionId = mockAgentSessionId;
+            const productId = 'product-123';
+
+            element.sendPsaSearchResultClicked(agentSessionId, productId);
+
+            expect(mockPostMessage).toHaveBeenCalledWith(
+                {
+                    type: 'lwc.agentSearchResultClicked',
+                    timestamp: expect.any(Number),
+                    agentSessionId: agentSessionId,
+                    productId: productId,
+                },
+                '*'
+            );
+        });
+
+        it('should not send postMessage when agentSessionId is null', () => {
+            element.sendPsaSearchResultClicked(null, 'product-123');
+
+            expect(mockPostMessage).not.toHaveBeenCalled();
+        });
+
+        it('should not send postMessage when agentSessionId is undefined', () => {
+            element.sendPsaSearchResultClicked(undefined, 'product-123');
+
+            expect(mockPostMessage).not.toHaveBeenCalled();
+        });
+
+        it('should not send postMessage when agentSessionId is empty string', () => {
+            element.sendPsaSearchResultClicked('', 'product-123');
+
+            expect(mockPostMessage).not.toHaveBeenCalled();
+        });
+
+        it('should send postMessage with correct message structure', () => {
+            const agentSessionId = mockAgentSessionId;
+            const productId = 'product-123';
+
+            element.sendPsaSearchResultClicked(agentSessionId, productId);
+
+            expect(mockPostMessage).toHaveBeenCalledTimes(1);
+            expect(mockPostMessage).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    type: 'lwc.agentSearchResultClicked',
+                    timestamp: expect.any(Number),
+                    agentSessionId: mockAgentSessionId,
+                    productId: 'product-123',
+                }),
+                mockAncestorOrigin
+            );
         });
     });
 
