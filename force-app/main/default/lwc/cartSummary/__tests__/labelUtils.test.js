@@ -58,6 +58,18 @@ describe('c-cart-summary labelUtils', () => {
         expect(Labels.checkoutButtonAssistiveText('xyz')).toBe('Proceed to checkout');
     });
 
+    it('should return addedCouponsAriaLabel for locale', () => {
+        expect(Labels.addedCouponsAriaLabel('en_US')).toBe('Added coupons');
+        expect(Labels.addedCouponsAriaLabel('es')).toBe('Cupones añadidos');
+        expect(Labels.addedCouponsAriaLabel('fr')).toBe('Codes promo ajoutés');
+    });
+
+    it('should return appliedCouponsAriaLabel for locale', () => {
+        expect(Labels.appliedCouponsAriaLabel('en_US')).toBe('Applied coupons');
+        expect(Labels.appliedCouponsAriaLabel('es')).toBe('Cupones aplicados');
+        expect(Labels.appliedCouponsAriaLabel('fr')).toBe('Codes promo appliqués');
+    });
+
     it('should test final fallback branch with missing English translation', () => {
         // Create a test scenario to trigger the final fallback branch
         // We'll test this by creating a temporary label structure

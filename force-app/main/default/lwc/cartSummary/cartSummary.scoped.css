@@ -68,6 +68,14 @@
     box-sizing: border-box;
 }
 
+/* Coupon pills */
+.coupon-pills-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--dxp-g-spacing-x-small, 0.5rem);
+    align-items: center;
+}
+
 .loading-container {
     position: relative;
     min-height: var(--ref-c-cart-summary-loading-container-height);

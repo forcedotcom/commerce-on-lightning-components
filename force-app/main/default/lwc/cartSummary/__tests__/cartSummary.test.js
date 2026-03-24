@@ -273,8 +273,12 @@ describe('c-cart-summary', () => {
             // Verify messaging event was dispatched
             expect(dispatchMessagingEvent).toHaveBeenCalledWith(MESSAGING_EVENT.MINIMIZE_BUTTON_CLICK, {});
 
-            // Verify window.open was called with correct URL
-            expect(mockWindowOpen).toHaveBeenCalledWith('https://example.com/checkout', '_blank');
+            // Verify window.open was called with correct URL and security features.
+            expect(mockWindowOpen).toHaveBeenCalledWith(
+                'https://example.com/checkout',
+                '_blank',
+                'noopener,noreferrer'
+            );
 
             mockWindowOpen.mockRestore();
         });
@@ -955,6 +959,7 @@ describe('c-cart-summary', () => {
 describe('Express payment URL construction', () => {
     let element;
     let mockLocalStorage;
+    let mockCartSummaryNoExpressUrl;
 
     beforeEach(async () => {
         // Mock localStorage
@@ -974,10 +979,13 @@ describe('Express payment URL construction', () => {
             writable: true,
         });
 
+        mockCartSummaryNoExpressUrl = { ...mockCartSummary };
+        delete mockCartSummaryNoExpressUrl.expressPaymentUrl;
+
         element = createElement('c-cart-summary', {
             is: CartSummary,
         });
-        element.cartSummary = mockCartSummary;
+        element.cartSummary = mockCartSummaryNoExpressUrl;
         element.entryId = 'test-entry-456';
         document.body.appendChild(element);
         await Promise.resolve();
@@ -990,24 +998,39 @@ describe('Express payment URL construction', () => {
         jest.clearAllMocks();
     });
 
-    it('should construct express payment URL from localStorage values', () => {
+    it('should use constructed PWA URL from localStorage over cart expressPaymentUrl', async () => {
+        while (document.body.firstChild) {
+            document.body.removeChild(document.body.firstChild);
+        }
+
+        element = createElement('c-cart-summary', {
+            is: CartSummary,
+        });
+        element.cartSummary = mockCartSummary;
+        element.entryId = 'test-entry-456';
+        document.body.appendChild(element);
+        await Promise.resolve();
+
         const expressPayment = element.querySelector('c-express-payment');
         expect(expressPayment).not.toBeNull();
         expect(expressPayment.expressPaymentUrl).toBe('https://www.phased-launch-testing.com/site-123/en-US/express');
     });
 
-    it('should call localStorage.getItem for required keys', () => {
-        // Verify that localStorage.getItem was called with the required keys
+    it('should construct express payment URL from localStorage values when cart has no expressPaymentUrl', () => {
+        const expressPayment = element.querySelector('c-express-payment');
+        expect(expressPayment).not.toBeNull();
+        expect(expressPayment.expressPaymentUrl).toBe('https://www.phased-launch-testing.com/site-123/en-US/express');
+    });
+
+    it('should call localStorage.getItem for required keys when falling back', () => {
         expect(mockLocalStorage.getItem).toHaveBeenCalledWith('pwaDomainUrl');
         expect(mockLocalStorage.getItem).toHaveBeenCalledWith('pwaSiteId');
         expect(mockLocalStorage.getItem).toHaveBeenCalledWith('pwaLocale');
     });
 
-    it('should return null when localStorage values are missing', async () => {
-        // Clear the mock to return null for all keys
+    it('should return null when localStorage values are missing and no cart expressPaymentUrl', async () => {
         mockLocalStorage.getItem.mockReturnValue(null);
 
-        // Recreate the element to trigger the getter again
         while (document.body.firstChild) {
             document.body.removeChild(document.body.firstChild);
         }
@@ -1015,7 +1038,7 @@ describe('Express payment URL construction', () => {
         element = createElement('c-cart-summary', {
             is: CartSummary,
         });
-        element.cartSummary = mockCartSummary;
+        element.cartSummary = mockCartSummaryNoExpressUrl;
         element.entryId = 'test-entry-456';
         document.body.appendChild(element);
         await Promise.resolve();
@@ -1025,16 +1048,13 @@ describe('Express payment URL construction', () => {
         expect(expressPayment.expressPaymentUrl).toBe('null');
     });
 
-    it('should handle localStorage errors gracefully', async () => {
-        // Mock localStorage to throw an error
+    it('should handle localStorage errors gracefully when no cart expressPaymentUrl', async () => {
         mockLocalStorage.getItem.mockImplementation(() => {
             throw new Error('localStorage error');
         });
 
-        // Mock console.warn to prevent console output during tests
         const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
 
-        // Recreate the element to trigger the getter again
         while (document.body.firstChild) {
             document.body.removeChild(document.body.firstChild);
         }
@@ -1042,7 +1062,7 @@ describe('Express payment URL construction', () => {
         element = createElement('c-cart-summary', {
             is: CartSummary,
         });
-        element.cartSummary = mockCartSummary;
+        element.cartSummary = mockCartSummaryNoExpressUrl;
         element.entryId = 'test-entry-456';
         document.body.appendChild(element);
         await Promise.resolve();
@@ -1051,25 +1071,85 @@ describe('Express payment URL construction', () => {
         expect(expressPayment).not.toBeNull();
         expect(expressPayment.expressPaymentUrl).toBe('null');
 
-        // Verify that console.warn was called for localStorage errors
         expect(consoleSpy).toHaveBeenCalledWith('localStorage not available:', expect.any(Error));
 
         consoleSpy.mockRestore();
     });
 
-    it('should return cartSummary.expressPaymentUrl when it equals string "null"', async () => {
-        // Test the specific case where cartSummary.expressPaymentUrl === 'null' (line 199)
+    it('should fall back to cart expressPaymentUrl when localStorage values are missing', async () => {
+        mockLocalStorage.getItem.mockReturnValue(null);
+
+        while (document.body.firstChild) {
+            document.body.removeChild(document.body.firstChild);
+        }
+
         element = createElement('c-cart-summary', {
             is: CartSummary,
         });
-        element.cartSummary = { ...mockCartSummary, expressPaymentUrl: 'null' };
+        element.cartSummary = mockCartSummary;
         element.entryId = 'test-entry-456';
         document.body.appendChild(element);
         await Promise.resolve();
 
         const expressPayment = element.querySelector('c-express-payment');
         expect(expressPayment).not.toBeNull();
-        expect(expressPayment.expressPaymentUrl).toBe('null');
+        expect(expressPayment.expressPaymentUrl).toBe('https://example.com/express');
+    });
+
+    it('should construct SFRA express payment URL from localizedUrl in localStorage', async () => {
+        mockLocalStorage.getItem.mockImplementation((key) => {
+            if (key === 'localizedUrl')
+                return 'https://zysn-003.unified.demandware.net/on/demandware.servlet/Sites-RefArch-Site/en_US';
+            return null;
+        });
+
+        while (document.body.firstChild) {
+            document.body.removeChild(document.body.firstChild);
+        }
+
+        element = createElement('c-cart-summary', {
+            is: CartSummary,
+        });
+        element.cartSummary = mockCartSummaryNoExpressUrl;
+        element.entryId = 'test-entry-456';
+        document.body.appendChild(element);
+        await Promise.resolve();
+
+        const expressPayment = element.querySelector('c-express-payment');
+        expect(expressPayment).not.toBeNull();
+        expect(expressPayment.expressPaymentUrl).toBe(
+            'https://zysn-003.unified.demandware.net/on/demandware.store/Sites-RefArch-Site/en_US/Payments-Express'
+        );
+    });
+
+    it('should use SFRA localizedUrl over PWA keys when both are in localStorage', async () => {
+        mockLocalStorage.getItem.mockImplementation((key) => {
+            const mockData = {
+                localizedUrl: 'https://zysn-003.unified.demandware.net/on/demandware.servlet/Sites-RefArch-Site/en_US',
+                pwaDomainUrl: 'https://www.phased-launch-testing.com',
+                pwaSiteId: 'site-123',
+                pwaLocale: 'en-US',
+            };
+            return mockData[key] || null;
+        });
+
+        while (document.body.firstChild) {
+            document.body.removeChild(document.body.firstChild);
+        }
+
+        element = createElement('c-cart-summary', {
+            is: CartSummary,
+        });
+        element.cartSummary = mockCartSummaryNoExpressUrl;
+        element.entryId = 'test-entry-456';
+        document.body.appendChild(element);
+        await Promise.resolve();
+
+        const expressPayment = element.querySelector('c-express-payment');
+        expect(expressPayment).not.toBeNull();
+        expect(expressPayment.expressPaymentUrl).toBe(
+            'https://zysn-003.unified.demandware.net/on/demandware.store/Sites-RefArch-Site/en_US/Payments-Express'
+        );
     });
 
     describe('localStorage integration for checkout URL', () => {
@@ -1088,6 +1168,42 @@ describe('Express payment URL construction', () => {
         afterEach(() => {
             // Clean up localStorage mock
             delete window.localStorage;
+        });
+
+        it('should construct SFRA checkout URL from localizedUrl in localStorage', async () => {
+            mockLocalStorage.getItem.mockReturnValue(
+                'https://zysn-003.unified.demandware.net/on/demandware.servlet/Sites-RefArch-Site/en_US'
+            );
+
+            element = createElement('c-cart-summary', {
+                is: CartSummary,
+            });
+            element.cartSummary = mockCartSummary;
+            document.body.appendChild(element);
+            await Promise.resolve();
+
+            const expressPayment = element.querySelector('c-express-payment');
+            expressPayment.dispatchEvent(
+                new CustomEvent('expressloaded', {
+                    detail: { available: false },
+                    bubbles: true,
+                })
+            );
+            await Promise.resolve();
+
+            const windowOpenSpy = jest.spyOn(window, 'open').mockImplementation();
+            const button = element.querySelector('c-common-button');
+            expect(button).not.toBeNull();
+            expect(button.disabled).toBe(false);
+            button.click();
+
+            expect(windowOpenSpy).toHaveBeenCalledWith(
+                'https://zysn-003.unified.demandware.net/on/demandware.store/Sites-RefArch-Site/en_US/Checkout-Begin',
+                '_blank',
+                'noopener,noreferrer'
+            );
+            expect(mockLocalStorage.getItem).toHaveBeenCalledWith('localizedUrl');
+            windowOpenSpy.mockRestore();
         });
 
         it('should use localizedUrl from localStorage when available', async () => {
@@ -1126,6 +1242,15 @@ describe('Express payment URL construction', () => {
             document.body.appendChild(element);
             await Promise.resolve();
 
+            const expressPayment = element.querySelector('c-express-payment');
+            expressPayment.dispatchEvent(
+                new CustomEvent('expressloaded', {
+                    detail: { available: false },
+                    bubbles: true,
+                })
+            );
+            await Promise.resolve();
+
             const button = element.querySelector('c-common-button');
             expect(button).not.toBeNull();
             expect(button.disabled).toBe(false);
@@ -1159,6 +1284,15 @@ describe('Express payment URL construction', () => {
             });
             element.cartSummary = mockCartSummary;
             document.body.appendChild(element);
+            await Promise.resolve();
+
+            const expressPayment = element.querySelector('c-express-payment');
+            expressPayment.dispatchEvent(
+                new CustomEvent('expressloaded', {
+                    detail: { available: false },
+                    bubbles: true,
+                })
+            );
             await Promise.resolve();
 
             const button = element.querySelector('c-common-button');
@@ -1394,7 +1528,7 @@ describe('Express payment URL construction', () => {
             document.body.removeChild(newElement);
         });
 
-        it('should hide coupon input when feature flag is undefined (defaults to false)', async () => {
+        it('should show coupon input when feature flag is undefined (defaults to true)', async () => {
             const newElement = createElement('c-cart-summary', {
                 is: CartSummary,
             });
@@ -1408,7 +1542,7 @@ describe('Express payment URL construction', () => {
             await Promise.resolve();
 
             const couponInput = newElement.querySelector('c-coupon-input');
-            expect(couponInput).toBeNull();
+            expect(couponInput).not.toBeNull();
 
             document.body.removeChild(newElement);
         });

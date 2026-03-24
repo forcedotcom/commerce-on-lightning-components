@@ -28,27 +28,80 @@
         <div
             lwc:if={hasSuggestedActions}
             class="slds-col slds-p-vertical_small slds-p-horizontal_medium">
-            <p class="suggested-actions-description">{suggestedActions.description}</p>
-            <!-- Grid layout for suggestions buttons -->
-            <div class="slds-grid slds-wrap slds-m-top_small suggested-actions-layout">
-                <template
-                    for:each={suggestedActions.options}
-                    for:item="option">
-                    <!-- Individual option button container -->
-                    <div
-                        class="slds-m-right_x-small slds-m-bottom_x-small"
-                        key={option.displayValue}>
-                        <!-- Clickable option button with hover effects -->
-                        <button
-                            name={option.displayValue}
-                            data-utterance={option.utterance}
-                            onclick={handleSelectOption}
-                            class="suggested-actions-button">
-                            {option.displayValue}
-                        </button>
+            <!-- Multiple Questions Section -->
+            <template
+                for:each={processedSuggestedActions}
+                for:item="question">
+                <!-- Question section -->
+                <div
+                    key={question.index}
+                    class="slds-m-bottom_medium">
+                    <!-- Question description -->
+                    <p
+                        lwc:if={question.description}
+                        class="suggested-actions-description">
+                        {question.description}
+                    </p>
+                    <div class="slds-grid slds-wrap slds-m-top_small suggested-actions-layout">
+                        <!-- Single-select: show inline option buttons -->
+                        <template lwc:if={question.isSingleSelect}>
+                            <template
+                                for:each={question.displayedOptions}
+                                for:item="option">
+                                <div
+                                    class="slds-m-right_x-small slds-m-bottom_x-small"
+                                    key={option.displayValue}>
+                                    <button
+                                        name={option.displayValue}
+                                        data-utterance={option.utterance}
+                                        onclick={handleSelectOptionFromButton}
+                                        class="suggested-actions-button">
+                                        {option.displayValue}
+                                    </button>
+                                </div>
+                            </template>
+                            <div
+                                lwc:if={question.showSeeMore}
+                                class="slds-m-right_x-small slds-m-bottom_x-small">
+                                <button
+                                    data-question-index={question.index}
+                                    onclick={handleSeeMore}
+                                    class="suggested-actions-button suggested-actions-see-more">
+                                    {i18n.moreOptionsLabel}
+                                </button>
+                            </div>
+                        </template>
+                        <!-- Multi-select: show only an "Options" pill that opens the bottom sheet -->
+                        <template lwc:else>
+                            <div class="slds-m-right_x-small slds-m-bottom_x-small">
+                                <button
+                                    data-question-index={question.index}
+                                    onclick={handleSeeMore}
+                                    class="suggested-actions-button suggested-actions-see-more">
+                                    {i18n.optionsLabel}
+                                </button>
+                            </div>
+                        </template>
                     </div>
-                </template>
-            </div>
+                </div>
+            </template>
         </div>
+
+        <!-- Bottom Sheets for "See More" options - one per question -->
+        <template
+            for:each={processedSuggestedActions}
+            for:item="question">
+            <c-bottom-sheet
+                key={question.questionIndex}
+                lwc:if={question.isBottomSheetOpen}
+                configuration={configuration}
+                title={question.description}
+                options={question.options}
+                question-index={question.questionIndex}
+                is-open={question.isBottomSheetOpen}
+                multi-select={question.isMultiSelect}
+                onselectoption={handleSelectOptionFromBottomSheet}
+                onclose={handleBottomSheetClose}></c-bottom-sheet>
+        </template>
     </div>
 </template>

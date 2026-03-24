@@ -15,6 +15,8 @@ import { getTranslatedLabel } from 'c/labelService';
 import { LABEL_DATA } from './labels';
 
 // Export individual label functions
+export const addedCouponsAriaLabel = (locale) => getTranslatedLabel('addedCouponsAriaLabel', LABEL_DATA, locale);
+export const appliedCouponsAriaLabel = (locale) => getTranslatedLabel('appliedCouponsAriaLabel', LABEL_DATA, locale);
 export const cartSummaryRegionLabel = (locale) => getTranslatedLabel('cartSummaryRegionLabel', LABEL_DATA, locale);
 export const loadingSpinnerAltText = (locale) => getTranslatedLabel('loadingSpinnerAltText', LABEL_DATA, locale);
 export const checkoutButtonLabel = (locale) => getTranslatedLabel('checkoutButtonLabel', LABEL_DATA, locale);

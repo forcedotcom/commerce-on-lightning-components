@@ -18,3 +18,4 @@ import { LABEL_DATA } from './labels';
 export const quantityLabelText = (locale) => getTranslatedLabel('quantityLabelText', LABEL_DATA, locale);
 export const originalPriceLabel = (locale) => getTranslatedLabel('originalPriceLabel', LABEL_DATA, locale);
 export const currentPriceLabel = (locale) => getTranslatedLabel('currentPriceLabel', LABEL_DATA, locale);
+export const promotionsLabel = (locale) => getTranslatedLabel('promotionsLabel', LABEL_DATA, locale);

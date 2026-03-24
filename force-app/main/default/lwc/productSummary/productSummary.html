@@ -29,6 +29,27 @@
                     </template>
                 </div>
 
+                <!-- Promotions: item level promotions -->
+                <template if:true={hasItemPromotions}>
+                    <div class="promotions-container">
+                        <span class="promotions-label">{i18n.promotionsLabel}</span>
+                        <ul
+                            class="promotions-list"
+                            role="list">
+                            <template
+                                for:each={itemPromotions}
+                                for:item="promo">
+                                <li key={promo.id}>
+                                    <c-custom-pill
+                                        label={promo.text}
+                                        variant="promotion"
+                                        max-width="350px"></c-custom-pill>
+                                </li>
+                            </template>
+                        </ul>
+                    </div>
+                </template>
+
                 <!-- Bottom: Quantity -->
                 <div class="bottom-row">
                     <div class="item-quantity">
@@ -36,6 +57,20 @@
                         <span class="item-quantity-value">{quantity}</span>
                     </div>
                 </div>
+
+                <!-- Item-level coupon pills -->
+                <template if:true={hasItemCoupons}>
+                    <div class="item-coupons">
+                        <template
+                            for:each={itemCoupons}
+                            for:item="coupon">
+                            <c-custom-pill
+                                key={coupon.id}
+                                label={coupon.code}
+                                variant="coupon"></c-custom-pill>
+                        </template>
+                    </div>
+                </template>
             </div>
 
             <!-- Right column: Price -->

@@ -1,0 +1,59 @@
+/*
+ * Reusable pill for item-level and order-level promotions and coupons.
+ */
+
+:host {
+    display: inline-block;
+    box-sizing: border-box;
+    max-width: 100%;
+}
+
+.pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.5rem;
+    border-radius: 9999px;
+    font-size: 12px;
+    line-height: 1.25;
+    overflow: hidden;
+    box-sizing: border-box;
+    max-width: 100%;
+}
+
+.pill-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+    min-width: 0;
+}
+
+.pill-promotion {
+    background-color: var(--c-pill-promotion-bg, #f0f0f0);
+    color: var(--c-pill-promotion-color, #444444);
+    font-weight: 400;
+    border: none;
+}
+
+/* Coupon variant */
+.pill-coupon {
+    background-color: var(--c-pill-coupon-bg, #ffffff);
+    color: var(--c-pill-coupon-color, #1c1c1c);
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 1.3;
+    border: 1px solid var(--c-pill-coupon-border, #e0e0e0);
+    padding: 0.5rem 0.75rem;
+}
+
+/* Disabled state */
+.pill-disabled {
+    opacity: 0.6;
+    color: var(--c-pill-disabled-color, #707275);
+    background-color: var(--c-pill-disabled-bg, #f3f3f3);
+    cursor: default;
+}
+
+.pill-coupon.pill-disabled {
+    border-color: var(--c-pill-disabled-border, #e5e5e5);
+}

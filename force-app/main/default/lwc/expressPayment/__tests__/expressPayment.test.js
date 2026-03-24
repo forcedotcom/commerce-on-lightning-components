@@ -719,6 +719,68 @@ describe('c-express-payment', () => {
         });
     });
 
+    describe('price parameter functionality', () => {
+        it('should include price parameter in URL when price is a valid positive number', async () => {
+            element.expressPaymentUrl = 'https://example.com/express';
+            element.entryId = 'test-entry-123';
+            element.price = 35.69;
+
+            await Promise.resolve();
+            const iframe = element.shadowRoot.querySelector('iframe');
+            expect(iframe.src).toBe('https://example.com/express?id=test-entry-123&price=35.69');
+        });
+
+        it('should include price and pdp parameters together', async () => {
+            element.expressPaymentUrl = 'https://example.com/express';
+            element.entryId = 'test-entry-123';
+            element.pdp = true;
+            element.price = 110.99;
+
+            await Promise.resolve();
+            const iframe = element.shadowRoot.querySelector('iframe');
+            expect(iframe.src).toBe('https://example.com/express?id=test-entry-123&pdp=true&price=110.99');
+        });
+
+        it('should not include price parameter when price is 0', async () => {
+            element.expressPaymentUrl = 'https://example.com/express';
+            element.entryId = 'test-entry-123';
+            element.price = 0;
+
+            await Promise.resolve();
+            const iframe = element.shadowRoot.querySelector('iframe');
+            expect(iframe.src).toBe('https://example.com/express?id=test-entry-123');
+        });
+
+        it('should not include price parameter when price is negative', async () => {
+            element.expressPaymentUrl = 'https://example.com/express';
+            element.entryId = 'test-entry-123';
+            element.price = -10;
+
+            await Promise.resolve();
+            const iframe = element.shadowRoot.querySelector('iframe');
+            expect(iframe.src).toBe('https://example.com/express?id=test-entry-123');
+        });
+
+        it('should not include price parameter when price is undefined', async () => {
+            element.expressPaymentUrl = 'https://example.com/express';
+            element.entryId = 'test-entry-123';
+
+            await Promise.resolve();
+            const iframe = element.shadowRoot.querySelector('iframe');
+            expect(iframe.src).toBe('https://example.com/express?id=test-entry-123');
+        });
+
+        it('should not include price parameter when price is a string', async () => {
+            element.expressPaymentUrl = 'https://example.com/express';
+            element.entryId = 'test-entry-123';
+            element.price = '35.69';
+
+            await Promise.resolve();
+            const iframe = element.shadowRoot.querySelector('iframe');
+            expect(iframe.src).toBe('https://example.com/express?id=test-entry-123');
+        });
+    });
+
     describe('PDP property functionality', () => {
         it('should include pdp parameter in URL when pdp is true', async () => {
             element.expressPaymentUrl = 'https://example.com/express';

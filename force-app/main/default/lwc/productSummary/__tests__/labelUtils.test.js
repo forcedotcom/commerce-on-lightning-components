@@ -23,6 +23,9 @@ describe('c-product-summary labelUtils', () => {
         expect(Labels.currentPriceLabel('en_US')).toBe('Current price');
         expect(Labels.currentPriceLabel('es')).toBe('Precio actual');
         expect(Labels.currentPriceLabel('fr')).toBe('Prix actuel');
+
+        expect(Labels.promotionsLabel('en_US')).toBe('Promotions');
+        expect(Labels.promotionsLabel('es')).toBe('Promociones');
     });
 
     it('should fallback to English when requested locale not available', () => {
@@ -30,6 +33,7 @@ describe('c-product-summary labelUtils', () => {
         expect(Labels.quantityLabelText('xx')).toBe('Qty'); // Unknown locale not available, fallback to English
         expect(Labels.originalPriceLabel('xx')).toBe('Original price');
         expect(Labels.currentPriceLabel('xx')).toBe('Current price');
+        expect(Labels.promotionsLabel('xx')).toBe('Promotions');
     });
 
     it('should fallback to labelKey when English not available', () => {

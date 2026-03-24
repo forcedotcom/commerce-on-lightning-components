@@ -6,6 +6,7 @@
  * root or https://opensource.org/licenses/apache-2.0/
  */
 import { LightningElement, api } from 'lwc';
+import * as Labels from './labelUtils';
 
 /**
  * ProductSearchRecommendations displays a horizontally scrolling carousel of product recommendations.
@@ -15,6 +16,12 @@ import { LightningElement, api } from 'lwc';
  */
 export default class productSearchRecommendations extends LightningElement {
     static renderMode = 'light';
+
+    /**
+     * Maximum number of options to display before showing "See More" button.
+     * @type {number}
+     */
+    static MAX_DISPLAYED_OPTIONS = 5;
 
     /**
      * Configuration object containing language and other settings
@@ -51,10 +58,64 @@ export default class productSearchRecommendations extends LightningElement {
     showMoreProducts = false;
 
     /**
-     * Configuration object containing suggested action description and options.
-     * @type {object}
+     * Array of suggested action questions, each containing description and options.
+     * Supports multiple questions.
+     * @type {Array<object>}
      */
-    @api suggestedActions = {};
+    _suggestedActions = [];
+
+    @api
+    get suggestedActions() {
+        return this._suggestedActions;
+    }
+
+    set suggestedActions(value) {
+        // Handle array of questions
+        if (Array.isArray(value) && value.length > 0) {
+            // Validate each question has the required structure
+            this._suggestedActions = value.filter(
+                (question) =>
+                    question &&
+                    typeof question === 'object' &&
+                    Array.isArray(question.options) &&
+                    question.options.length > 0
+            );
+        } else if (value && typeof value === 'object' && Array.isArray(value.options)) {
+            // Backward compatibility: handle single question object
+            this._suggestedActions = [value];
+        } else {
+            this._suggestedActions = [];
+        }
+        // Reset bottom sheet tracking when suggested actions change
+        this._openBottomSheetIndex = null;
+    }
+
+    /**
+     * Tracks which question's bottom sheet is currently open.
+     * Value is the index of the question, or null if no bottom sheet is open.
+     * @type {number|null}
+     * @private
+     */
+    _openBottomSheetIndex = null;
+
+    /**
+     * Get current language for translations.
+     * @returns {string} The current language code
+     */
+    get language() {
+        return this.configuration?.language || 'en_US';
+    }
+
+    /**
+     * Get translated labels based on current language.
+     * @returns {object} Object with translated label strings
+     */
+    get i18n() {
+        return {
+            moreOptionsLabel: Labels.moreOptionsLabel(this.language),
+            optionsLabel: Labels.optionsLabel(this.language),
+        };
+    }
 
     /**
      * Determines if there are product recommendations to display.
@@ -74,16 +135,16 @@ export default class productSearchRecommendations extends LightningElement {
 
     /**
      * Determines if there are suggested actions to display.
-     * @returns {boolean} True if there are suggested actions with description and options.
+     * @returns {boolean} True if there are suggested actions with at least one question that has options.
      */
     @api
     get hasSuggestedActions() {
         return (
-            this.suggestedActions &&
-            typeof this.suggestedActions === 'object' &&
-            this.suggestedActions.description &&
-            Array.isArray(this.suggestedActions.options) &&
-            this.suggestedActions.options.length > 0
+            Array.isArray(this.suggestedActions) &&
+            this.suggestedActions.length > 0 &&
+            this.suggestedActions.some(
+                (question) => question && Array.isArray(question.options) && question.options.length > 0
+            )
         );
     }
 
@@ -103,6 +164,34 @@ export default class productSearchRecommendations extends LightningElement {
             }
 
             return transformedProduct;
+        });
+        // console.log('hasSuggestedActions', this.hasSuggestedActions());
+    }
+
+    /**
+     * Returns processed suggested actions with displayed options and see more flags computed for each question.
+     * Returns an array of processed question objects, each with displayedOptions and showSeeMore properties.
+     * @returns {Array<object>} Array of processed question objects
+     */
+    get processedSuggestedActions() {
+        const maxDisplayed = productSearchRecommendations.MAX_DISPLAYED_OPTIONS;
+        return this.suggestedActions.map((question, index) => {
+            const options = question.options;
+            const displayedOptions = options.length > maxDisplayed ? options.slice(0, maxDisplayed) : options;
+            const showSeeMore = options.length > maxDisplayed;
+            const isBottomSheetOpen = this._openBottomSheetIndex === index;
+            const isMultiSelect = question?.selectionType === 'MULTI_SELECT';
+
+            return {
+                ...question,
+                index: index,
+                displayedOptions,
+                showSeeMore,
+                isBottomSheetOpen,
+                isMultiSelect,
+                isSingleSelect: !isMultiSelect,
+                questionIndex: index,
+            };
         });
     }
 
@@ -133,13 +222,38 @@ export default class productSearchRecommendations extends LightningElement {
     }
 
     /**
-     * Handles option button click, emitting 'selectoption' with displayValue and utterance.
+     * Handles option selection from direct button clicks (inline options).
      * @param {Event} event - The click event from the option button.
      */
-    handleSelectOption(event) {
-        const optionDisplayValue = event.target.name;
-        const utterance = event.target.dataset.utterance;
+    handleSelectOptionFromButton(event) {
+        const optionDisplayValue = event.target?.name;
+        const utterance = event.target?.dataset?.utterance;
+        this.processOptionSelection(optionDisplayValue, utterance, false);
+    }
 
+    /**
+     * Handles option selection from bottom sheet CustomEvent.
+     * @param {CustomEvent} event - The CustomEvent from the bottom sheet component.
+     */
+    handleSelectOptionFromBottomSheet(event) {
+        // Stop propagation of the event from bottomSheet to prevent it from bubbling up
+        event.stopPropagation();
+        const optionDisplayValue = event.detail?.displayValue;
+        const utterance = event.detail?.utterance;
+        const questionIndex = event.detail?.questionIndex;
+        this.processOptionSelection(optionDisplayValue, utterance, true, questionIndex);
+    }
+
+    /**
+     * Processes the option selection and dispatches the selectoption event.
+     * Closes the bottom sheet if the selection came from it.
+     * @param {string} optionDisplayValue - The display value of the selected option.
+     * @param {string} utterance - The utterance to send.
+     * @param {boolean} isFromBottomSheet - Whether the selection came from the bottom sheet.
+     * @param {number} questionIndex - The index of the question (for bottom sheet tracking).
+     * @private
+     */
+    processOptionSelection(optionDisplayValue, utterance, isFromBottomSheet, questionIndex) {
         if (optionDisplayValue && utterance) {
             const eventDetail = {
                 displayValue: optionDisplayValue,
@@ -147,6 +261,43 @@ export default class productSearchRecommendations extends LightningElement {
             };
 
             this.dispatchEvent(new CustomEvent('selectoption', { detail: eventDetail }));
+
+            // Close bottom sheet if the event came from it
+            if (isFromBottomSheet && questionIndex !== undefined && questionIndex !== null) {
+                this._openBottomSheetIndex = null;
+            }
+        }
+    }
+
+    /**
+     * Handles the "See More" button click to open the bottom sheet with all options for a specific question.
+     * @param {Event} event - The click event from the "See More" button.
+     */
+    handleSeeMore(event) {
+        event.stopPropagation();
+        event.preventDefault();
+        const questionIndex = parseInt(event.target?.dataset?.questionIndex, 10);
+        // Open the bottom sheet for the specific question
+        if (this.hasSuggestedActions && questionIndex !== undefined && !isNaN(questionIndex)) {
+            this._openBottomSheetIndex = questionIndex;
+        }
+    }
+
+    /**
+     * Handles the bottom sheet close event for a specific question.
+     * @param {Event} event - The close event from the bottom sheet.
+     */
+    handleBottomSheetClose(event) {
+        event.stopPropagation();
+        event.preventDefault();
+        // Get question index from the event detail or from the component that dispatched it
+        const questionIndex = event.detail?.questionIndex;
+        // Close the bottom sheet for the specific question
+        if (questionIndex !== undefined && questionIndex !== null && this._openBottomSheetIndex === questionIndex) {
+            this._openBottomSheetIndex = null;
+        } else if (questionIndex === undefined || questionIndex === null) {
+            // Fallback: close any open bottom sheet
+            this._openBottomSheetIndex = null;
         }
     }
 }

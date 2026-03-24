@@ -41,6 +41,7 @@ export default class ProductSummaryComponent extends LightningElement {
             quantityLabelText: Labels.quantityLabelText(language),
             originalPriceLabel: Labels.originalPriceLabel(language),
             currentPriceLabel: Labels.currentPriceLabel(language),
+            promotionsLabel: Labels.promotionsLabel(language),
         };
     }
 
@@ -93,11 +94,59 @@ export default class ProductSummaryComponent extends LightningElement {
     }
 
     /**
+     * Gets the list of promotion texts for this item.
+     * @returns {Array<{id: string, text: string}>} Array of promotion entries
+     */
+    get itemPromotions() {
+        const promotions = this.item?.promotions;
+        if (!Array.isArray(promotions)) return [];
+        return promotions
+            .filter((p) => p != null && String(p).trim() !== '')
+            .map((text, index) => ({ id: `promo-${index}`, text: String(text).trim() }));
+    }
+
+    /**
+     * Whether this item has any promotion text to display.
+     * @returns {boolean} True if item has at least one promotion string
+     */
+    get hasItemPromotions() {
+        return this.itemPromotions.length > 0;
+    }
+
+    /**
      * Gets the product quantity
      * @returns {number} Quantity of the product
      */
     get quantity() {
         return this.item?.quantity;
+    }
+
+    /**
+     * Coupons applied to this line item,
+     * @returns {Array<{id: string, code: string}>} Normalized list of coupon objects for template.
+     */
+    get itemCoupons() {
+        const coupons = this.item?.coupons;
+        if (!Array.isArray(coupons) || coupons.length === 0) return [];
+        return coupons
+            .map((entry, index) => {
+                const code = typeof entry === 'string' ? entry : entry?.code ?? entry?.id;
+                if (code == null || String(code).trim() === '') return null;
+                const codeStr = String(code).trim();
+                return {
+                    id: `coupon-${index}-${codeStr.slice(0, 20)}`,
+                    code: codeStr,
+                };
+            })
+            .filter(Boolean);
+    }
+
+    /**
+     * Whether this item has any applied coupons to display.
+     * @returns {boolean} True if the item has at least one applied coupon.
+     */
+    get hasItemCoupons() {
+        return this.itemCoupons.length > 0;
     }
 
     /**

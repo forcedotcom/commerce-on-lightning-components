@@ -1,0 +1,115 @@
+<template lwc:render-mode="light">
+    <!-- Backdrop overlay -->
+    <div
+        lwc:if={isOpen}
+        class="bottom-sheet-backdrop"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="bottom-sheet-title"
+        onclick={handleBackdropClick}>
+        <!-- Bottom sheet container -->
+        <div class="bottom-sheet-container">
+            <!-- Header -->
+            <div class="bottom-sheet-header">
+                <h2
+                    id="bottom-sheet-title"
+                    class="bottom-sheet-title">
+                    {title}
+                </h2>
+                <button
+                    type="button"
+                    class="bottom-sheet-close-button"
+                    onclick={handleClose}
+                    aria-label="Close">
+                    <svg
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        aria-hidden="true">
+                        <path
+                            d="M18 6L6 18M6 6L18 18"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Content area with options list -->
+            <div
+                class="bottom-sheet-content"
+                role="checkboxgroup"
+                aria-label="Selection options"
+                lwc:if={multiSelect}>
+                <template
+                    for:each={processedOptions}
+                    for:item="option">
+                    <div
+                        key={option.uniqueKey}
+                        class="bottom-sheet-option-item">
+                        <label class="bottom-sheet-radio-label">
+                            <span class="bottom-sheet-radio-text">{option.displayValue}</span>
+                            <input
+                                type="checkbox"
+                                class="bottom-sheet-checkbox"
+                                name="bottom-sheet-option"
+                                checked={option.isSelected}
+                                value={option.displayValue}
+                                aria-label={option.displayValue}
+                                onclick={handleCheckboxChange} />
+                        </label>
+                    </div>
+                </template>
+            </div>
+            <div
+                class="bottom-sheet-content"
+                role="radiogroup"
+                aria-label="Selection options"
+                lwc:else>
+                <template
+                    for:each={processedOptions}
+                    for:item="option">
+                    <div
+                        key={option.uniqueKey}
+                        class="bottom-sheet-option-item">
+                        <label class="bottom-sheet-radio-label">
+                            <span class="bottom-sheet-radio-text">{option.displayValue}</span>
+                            <input
+                                type="radio"
+                                class="bottom-sheet-radio"
+                                name="bottom-sheet-option"
+                                checked={option.isSelected}
+                                value={option.displayValue}
+                                aria-label={option.displayValue}
+                                onclick={handleRadioChange}
+                                onkeydown={handleRadioKeyDown} />
+                        </label>
+                    </div>
+                </template>
+            </div>
+
+            <!-- Footer with action buttons. Need to use button instead of c-common-button to avoid style issues and align with bottom sheet design -->
+            <div
+                class="bottom-sheet-footer"
+                role="group"
+                aria-label="Action buttons">
+                <button
+                    type="button"
+                    class="bottom-sheet-button bottom-sheet-button-clear"
+                    onclick={handleClear}>
+                    {i18n.clearLabel}
+                </button>
+                <button
+                    type="button"
+                    class="bottom-sheet-button bottom-sheet-button-proceed"
+                    data-has-selection={hasSelection}
+                    onclick={handleProceed}>
+                    {continueButtonLabel}
+                </button>
+            </div>
+        </div>
+    </div>
+</template>

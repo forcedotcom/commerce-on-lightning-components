@@ -68,6 +68,29 @@
     --ref-c-product-summary-current-price-font-weight: 500;
     --ref-c-product-summary-current-price-line-height: 17px;
     --ref-c-product-summary-current-price-letter-spacing: -1%;
+
+    /* Promotions: label and pill text share the same color for visual consistency */
+    --ref-c-product-summary-promotions-label-color: #444444;
+    --ref-c-product-summary-promotions-label-font-size: 12px;
+    --ref-c-product-summary-promotions-label-line-height: 17px;
+    --ref-c-product-summary-promotion-pill-bg: #f0f0f0;
+    --ref-c-product-summary-promotion-pill-color: var(--ref-c-product-summary-promotions-label-color);
+    --ref-c-product-summary-promotion-pill-font-size: 12px;
+    --ref-c-product-summary-promotion-pill-line-height: 17px;
+    --ref-c-product-summary-promotion-pill-padding-x: var(--dxp-g-spacing-small, 0.5rem);
+    --ref-c-product-summary-promotion-pill-padding-y: var(--dxp-g-spacing-xxsmall, 0.25rem);
+    --ref-c-product-summary-promotion-pill-radius: 9999px;
+    --ref-c-product-summary-promotion-pill-max-width: 180px;
+    --ref-c-product-summary-promotions-gap: var(--dxp-g-spacing-x-small, 0.5rem);
+    --ref-c-product-summary-promotions-list-gap: var(--dxp-g-spacing-xxsmall, 0.25rem);
+    /* Item-level coupon pills (white bg, light gray border, black text; no remove icon) */
+    --ref-c-product-summary-coupon-pill-bg: #ffffff;
+    --ref-c-product-summary-coupon-pill-border: #e0e0e0;
+    --ref-c-product-summary-coupon-pill-color: #000000;
+    --ref-c-product-summary-coupon-pill-font-size: 12px;
+    --ref-c-product-summary-coupon-pill-padding-y: 0.125rem;
+    --ref-c-product-summary-coupon-pill-padding-x: 0.5rem;
+    --ref-c-product-summary-coupon-pill-radius: 9999px;
 }
 
 .product-summary {
@@ -184,4 +207,57 @@ img {
     font-weight: var(--ref-c-product-summary-current-price-font-weight);
     line-height: var(--ref-c-product-summary-current-price-line-height);
     letter-spacing: var(--ref-c-product-summary-current-price-letter-spacing);
+}
+
+.promotions-container {
+    margin-top: var(--dxp-g-spacing-xxsmall, 0.25rem);
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    gap: var(--ref-c-product-summary-promotions-gap);
+    min-width: 0;
+}
+
+.promotions-label {
+    flex-shrink: 0;
+    color: var(--ref-c-product-summary-promotions-label-color);
+    font-size: var(--ref-c-product-summary-promotions-label-font-size);
+    font-weight: var(--dxp-g-font-weight-regular, 400);
+    line-height: var(--ref-c-product-summary-promotions-label-line-height);
+}
+
+.promotions-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    margin-top: -2px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--ref-c-product-summary-promotions-list-gap);
+    min-width: 0;
+    flex: 0 1 auto;
+}
+
+.promotions-list li {
+    min-width: 0;
+}
+
+/* Token overrides for c-custom-pill in product summary */
+.promotions-list c-custom-pill {
+    --c-pill-promotion-bg: var(--ref-c-product-summary-promotion-pill-bg);
+    --c-pill-promotion-color: var(--ref-c-product-summary-promotions-label-color);
+}
+
+.item-coupons c-custom-pill {
+    --c-pill-coupon-bg: var(--ref-c-product-summary-coupon-pill-bg, #ffffff);
+    --c-pill-coupon-border: var(--ref-c-product-summary-coupon-pill-border, #e0e0e0);
+    --c-pill-coupon-color: var(--ref-c-product-summary-coupon-pill-color, #000000);
+}
+
+.item-coupons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--dxp-g-spacing-xxsmall, 0.25rem);
+    margin-top: var(--dxp-g-spacing-xxsmall, 0.25rem);
+    align-items: center;
 }

@@ -357,6 +357,28 @@ describe('c-summary-details', () => {
             expect(hasSummaryValue(element, 'Promotions', '-$25.00')).toBe(true);
         });
 
+        it('should display order-level promotion pills when details.promotions array is provided', async () => {
+            const dataWithPromotionsArray = {
+                ...mockDataWithPromotionsAndDiscounts,
+                promotions: ['15% off on all accessories with A...', 'Save 18% with Save18'],
+            };
+            const element = await createComponent({ details: dataWithPromotionsArray });
+            await expandComponent(element);
+
+            const pills = element.querySelectorAll('c-custom-pill');
+            expect(pills.length).toBe(2);
+            expect(pills[0].label).toBe('15% off on all accessories with A...');
+            expect(pills[1].label).toBe('Save 18% with Save18');
+        });
+
+        it('should not display promotion pills when details.promotions is empty or missing', async () => {
+            const element = await createComponent({ details: mockDataWithPromotionsAndDiscounts });
+            await expandComponent(element);
+
+            const pills = element.querySelectorAll('c-custom-pill');
+            expect(pills.length).toBe(0);
+        });
+
         it('should hide promotions row when promotions amount is 0', async () => {
             const dataNoPromotions = { ...mockDataWithPromotionsAndDiscounts, promotionsDiscount: 0 };
             const element = await createComponent({ details: dataNoPromotions });
@@ -403,7 +425,7 @@ describe('c-summary-details', () => {
             expect(hasSummaryLabel(element, 'Coupon Discount')).toBe(false);
         });
 
-        it('should display coupon applied row when couponsApplied array has multiple values', async () => {
+        it('should not display coupon applied row (coupons shown as pills in cart summary)', async () => {
             const dataWithMultipleCouponsApplied = {
                 ...mockDataWithPromotionsAndDiscounts,
                 couponsApplied: ['SAVE20', 'HALLOWEEN15', 'NEW10', 'WELCOME10'],
@@ -412,11 +434,10 @@ describe('c-summary-details', () => {
             const element = await createComponent({ details: dataWithMultipleCouponsApplied });
             await expandComponent(element);
 
-            expect(hasSummaryLabel(element, 'Coupons Applied')).toBe(true);
-            expect(hasSummaryValue(element, 'Coupons Applied', 'SAVE20, HALLOWEEN15, NEW10, WELCOME10')).toBe(true);
+            expect(hasSummaryLabel(element, 'Coupons Applied')).toBe(false);
         });
 
-        it('should display coupon applied row with single coupon', async () => {
+        it('should not display coupon applied row with single coupon (moved to cart summary pills)', async () => {
             const dataWithSingleCoupon = {
                 ...mockDataWithPromotionsAndDiscounts,
                 couponsApplied: ['WELCOME10'],
@@ -425,8 +446,7 @@ describe('c-summary-details', () => {
             const element = await createComponent({ details: dataWithSingleCoupon });
             await expandComponent(element);
 
-            expect(hasSummaryLabel(element, 'Coupon Applied')).toBe(true);
-            expect(hasSummaryValue(element, 'Coupon Applied', 'WELCOME10')).toBe(true);
+            expect(hasSummaryLabel(element, 'Coupon Applied')).toBe(false);
         });
 
         it.each([
@@ -471,18 +491,16 @@ describe('c-summary-details', () => {
             {
                 description: 'mix of valid and empty/whitespace values',
                 couponsApplied: ['SAVE20', '', 'WELCOME10', '  ', 'LOYALTY15', '\t', '  NEW10  '],
-                expectedValue: 'SAVE20, WELCOME10, LOYALTY15, NEW10',
                 expectedLabel: 'Coupons Applied',
             },
             {
                 description: 'valid codes with surrounding whitespace',
                 couponsApplied: ['  SAVE20  ', '\tWELCOME10\t', '  LOYALTY15\n'],
-                expectedValue: 'SAVE20, WELCOME10, LOYALTY15',
                 expectedLabel: 'Coupons Applied',
             },
         ])(
-            'should display filtered and trimmed coupons with $description',
-            async ({ couponsApplied, expectedValue, expectedLabel }) => {
+            'should not display coupon applied row with $description (moved to cart summary pills)',
+            async ({ couponsApplied, expectedLabel }) => {
                 const testData = {
                     ...mockDataWithPromotionsAndDiscounts,
                     couponsApplied,
@@ -491,8 +509,7 @@ describe('c-summary-details', () => {
                 const element = await createComponent({ details: testData });
                 await expandComponent(element);
 
-                expect(hasSummaryLabel(element, expectedLabel)).toBe(true);
-                expect(hasSummaryValue(element, expectedLabel, expectedValue)).toBe(true);
+                expect(hasSummaryLabel(element, expectedLabel)).toBe(false);
             }
         );
 
@@ -1099,7 +1116,7 @@ describe('c-summary-details', () => {
             });
         });
 
-        it('should handle both coupon discount and coupon applied together', async () => {
+        it('should handle both coupon discount and coupon applied together (applied row moved to cart summary)', async () => {
             const orderDataWithBothCouponFields = {
                 ...mockOrderData,
                 couponsDiscount: 15.0,
@@ -1109,11 +1126,8 @@ describe('c-summary-details', () => {
             const element = await createComponent({ details: orderDataWithBothCouponFields });
             await expandComponent(element);
 
-            expect(hasSummaryLabel(element, 'Coupon Applied')).toBe(true);
+            expect(hasSummaryLabel(element, 'Coupon Applied')).toBe(false);
             expect(hasSummaryLabel(element, 'Coupon Discount')).toBe(true);
-
-            expect(hasSummaryValue(element, 'Coupon Applied', 'SAVE15')).toBe(true);
-
             expect(hasSummaryValue(element, 'Coupon Discount', '-$15.00')).toBe(true);
         });
 
@@ -1137,7 +1151,7 @@ describe('c-summary-details', () => {
             expect(element.couponsApplied).toBe('');
         });
 
-        it('should verify correct order of summary rows with coupon applied', async () => {
+        it('should verify correct order of summary rows with coupon discount', async () => {
             const orderData = {
                 ...mockOrderData,
                 couponsApplied: ['COUPON1', 'COUPON2'],
@@ -1151,7 +1165,6 @@ describe('c-summary-details', () => {
 
             const summaryLabels = element.querySelectorAll('.summary-label');
             const expectedOrder = [
-                'Coupons Applied',
                 'Subtotal',
                 'Coupons Discount',
                 'Promotions',
@@ -1167,7 +1180,7 @@ describe('c-summary-details', () => {
     });
 
     describe('Coupon Labels Plural Support', () => {
-        it('should display singular labels when exactly one coupon is applied', async () => {
+        it('should display coupon discount when exactly one coupon is applied (applied row moved to cart summary)', async () => {
             const dataWithOneCoupon = {
                 ...mockDataWithPromotionsAndDiscounts,
                 couponsApplied: ['SAVE20'],
@@ -1177,13 +1190,12 @@ describe('c-summary-details', () => {
             const element = await createComponent({ details: dataWithOneCoupon });
             await expandComponent(element);
 
-            expect(hasSummaryLabel(element, 'Coupon Applied')).toBe(true);
+            expect(hasSummaryLabel(element, 'Coupon Applied')).toBe(false);
             expect(hasSummaryLabel(element, 'Coupon Discount')).toBe(true);
-            expect(hasSummaryValue(element, 'Coupon Applied', 'SAVE20')).toBe(true);
             expect(hasSummaryValue(element, 'Coupon Discount', '-$20.00')).toBe(true);
         });
 
-        it('should display plural labels when more than one coupon is applied', async () => {
+        it('should display coupon discount when more than one coupon is applied (applied row moved to cart summary)', async () => {
             const dataWithManyCoupons = {
                 ...mockDataWithPromotionsAndDiscounts,
                 couponsApplied: ['COUPON1', 'COUPON2', 'COUPON3', 'COUPON4', 'COUPON5'],
@@ -1193,11 +1205,9 @@ describe('c-summary-details', () => {
             const element = await createComponent({ details: dataWithManyCoupons });
             await expandComponent(element);
 
-            expect(hasSummaryLabel(element, 'Coupons Applied')).toBe(true);
+            expect(hasSummaryLabel(element, 'Coupons Applied')).toBe(false);
             expect(hasSummaryLabel(element, 'Coupons Discount')).toBe(true);
-            expect(hasSummaryValue(element, 'Coupons Applied', 'COUPON1, COUPON2, COUPON3, COUPON4, COUPON5')).toBe(
-                true
-            );
+            expect(hasSummaryValue(element, 'Coupons Discount', '-$50.00')).toBe(true);
         });
 
         it.each([
@@ -1241,24 +1251,22 @@ describe('c-summary-details', () => {
 
         it.each([
             {
-                description: 'singular label when only one valid coupon after filtering',
+                description: 'singular discount label when only one valid coupon after filtering',
                 couponsApplied: ['SAVE20', '', '  ', '\t'],
                 couponsDiscount: -20.0,
-                expectedAppliedLabel: 'Coupon Applied',
                 expectedDiscountLabel: 'Coupon Discount',
-                expectedValue: 'SAVE20',
+                expectedDiscountValue: '-$20.00',
             },
             {
-                description: 'plural label when two valid coupons after filtering',
+                description: 'plural discount label when two valid coupons after filtering',
                 couponsApplied: ['SAVE20', '', 'WELCOME10', '  '],
                 couponsDiscount: -30.0,
-                expectedAppliedLabel: 'Coupons Applied',
                 expectedDiscountLabel: 'Coupons Discount',
-                expectedValue: 'SAVE20, WELCOME10',
+                expectedDiscountValue: '-$30.00',
             },
         ])(
             'should display $description',
-            async ({ couponsApplied, couponsDiscount, expectedAppliedLabel, expectedDiscountLabel, expectedValue }) => {
+            async ({ couponsApplied, couponsDiscount, expectedDiscountLabel, expectedDiscountValue }) => {
                 const testData = {
                     ...mockDataWithPromotionsAndDiscounts,
                     couponsApplied,
@@ -1268,9 +1276,10 @@ describe('c-summary-details', () => {
                 const element = await createComponent({ details: testData });
                 await expandComponent(element);
 
-                expect(hasSummaryLabel(element, expectedAppliedLabel)).toBe(true);
+                expect(hasSummaryLabel(element, 'Coupon Applied')).toBe(false);
+                expect(hasSummaryLabel(element, 'Coupons Applied')).toBe(false);
                 expect(hasSummaryLabel(element, expectedDiscountLabel)).toBe(true);
-                expect(hasSummaryValue(element, expectedAppliedLabel, expectedValue)).toBe(true);
+                expect(hasSummaryValue(element, expectedDiscountLabel, expectedDiscountValue)).toBe(true);
             }
         );
 
@@ -1301,9 +1310,9 @@ describe('c-summary-details', () => {
                 expectedToShow: false,
             },
             {
-                description: 'feature flag is undefined (defaults to false)',
+                description: 'feature flag is undefined (defaults to true)',
                 flags: undefined,
-                expectedToShow: false,
+                expectedToShow: true,
             },
         ])(
             'should show/hide coupon discount and applied labels when $description',
@@ -1319,13 +1328,405 @@ describe('c-summary-details', () => {
 
                 const hasCouponDiscount =
                     hasSummaryLabel(element, 'Coupon Discount') || hasSummaryLabel(element, 'Coupons Discount');
-                const hasCouponApplied =
-                    hasSummaryLabel(element, 'Coupon Applied') || hasSummaryLabel(element, 'Coupons Applied');
-
                 expect(hasCouponDiscount).toBe(expectedToShow);
-                expect(hasCouponApplied).toBe(expectedToShow);
+                // Coupon applied row removed from order summary; coupons shown as pills in cart summary
+                expect(hasSummaryLabel(element, 'Coupon Applied') || hasSummaryLabel(element, 'Coupons Applied')).toBe(
+                    false
+                );
             }
         );
+    });
+
+    describe('Order-level coupon pills and shipping promotions (coverage)', () => {
+        const NO_APPLICABLE_PROMOTION = 'no_applicable_promotion';
+
+        it('does not show order-level coupon pills when isCartSummary is false', async () => {
+            const element = await createComponent({
+                details: { ...mockCartData, coupons: [{ code: 'SAVE20' }], flags: { isCouponFeatureEnabled: true } },
+                isCartSummary: false,
+            });
+            await expandComponent(element);
+            const wrapper = element.querySelector('.order-coupon-pills-wrapper');
+            expect(wrapper).toBeNull();
+        });
+
+        it('does not show order-level coupon pills when isCouponFeatureEnabled is false', async () => {
+            const element = await createComponent({
+                details: {
+                    ...mockCartData,
+                    coupons: [{ code: 'SAVE20' }],
+                    flags: { isCouponFeatureEnabled: false },
+                },
+                isCartSummary: true,
+            });
+            await expandComponent(element);
+            const wrapper = element.querySelector('.order-coupon-pills-wrapper');
+            expect(wrapper).toBeNull();
+        });
+
+        it('does not show order-level coupon pills when coupons is not an array', async () => {
+            const element = await createComponent({
+                details: { ...mockCartData, coupons: null, flags: { isCouponFeatureEnabled: true } },
+                isCartSummary: true,
+            });
+            await expandComponent(element);
+            const wrapper = element.querySelector('.order-coupon-pills-wrapper');
+            expect(wrapper).toBeNull();
+        });
+
+        it('shows order-level coupon pills when isCartSummary, expanded, and coupons provided', async () => {
+            const details = {
+                ...mockCartData,
+                coupons: [
+                    { id: 'c1', code: 'SAVE20' },
+                    { code: 'WELCOME10', status: NO_APPLICABLE_PROMOTION },
+                ],
+                flags: { isCouponFeatureEnabled: true },
+            };
+            const element = await createComponent({ details, isCartSummary: true });
+            await expandComponent(element);
+            const wrapper = element.querySelector('.order-coupon-pills-wrapper');
+            expect(wrapper).not.toBeNull();
+            const pills = element.querySelectorAll('.order-coupon-pills-wrapper c-custom-pill');
+            expect(pills).toHaveLength(2);
+            expect(pills[0].label).toBe('SAVE20');
+            expect(pills[1].label).toBe('WELCOME10');
+        });
+
+        it('uses addedCouponsAriaLabel when any coupon has NO_APPLICABLE_PROMOTION status', async () => {
+            const details = {
+                ...mockCartData,
+                coupons: [{ code: 'SAVE20', status: NO_APPLICABLE_PROMOTION }],
+                flags: { isCouponFeatureEnabled: true },
+            };
+            const element = await createComponent({ details, isCartSummary: true });
+            await expandComponent(element);
+            const wrapper = element.querySelector('.order-coupon-pills-wrapper');
+            expect(wrapper).not.toBeNull();
+            expect(wrapper.getAttribute('aria-label')).toBe('Added coupons');
+        });
+
+        it('uses appliedCouponsAriaLabel when no coupon has NO_APPLICABLE_PROMOTION status', async () => {
+            const details = {
+                ...mockCartData,
+                coupons: [{ code: 'SAVE20' }],
+                flags: { isCouponFeatureEnabled: true },
+            };
+            const element = await createComponent({ details, isCartSummary: true });
+            await expandComponent(element);
+            const wrapper = element.querySelector('.order-coupon-pills-wrapper');
+            expect(wrapper.getAttribute('aria-label')).toBe('Applied coupons');
+        });
+
+        it('orderLevelCouponPills normalizes coupon code with trim and fallback id (covers map path)', async () => {
+            const details = {
+                ...mockCartData,
+                coupons: [
+                    { id: 'c1', code: 'SAVE20' },
+                    { code: '  WELCOME10  ', status: NO_APPLICABLE_PROMOTION },
+                ],
+                flags: { isCouponFeatureEnabled: true },
+            };
+            const element = await createComponent({ details, isCartSummary: true });
+            await expandComponent(element);
+            const pills = element.querySelectorAll('.order-coupon-pills-wrapper c-custom-pill');
+            expect(pills).toHaveLength(2);
+            expect(pills[0].label).toBe('SAVE20');
+            expect(pills[1].label).toBe('WELCOME10');
+            expect(pills[1].disabled).toBe(true);
+        });
+
+        it('orderLevelCouponPills excludes coupons with null or invalid code', async () => {
+            const details = {
+                ...mockCartData,
+                coupons: [{ code: 'SAVE20' }, { code: null }],
+                flags: { isCouponFeatureEnabled: true },
+            };
+            const element = await createComponent({ details, isCartSummary: true });
+            await expandComponent(element);
+            const pills = element.querySelectorAll('.order-coupon-pills-wrapper c-custom-pill');
+            expect(pills).toHaveLength(1);
+            expect(pills[0].label).toBe('SAVE20');
+        });
+
+        it('orderLevelCouponPills excludes coupons with undefined code, non-string code, empty or whitespace code', async () => {
+            const details = {
+                ...mockCartData,
+                coupons: [
+                    { code: 'VALID' },
+                    { code: undefined },
+                    { code: 123 },
+                    { code: '' },
+                    { code: '   ' },
+                    { code: '\t' },
+                ],
+                flags: { isCouponFeatureEnabled: true },
+            };
+            const element = await createComponent({ details, isCartSummary: true });
+            await expandComponent(element);
+            const pills = element.querySelectorAll('.order-coupon-pills-wrapper c-custom-pill');
+            expect(pills).toHaveLength(1);
+            expect(pills[0].label).toBe('VALID');
+        });
+
+        it('orderLevelCouponPills excludes null coupon entries', async () => {
+            const details = {
+                ...mockCartData,
+                coupons: [{ code: 'OK' }, null, undefined],
+                flags: { isCouponFeatureEnabled: true },
+            };
+            const element = await createComponent({ details, isCartSummary: true });
+            await expandComponent(element);
+            const pills = element.querySelectorAll('.order-coupon-pills-wrapper c-custom-pill');
+            expect(pills).toHaveLength(1);
+            expect(pills[0].label).toBe('OK');
+        });
+
+        it('shippingPromotionPills handles string and object promotions', async () => {
+            const details = {
+                ...mockOrderData,
+                shippingDiscount: -5.0,
+                shippingPromotions: [
+                    'Free ship above $200',
+                    { text: 'Promo text' },
+                    { description: 'Promo description' },
+                    { text: '  ', description: '' },
+                    null,
+                ],
+            };
+            const element = await createComponent({ details });
+            await expandComponent(element);
+            const promoPills = element.querySelectorAll('.order-promotions-pills c-custom-pill');
+            expect(promoPills.length).toBeGreaterThanOrEqual(3);
+            expect(promoPills[0].label).toBe('Free ship above $200');
+            expect(promoPills[1].label).toBe('Promo text');
+            expect(promoPills[2].label).toBe('Promo description');
+        });
+
+        it('hides coupon discount when isCouponFeatureEnabled is false (hasCouponsApplied)', async () => {
+            const details = {
+                ...mockOrderData,
+                couponsApplied: ['SAVE20'],
+                couponsDiscount: -10.0,
+                flags: { isCouponFeatureEnabled: false },
+            };
+            const element = await createComponent({ details });
+            await expandComponent(element);
+            expect(hasSummaryLabel(element, 'Coupon Discount')).toBe(false);
+        });
+
+        it('couponsApplied getter returns trimmed comma-separated string', async () => {
+            const details = {
+                ...mockOrderData,
+                couponsApplied: ['SAVE20', '  WELCOME10  ', 'LOYALTY15'],
+            };
+            const element = await createComponent({ details });
+            expect(element.couponsApplied).toBe('SAVE20, WELCOME10, LOYALTY15');
+        });
+
+        it('hasCouponsApplied returns true when feature enabled and coupons applied', async () => {
+            const details = {
+                ...mockOrderData,
+                couponsApplied: ['SAVE20'],
+                flags: { isCouponFeatureEnabled: true },
+            };
+            const element = await createComponent({ details });
+            const desc = Object.getOwnPropertyDescriptor(SummaryDetails.prototype, 'hasCouponsApplied');
+            expect(desc?.get?.call(element)).toBe(true);
+        });
+
+        it('hasCouponsApplied returns false when isCouponFeatureEnabled is false', async () => {
+            const details = {
+                ...mockOrderData,
+                couponsApplied: ['SAVE20'],
+                flags: { isCouponFeatureEnabled: false },
+            };
+            const element = await createComponent({ details });
+            const desc = Object.getOwnPropertyDescriptor(SummaryDetails.prototype, 'hasCouponsApplied');
+            expect(desc?.get?.call(element)).toBe(false);
+        });
+
+        it('orderLevelPromotions handles string, object with text/description, and empty text', async () => {
+            const details = {
+                ...mockOrderData,
+                promotionsDiscount: -20,
+                promotions: [
+                    '  String promo  ',
+                    { text: 'Text promo' },
+                    { description: 'Description only' },
+                    { text: '  ', description: '' },
+                ],
+            };
+            const element = await createComponent({ details });
+            await expandComponent(element);
+            const pills = element.querySelectorAll('.order-promotions-pills c-custom-pill');
+            expect(pills.length).toBeGreaterThanOrEqual(3);
+            expect(pills[0].label).toBe('String promo');
+            expect(pills[1].label).toBe('Text promo');
+            expect(pills[2].label).toBe('Description only');
+        });
+
+        it('orderLevelCouponPills returns empty array when isCartSummary is false (getter coverage)', async () => {
+            const element = await createComponent({
+                details: { ...mockCartData, coupons: [{ code: 'SAVE20' }], flags: { isCouponFeatureEnabled: true } },
+                isCartSummary: false,
+            });
+            const getter = Object.getOwnPropertyDescriptor(SummaryDetails.prototype, 'orderLevelCouponPills').get;
+            expect(getter.call(element)).toEqual([]);
+        });
+
+        it('orderLevelCouponPills uses fallback id when coupon has no id (getter coverage)', async () => {
+            const details = {
+                ...mockCartData,
+                coupons: [{ code: 'WELCOME10' }],
+                flags: { isCouponFeatureEnabled: true },
+            };
+            const element = await createComponent({ details, isCartSummary: true });
+            const getter = Object.getOwnPropertyDescriptor(SummaryDetails.prototype, 'orderLevelCouponPills').get;
+            const pills = getter.call(element);
+            expect(pills).toHaveLength(1);
+            expect(pills[0].id).toBe('coupon-0-WELCOME10');
+            expect(pills[0].code).toBe('WELCOME10');
+        });
+
+        it('orderLevelCouponPills uses coupon.id when present (branch coverage)', async () => {
+            const details = {
+                ...mockCartData,
+                coupons: [{ id: 'my-coupon-id', code: 'SAVE20' }],
+                flags: { isCouponFeatureEnabled: true },
+            };
+            const element = await createComponent({ details, isCartSummary: true });
+            const getter = Object.getOwnPropertyDescriptor(SummaryDetails.prototype, 'orderLevelCouponPills').get;
+            const pills = getter.call(element);
+            expect(pills).toHaveLength(1);
+            expect(pills[0].id).toBe('my-coupon-id');
+        });
+
+        it('orderLevelPromotions getter returns description when text is absent (branch coverage)', async () => {
+            const details = {
+                ...mockOrderData,
+                promotions: [{ description: 'Description only promo' }],
+            };
+            const element = await createComponent({ details });
+            const getter = Object.getOwnPropertyDescriptor(SummaryDetails.prototype, 'orderLevelPromotions').get;
+            const result = getter.call(element);
+            expect(result).toHaveLength(1);
+            expect(result[0].text).toBe('Description only promo');
+        });
+
+        it('orderLevelPromotions getter uses text when present (branch coverage)', async () => {
+            const details = {
+                ...mockOrderData,
+                promotions: [{ text: 'Text promo' }],
+            };
+            const element = await createComponent({ details });
+            const getter = Object.getOwnPropertyDescriptor(SummaryDetails.prototype, 'orderLevelPromotions').get;
+            const result = getter.call(element);
+            expect(result).toHaveLength(1);
+            expect(result[0].text).toBe('Text promo');
+        });
+
+        it('shippingPromotionPills getter returns description when text is absent (branch coverage)', async () => {
+            const details = {
+                ...mockOrderData,
+                shippingPromotions: [{ description: 'Free shipping description' }],
+            };
+            const element = await createComponent({ details });
+            const getter = Object.getOwnPropertyDescriptor(SummaryDetails.prototype, 'shippingPromotionPills').get;
+            const result = getter.call(element);
+            expect(result).toHaveLength(1);
+            expect(result[0].text).toBe('Free shipping description');
+        });
+
+        it('shippingPromotionPills getter uses text when present (branch coverage)', async () => {
+            const details = {
+                ...mockOrderData,
+                shippingPromotions: [{ text: 'Free ship text' }],
+            };
+            const element = await createComponent({ details });
+            const getter = Object.getOwnPropertyDescriptor(SummaryDetails.prototype, 'shippingPromotionPills').get;
+            const result = getter.call(element);
+            expect(result).toHaveLength(1);
+            expect(result[0].text).toBe('Free ship text');
+        });
+
+        it('hasCouponsApplied getter returns false when isCouponFeatureEnabled is false (branch coverage)', async () => {
+            const details = {
+                ...mockOrderData,
+                couponsApplied: ['SAVE20'],
+                flags: { isCouponFeatureEnabled: false },
+            };
+            const element = await createComponent({ details });
+            const getter = Object.getOwnPropertyDescriptor(SummaryDetails.prototype, 'hasCouponsApplied').get;
+            expect(getter.call(element)).toBe(false);
+        });
+
+        it('hasCouponsApplied getter returns false when feature enabled but no coupons applied (branch coverage)', async () => {
+            const details = {
+                ...mockOrderData,
+                couponsApplied: [],
+                flags: { isCouponFeatureEnabled: true },
+            };
+            const element = await createComponent({ details });
+            const getter = Object.getOwnPropertyDescriptor(SummaryDetails.prototype, 'hasCouponsApplied').get;
+            expect(getter.call(element)).toBe(false);
+        });
+
+        it('hasCouponsApplied uses default true when flags is undefined (branch coverage)', async () => {
+            const details = {
+                ...mockOrderData,
+                couponsApplied: ['SAVE20'],
+            };
+            const element = await createComponent({ details });
+            const getter = Object.getOwnPropertyDescriptor(SummaryDetails.prototype, 'hasCouponsApplied').get;
+            expect(getter.call(element)).toBe(true);
+        });
+
+        it('orderLevelPromotions getter returns empty string when promotion has no text or description (branch coverage)', async () => {
+            const details = {
+                ...mockOrderData,
+                promotions: [{}, { text: '', description: '' }],
+            };
+            const element = await createComponent({ details });
+            const getter = Object.getOwnPropertyDescriptor(SummaryDetails.prototype, 'orderLevelPromotions').get;
+            const result = getter.call(element);
+            expect(result).toHaveLength(0);
+        });
+
+        it('shippingPromotionPills getter returns empty string when promotion has no text or description (branch coverage)', async () => {
+            const details = {
+                ...mockOrderData,
+                shippingPromotions: [{}, { text: '', description: '' }],
+            };
+            const element = await createComponent({ details });
+            const getter = Object.getOwnPropertyDescriptor(SummaryDetails.prototype, 'shippingPromotionPills').get;
+            const result = getter.call(element);
+            expect(result).toHaveLength(0);
+        });
+
+        it('orderLevelPromotions getter handles string promotion (branch coverage)', async () => {
+            const details = {
+                ...mockOrderData,
+                promotions: ['  String only  '],
+            };
+            const element = await createComponent({ details });
+            const getter = Object.getOwnPropertyDescriptor(SummaryDetails.prototype, 'orderLevelPromotions').get;
+            const result = getter.call(element);
+            expect(result).toHaveLength(1);
+            expect(result[0].text).toBe('String only');
+        });
+
+        it('shippingPromotionPills getter handles string promotion (branch coverage)', async () => {
+            const details = {
+                ...mockOrderData,
+                shippingPromotions: ['  Ship string  '],
+            };
+            const element = await createComponent({ details });
+            const getter = Object.getOwnPropertyDescriptor(SummaryDetails.prototype, 'shippingPromotionPills').get;
+            const result = getter.call(element);
+            expect(result).toHaveLength(1);
+            expect(result[0].text).toBe('Ship string');
+        });
     });
 
     describe('Accessibility Features', () => {
@@ -1554,9 +1955,6 @@ describe('c-summary-details', () => {
                 // Check that conditional elements have proper ARIA
                 expect(hasSummaryLabel(element, 'Promotions')).toBe(true);
                 expect(findSummaryValue(element, 'Promotions')).not.toBeNull();
-
-                expect(hasSummaryLabel(element, 'Coupons Applied')).toBe(true);
-                expect(findSummaryValue(element, 'Coupons Applied')).not.toBeNull();
 
                 expect(hasSummaryLabel(element, 'Coupons Discount')).toBe(true);
                 expect(findSummaryValue(element, 'Coupons Discount')).not.toBeNull();
