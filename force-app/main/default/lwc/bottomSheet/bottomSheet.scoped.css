@@ -1,0 +1,202 @@
+/*
+ * bottomSheet.scoped.css
+ *
+ * This CSS file styles the BottomSheet LWC component.
+ * It employs a layered approach to styling, prioritizing consumer customization
+ * via public `--ref-c-` styling hooks, then leveraging Salesforce DXP theme tokens,
+ * and finally falling back to default values if neither are defined.
+ */
+
+:host {
+    display: block;
+    box-sizing: border-box;
+}
+
+/* Backdrop overlay */
+.bottom-sheet-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Bottom sheet container */
+.bottom-sheet-container {
+    background-color: var(--dxp-g-root, #ffffff);
+    border-radius: 16px 16px 0 0;
+    width: 100%;
+    max-width: 100%;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    animation: slideUp 0.3s ease-out;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+/* Header */
+.bottom-sheet-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+}
+
+.bottom-sheet-title {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--dxp-g-neutral-10, #181818);
+    flex: 1;
+}
+
+.bottom-sheet-close-button {
+    background: none;
+    border: none;
+    padding: 0.5rem;
+    cursor: pointer;
+    color: var(--dxp-g-neutral-8, #5c5c5c);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.bottom-sheet-close-button:hover {
+    background-color: var(--dxp-g-neutral-2, #f5f5f5);
+}
+
+.bottom-sheet-close-button:active {
+    background-color: var(--dxp-g-neutral-3, #e5e5e5);
+}
+
+/* Content area */
+.bottom-sheet-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0.5rem 0;
+    max-height: calc(80vh - 140px);
+}
+
+.bottom-sheet-option-item {
+    padding: 0.75rem 1.25rem;
+}
+
+.bottom-sheet-radio-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    user-select: none;
+}
+
+.bottom-sheet-radio,
+.bottom-sheet-checkbox {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-left: 0.75rem;
+    cursor: pointer;
+    accent-color: var(--dxp-g-brand, #0176d3);
+}
+
+.bottom-sheet-radio-text {
+    font-size: 0.9375rem;
+    color: var(--dxp-g-neutral-10, #181818);
+    line-height: 1.5;
+    flex: 1;
+}
+
+/* Footer */
+.bottom-sheet-footer {
+    display: flex;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    background-color: var(--dxp-g-root, #ffffff);
+}
+
+/* Base button styles */
+.bottom-sheet-button {
+    flex: 1;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--dxp-g-neutral-4, #d0d0d0);
+    border-radius: 1.5rem;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    background-color: var(--dxp-g-root, #ffffff);
+    color: var(--dxp-g-neutral-10, #181818);
+}
+
+/* Clear button - always white with border */
+.bottom-sheet-button-clear:hover {
+    background-color: var(--dxp-g-neutral-2, #f5f5f5);
+    border-color: var(--dxp-g-neutral-5, #b8b8b8);
+}
+
+.bottom-sheet-button-clear:active {
+    background-color: var(--dxp-g-neutral-3, #e5e5e5);
+}
+
+/* Proceed button - white by default */
+.bottom-sheet-button-proceed:hover {
+    background-color: var(--dxp-g-neutral-2, #f5f5f5);
+    border-color: var(--dxp-g-neutral-5, #b8b8b8);
+}
+
+.bottom-sheet-button-proceed:active {
+    background-color: var(--dxp-g-neutral-3, #e5e5e5);
+}
+
+/* Proceed button - blue when has selection */
+.bottom-sheet-button-proceed[data-has-selection='true'] {
+    background-color: var(--dxp-g-brand, #0176d3);
+    border-color: var(--dxp-g-brand, #0176d3);
+    color: var(--dxp-g-root, #ffffff);
+}
+
+.bottom-sheet-button-proceed[data-has-selection='true']:hover {
+    background-color: var(--dxp-g-brand-2, #014486);
+    border-color: var(--dxp-g-brand-2, #014486);
+}
+
+.bottom-sheet-button-proceed[data-has-selection='true']:active {
+    background-color: var(--dxp-g-brand-3, #013360);
+    border-color: var(--dxp-g-brand-3, #013360);
+}
+
+/* Responsive design */
+@media (max-width: 30rem) {
+    .bottom-sheet-container {
+        max-height: 90vh;
+    }
+
+    .bottom-sheet-content {
+        max-height: calc(90vh - 140px);
+    }
+}

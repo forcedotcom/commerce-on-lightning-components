@@ -42,3 +42,5 @@ export const couponsDiscountLabelPlural = (locale) =>
     getTranslatedLabel('couponsDiscountLabelPlural', LABEL_DATA, locale);
 export const couponsAppliedLabelPlural = (locale) =>
     getTranslatedLabel('couponsAppliedLabelPlural', LABEL_DATA, locale);
+export const addedCouponsAriaLabel = (locale) => getTranslatedLabel('addedCouponsAriaLabel', LABEL_DATA, locale);
+export const appliedCouponsAriaLabel = (locale) => getTranslatedLabel('appliedCouponsAriaLabel', LABEL_DATA, locale);

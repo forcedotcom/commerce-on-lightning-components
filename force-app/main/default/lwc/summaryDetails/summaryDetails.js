@@ -6,6 +6,7 @@
  * root or https://opensource.org/licenses/apache-2-0/
  */
 import { LightningElement, api } from 'lwc';
+import { COUPON_STATUS } from './constants';
 import * as Labels from './labelUtils';
 
 export default class SummaryDetails extends LightningElement {
@@ -26,6 +27,8 @@ export default class SummaryDetails extends LightningElement {
      * promotionsDiscount: Number,
      * shippingCost: Number,
      * shippingDiscount: Number,
+     * promotions: Array<String>,
+     * shippingPromotions: Array<String>,
      * couponsDiscount: Number,
      * couponsApplied: Array<String>, // Array of coupon codes applied for an item or for the entire order (e.g., ['SAVE20', 'WELCOME10'])
      * taxes: Number,
@@ -104,7 +107,64 @@ export default class SummaryDetails extends LightningElement {
             couponsAppliedLabel: isMoreThanOneCouponApplied
                 ? Labels.couponsAppliedLabelPlural(language)
                 : Labels.couponsAppliedLabel(language),
+            addedCouponsAriaLabel: Labels.addedCouponsAriaLabel(language),
+            appliedCouponsAriaLabel: Labels.appliedCouponsAriaLabel(language),
         };
+    }
+
+    /**
+     * Order-level coupon pills for cart summary.
+     * @returns {Array<{id: string, code: string, isDisabled: boolean}>} Normalized coupon pill data for template
+     */
+    get orderLevelCouponPills() {
+        if (!this.isCartSummary) return [];
+        const isCouponFeatureShown = this.details?.flags?.isCouponFeatureEnabled ?? true; // TODO: This flag will be deprecated
+        if (!isCouponFeatureShown) return [];
+        const coupons = this.details?.coupons;
+        if (!Array.isArray(coupons)) return [];
+        return coupons
+            .filter(
+                (coupon) =>
+                    coupon != null &&
+                    coupon.code != null &&
+                    typeof coupon.code === 'string' &&
+                    coupon.code.trim() !== ''
+            )
+            .map((coupon, index) => {
+                const code = String(coupon.code).trim();
+                const id = coupon.id || `coupon-${index}-${code}`;
+                const isDisabled = coupon.status === COUPON_STATUS.NO_APPLICABLE_PROMOTION;
+                return { id, code, isDisabled };
+            })
+            .filter((pill) => pill.code !== '');
+    }
+
+    /**
+     * Whether there are order-level coupon pills to show.
+     * @returns {boolean} True if orderLevelCouponPills has at least one item
+     */
+    get hasOrderLevelCouponPills() {
+        return this.orderLevelCouponPills.length > 0;
+    }
+
+    /**
+     * Whether to show the order-level coupon pills section.
+     * @returns {boolean} True when cart summary, expanded, and has coupon pills
+     */
+    get showOrderLevelCouponPills() {
+        return this.isCartSummary && this.isExpanded && this.hasOrderLevelCouponPills;
+    }
+
+    /**
+     * Aria-label for the order-level coupon pills list. Uses addedCoupons when any coupon is disabled, otherwise applied.
+     * @returns {string} Aria-label for the order-level coupon pills list
+     */
+    get orderLevelCouponPillsContainerAriaLabel() {
+        const coupons = this.details?.coupons;
+        const hasDisabled =
+            Array.isArray(coupons) &&
+            coupons.some((coupon) => coupon != null && coupon.status === COUPON_STATUS.NO_APPLICABLE_PROMOTION);
+        return hasDisabled ? this.i18n.addedCouponsAriaLabel : this.i18n.appliedCouponsAriaLabel;
     }
 
     /**
@@ -226,6 +286,33 @@ export default class SummaryDetails extends LightningElement {
     }
 
     /**
+     * Order-level promotions list for pill display.
+     * @returns {Array<{id: string, text: string}>} Normalized promotion pill data for template
+     */
+    get orderLevelPromotions() {
+        const promotions = this.details?.promotions;
+        if (!Array.isArray(promotions)) return [];
+        return promotions
+            .filter((promotion) => promotion != null)
+            .map((promotion, index) => {
+                const text =
+                    typeof promotion === 'string'
+                        ? promotion.trim()
+                        : (promotion?.text ?? promotion?.description ?? '').trim();
+                return text ? { id: `order-promo-${index}`, text } : null;
+            })
+            .filter(Boolean);
+    }
+
+    /**
+     * Whether there are order-level promotion pills to show.
+     * @returns {boolean} True if orderLevelPromotions has at least one item
+     */
+    get hasOrderLevelPromotions() {
+        return this.orderLevelPromotions.length > 0;
+    }
+
+    /**
      * Indicates if there is a shipping discount to display.
      * @returns {boolean} True if shipping discount amount is not null or undefined
      */
@@ -234,11 +321,38 @@ export default class SummaryDetails extends LightningElement {
     }
 
     /**
+     * Shipping promotion strings for pill display (e.g. "Free ship above $200").
+     * @returns {Array<{id: string, text: string}>} Normalized shipping promotion pill data for template
+     */
+    get shippingPromotionPills() {
+        const promotions = this.details?.shippingPromotions;
+        if (!Array.isArray(promotions)) return [];
+        return promotions
+            .filter((promotion) => promotion != null)
+            .map((promotion, index) => {
+                const text =
+                    typeof promotion === 'string'
+                        ? promotion.trim()
+                        : (promotion?.text ?? promotion?.description ?? '').trim();
+                return text ? { id: `shipping-promo-${index}`, text } : null;
+            })
+            .filter(Boolean);
+    }
+
+    /**
+     * Whether there are shipping promotion pills to show.
+     * @returns {boolean} True if shippingPromotionPills has at least one item
+     */
+    get hasShippingPromotionPills() {
+        return this.shippingPromotionPills.length > 0;
+    }
+
+    /**
      * Indicates if there is a coupon discount to display.
      * @returns {boolean} True if coupon discount amount is not null or undefined
      */
     get hasCouponsDiscount() {
-        const isCouponFeatureShown = this.details?.flags?.isCouponFeatureEnabled ?? false;
+        const isCouponFeatureShown = this.details?.flags?.isCouponFeatureEnabled ?? true; // TODO: This flag will be deprecated
         return isCouponFeatureShown && !!this.details?.couponsDiscount;
     }
 
@@ -274,7 +388,7 @@ export default class SummaryDetails extends LightningElement {
      * @returns {boolean} True if couponsApplied array has at least one valid (non-empty, non-whitespace) item
      */
     get hasCouponsApplied() {
-        const isCouponFeatureShown = this.details?.flags?.isCouponFeatureEnabled ?? false;
+        const isCouponFeatureShown = this.details?.flags?.isCouponFeatureEnabled ?? true; // TODO: This flag will be deprecated
         return isCouponFeatureShown && this.couponsAppliedCount > 0;
     }
 
@@ -404,7 +518,7 @@ export default class SummaryDetails extends LightningElement {
      * @returns {string} CSS classes for totals section styling
      */
     get totalsClasses() {
-        return this.isCartSummary ? 'totals slds-p-bottom_small' : 'totals slds-p-bottom_medium';
+        return this.isCartSummary ? 'totals slds-p-bottom_x-small' : 'totals slds-p-bottom_small';
     }
 
     /**

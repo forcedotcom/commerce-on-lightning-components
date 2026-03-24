@@ -576,23 +576,42 @@ export default class ProductDetails extends LightningElement {
     }
 
     /**
+     * Gets the unit price for the express payment iframe URL.
+     * The server reads this as the initial amount displayed in the Apple Pay / Google Pay sheet.
+     * Quantity is communicated separately via UPDATE_QUANTITY postMessage.
+     * @returns {number|null} Unit price, or null if unavailable
+     */
+    get expressPaymentPrice() {
+        const unitPrice = this._productData?.pr?.cur;
+        return typeof unitPrice === 'number' ? unitPrice : null;
+    }
+
+    /**
      * @description Gets the express payment URL safely handling null product
      * @returns {string} Express payment URL
      */
     get expressPaymentUrl() {
-        return this.product?.expressPaymentUrl === 'null'
-            ? this.product?.expressPaymentUrl
-            : this._constructExpressPaymentUrl();
+        const constructed = this._constructExpressPaymentUrl();
+        if (constructed !== 'null') {
+            return constructed;
+        }
+        return this.product?.expressPaymentUrl ?? 'null';
     }
 
     /**
-     * Constructs express payment URL from localStorage PWA context values.
-     * Returns null if any required values are missing from localStorage.
-     * @returns {string} Constructed URL or null if any values are missing
+     * Constructs express payment URL from localStorage context values.
+     * Checks for SFRA site (localizedUrl) first, then PWA site (pwaDomainUrl, pwaSiteId, pwaLocale).
+     * Returns 'null' if no valid context is found in localStorage.
+     * @returns {string} Constructed URL or 'null' if no context is available
      * @private
      */
     _constructExpressPaymentUrl() {
         try {
+            const localizedUrl = localStorage.getItem('localizedUrl');
+            if (localizedUrl) {
+                return localizedUrl.replace('demandware.servlet', 'demandware.store') + '/Payments-Express';
+            }
+
             const pwaDomainUrl = localStorage.getItem('pwaDomainUrl');
             const pwaSiteId = localStorage.getItem('pwaSiteId');
             const pwaLocale = localStorage.getItem('pwaLocale');

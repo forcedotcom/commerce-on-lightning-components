@@ -12,6 +12,48 @@
 
 // Label data with multi-locale support
 export const LABEL_DATA = {
+    addedCouponsAriaLabel: {
+        en_US: 'Added coupons',
+        en_GB: 'Added coupons',
+        en: 'Added coupons',
+        de: 'Hinzugefügte Gutscheine',
+        es: 'Cupones añadidos',
+        fr: 'Codes promo ajoutés',
+        it: 'Coupon aggiunti',
+        ja: '追加されたクーポン',
+        ko: '추가된 쿠폰',
+        nl: 'Toegevoegde kortingsbonnen',
+        no: 'Lagt til kuponger',
+        pl: 'Dodane kupony',
+        pt_BR: 'Cupons adicionados',
+        sv: 'Tillagda kuponger',
+        da: 'Tilføjede rabatkoder',
+        fi: 'Lisätyt kuponkit',
+        zh_CN: '已添加的优惠券',
+        zh_TW: '已加入的優惠券',
+    },
+
+    appliedCouponsAriaLabel: {
+        en_US: 'Applied coupons',
+        en_GB: 'Applied coupons',
+        en: 'Applied coupons',
+        de: 'Angewendete Gutscheine',
+        es: 'Cupones aplicados',
+        fr: 'Codes promo appliqués',
+        it: 'Coupon applicati',
+        ja: '適用されたクーポン',
+        ko: '적용된 쿠폰',
+        nl: 'Toegepaste kortingsbonnen',
+        no: 'Brukte kuponger',
+        pl: 'Zastosowane kupony',
+        pt_BR: 'Cupons aplicados',
+        sv: 'Tillämpade kuponger',
+        da: 'Anvendte rabatkoder',
+        fi: 'Käytetyt kuponkit',
+        zh_CN: '已应用的优惠券',
+        zh_TW: '已套用的優惠券',
+    },
+
     cartSummaryRegionLabel: {
         en_US: 'Cart Summary Section',
         en_GB: 'Cart Summary Section',

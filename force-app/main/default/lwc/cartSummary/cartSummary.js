@@ -197,19 +197,27 @@ export default class CartSummary extends LightningElement {
      * @returns {string} Express payment URL
      */
     get expressPaymentUrl() {
-        return this.cartSummary?.expressPaymentUrl === 'null'
-            ? this.cartSummary?.expressPaymentUrl
-            : this._constructExpressPaymentUrl();
+        const constructed = this._constructExpressPaymentUrl();
+        if (constructed !== 'null') {
+            return constructed;
+        }
+        return this.cartSummary?.expressPaymentUrl ?? 'null';
     }
 
     /**
-     * Constructs express payment URL from localStorage PWA context values.
-     * Returns 'null' if any required values are missing from localStorage.
-     * @returns {string} Constructed URL or 'null' if any values are missing
+     * Constructs express payment URL from localStorage context values.
+     * Checks for SFRA site (localizedUrl) first, then PWA site (pwaDomainUrl, pwaSiteId, pwaLocale).
+     * Returns 'null' if no valid context is found in localStorage.
+     * @returns {string} Constructed URL or 'null' if no context is available
      * @private
      */
     _constructExpressPaymentUrl() {
         try {
+            const localizedUrl = localStorage.getItem('localizedUrl');
+            if (localizedUrl) {
+                return localizedUrl.replace('demandware.servlet', 'demandware.store') + '/Payments-Express';
+            }
+
             const pwaDomainUrl = localStorage.getItem('pwaDomainUrl');
             const pwaSiteId = localStorage.getItem('pwaSiteId');
             const pwaLocale = localStorage.getItem('pwaLocale');
@@ -281,13 +289,16 @@ export default class CartSummary extends LightningElement {
 
     /**
      * @description Gets the checkout URL, using localizedUrl from localStorage as primary and checkoutButtonUrl as fallback.
+     * When localizedUrl is present, constructs the checkout URL using demandware.store/Checkout-Begin.
      * @returns {string|null} The checkout URL to use, or null if neither is available.
      */
     get checkoutUrl() {
         let domainCheckoutUrl = null;
         try {
             const localizedUrl = localStorage.getItem('localizedUrl');
-            domainCheckoutUrl = localizedUrl ? `${localizedUrl}/checkout` : null;
+            if (localizedUrl) {
+                domainCheckoutUrl = localizedUrl.replace('demandware.servlet', 'demandware.store') + '/Checkout-Begin';
+            }
         } catch (error) {
             console.warn('localStorage not available:', error);
         }
@@ -315,7 +326,7 @@ export default class CartSummary extends LightningElement {
 
         try {
             dispatchMessagingEvent(MESSAGING_EVENT.MINIMIZE_BUTTON_CLICK, {});
-            window.open(checkoutUrl, '_blank');
+            window.open(checkoutUrl, '_blank', 'noopener,noreferrer');
         } catch (error) {
             console.error('Failed to open checkout URL:', error);
         }
@@ -392,7 +403,7 @@ export default class CartSummary extends LightningElement {
      */
     get shouldShowCouponInput() {
         const hasItems = this._cartSummary && this._cartSummary.items && this._cartSummary.items.length > 0;
-        const isCouponFeatureShown = this._cartSummary?.flags?.isCouponFeatureEnabled ?? false;
+        const isCouponFeatureShown = this._cartSummary?.flags?.isCouponFeatureEnabled ?? true; // TODO: This flag will be deprecated
         return hasItems && isCouponFeatureShown;
     }
 

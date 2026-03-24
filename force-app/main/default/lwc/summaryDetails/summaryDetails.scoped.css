@@ -126,7 +126,7 @@
 }
 
 .expandable-content.expanded {
-    max-height: 1000px;
+    max-height: 100%;
 }
 
 .summary-row {
@@ -161,6 +161,37 @@
     white-space: normal;
     word-break: break-word;
     max-width: min(var(--ref-c-summary-details-value-max-width), var(--ref-c-summary-details-value-max-width-viewport));
+}
+
+/* Order-level promotions */
+.summary-row-promotions .summary-row-promotions-content {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    gap: var(--dxp-g-spacing-x-small, 0.5rem);
+    min-width: 0;
+    grid-column: 1;
+}
+
+.summary-row-promotions .summary-row-promotions-content .summary-label {
+    flex-shrink: 0;
+}
+
+/* Order-level promotion pills */
+.order-promotions-pills {
+    display: flex;
+    flex-direction: column;
+    gap: var(--dxp-g-spacing-xxsmall, 0.25rem);
+    align-items: flex-start;
+    min-width: 0;
+}
+
+/* Order-level coupon pills */
+.order-coupon-pills-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--dxp-g-spacing-x-small, 0.5rem);
+    align-items: center;
 }
 
 .summary-row.total {

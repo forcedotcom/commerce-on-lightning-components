@@ -266,18 +266,17 @@ describe('c-product-details express payment loading states', () => {
             );
         });
 
-        it('should not render c-express-payment if no express payment url is available', async () => {
-            element.product = { ...mockProduct, expressPaymentUrl: 'null' };
+        it('should construct PWA URL from localStorage when product has no expressPaymentUrl', async () => {
+            const productWithoutExpressUrl = { ...mockProduct };
+            delete productWithoutExpressUrl.expressPaymentUrl;
+            element.product = productWithoutExpressUrl;
             await Promise.resolve();
 
             const expressPayment = element.querySelector('c-express-payment');
             expect(expressPayment).not.toBeNull();
-            expect(expressPayment.entryId).toBe('test-entry-456');
-            expect(expressPayment.expressPaymentUrl).toBe('null');
-        });
-
-        it('should access localStorage for express payment URL construction', () => {
-            // Verify that localStorage.getItem was called with the required keys
+            expect(expressPayment.expressPaymentUrl).toBe(
+                'https://www.phased-launch-testing.com/site-123/en-US/express'
+            );
             expect(mockLocalStorage.getItem).toHaveBeenCalledWith('pwaDomainUrl');
             expect(mockLocalStorage.getItem).toHaveBeenCalledWith('pwaSiteId');
             expect(mockLocalStorage.getItem).toHaveBeenCalledWith('pwaLocale');
@@ -623,6 +622,7 @@ describe('c-product-details express payment loading states', () => {
 describe('Express payment URL construction', () => {
     let element;
     let mockLocalStorage;
+    let mockProductWithoutExpressUrl;
 
     beforeEach(async () => {
         // Mock localStorage
@@ -642,10 +642,13 @@ describe('Express payment URL construction', () => {
             writable: true,
         });
 
+        mockProductWithoutExpressUrl = { ...mockProduct };
+        delete mockProductWithoutExpressUrl.expressPaymentUrl;
+
         element = createElement('c-product-details', {
             is: ProductDetails,
         });
-        element.product = mockProduct;
+        element.product = mockProductWithoutExpressUrl;
         element.entryId = 'test-entry-456';
         document.body.appendChild(element);
         await Promise.resolve();
@@ -658,24 +661,39 @@ describe('Express payment URL construction', () => {
         jest.clearAllMocks();
     });
 
-    it('should construct express payment URL from localStorage values', () => {
+    it('should use constructed PWA URL from localStorage over product expressPaymentUrl', async () => {
+        while (document.body.firstChild) {
+            document.body.removeChild(document.body.firstChild);
+        }
+
+        element = createElement('c-product-details', {
+            is: ProductDetails,
+        });
+        element.product = mockProduct;
+        element.entryId = 'test-entry-456';
+        document.body.appendChild(element);
+        await Promise.resolve();
+
         const expressPayment = element.querySelector('c-express-payment');
         expect(expressPayment).not.toBeNull();
         expect(expressPayment.expressPaymentUrl).toBe('https://www.phased-launch-testing.com/site-123/en-US/express');
     });
 
-    it('should call localStorage.getItem for required keys', () => {
-        // Verify that localStorage.getItem was called with the required keys
+    it('should construct express payment URL from localStorage values when product has no expressPaymentUrl', () => {
+        const expressPayment = element.querySelector('c-express-payment');
+        expect(expressPayment).not.toBeNull();
+        expect(expressPayment.expressPaymentUrl).toBe('https://www.phased-launch-testing.com/site-123/en-US/express');
+    });
+
+    it('should call localStorage.getItem for required keys when falling back', () => {
         expect(mockLocalStorage.getItem).toHaveBeenCalledWith('pwaDomainUrl');
         expect(mockLocalStorage.getItem).toHaveBeenCalledWith('pwaSiteId');
         expect(mockLocalStorage.getItem).toHaveBeenCalledWith('pwaLocale');
     });
 
-    it('should return null when localStorage values are missing', async () => {
-        // Clear the mock to return null for all keys
+    it('should return null when localStorage values are missing and no product expressPaymentUrl', async () => {
         mockLocalStorage.getItem.mockReturnValue(null);
 
-        // Recreate the element to trigger the getter again
         while (document.body.firstChild) {
             document.body.removeChild(document.body.firstChild);
         }
@@ -683,7 +701,7 @@ describe('Express payment URL construction', () => {
         element = createElement('c-product-details', {
             is: ProductDetails,
         });
-        element.product = mockProduct;
+        element.product = mockProductWithoutExpressUrl;
         element.entryId = 'test-entry-456';
         document.body.appendChild(element);
         await Promise.resolve();
@@ -693,13 +711,31 @@ describe('Express payment URL construction', () => {
         expect(expressPayment.expressPaymentUrl).toBe('null');
     });
 
-    it('should handle localStorage errors gracefully', async () => {
-        // Mock localStorage to throw an error
+    it('should handle localStorage errors gracefully when no product expressPaymentUrl', async () => {
         mockLocalStorage.getItem.mockImplementation(() => {
             throw new Error('localStorage error');
         });
 
-        // Recreate the element to trigger the getter again
+        while (document.body.firstChild) {
+            document.body.removeChild(document.body.firstChild);
+        }
+
+        element = createElement('c-product-details', {
+            is: ProductDetails,
+        });
+        element.product = mockProductWithoutExpressUrl;
+        element.entryId = 'test-entry-456';
+        document.body.appendChild(element);
+        await Promise.resolve();
+
+        const expressPayment = element.querySelector('c-express-payment');
+        expect(expressPayment).not.toBeNull();
+        expect(expressPayment.expressPaymentUrl).toBe('null');
+    });
+
+    it('should fall back to product expressPaymentUrl when localStorage values are missing', async () => {
+        mockLocalStorage.getItem.mockReturnValue(null);
+
         while (document.body.firstChild) {
             document.body.removeChild(document.body.firstChild);
         }
@@ -714,7 +750,63 @@ describe('Express payment URL construction', () => {
 
         const expressPayment = element.querySelector('c-express-payment');
         expect(expressPayment).not.toBeNull();
-        expect(expressPayment.expressPaymentUrl).toBe('null');
+        expect(expressPayment.expressPaymentUrl).toBe('https://www.phased-launch-testing.com/express');
+    });
+
+    it('should construct SFRA express payment URL from localizedUrl in localStorage', async () => {
+        mockLocalStorage.getItem.mockImplementation((key) => {
+            if (key === 'localizedUrl')
+                return 'https://zysn-003.unified.demandware.net/on/demandware.servlet/Sites-RefArch-Site/en_US';
+            return null;
+        });
+
+        while (document.body.firstChild) {
+            document.body.removeChild(document.body.firstChild);
+        }
+
+        element = createElement('c-product-details', {
+            is: ProductDetails,
+        });
+        element.product = mockProductWithoutExpressUrl;
+        element.entryId = 'test-entry-456';
+        document.body.appendChild(element);
+        await Promise.resolve();
+
+        const expressPayment = element.querySelector('c-express-payment');
+        expect(expressPayment).not.toBeNull();
+        expect(expressPayment.expressPaymentUrl).toBe(
+            'https://zysn-003.unified.demandware.net/on/demandware.store/Sites-RefArch-Site/en_US/Payments-Express'
+        );
+    });
+
+    it('should use SFRA localizedUrl over PWA keys when both are in localStorage', async () => {
+        mockLocalStorage.getItem.mockImplementation((key) => {
+            const mockData = {
+                localizedUrl: 'https://zysn-003.unified.demandware.net/on/demandware.servlet/Sites-RefArch-Site/en_US',
+                pwaDomainUrl: 'https://www.phased-launch-testing.com',
+                pwaSiteId: 'site-123',
+                pwaLocale: 'en-US',
+            };
+            return mockData[key] || null;
+        });
+
+        while (document.body.firstChild) {
+            document.body.removeChild(document.body.firstChild);
+        }
+
+        element = createElement('c-product-details', {
+            is: ProductDetails,
+        });
+        element.product = mockProductWithoutExpressUrl;
+        element.entryId = 'test-entry-456';
+        document.body.appendChild(element);
+        await Promise.resolve();
+
+        const expressPayment = element.querySelector('c-express-payment');
+        expect(expressPayment).not.toBeNull();
+        expect(expressPayment.expressPaymentUrl).toBe(
+            'https://zysn-003.unified.demandware.net/on/demandware.store/Sites-RefArch-Site/en_US/Payments-Express'
+        );
     });
 });
 
@@ -3382,7 +3474,7 @@ describe('c-product-details originalPrice', () => {
     });
 });
 
-describe('c-product-details isAnyVariantOrderable functionality', () => {
+describe('c-product-details isAnyVariantOrderable button state', () => {
     let element;
 
     beforeEach(async () => {
@@ -3523,5 +3615,60 @@ describe('c-product-details isAnyVariantOrderable functionality', () => {
             expect(incrementButton.disabled).toBe(testCase.expectedIncrementDisabled);
             expect(decrementButton.disabled).toBe(testCase.expectedDecrementDisabled);
         });
+    });
+});
+
+describe('c-product-details expressPaymentPrice', () => {
+    let element;
+
+    beforeEach(async () => {
+        element = createElement('c-product-details', {
+            is: ProductDetails,
+        });
+        document.body.appendChild(element);
+        await Promise.resolve();
+    });
+
+    afterEach(() => {
+        document.body.removeChild(element);
+    });
+
+    it('should pass unit price (not multiplied by quantity) to c-express-payment price prop', async () => {
+        element.product = { ...mockProduct, pr: { cur: 110.99, orig: 110.99 } };
+        element.quantity = 3;
+        await Promise.resolve();
+
+        const expressPayment = element.querySelector('c-express-payment');
+        expect(expressPayment.price).toBeCloseTo(110.99, 2);
+    });
+
+    it('should pass unit price regardless of quantity changes', async () => {
+        element.product = { ...mockProduct, pr: { cur: 35.69, orig: 35.69 } };
+        element.quantity = 2;
+        await Promise.resolve();
+
+        const expressPayment = element.querySelector('c-express-payment');
+        expect(expressPayment.price).toBeCloseTo(35.69, 2);
+    });
+
+    it('should pass null price to c-express-payment when product has no price', async () => {
+        element.product = { ...mockProduct, pr: null };
+        await Promise.resolve();
+
+        const expressPayment = element.querySelector('c-express-payment');
+        expect(expressPayment.price).toBeNull();
+    });
+
+    it('should pass null price to c-express-payment when product is not set', async () => {
+        const expressPayment = element.querySelector('c-express-payment');
+        expect(expressPayment.price).toBeNull();
+    });
+
+    it('should pass unit price to c-express-payment when product has a valid price', async () => {
+        element.product = { ...mockProduct, pr: { cur: 110.99, orig: 110.99 } };
+        await Promise.resolve();
+
+        const expressPayment = element.querySelector('c-express-payment');
+        expect(expressPayment.price).toBeCloseTo(110.99, 2);
     });
 });

@@ -630,10 +630,7 @@ export default class DynamicContentRenderer extends LightningElement {
 
         if (!isCartMgmtSupported) {
             // If cart management is not supported, get URL from event detail and open it
-            // add src=shopperAgent to the URL since we need it for the order source tracking
-            const baseUrl = event?.detail?.url;
-            const separator = baseUrl?.includes('?') ? '&' : '?';
-            const productUrl = baseUrl + separator + 'src=shopperAgent';
+            const productUrl = event?.detail?.url;
 
             // Get the agent session ID for analytics tracking send it to the storefront
             const agentSessionId =
@@ -642,9 +639,9 @@ export default class DynamicContentRenderer extends LightningElement {
             const productId = event.detail?.id;
             this.sendPsaSearchResultClicked(agentSessionId, productId);
 
-            if (baseUrl && productUrl) {
+            if (productUrl) {
                 try {
-                    window.open(productUrl, '_blank');
+                    window.open(productUrl, '_blank', 'noopener,noreferrer');
                 } catch (error) {
                     console.error('Failed to open product URL:', error);
                 }
@@ -672,7 +669,7 @@ export default class DynamicContentRenderer extends LightningElement {
     handleSelectOption(event) {
         const option = event?.detail;
         if (option?.displayValue && option?.utterance) {
-            this.configuration.util.sendTextMessage(option.utterance);
+            this.configuration.util.sendTextMessage(option.displayValue);
         }
     }
 
@@ -985,7 +982,7 @@ export default class DynamicContentRenderer extends LightningElement {
      * - `productsDescription`: A string description for products.
      * - `isCartMgmtSupported`: Boolean indicating if cart management is enabled.
      * - `userQuery`: The user's original query related to recommendations.
-     * - `suggestedActions`: An array of action objects containing suggested actions (e.g., suggested questions and answers), defaults to empty array if not available.
+     * - `suggestedActions`: An array of question objects, each containing `description`, `utterance`, and `options`. Supports multiple questions.
      * @private
      */
     processProductRecommendations() {
@@ -1012,32 +1009,28 @@ export default class DynamicContentRenderer extends LightningElement {
 
         // userQuery can be under productRecommendations or at root level
         data.userQuery = parsed?.productRecommendations?.userQuery || parsed?.userQuery || '';
-
-        // Extract and process suggestedActions with proper null safety
         const suggestedActions = parsed?.productRecommendations?.suggestedActions || parsed?.suggestedActions;
-
-        // Initialize suggestedActions with safe defaults
-        data.suggestedActions = {
-            description: '',
-            options: [],
-            utterance: '',
-        };
+        // Initialize suggestedActions as an empty array (multiple questions format)
+        data.suggestedActions = [];
 
         // Only process if suggestedActions exists and has actions array
         if (suggestedActions && Array.isArray(suggestedActions) && suggestedActions.length > 0) {
-            // Find the first QUESTION_WITH_ANSWERS action (currently only supported type)
-            const questionAction = suggestedActions.find(
+            // Find all QUESTION actions (now supports multiple questions)
+            const questionActions = suggestedActions.filter(
                 (action) => action && action.type === SUGGESTED_ACTIONS_TYPES.QUESTION
             );
 
-            if (questionAction) {
-                // Set description from action's displayValue
-                data.suggestedActions.description = questionAction.displayValue || '';
-                data.suggestedActions.utterance = questionAction.utterance || '';
-
+            // Process each question
+            questionActions.forEach((questionAction) => {
+                const processedQuestion = {
+                    description: questionAction.displayValue || '',
+                    utterance: questionAction.utterance || '',
+                    selectionType: questionAction.selectionType || null,
+                    options: [],
+                };
                 // Filter and validate options with proper type checking
                 if (Array.isArray(questionAction.options)) {
-                    data.suggestedActions.options = questionAction.options.filter((option) => {
+                    processedQuestion.options = questionAction.options.filter((option) => {
                         // Validate that option has required properties and correct type
                         return (
                             option &&
@@ -1047,7 +1040,12 @@ export default class DynamicContentRenderer extends LightningElement {
                         );
                     });
                 }
-            }
+
+                // Only add the question if it has options
+                if (processedQuestion.options.length > 0) {
+                    data.suggestedActions.push(processedQuestion);
+                }
+            });
         }
 
         return data;

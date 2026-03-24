@@ -663,6 +663,92 @@ describe('c-dynamic-content-renderer', () => {
                 expect(element.querySelector('c-product-search-recommendations')).toBeDefined();
             });
 
+            it('should pass through selectionType from the response', async () => {
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: JSON.stringify({
+                                    productRecommendations: {
+                                        messagingSessionId: mockAgentSessionId,
+                                        className: CONTENT_TYPES.PRODUCT_RECOMMENDATIONS,
+                                        productsDetails: { products: [] },
+                                        suggestedActions: [
+                                            {
+                                                type: 'QUESTION_WITH_ANSWERS',
+                                                displayValue: 'What activity?',
+                                                utterance: null,
+                                                selectionType: 'MULTI_SELECT',
+                                                options: [
+                                                    {
+                                                        utterance: 'Show me hiking jackets',
+                                                        type: 'UTTERANCE_SUGGESTIONS',
+                                                        displayValue: 'Hiking',
+                                                    },
+                                                    {
+                                                        utterance: 'Show me running jackets',
+                                                        type: 'UTTERANCE_SUGGESTIONS',
+                                                        displayValue: 'Running',
+                                                    },
+                                                ],
+                                            },
+                                        ],
+                                    },
+                                }),
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                element.conversationEntry = entry;
+                await Promise.resolve();
+
+                const recComponent = element.querySelector('c-product-search-recommendations');
+                expect(recComponent).not.toBeNull();
+                expect(recComponent.suggestedActions[0].selectionType).toBe('MULTI_SELECT');
+            });
+
+            it('should default selectionType to null when not provided', async () => {
+                const entry = {
+                    entryPayload: JSON.stringify({
+                        abstractMessage: {
+                            staticContent: {
+                                text: JSON.stringify({
+                                    productRecommendations: {
+                                        messagingSessionId: mockAgentSessionId,
+                                        className: CONTENT_TYPES.PRODUCT_RECOMMENDATIONS,
+                                        productsDetails: { products: [] },
+                                        suggestedActions: [
+                                            {
+                                                type: 'QUESTION_WITH_ANSWERS',
+                                                displayValue: 'What size?',
+                                                utterance: null,
+                                                options: [
+                                                    {
+                                                        utterance: 'Size S',
+                                                        type: 'UTTERANCE_SUGGESTIONS',
+                                                        displayValue: 'S',
+                                                    },
+                                                ],
+                                            },
+                                        ],
+                                    },
+                                }),
+                            },
+                        },
+                    }),
+                    sender: { role: CHATBOT },
+                };
+
+                element.conversationEntry = entry;
+                await Promise.resolve();
+
+                const recComponent = element.querySelector('c-product-search-recommendations');
+                expect(recComponent).not.toBeNull();
+                expect(recComponent.suggestedActions[0].selectionType).toBeNull();
+            });
+
             it('should filter out options with incorrect type', () => {
                 const entry = {
                     entryPayload: JSON.stringify({
@@ -874,7 +960,7 @@ describe('c-dynamic-content-renderer', () => {
                 expect(element.querySelector('c-product-search-recommendations')).toBeDefined();
             });
 
-            it('should use the first QUESTION_WITH_ANSWERS when multiple actions exist', () => {
+            it('should process all QUESTION_WITH_ANSWERS when multiple actions exist', async () => {
                 const entry = {
                     entryPayload: JSON.stringify({
                         abstractMessage: {
@@ -892,7 +978,7 @@ describe('c-dynamic-content-renderer', () => {
                                                 options: [
                                                     {
                                                         utterance: 'First',
-                                                        type: 'UTTERANCE_SUGGESTION',
+                                                        type: 'UTTERANCE_SUGGESTIONS',
                                                         displayValue: 'First',
                                                     },
                                                 ],
@@ -904,7 +990,7 @@ describe('c-dynamic-content-renderer', () => {
                                                 options: [
                                                     {
                                                         utterance: 'Second',
-                                                        type: 'UTTERANCE_SUGGESTION',
+                                                        type: 'UTTERANCE_SUGGESTIONS',
                                                         displayValue: 'Second',
                                                     },
                                                 ],
@@ -919,10 +1005,182 @@ describe('c-dynamic-content-renderer', () => {
                 };
 
                 element.conversationEntry = entry;
+                await Promise.resolve();
 
                 // Component should render without errors
                 expect(element).toBeDefined();
-                expect(element.querySelector('c-product-search-recommendations')).toBeDefined();
+                const childComponent = element.querySelector('c-product-search-recommendations');
+                expect(childComponent).toBeDefined();
+                // Verify that all questions are processed (not just the first)
+                expect(childComponent.suggestedActions).toEqual([
+                    {
+                        description: 'First question?',
+                        utterance: '',
+                        selectionType: null,
+                        options: [
+                            {
+                                utterance: 'First',
+                                type: 'UTTERANCE_SUGGESTIONS',
+                                displayValue: 'First',
+                            },
+                        ],
+                    },
+                    {
+                        description: 'Second question?',
+                        utterance: '',
+                        selectionType: null,
+                        options: [
+                            {
+                                utterance: 'Second',
+                                type: 'UTTERANCE_SUGGESTIONS',
+                                displayValue: 'Second',
+                            },
+                        ],
+                    },
+                ]);
+            });
+
+            describe('BottomSheet Multiple Questions Format', () => {
+                it('should handle suggestedActions at root level when not nested under productRecommendations', async () => {
+                    const entry = {
+                        entryPayload: JSON.stringify({
+                            abstractMessage: {
+                                staticContent: {
+                                    text: JSON.stringify({
+                                        productRecommendations: {
+                                            messagingSessionId: mockAgentSessionId,
+                                            className: CONTENT_TYPES.PRODUCT_RECOMMENDATIONS,
+                                            productsDetails: { products: [] },
+                                        },
+                                        suggestedActions: [
+                                            {
+                                                type: 'QUESTION_WITH_ANSWERS',
+                                                displayValue: 'Root level question?',
+                                                utterance: 'root',
+                                                options: [
+                                                    {
+                                                        utterance: 'Root option',
+                                                        type: 'UTTERANCE_SUGGESTIONS',
+                                                        displayValue: 'Root',
+                                                    },
+                                                ],
+                                            },
+                                        ],
+                                    }),
+                                },
+                            },
+                        }),
+                        sender: { role: CHATBOT },
+                    };
+
+                    element.conversationEntry = entry;
+                    await Promise.resolve();
+
+                    // Verify component rendered correctly
+                    // suggestedActions at root level should be processed correctly
+                    expect(element).toBeDefined();
+                    const childComponent = element.querySelector('c-product-search-recommendations');
+                    expect(childComponent).toBeDefined();
+                    // suggestedActions is now an array of questions
+                    expect(childComponent.suggestedActions).toEqual([
+                        {
+                            description: 'Root level question?',
+                            utterance: 'root',
+                            selectionType: null,
+                            options: [
+                                {
+                                    utterance: 'Root option',
+                                    type: 'UTTERANCE_SUGGESTIONS',
+                                    displayValue: 'Root',
+                                },
+                            ],
+                        },
+                    ]);
+                });
+
+                it('should handle missing displayValue on question by using empty string', async () => {
+                    const entry = {
+                        entryPayload: JSON.stringify({
+                            abstractMessage: {
+                                staticContent: {
+                                    text: JSON.stringify({
+                                        productRecommendations: {
+                                            messagingSessionId: mockAgentSessionId,
+                                            className: CONTENT_TYPES.PRODUCT_RECOMMENDATIONS,
+                                            productsDetails: { products: [] },
+                                            suggestedActions: [
+                                                {
+                                                    type: 'QUESTION_WITH_ANSWERS',
+                                                    // Missing displayValue
+                                                    utterance: 'test',
+                                                    options: [
+                                                        {
+                                                            utterance: 'Option',
+                                                            type: 'UTTERANCE_SUGGESTION',
+                                                            displayValue: 'Option',
+                                                        },
+                                                    ],
+                                                },
+                                            ],
+                                        },
+                                    }),
+                                },
+                            },
+                        }),
+                        sender: { role: CHATBOT },
+                    };
+
+                    element.conversationEntry = entry;
+                    await Promise.resolve();
+
+                    // Verify component rendered correctly
+                    // Missing displayValue should default to empty string
+                    expect(element).toBeDefined();
+                    const childComponent = element.querySelector('c-product-search-recommendations');
+                    expect(childComponent).toBeDefined();
+                });
+
+                it('should handle missing utterance on question by using empty string', async () => {
+                    const entry = {
+                        entryPayload: JSON.stringify({
+                            abstractMessage: {
+                                staticContent: {
+                                    text: JSON.stringify({
+                                        productRecommendations: {
+                                            messagingSessionId: mockAgentSessionId,
+                                            className: CONTENT_TYPES.PRODUCT_RECOMMENDATIONS,
+                                            productsDetails: { products: [] },
+                                            suggestedActions: [
+                                                {
+                                                    type: 'QUESTION_WITH_ANSWERS',
+                                                    displayValue: 'Test question?',
+                                                    // Missing utterance
+                                                    options: [
+                                                        {
+                                                            utterance: 'Option',
+                                                            type: 'UTTERANCE_SUGGESTION',
+                                                            displayValue: 'Option',
+                                                        },
+                                                    ],
+                                                },
+                                            ],
+                                        },
+                                    }),
+                                },
+                            },
+                        }),
+                        sender: { role: CHATBOT },
+                    };
+
+                    element.conversationEntry = entry;
+                    await Promise.resolve();
+
+                    // Verify component rendered correctly
+                    // Missing utterance should default to empty string
+                    expect(element).toBeDefined();
+                    const childComponent = element.querySelector('c-product-search-recommendations');
+                    expect(childComponent).toBeDefined();
+                });
             });
         });
 
@@ -1451,7 +1709,11 @@ describe('c-dynamic-content-renderer', () => {
 
                 element.handleShowProduct(event);
 
-                expect(window.open).toHaveBeenCalledWith('https://example.com/product?src=shopperAgent', '_blank');
+                expect(window.open).toHaveBeenCalledWith(
+                    'https://example.com/product',
+                    '_blank',
+                    'noopener,noreferrer'
+                );
             });
 
             it('should open URL when cart management is not supported when product url does have existing query params', () => {
@@ -1476,8 +1738,9 @@ describe('c-dynamic-content-renderer', () => {
                 element.handleShowProduct(event);
 
                 expect(window.open).toHaveBeenCalledWith(
-                    'https://example.com/product?lang=en-US&src=shopperAgent',
-                    '_blank'
+                    'https://example.com/product?lang=en-US',
+                    '_blank',
+                    'noopener,noreferrer'
                 );
             });
 
@@ -1501,7 +1764,11 @@ describe('c-dynamic-content-renderer', () => {
 
                 element.handleShowProduct(event);
 
-                expect(window.open).toHaveBeenCalledWith('https://example.com/product?src=shopperAgent', '_blank');
+                expect(window.open).toHaveBeenCalledWith(
+                    'https://example.com/product',
+                    '_blank',
+                    'noopener,noreferrer'
+                );
             });
 
             it('should send text message when cart management is supported', () => {
@@ -1614,7 +1881,7 @@ describe('c-dynamic-content-renderer', () => {
 
                 element.handleSelectOption(event);
 
-                expect(mockSendTextMessage).toHaveBeenCalledWith('Suggest me more in jackets for hiking.');
+                expect(mockSendTextMessage).toHaveBeenCalledWith('Hiking');
             });
 
             it('should not send message when option has no displayValue', () => {

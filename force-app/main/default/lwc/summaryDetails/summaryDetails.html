@@ -80,21 +80,6 @@
                     class={totalsClasses}
                     role="region"
                     aria-label={totalsAriaLabel}>
-                    <template if:true={hasCouponsApplied}>
-                        <div class="summary-row slds-p-bottom_small">
-                            <span
-                                class="summary-label"
-                                id="coupons-applied-label">
-                                {i18n.couponsAppliedLabel}
-                            </span>
-                            <span
-                                class="summary-value wrapped-value"
-                                aria-labelledby="coupons-applied-label">
-                                {couponsApplied}
-                            </span>
-                        </div>
-                    </template>
-
                     <div class="summary-row slds-p-bottom_xxx-small">
                         <span
                             class="summary-label"
@@ -124,12 +109,30 @@
                     </template>
 
                     <template if:true={hasPromotions}>
-                        <div class="summary-row slds-p-bottom_xxx-small">
-                            <span
-                                class="summary-label"
-                                id="promotions-label">
-                                {i18n.promotionsLabel}
-                            </span>
+                        <div class="summary-row summary-row-promotions slds-p-bottom_xxx-small">
+                            <div class="summary-row-promotions-content">
+                                <span
+                                    class="summary-label"
+                                    id="promotions-label">
+                                    {i18n.promotionsLabel}
+                                </span>
+                                <template if:true={hasOrderLevelPromotions}>
+                                    <div
+                                        class="order-promotions-pills"
+                                        role="list"
+                                        aria-label={i18n.promotionsLabel}>
+                                        <template
+                                            for:each={orderLevelPromotions}
+                                            for:item="promo">
+                                            <c-custom-pill
+                                                key={promo.id}
+                                                label={promo.text}
+                                                variant="promotion"
+                                                max-width="350px"></c-custom-pill>
+                                        </template>
+                                    </div>
+                                </template>
+                            </div>
                             <span
                                 class="summary-value"
                                 aria-labelledby="promotions-label">
@@ -152,12 +155,30 @@
                     </div>
 
                     <template if:true={hasShippingDiscount}>
-                        <div class="summary-row slds-p-bottom_xxx-small">
-                            <span
-                                class="summary-label"
-                                id="shipping-discount-label">
-                                {i18n.shippingDiscountLabel}
-                            </span>
+                        <div class="summary-row summary-row-promotions slds-p-bottom_xxx-small">
+                            <div class="summary-row-promotions-content">
+                                <span
+                                    class="summary-label"
+                                    id="shipping-discount-label">
+                                    {i18n.shippingDiscountLabel}
+                                </span>
+                                <template if:true={hasShippingPromotionPills}>
+                                    <div
+                                        class="order-promotions-pills"
+                                        role="list"
+                                        aria-label={i18n.shippingDiscountLabel}>
+                                        <template
+                                            for:each={shippingPromotionPills}
+                                            for:item="promo">
+                                            <c-custom-pill
+                                                key={promo.id}
+                                                label={promo.text}
+                                                variant="promotion"
+                                                max-width="350px"></c-custom-pill>
+                                        </template>
+                                    </div>
+                                </template>
+                            </div>
                             <span
                                 class="summary-value"
                                 aria-labelledby="shipping-discount-label">
@@ -191,6 +212,23 @@
                             {total}
                         </span>
                     </div>
+
+                    <template if:true={showOrderLevelCouponPills}>
+                        <div
+                            class="order-coupon-pills-wrapper slds-p-top_x-small"
+                            role="list"
+                            aria-label={orderLevelCouponPillsContainerAriaLabel}>
+                            <template
+                                for:each={orderLevelCouponPills}
+                                for:item="coupon">
+                                <c-custom-pill
+                                    key={coupon.id}
+                                    label={coupon.code}
+                                    variant="coupon"
+                                    disabled={coupon.isDisabled}></c-custom-pill>
+                            </template>
+                        </div>
+                    </template>
                 </div>
             </template>
         </div>

@@ -423,6 +423,90 @@ describe('c-product-summary', () => {
         });
     });
 
+    describe('Promotions', () => {
+        it('renders promotions label and items when item has promotions', async () => {
+            element.item = {
+                imageUrl: 'test.jpg',
+                name: 'Product',
+                quantity: 1,
+                formattedPrice: '$41.99',
+                itemSubtotal: 41.99,
+                promotions: ['20% off', '10% off'],
+            };
+            await Promise.resolve();
+
+            const pills = element.querySelectorAll('c-custom-pill');
+            expect(pills.length).toBe(2);
+            expect(pills[0].label).toBe('20% off');
+            expect(pills[1].label).toBe('10% off');
+        });
+
+        it('does not render promotions section when item has no promotions', async () => {
+            element.item = { ...mockItemMinimal };
+            await Promise.resolve();
+            expect(element.querySelector('.promotions-container')).toBeNull();
+        });
+
+        it('does not render promotions section when item.promotions is empty array', async () => {
+            element.item = { ...mockItemMinimal, promotions: [] };
+            await Promise.resolve();
+            expect(element.querySelector('.promotions-container')).toBeNull();
+        });
+    });
+
+    describe('Item-level coupons', () => {
+        it('renders coupon pills when item has coupons', async () => {
+            element.item = {
+                imageUrl: 'test.jpg',
+                name: 'Product',
+                quantity: 1,
+                formattedPrice: '$41.99',
+                coupons: ['ITEMLEVEL15', 'FILTER10'],
+            };
+            await Promise.resolve();
+
+            const pills = element.querySelectorAll('c-custom-pill');
+            expect(pills.length).toBe(2);
+            expect(pills[0].label).toBe('ITEMLEVEL15');
+            expect(pills[1].label).toBe('FILTER10');
+        });
+
+        it('does not render coupon section when item has no coupons', async () => {
+            element.item = { ...mockItemMinimal };
+            await Promise.resolve();
+            expect(element.querySelector('.item-coupons')).toBeNull();
+        });
+
+        it('normalizes item coupons from object entries (code and id)', async () => {
+            element.item = {
+                imageUrl: 'test.jpg',
+                name: 'Product',
+                quantity: 1,
+                formattedPrice: '$41.99',
+                coupons: [{ code: 'OBJCODE' }, { id: 'id-only-coupon' }],
+            };
+            await Promise.resolve();
+            const pills = element.querySelectorAll('c-custom-pill');
+            expect(pills).toHaveLength(2);
+            expect(pills[0].label).toBe('OBJCODE');
+            expect(pills[1].label).toBe('id-only-coupon');
+        });
+
+        it('filters out null or whitespace-only code from item coupons', async () => {
+            element.item = {
+                imageUrl: 'test.jpg',
+                name: 'Product',
+                quantity: 1,
+                formattedPrice: '$41.99',
+                coupons: [{ code: 'VALID' }, { code: '' }, { code: '   ' }, {}],
+            };
+            await Promise.resolve();
+            const pills = element.querySelectorAll('c-custom-pill');
+            expect(pills).toHaveLength(1);
+            expect(pills[0].label).toBe('VALID');
+        });
+    });
+
     describe('Accessibility', () => {
         it('provides correct ARIA label for discounted items', async () => {
             element.item = {

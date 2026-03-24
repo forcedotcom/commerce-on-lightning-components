@@ -41,6 +41,16 @@ export default class ExpressPayment extends LightningElement {
     @api disabled = false;
 
     /**
+     * Product total price (unit price × quantity) to pre-populate the payment sheet.
+     * Passed as &price=<value> in the iframe URL so the server can display the correct
+     * initial amount in the Apple Pay / Google Pay sheet.
+     * Note: this value is a placeholder for display purposes only and does not dictate
+     * the actual charge. The authoritative amount is set once the basket is created.
+     * @type {number}
+     */
+    @api price;
+
+    /**
      * Dynamic height for the express payment iframe.
      * @type {number}
      */
@@ -100,6 +110,9 @@ export default class ExpressPayment extends LightningElement {
         let url = `${this.expressPaymentUrl}?id=${this.entryId}`;
         if (this.pdp) {
             url += `&pdp=true`;
+        }
+        if (typeof this.price === 'number' && this.price > 0) {
+            url += `&price=${this.price}`;
         }
         return url;
     }
