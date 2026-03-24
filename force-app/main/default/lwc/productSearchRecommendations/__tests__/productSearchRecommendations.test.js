@@ -613,22 +613,18 @@ describe('c-product-search-recommendations', () => {
             const selectOptionHandler = jest.fn();
             element.addEventListener('selectoption', selectOptionHandler);
 
-            // Simulate event without utterance
-            const invalidEvent = {
-                target: {
-                    name: 'Test Option',
-                    dataset: {
-                        utterance: '', // Empty utterance
-                    },
-                },
+            // Set up suggestedActions with an option that has an empty utterance
+            element.suggestedActions = {
+                description: 'Choose an option',
+                options: [{ displayValue: 'Test Option', utterance: '' }],
             };
 
-            // Call handleSelectOptionFromButton directly (method may not be publicly accessible in LWC)
-            try {
-                element.handleSelectOptionFromButton?.(invalidEvent);
-            } catch {
-                // Method not exposed
-            }
+            await Promise.resolve();
+
+            // Click the button - event should not be dispatched because utterance is empty
+            const optionButton = element.querySelector('.suggested-actions-button');
+            expect(optionButton).not.toBeNull();
+            optionButton.click();
             await Promise.resolve();
 
             // Event should not be dispatched
@@ -639,21 +635,37 @@ describe('c-product-search-recommendations', () => {
             const selectOptionHandler = jest.fn();
             element.addEventListener('selectoption', selectOptionHandler);
 
-            // Simulate bottomSheet event without displayValue
-            const invalidEvent = {
-                detail: {
-                    displayValue: '', // Empty displayValue
-                    utterance: 'test utterance',
-                },
-                stopPropagation: jest.fn(),
+            // Set up suggestedActions with enough options to trigger the bottom sheet
+            element.suggestedActions = {
+                description: 'Choose a size',
+                options: [
+                    { displayValue: 'XS', utterance: 'Size XS' },
+                    { displayValue: 'S', utterance: 'Size S' },
+                    { displayValue: 'M', utterance: 'Size M' },
+                    { displayValue: 'L', utterance: 'Size L' },
+                    { displayValue: 'XL', utterance: 'Size XL' },
+                    { displayValue: 'XXL', utterance: 'Size XXL' },
+                ],
             };
 
-            // Call handleSelectOptionFromBottomSheet directly (method may not be publicly accessible in LWC)
-            try {
-                element.handleSelectOptionFromBottomSheet?.(invalidEvent);
-            } catch {
-                // Method not exposed
-            }
+            await Promise.resolve();
+
+            // Open bottom sheet first
+            const seeMoreButton = element.querySelector('.suggested-actions-see-more');
+            expect(seeMoreButton).not.toBeNull();
+            seeMoreButton.click();
+            await Promise.resolve();
+
+            const bottomSheet = element.querySelector('c-bottom-sheet');
+            expect(bottomSheet).not.toBeNull();
+
+            // Dispatch selectoption with an empty displayValue
+            bottomSheet.dispatchEvent(
+                new CustomEvent('selectoption', {
+                    detail: { displayValue: '', utterance: 'test utterance', questionIndex: 0 },
+                    bubbles: true,
+                })
+            );
             await Promise.resolve();
 
             // Event should not be dispatched
@@ -664,21 +676,37 @@ describe('c-product-search-recommendations', () => {
             const selectOptionHandler = jest.fn();
             element.addEventListener('selectoption', selectOptionHandler);
 
-            // Simulate bottomSheet event without utterance
-            const invalidEvent = {
-                detail: {
-                    displayValue: 'Test Option',
-                    utterance: '', // Empty utterance
-                },
-                stopPropagation: jest.fn(),
+            // Set up suggestedActions with enough options to trigger the bottom sheet
+            element.suggestedActions = {
+                description: 'Choose a size',
+                options: [
+                    { displayValue: 'XS', utterance: 'Size XS' },
+                    { displayValue: 'S', utterance: 'Size S' },
+                    { displayValue: 'M', utterance: 'Size M' },
+                    { displayValue: 'L', utterance: 'Size L' },
+                    { displayValue: 'XL', utterance: 'Size XL' },
+                    { displayValue: 'XXL', utterance: 'Size XXL' },
+                ],
             };
 
-            // Call handleSelectOptionFromBottomSheet directly (method may not be publicly accessible in LWC)
-            try {
-                element.handleSelectOptionFromBottomSheet?.(invalidEvent);
-            } catch {
-                // Method not exposed
-            }
+            await Promise.resolve();
+
+            // Open bottom sheet first
+            const seeMoreButton = element.querySelector('.suggested-actions-see-more');
+            expect(seeMoreButton).not.toBeNull();
+            seeMoreButton.click();
+            await Promise.resolve();
+
+            const bottomSheet = element.querySelector('c-bottom-sheet');
+            expect(bottomSheet).not.toBeNull();
+
+            // Dispatch selectoption with an empty utterance
+            bottomSheet.dispatchEvent(
+                new CustomEvent('selectoption', {
+                    detail: { displayValue: 'Test Option', utterance: '', questionIndex: 0 },
+                    bubbles: true,
+                })
+            );
             await Promise.resolve();
 
             // Event should not be dispatched
@@ -1008,16 +1036,6 @@ describe('c-product-search-recommendations', () => {
 
         describe('Bottom Sheet Component Rendering', () => {
             it('should not render bottom sheet when isBottomSheetOpen is false', async () => {
-                // Ensure bottom sheet is closed (handleBottomSheetClose may not be publicly accessible in LWC)
-                const closeEvent = {
-                    stopPropagation: jest.fn(),
-                    preventDefault: jest.fn(),
-                };
-                try {
-                    element.handleBottomSheetClose?.(closeEvent);
-                } catch {
-                    // Method not exposed
-                }
                 await Promise.resolve();
 
                 const bottomSheet = element.querySelector('c-bottom-sheet');
@@ -1060,16 +1078,6 @@ describe('c-product-search-recommendations', () => {
                     description: 'Test',
                     options: [],
                 };
-                // Open bottom sheet through handleSeeMore (though it won't open if hasSuggestedActions is false)
-                const openEvent = {
-                    stopPropagation: jest.fn(),
-                    preventDefault: jest.fn(),
-                };
-                try {
-                    element.handleSeeMore?.(openEvent);
-                } catch {
-                    // Method not exposed
-                }
                 await Promise.resolve();
 
                 // Bottom sheet should not be open when hasSuggestedActions is false (empty options)

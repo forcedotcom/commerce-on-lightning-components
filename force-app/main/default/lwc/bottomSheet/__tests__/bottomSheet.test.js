@@ -736,6 +736,41 @@ describe('c-bottom-sheet', () => {
 
             expect(document.activeElement).toBe(radios[0]);
         });
+
+        it('should return early when radiogroup contains no radio inputs', async () => {
+            const radio = element.querySelector('input[type="radio"]');
+            expect(radio).not.toBeNull();
+            // Override closest on this specific element so the handler sees an empty group
+            const fakeGroup = { querySelectorAll: () => [] };
+            Object.defineProperty(radio, 'closest', {
+                value: () => fakeGroup,
+                configurable: true,
+                writable: true,
+            });
+
+            radio.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+            await Promise.resolve();
+
+            // No navigation occurs; selection remains unchanged
+            expect(element.getSelectedValue()).toBeNull();
+        });
+
+        it('should return early when event target is not found among radiogroup inputs', async () => {
+            const radios = element.querySelectorAll('input[type="radio"]');
+            // Override closest so the group's querySelectorAll returns inputs that exclude radios[0]
+            const fakeGroup = { querySelectorAll: () => [radios[1], radios[2]] };
+            Object.defineProperty(radios[0], 'closest', {
+                value: () => fakeGroup,
+                configurable: true,
+                writable: true,
+            });
+
+            radios[0].dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+            await Promise.resolve();
+
+            // No navigation occurs; selection remains unchanged
+            expect(element.getSelectedValue()).toBeNull();
+        });
     });
 
     describe('Single-Select Mode (default)', () => {
