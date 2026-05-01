@@ -66,6 +66,7 @@ export const PAYMENT_METHOD_MAP = {
 // Defines the types of suggested actions that can be presented to users.
 export const SUGGESTED_ACTIONS_TYPES = Object.freeze({
     QUESTION: 'QUESTION_WITH_ANSWERS',
+    FOLLOWUP_QUESTION: 'FOLLOWUP_QUESTION',
 });
 
 // --- Suggested Actions Options Types Constants ---

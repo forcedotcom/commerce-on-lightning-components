@@ -43,14 +43,16 @@
     border-radius: 999px; /* Pill shape */
     background-color: var(--ref-c-suggested-actions-button-background-color);
     border: 1px solid var(--ref-c-suggested-actions-button-border-color);
-    padding: 0.375em 1.25em;
+    padding: 1em 1.25em;
     cursor: pointer;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 20.563em; /* Prevent buttons from becoming too wide */
+    line-height: 1.5;
+    white-space: normal;
+    word-break: break-word;
+    max-width: 100%;
     min-width: 0;
     display: inline-block;
+    text-align: left;
+    vertical-align: top;
 }
 
 /* ===== SUGGESTED ACTIONS BUTTON INTERACTIONS ===== */
@@ -73,7 +75,5 @@
 @media (max-width: 30rem) {
     .suggested-actions-button {
         font-size: var(--ref-c-suggested-actions-button-font-size-mobile);
-        padding: 0.25rem 1rem;
-        max-width: 20.563rem; /* Smaller max width on mobile */
     }
 }
