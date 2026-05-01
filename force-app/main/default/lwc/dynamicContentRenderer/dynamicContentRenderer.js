@@ -21,6 +21,19 @@ import {
 } from './constants';
 
 /**
+ * Cart management is treated as supported unless explicitly disabled on the root payload
+ * or nested search action (`false` or the string `'false'`). Absent, null, undefined, and
+ * empty string all default to supported.
+ * @param {unknown} fromRoot
+ * @param {unknown} fromSearchAction
+ * @param fromNested
+ * @returns {boolean}
+ */
+function resolveIsCartMgmtSupported(fromRoot, fromNested) {
+    return !(fromRoot === false || fromRoot === 'false' || fromNested === false || fromNested === 'false');
+}
+
+/**
  * A Lightning Web Component (LWC) that renders dynamic content within a commerce messaging interface.
  *
  * This component acts as a versatile renderer, capable of displaying various types of message payloads,
@@ -621,11 +634,9 @@ export default class DynamicContentRenderer extends LightningElement {
     @api
     handleShowProduct(event) {
         // Determine if cart management is supported based on parsed content
-        const isCartMgmtSupported = Boolean(
-            this._parsedMessageContent?.isCartMgmtSupported === true ||
-                this._parsedMessageContent?.isCartMgmtSupported === 'true' ||
-                this._parsedMessageContent?.productRecommendations?.isCartMgmtSupported === true ||
-                this._parsedMessageContent?.productRecommendations?.isCartMgmtSupported === 'true'
+        const isCartMgmtSupported = resolveIsCartMgmtSupported(
+            this._parsedMessageContent?.isCartMgmtSupported,
+            this._parsedMessageContent?.productRecommendations?.isCartMgmtSupported
         );
 
         if (!isCartMgmtSupported) {
@@ -980,9 +991,9 @@ export default class DynamicContentRenderer extends LightningElement {
      * @returns {object} An object containing structured data for product recommendations:
      * - `productData`: An array of product objects.
      * - `productsDescription`: A string description for products.
-     * - `isCartMgmtSupported`: Boolean indicating if cart management is enabled.
+     * - `isCartMgmtSupported`: Boolean; true by default when omitted or empty, false only when explicitly `false` or `'false'` on the root payload or nested search action.
      * - `userQuery`: The user's original query related to recommendations.
-     * - `suggestedActions`: An array of question objects, each containing `description`, `utterance`, and `options`. Supports multiple questions.
+     * - `suggestedActions`: An array of question objects, each containing `description`, `utterance`, and `options`. Supports `QUESTION_WITH_ANSWERS` and `FOLLOWUP_QUESTION` (multiple actions).
      * @private
      */
     processProductRecommendations() {
@@ -1000,8 +1011,10 @@ export default class DynamicContentRenderer extends LightningElement {
             data.productData = productsDetails.products;
             data.productsDescription = productsDetails.description || '';
             data.showMoreProducts = productsDetails.showMore;
-            data.isCartMgmtSupported =
-                parsed?.isCartMgmtSupported || parsed?.productRecommendations?.isCartMgmtSupported || false;
+            data.isCartMgmtSupported = resolveIsCartMgmtSupported(
+                parsed?.isCartMgmtSupported,
+                parsed?.productRecommendations?.isCartMgmtSupported
+            );
         } else {
             data.productData = []; // Ensure it's an array for child component
             data.productsDescription = '';
@@ -1010,14 +1023,16 @@ export default class DynamicContentRenderer extends LightningElement {
         // userQuery can be under productRecommendations or at root level
         data.userQuery = parsed?.productRecommendations?.userQuery || parsed?.userQuery || '';
         const suggestedActions = parsed?.productRecommendations?.suggestedActions || parsed?.suggestedActions;
-        // Initialize suggestedActions as an empty array (multiple questions format)
         data.suggestedActions = [];
 
         // Only process if suggestedActions exists and has actions array
         if (suggestedActions && Array.isArray(suggestedActions) && suggestedActions.length > 0) {
-            // Find all QUESTION actions (now supports multiple questions)
+            // QUESTION_WITH_ANSWERS and FOLLOWUP_QUESTION (supports multiple actions)
             const questionActions = suggestedActions.filter(
-                (action) => action && action.type === SUGGESTED_ACTIONS_TYPES.QUESTION
+                (action) =>
+                    action &&
+                    (action.type === SUGGESTED_ACTIONS_TYPES.QUESTION ||
+                        action.type === SUGGESTED_ACTIONS_TYPES.FOLLOWUP_QUESTION)
             );
 
             // Process each question
@@ -1039,6 +1054,23 @@ export default class DynamicContentRenderer extends LightningElement {
                             option.utterance
                         );
                     });
+                }
+                if (
+                    processedQuestion.options.length === 0 &&
+                    questionAction.type === SUGGESTED_ACTIONS_TYPES.FOLLOWUP_QUESTION
+                ) {
+                    const displayValue = questionAction.displayValue || questionAction.utterance;
+                    const utterance = questionAction.utterance || questionAction.displayValue;
+                    if (displayValue && utterance) {
+                        processedQuestion.options = [
+                            {
+                                type: SUGGESTED_ACTIONS_OPTIONS_TYPES.UTTERANCE_SUGGESTION,
+                                displayValue,
+                                utterance,
+                            },
+                        ];
+                        processedQuestion.description = '';
+                    }
                 }
 
                 // Only add the question if it has options
