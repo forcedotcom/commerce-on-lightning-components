@@ -348,6 +348,16 @@ export default class SummaryDetails extends LightningElement {
     }
 
     /**
+     * Indicates if taxes should be shown in the summary.
+     * When taxation mode is 'gross', taxes are included in the displayed prices
+     * and should not be shown as a separate line item.
+     * @returns {boolean} True if taxes should be displayed (i.e., taxation mode is not 'gross')
+     */
+    get shouldShowTaxes() {
+        return this.details?.taxationMode !== 'gross';
+    }
+
+    /**
      * Indicates if there is a coupon discount to display.
      * @returns {boolean} True if coupon discount amount is not null or undefined
      */

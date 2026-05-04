@@ -522,6 +522,46 @@ describe('c-summary-details', () => {
             expect(hasSummaryValue(element, 'Taxes', 'TBD')).toBe(true);
         });
 
+        it('should hide taxes row when taxationMode is gross', async () => {
+            const dataWithGrossTaxation = { ...mockOrderData, taxationMode: 'gross' };
+            const element = await createComponent({ details: dataWithGrossTaxation });
+            await expandComponent(element);
+
+            expect(hasSummaryLabel(element, 'Taxes')).toBe(false);
+        });
+
+        it('should show taxes row when taxationMode is net', async () => {
+            const dataWithNetTaxation = { ...mockOrderData, taxationMode: 'net' };
+            const element = await createComponent({ details: dataWithNetTaxation });
+            await expandComponent(element);
+
+            expect(hasSummaryLabel(element, 'Taxes')).toBe(true);
+            expect(hasSummaryValue(element, 'Taxes', '$8.00')).toBe(true);
+        });
+
+        it('should show taxes row when taxationMode is undefined', async () => {
+            const dataWithUndefinedTaxation = { ...mockOrderData, taxationMode: undefined };
+            const element = await createComponent({ details: dataWithUndefinedTaxation });
+            await expandComponent(element);
+
+            expect(hasSummaryLabel(element, 'Taxes')).toBe(true);
+            expect(hasSummaryValue(element, 'Taxes', '$8.00')).toBe(true);
+        });
+
+        it('should hide taxes row in cart summary mode when taxationMode is gross', async () => {
+            const dataWithGrossTaxation = { ...mockCartData, taxationMode: 'gross' };
+            const element = await createComponent({
+                details: dataWithGrossTaxation,
+                isCartSummary: true,
+            });
+            await expandComponent(element);
+
+            expect(hasSummaryLabel(element, 'Taxes')).toBe(false);
+            // Other totals should still be visible
+            expect(hasSummaryLabel(element, 'Subtotal')).toBe(true);
+            expect(hasSummaryLabel(element, 'Shipping')).toBe(true);
+        });
+
         it('should display "TBD" for shipping when shippingCost is null or undefined', async () => {
             const dataWithTBDValues = { ...mockDataWithPromotionsAndDiscounts, shippingCost: undefined };
             const element = await createComponent({ details: dataWithTBDValues });
@@ -567,6 +607,28 @@ describe('c-summary-details', () => {
 
             expect(hasSummaryLabel(element, 'Promotions')).toBe(false);
             expect(hasSummaryLabel(element, 'Shipping Discount')).toBe(false);
+        });
+
+        it('should display summary structure without taxes when taxationMode is gross', async () => {
+            const dataGrossTaxation = {
+                ...mockDataWithPromotionsAndDiscounts,
+                taxationMode: 'gross',
+            };
+            const element = await createComponent({ details: dataGrossTaxation });
+            await expandComponent(element);
+
+            const summaryLabels = element.querySelectorAll('.summary-label');
+            const expectedOrder = ['Subtotal', 'Promotions', 'Shipping', 'Shipping Discount'];
+
+            expectedOrder.forEach((expectedLabel, index) => {
+                expect(summaryLabels[index].textContent).toBe(expectedLabel);
+            });
+
+            expect(hasSummaryLabel(element, 'Taxes')).toBe(false);
+
+            // Total row should still be present
+            const totalRow = element.querySelector('.summary-row.total');
+            expect(totalRow).not.toBeNull();
         });
     });
 
