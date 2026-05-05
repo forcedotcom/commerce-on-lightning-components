@@ -25,8 +25,7 @@ import {
  * or nested search action (`false` or the string `'false'`). Absent, null, undefined, and
  * empty string all default to supported.
  * @param {unknown} fromRoot
- * @param {unknown} fromSearchAction
- * @param fromNested
+ * @param {unknown} fromNested
  * @returns {boolean}
  */
 function resolveIsCartMgmtSupported(fromRoot, fromNested) {
