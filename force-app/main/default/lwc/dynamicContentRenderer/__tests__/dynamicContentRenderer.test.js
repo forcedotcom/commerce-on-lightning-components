@@ -1040,6 +1040,251 @@ describe('c-dynamic-content-renderer', () => {
                 ]);
             });
 
+            describe('FOLLOWUP_QUESTION type', () => {
+                // Builds a chatbot entry with suggestedActions nested under
+                // productRecommendations (atRoot=false) or at root level (atRoot=true).
+                const buildFollowupEntry = (suggestedActions, atRoot = false) => {
+                    const text = atRoot
+                        ? {
+                              productRecommendations: {
+                                  messagingSessionId: mockAgentSessionId,
+                                  className: CONTENT_TYPES.PRODUCT_RECOMMENDATIONS,
+                                  productsDetails: { products: [] },
+                              },
+                              suggestedActions,
+                          }
+                        : {
+                              productRecommendations: {
+                                  messagingSessionId: mockAgentSessionId,
+                                  className: CONTENT_TYPES.PRODUCT_RECOMMENDATIONS,
+                                  productsDetails: { products: [] },
+                                  suggestedActions,
+                              },
+                          };
+                    return {
+                        entryPayload: JSON.stringify({
+                            abstractMessage: { staticContent: { text: JSON.stringify(text) } },
+                        }),
+                        sender: { role: CHATBOT },
+                    };
+                };
+
+                // When a FOLLOWUP_QUESTION action has no valid options, the component
+                // synthesizes a single option from the action's own displayValue/utterance
+                // and clears the processedQuestion description.
+                it.each([
+                    [
+                        'synthesizes option from both displayValue and utterance when no options are present',
+                        {
+                            type: 'FOLLOWUP_QUESTION',
+                            displayValue: 'Would you like more options?',
+                            utterance: 'Yes, show me more.',
+                        },
+                        {
+                            description: '',
+                            utterance: 'Yes, show me more.',
+                            selectionType: null,
+                            options: [
+                                {
+                                    type: 'UTTERANCE_SUGGESTIONS',
+                                    displayValue: 'Would you like more options?',
+                                    utterance: 'Yes, show me more.',
+                                },
+                            ],
+                        },
+                    ],
+                    [
+                        'synthesizes option using displayValue for both fields when utterance is null',
+                        { type: 'FOLLOWUP_QUESTION', displayValue: 'Would you like more options?', utterance: null },
+                        {
+                            description: '',
+                            utterance: '',
+                            selectionType: null,
+                            options: [
+                                {
+                                    type: 'UTTERANCE_SUGGESTIONS',
+                                    displayValue: 'Would you like more options?',
+                                    utterance: 'Would you like more options?',
+                                },
+                            ],
+                        },
+                    ],
+                    [
+                        'synthesizes option using utterance for both fields when displayValue is absent',
+                        { type: 'FOLLOWUP_QUESTION', utterance: 'Yes, show me more.' },
+                        {
+                            description: '',
+                            utterance: 'Yes, show me more.',
+                            selectionType: null,
+                            options: [
+                                {
+                                    type: 'UTTERANCE_SUGGESTIONS',
+                                    displayValue: 'Yes, show me more.',
+                                    utterance: 'Yes, show me more.',
+                                },
+                            ],
+                        },
+                    ],
+                ])('%s', async (_, action, expectedQuestion) => {
+                    element.conversationEntry = buildFollowupEntry([action]);
+                    await Promise.resolve();
+                    const childComponent = element.querySelector('c-product-search-recommendations');
+                    expect(childComponent).not.toBeNull();
+                    expect(childComponent.suggestedActions).toEqual([expectedQuestion]);
+                });
+
+                it('is excluded from suggestedActions when both displayValue and utterance are absent', async () => {
+                    element.conversationEntry = buildFollowupEntry([{ type: 'FOLLOWUP_QUESTION' }]);
+                    await Promise.resolve();
+                    const childComponent = element.querySelector('c-product-search-recommendations');
+                    expect(childComponent).not.toBeNull();
+                    expect(childComponent.suggestedActions).toEqual([]);
+                });
+
+                it('uses valid UTTERANCE_SUGGESTIONS options directly without synthesis', async () => {
+                    element.conversationEntry = buildFollowupEntry([
+                        {
+                            type: 'FOLLOWUP_QUESTION',
+                            displayValue: 'Follow-up question?',
+                            utterance: 'original utterance',
+                            options: [
+                                {
+                                    type: 'UTTERANCE_SUGGESTIONS',
+                                    displayValue: 'Option A',
+                                    utterance: 'Go with option A',
+                                },
+                            ],
+                        },
+                    ]);
+                    await Promise.resolve();
+                    const childComponent = element.querySelector('c-product-search-recommendations');
+                    expect(childComponent).not.toBeNull();
+                    expect(childComponent.suggestedActions).toEqual([
+                        {
+                            description: 'Follow-up question?',
+                            utterance: 'original utterance',
+                            selectionType: null,
+                            options: [
+                                {
+                                    type: 'UTTERANCE_SUGGESTIONS',
+                                    displayValue: 'Option A',
+                                    utterance: 'Go with option A',
+                                },
+                            ],
+                        },
+                    ]);
+                });
+
+                it('falls back to synthesis when all options have an invalid type', async () => {
+                    element.conversationEntry = buildFollowupEntry([
+                        {
+                            type: 'FOLLOWUP_QUESTION',
+                            displayValue: 'Follow-up question?',
+                            utterance: 'follow-up utterance',
+                            options: [{ type: 'INVALID_TYPE', displayValue: 'Bad Option', utterance: 'bad' }],
+                        },
+                    ]);
+                    await Promise.resolve();
+                    const childComponent = element.querySelector('c-product-search-recommendations');
+                    expect(childComponent).not.toBeNull();
+                    expect(childComponent.suggestedActions).toEqual([
+                        {
+                            description: '',
+                            utterance: 'follow-up utterance',
+                            selectionType: null,
+                            options: [
+                                {
+                                    type: 'UTTERANCE_SUGGESTIONS',
+                                    displayValue: 'Follow-up question?',
+                                    utterance: 'follow-up utterance',
+                                },
+                            ],
+                        },
+                    ]);
+                });
+
+                it('preserves selectionType when specified', async () => {
+                    element.conversationEntry = buildFollowupEntry([
+                        {
+                            type: 'FOLLOWUP_QUESTION',
+                            displayValue: 'Follow-up?',
+                            utterance: 'Follow-up utterance',
+                            selectionType: 'MULTI_SELECT',
+                            options: [
+                                {
+                                    type: 'UTTERANCE_SUGGESTIONS',
+                                    displayValue: 'Option',
+                                    utterance: 'option utterance',
+                                },
+                            ],
+                        },
+                    ]);
+                    await Promise.resolve();
+                    const childComponent = element.querySelector('c-product-search-recommendations');
+                    expect(childComponent.suggestedActions[0].selectionType).toBe('MULTI_SELECT');
+                });
+
+                it('processes multiple FOLLOWUP_QUESTION actions in order', async () => {
+                    element.conversationEntry = buildFollowupEntry([
+                        { type: 'FOLLOWUP_QUESTION', displayValue: 'First follow-up?', utterance: 'first utterance' },
+                        { type: 'FOLLOWUP_QUESTION', displayValue: 'Second follow-up?', utterance: 'second utterance' },
+                    ]);
+                    await Promise.resolve();
+                    const childComponent = element.querySelector('c-product-search-recommendations');
+                    expect(childComponent.suggestedActions).toHaveLength(2);
+                    expect(childComponent.suggestedActions[0].options[0].displayValue).toBe('First follow-up?');
+                    expect(childComponent.suggestedActions[1].options[0].displayValue).toBe('Second follow-up?');
+                });
+
+                it('processes FOLLOWUP_QUESTION alongside QUESTION_WITH_ANSWERS in the same array', async () => {
+                    element.conversationEntry = buildFollowupEntry([
+                        {
+                            type: 'QUESTION_WITH_ANSWERS',
+                            displayValue: 'Which color?',
+                            utterance: null,
+                            options: [{ type: 'UTTERANCE_SUGGESTIONS', displayValue: 'Red', utterance: 'Show red' }],
+                        },
+                        { type: 'FOLLOWUP_QUESTION', displayValue: 'Anything else?', utterance: 'I need more help' },
+                    ]);
+                    await Promise.resolve();
+                    const childComponent = element.querySelector('c-product-search-recommendations');
+                    expect(childComponent.suggestedActions).toHaveLength(2);
+                    expect(childComponent.suggestedActions[0].description).toBe('Which color?');
+                    expect(childComponent.suggestedActions[1].description).toBe('');
+                    expect(childComponent.suggestedActions[1].options[0].displayValue).toBe('Anything else?');
+                });
+
+                it('processes FOLLOWUP_QUESTION at root level outside productRecommendations', async () => {
+                    element.conversationEntry = buildFollowupEntry(
+                        [
+                            {
+                                type: 'FOLLOWUP_QUESTION',
+                                displayValue: 'Any more questions?',
+                                utterance: 'Help me more.',
+                            },
+                        ],
+                        true
+                    );
+                    await Promise.resolve();
+                    const childComponent = element.querySelector('c-product-search-recommendations');
+                    expect(childComponent).not.toBeNull();
+                    expect(childComponent.suggestedActions).toEqual([
+                        {
+                            description: '',
+                            utterance: 'Help me more.',
+                            selectionType: null,
+                            options: [
+                                {
+                                    type: 'UTTERANCE_SUGGESTIONS',
+                                    displayValue: 'Any more questions?',
+                                    utterance: 'Help me more.',
+                                },
+                            ],
+                        },
+                    ]);
+                });
+            });
+
             describe('BottomSheet Multiple Questions Format', () => {
                 it('should handle suggestedActions at root level when not nested under productRecommendations', async () => {
                     const entry = {
@@ -1695,6 +1940,7 @@ describe('c-dynamic-content-renderer', () => {
                         abstractMessage: {
                             staticContent: {
                                 text: JSON.stringify({
+                                    isCartMgmtSupported: false,
                                     productsDetails: { products: [] },
                                     categoryDetails: { categories: [] },
                                 }),
@@ -1723,6 +1969,7 @@ describe('c-dynamic-content-renderer', () => {
                         abstractMessage: {
                             staticContent: {
                                 text: JSON.stringify({
+                                    isCartMgmtSupported: false,
                                     productsDetails: { products: [] },
                                     categoryDetails: { categories: [] },
                                 }),
@@ -1750,6 +1997,7 @@ describe('c-dynamic-content-renderer', () => {
                         abstractMessage: {
                             staticContent: {
                                 text: JSON.stringify({
+                                    isCartMgmtSupported: false,
                                     productsDetails: { products: [] },
                                     categoryDetails: { categories: [] },
                                 }),
@@ -5419,6 +5667,248 @@ Second paragraph`;
 
             // Verify that sendTextMessage was called with empty product IDs
             expect(mockSendTextMessage).toHaveBeenCalledWith('Show more ()');
+        });
+    });
+
+    describe('branch coverage — previously uncovered edge cases', () => {
+        // Helper shared across all tests in this block
+        const buildChatbotEntry = (text) => ({
+            entryPayload: JSON.stringify({
+                abstractMessage: { staticContent: { text } },
+            }),
+            sender: { role: CHATBOT },
+        });
+
+        // handlePayment: _getPaymentMethodDisplayName with empty/falsy input
+        describe('handlePayment cancel/failure with no paymentMethod triggers', () => {
+            it.each([
+                ['cancel status without paymentMethod', { status: 'cancel' }, ' was canceled'],
+                ['failure status without paymentMethod', { status: 'failure' }, ' failed'],
+                [
+                    'cancel status with empty-string paymentMethod',
+                    { status: 'cancel', paymentMethod: '' },
+                    ' was canceled',
+                ],
+            ])('%s', (_, detail, expectedSuffix) => {
+                element.handlePayment({ detail });
+                expect(mockSendTextMessage).toHaveBeenCalledWith(expect.stringContaining(expectedSuffix));
+            });
+        });
+
+        // _processConversationEntry parsing edge cases
+        describe('_processConversationEntry JSON parsing edge cases', () => {
+            it.each([
+                ['empty JSON string ("") — fast-path invalid response', '""'],
+                ['newline-only JSON string — fallback invalid response', '"\n"'],
+            ])('%s', async (_, text) => {
+                element.conversationEntry = buildChatbotEntry(text);
+                await flushPromises();
+                const richText = element.querySelector('lightning-formatted-rich-text');
+                expect(richText).toBeTruthy();
+                expect(richText.value).toContain('I did not understand your response. Please try again.');
+            });
+
+            it('fallback path sets plain text when sanitised JSON parses to a valid string', async () => {
+                element.conversationEntry = buildChatbotEntry('"Hello World\n"');
+                await flushPromises();
+                const richText = element.querySelector('lightning-formatted-rich-text');
+                expect(richText).toBeTruthy();
+                expect(richText.value).toContain('Hello World');
+            });
+
+            it('fallback double-encoded path re-parses a string that looks like JSON', async () => {
+                const text = `"{\\"key\\": \\"value\\"}\n"`;
+                element.conversationEntry = buildChatbotEntry(text);
+                await flushPromises();
+                expect(element).toBeDefined();
+            });
+        });
+
+        // dynamicComponentData: welcome-message branch
+        it('dynamicComponentData copies contextualData/contextualDescription into result for welcome messages', async () => {
+            const savedAddEventListener = window.addEventListener;
+            const savedRemoveEventListener = window.removeEventListener;
+
+            // Restore native implementations.
+            window.addEventListener = EventTarget.prototype.addEventListener.bind(window);
+            window.removeEventListener = EventTarget.prototype.removeEventListener.bind(window);
+
+            // Reconnect so connectedCallback runs against the real addEventListener.
+            document.body.removeChild(element);
+            document.body.appendChild(element);
+
+            window.dispatchEvent(
+                new MessageEvent('message', {
+                    data: {
+                        type: 'conversational.actualConversationContext',
+                        payload: {
+                            conversationContext: [{ id: 'ctx1', name: 'Context Item' }],
+                        },
+                    },
+                })
+            );
+            await flushPromises();
+
+            element.conversationEntry = buildChatbotEntry("<img src='banner.jpg'>");
+            await flushPromises();
+
+            // Reinstate the (possibly mocked) functions for subsequent tests.
+            window.addEventListener = savedAddEventListener;
+            window.removeEventListener = savedRemoveEventListener;
+
+            expect(element.querySelector('c-conversational-context')).toBeTruthy();
+        });
+
+        // ── dynamicComponentData: dataProcessor throws ─────────────────────────
+        it('component renders gracefully when the data processor throws', async () => {
+            // Make window.parent.postMessage throw exactly once.
+            const postMessageSpy = jest.spyOn(window.parent, 'postMessage').mockImplementationOnce(() => {
+                throw new Error('simulated postMessage error');
+            });
+
+            // Payload includes messagingSessionId and userQuery so sendPsaMsgToStorefront
+            // actually calls postMessage (the guard `agentSessionId && searchQuery` is true).
+            element.conversationEntry = buildChatbotEntry(
+                JSON.stringify({
+                    productRecommendations: {
+                        messagingSessionId: 'session-abc',
+                        userQuery: 'test query',
+                        productsDetails: { products: [] },
+                    },
+                })
+            );
+            await flushPromises();
+
+            // The component should render without throwing despite the failed postMessage.
+            expect(element).toBeDefined();
+            postMessageSpy.mockRestore();
+        });
+
+        // _parseMarkdownToHtml: singleParagraph listitem renderer
+        it('markdown list items are rendered via the singleParagraph listitem path', async () => {
+            element.conversationEntry = buildChatbotEntry('- First item\n- Second item\n- Third item');
+            await flushPromises();
+            const richText = element.querySelector('lightning-formatted-rich-text');
+            expect(richText).toBeTruthy();
+            expect(richText.value).toContain('First item');
+            expect(richText.value).toContain('Second item');
+        });
+    });
+
+    describe('isCartMgmtSupported flag — default state behavior', () => {
+        let mockWindowOpen;
+
+        const buildEntry = (textPayload) => ({
+            entryPayload: JSON.stringify({
+                abstractMessage: {
+                    staticContent: { text: JSON.stringify(textPayload) },
+                },
+            }),
+            sender: { role: CHATBOT },
+        });
+
+        beforeEach(() => {
+            mockWindowOpen = jest.fn();
+            global.window.open = mockWindowOpen;
+        });
+
+        afterEach(() => {
+            delete global.window.open;
+        });
+
+        // Absent, null, and empty-string values all default to supported (true),
+        // so handleShowProduct takes the cart-management path and sends a text message.
+        it.each([
+            [
+                'root isCartMgmtSupported omitted',
+                { productsDetails: { products: [] }, categoryDetails: { categories: [] } },
+            ],
+            [
+                'root isCartMgmtSupported is null',
+                { isCartMgmtSupported: null, productsDetails: { products: [] }, categoryDetails: { categories: [] } },
+            ],
+            [
+                'root isCartMgmtSupported is empty string',
+                { isCartMgmtSupported: '', productsDetails: { products: [] }, categoryDetails: { categories: [] } },
+            ],
+            [
+                'nested productRecommendations.isCartMgmtSupported omitted',
+                { productRecommendations: { productsDetails: { products: [] }, userQuery: 'test' } },
+            ],
+            [
+                'nested productRecommendations.isCartMgmtSupported is null',
+                {
+                    productRecommendations: {
+                        isCartMgmtSupported: null,
+                        productsDetails: { products: [] },
+                        userQuery: 'test',
+                    },
+                },
+            ],
+            [
+                'nested productRecommendations.isCartMgmtSupported is empty string',
+                {
+                    productRecommendations: {
+                        isCartMgmtSupported: '',
+                        productsDetails: { products: [] },
+                        userQuery: 'test',
+                    },
+                },
+            ],
+            [
+                'both root and nested isCartMgmtSupported omitted',
+                {
+                    productsDetails: { products: [] },
+                    productRecommendations: { productsDetails: { products: [] }, userQuery: 'test' },
+                },
+            ],
+        ])('defaults to supported when %s', (_, textPayload) => {
+            element.conversationEntry = buildEntry(textPayload);
+            element.handleShowProduct({ detail: { name: 'Test Product', id: 'prod123' } });
+            expect(mockSendTextMessage).toHaveBeenCalledWith('Show me details about Test Product (prod123)');
+            expect(mockWindowOpen).not.toHaveBeenCalled();
+        });
+
+        // Only boolean false or the string 'false' explicitly disable cart management,
+        // causing handleShowProduct to open a URL instead of sending a text message.
+        it.each([
+            [
+                'root isCartMgmtSupported is boolean false',
+                { isCartMgmtSupported: false, productsDetails: { products: [] }, categoryDetails: { categories: [] } },
+            ],
+            [
+                'root isCartMgmtSupported is the string "false"',
+                {
+                    isCartMgmtSupported: 'false',
+                    productsDetails: { products: [] },
+                    categoryDetails: { categories: [] },
+                },
+            ],
+            [
+                'nested productRecommendations.isCartMgmtSupported is boolean false',
+                {
+                    productRecommendations: {
+                        isCartMgmtSupported: false,
+                        productsDetails: { products: [] },
+                        userQuery: 'test',
+                    },
+                },
+            ],
+            [
+                'nested productRecommendations.isCartMgmtSupported is the string "false"',
+                {
+                    productRecommendations: {
+                        isCartMgmtSupported: 'false',
+                        productsDetails: { products: [] },
+                        userQuery: 'test',
+                    },
+                },
+            ],
+        ])('is not supported when %s', (_, textPayload) => {
+            element.conversationEntry = buildEntry(textPayload);
+            element.handleShowProduct({ detail: { url: 'https://example.com/product' } });
+            expect(mockWindowOpen).toHaveBeenCalledWith('https://example.com/product', '_blank', 'noopener,noreferrer');
+            expect(mockSendTextMessage).not.toHaveBeenCalled();
         });
     });
 });
