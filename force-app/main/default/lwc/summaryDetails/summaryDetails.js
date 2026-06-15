@@ -278,6 +278,14 @@ export default class SummaryDetails extends LightningElement {
     }
 
     /**
+     * True if taxes should be displayed (i.e., taxation mode is not 'gross').
+     * @returns {boolean}
+     */
+    get shouldShowTaxes() {
+        return this.details?.taxationMode !== 'gross';
+    }
+
+    /**
      * Indicates if there are any promotions to display.
      * @returns {boolean} True if promotions amount is not null or undefined
      */
