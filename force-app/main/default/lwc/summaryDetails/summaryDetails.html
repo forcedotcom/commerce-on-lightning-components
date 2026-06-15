@@ -187,18 +187,20 @@
                         </div>
                     </template>
 
-                    <div class="summary-row slds-p-bottom_x-small">
-                        <span
-                            class="summary-label"
-                            id="taxes-label">
-                            {i18n.taxesLabel}
-                        </span>
-                        <span
-                            class="summary-value"
-                            aria-labelledby="taxes-label">
-                            {taxes}
-                        </span>
-                    </div>
+                    <template if:true={shouldShowTaxes}>
+                        <div class="summary-row slds-p-bottom_x-small">
+                            <span
+                                class="summary-label"
+                                id="taxes-label">
+                                {i18n.taxesLabel}
+                            </span>
+                            <span
+                                class="summary-value"
+                                aria-labelledby="taxes-label">
+                                {taxes}
+                            </span>
+                        </div>
+                    </template>
 
                     <div class="summary-row total">
                         <span

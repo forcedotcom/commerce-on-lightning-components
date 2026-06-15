@@ -568,6 +568,57 @@ describe('c-summary-details', () => {
             expect(hasSummaryLabel(element, 'Promotions')).toBe(false);
             expect(hasSummaryLabel(element, 'Shipping Discount')).toBe(false);
         });
+
+        it('should hide taxes row when taxationMode is gross', async () => {
+            const dataWithGrossTaxation = { ...mockOrderData, taxationMode: 'gross' };
+            const element = await createComponent({ details: dataWithGrossTaxation });
+            await expandComponent(element);
+
+            expect(hasSummaryLabel(element, 'Taxes')).toBe(false);
+        });
+
+        it('should show taxes row when taxationMode is net', async () => {
+            const dataWithNetTaxation = { ...mockOrderData, taxationMode: 'net' };
+            const element = await createComponent({ details: dataWithNetTaxation });
+            await expandComponent(element);
+
+            expect(hasSummaryLabel(element, 'Taxes')).toBe(true);
+        });
+
+        it('should show taxes row when taxationMode is undefined', async () => {
+            const element = await createComponent({ details: mockOrderData });
+            await expandComponent(element);
+
+            expect(hasSummaryLabel(element, 'Taxes')).toBe(true);
+        });
+
+        it('should hide taxes row in cart summary mode when taxationMode is gross', async () => {
+            const dataWithGrossTaxation = { ...mockCartData, taxationMode: 'gross' };
+            const element = await createComponent({ details: dataWithGrossTaxation, isCartSummary: true });
+            await expandComponent(element);
+
+            expect(hasSummaryLabel(element, 'Taxes')).toBe(false);
+        });
+
+        it('should display summary structure without taxes when taxationMode is gross', async () => {
+            const dataWithGrossTaxation = {
+                ...mockDataWithPromotionsAndDiscounts,
+                taxationMode: 'gross',
+                shippingDiscount: 0,
+                promotionsDiscount: 0,
+            };
+            const element = await createComponent({ details: dataWithGrossTaxation });
+            await expandComponent(element);
+
+            const summaryLabels = element.querySelectorAll('.summary-label');
+            const expectedOrder = ['Subtotal', 'Shipping'];
+
+            expectedOrder.forEach((expectedLabel, index) => {
+                expect(summaryLabels[index].textContent).toBe(expectedLabel);
+            });
+
+            expect(hasSummaryLabel(element, 'Taxes')).toBe(false);
+        });
     });
 
     describe('Edge Cases', () => {
