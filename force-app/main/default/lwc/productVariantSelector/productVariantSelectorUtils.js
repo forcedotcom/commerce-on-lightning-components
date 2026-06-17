@@ -12,7 +12,7 @@
 const variantSupportedProductClasses = new Set(['Variation', 'VariationParent']);
 
 /**
- * Determines if option value at the selected attribute index is valid based
+ * Determines if the option value at the selected attribute index is valid based
  * on the provided valid variant and the currently selected options
  * @param {Array<string>} variant
  *  A valid variant to parse (e.g. ['Large', 'Yellow', 'Polyester'])
@@ -24,11 +24,11 @@ const variantSupportedProductClasses = new Set(['Variation', 'VariationParent'])
  *  True, if the option is valid
  */
 export function isOptionAtSelectedIndexValid(variant, selectedAttributeIndex, currentlySelectedOptions) {
-    return variant.every((variantOption, optionIndex) => {
+    return variant?.every((variantOption, optionIndex) => {
         const selectedOption = currentlySelectedOptions[optionIndex];
 
         return (
-            optionIndex === selectedAttributeIndex || selectedOption === variantOption || selectedOption.length === 0
+            optionIndex === selectedAttributeIndex || selectedOption === variantOption || selectedOption?.length === 0
         );
     });
 }
@@ -62,7 +62,7 @@ export function getAvailableOptions(selectedAttributeIndex, currentlySelectedOpt
             ?.filter((variant) =>
                 isOptionAtSelectedIndexValid(variant, selectedAttributeIndex, currentlySelectedOptions)
             )
-            .map((filteredOptions) => filteredOptions[selectedAttributeIndex])
+            ?.map((filteredOptions) => filteredOptions[selectedAttributeIndex])
     );
 }
 
@@ -83,10 +83,13 @@ export const transformVariantOptions = (attributeInfo) => {
     return Object.values(attributeInfo || [])
         .filter(Boolean)
         .map((attribute) => {
-            const options = (attribute?.availableValues || []).map((value) => ({
-                label: value,
-                value: value,
-            }));
+            const options = (attribute?.availableValues || []).map((value) => {
+                const option = attribute?.options?.find((o) => o?.apiName === value);
+                return {
+                    label: option?.label,
+                    value: option?.apiName,
+                };
+            });
             return {
                 id: attribute?.fieldEnumOrId,
                 label: attribute?.label,
@@ -141,7 +144,7 @@ export const transformSelectedOptions = (attributes, attributeInfo) => {
 };
 
 /**
- * Transform Variant Attributes list to a map
+ * Transform the Variant Attributes list to a map
  * @param {Array<JsonData>} [attributesToProductMappings] The product's variation attributes mapping
  * @returns {Map<string, {[key: string]: Array<string>}>} The consumable/normalized form of the variation attributes mapping
  * @example
@@ -190,7 +193,7 @@ export const transformVariantSelectionToProductIdMap = (attributesToProductMappi
     }, new Map());
 
 /**
- * Transform Variant Attributes list to a list of available variant options
+ * Transform the Variant Attributes list to a list of available variant options
  * @param {Array<JsonData>} [attributesToProductMappings] The product's variation attributes mapping
  * @returns {Array<Array<string>>} A list of available variant options
  * @example
